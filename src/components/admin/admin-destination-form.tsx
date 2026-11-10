@@ -14,7 +14,7 @@ export function AdminDestinationForm({
 
       <section className="rounded-[28px] border border-stone-200 bg-white p-6">
         <p className="eyebrow">The basics</p>
-        <h2 className="mt-2 font-display text-2xl font-semibold text-forest-950">
+        <h2 className="mt-2 font-display text-2xl font-semibold text-navy-950">
           Destination details
         </h2>
 
@@ -90,7 +90,7 @@ export function AdminDestinationForm({
               id="tagline"
               name="tagline"
               defaultValue={destination?.tagline ?? ""}
-              placeholder="Shikaras, snow and saffron valleys"
+              placeholder="Shikaras, snow and blue valleys"
               className="field"
             />
           </div>

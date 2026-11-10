@@ -1,5 +1,5 @@
-import { AdminPageHeader } from "@/components/admin-ui";
-import { AdminTourForm } from "@/components/admin-tour-form";
+import { AdminPageHeader } from "@/components/admin/admin-ui";
+import { AdminTourForm } from "@/components/admin/admin-tour-form";
 import { loadAdminExperiences } from "@/lib/content";
 import { experiences as staticExperiences } from "@/data/experiences";
 

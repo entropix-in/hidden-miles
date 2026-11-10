@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
-import { AdminPageHeader } from "@/components/admin-ui";
-import { AdminTestimonialForm } from "@/components/admin-testimonial-form";
-import { AdminDeleteButton } from "@/components/admin-delete-button";
+import { AdminPageHeader } from "@/components/admin/admin-ui";
+import { AdminTestimonialForm } from "@/components/admin/admin-testimonial-form";
+import { AdminDeleteButton } from "@/components/admin/admin-delete-button";
 import { deleteTestimonialAction } from "@/app/admin/actions";
 import { loadAdminTestimonial } from "@/lib/content";
 

@@ -14,7 +14,7 @@ export function AdminTestimonialForm({
 
       <section className="rounded-[28px] border border-stone-200 bg-white p-6">
         <p className="eyebrow">Guest story</p>
-        <h2 className="mt-2 font-display text-2xl font-semibold text-forest-950">
+        <h2 className="mt-2 font-display text-2xl font-semibold text-navy-950">
           Testimonial details
         </h2>
 

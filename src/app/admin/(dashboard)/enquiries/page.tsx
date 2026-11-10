@@ -5,13 +5,13 @@ import {
   AdminNotice,
   AdminPageHeader,
   DatabaseSetupNotice,
-} from "@/components/admin-ui";
+} from "@/components/admin/admin-ui";
 import { updateEnquiryStatusAction } from "@/app/admin/actions";
 import { loadAdminEnquiries } from "@/lib/content";
 import type { EnquiryStatus } from "@/lib/types";
 
 const statusStyles: Record<EnquiryStatus, string> = {
-  new: "bg-saffron-100 text-saffron-800",
+  new: "bg-blue-100 text-blue-800",
   contacted: "bg-sky-100 text-sky-800",
   closed: "bg-stone-200 text-stone-600",
 };
@@ -94,7 +94,7 @@ export default async function AdminEnquiriesPage({
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
                     <div className="flex flex-wrap items-center gap-2">
-                      <h2 className="font-display text-xl font-semibold text-forest-950">
+                      <h2 className="font-display text-xl font-semibold text-navy-950">
                         {enquiry.name}
                       </h2>
                       <span
@@ -102,7 +102,7 @@ export default async function AdminEnquiriesPage({
                       >
                         {status}
                       </span>
-                      <span className="rounded-full bg-cream-200 px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-wider text-forest-800">
+                      <span className="rounded-full bg-sand-200 px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-wider text-navy-800">
                         {enquiry.type === "newsletter"
                           ? "Newsletter"
                           : "Enquiry"}
@@ -125,7 +125,7 @@ export default async function AdminEnquiriesPage({
                     <select
                       name="status"
                       defaultValue={status}
-                      className="rounded-full border border-stone-200 bg-cream-50 px-3 py-2 text-[11px] font-bold text-forest-950 outline-none focus:border-saffron-500"
+                      className="rounded-full border border-stone-200 bg-sand-50 px-3 py-2 text-[11px] font-bold text-navy-950 outline-none focus:border-blue-500"
                     >
                       <option value="new">New</option>
                       <option value="contacted">Contacted</option>
@@ -133,7 +133,7 @@ export default async function AdminEnquiriesPage({
                     </select>
                     <button
                       type="submit"
-                      className="rounded-full bg-forest-950 px-3.5 py-2 text-[10px] font-extrabold uppercase tracking-wider text-cream-50 transition hover:bg-forest-900"
+                      className="rounded-full bg-navy-950 px-3.5 py-2 text-[10px] font-extrabold uppercase tracking-wider text-sand-50 transition hover:bg-navy-900"
                     >
                       Save
                     </button>
@@ -143,23 +143,23 @@ export default async function AdminEnquiriesPage({
                 <div className="mt-4 grid gap-2 text-[12px] leading-5 text-stone-600 sm:grid-cols-2 lg:grid-cols-4">
                   <a
                     href={`mailto:${enquiry.email}`}
-                    className="flex items-center gap-2 font-semibold hover:text-saffron-700"
+                    className="flex items-center gap-2 font-semibold hover:text-blue-700"
                   >
-                    <Mail className="h-3.5 w-3.5 text-saffron-600" />
+                    <Mail className="h-3.5 w-3.5 text-blue-600" />
                     {enquiry.email}
                   </a>
                   {enquiry.phone ? (
                     <a
                       href={`tel:${enquiry.phone.replace(/\s/g, "")}`}
-                      className="flex items-center gap-2 font-semibold hover:text-saffron-700"
+                      className="flex items-center gap-2 font-semibold hover:text-blue-700"
                     >
-                      <Phone className="h-3.5 w-3.5 text-saffron-600" />
+                      <Phone className="h-3.5 w-3.5 text-blue-600" />
                       {enquiry.phone}
                     </a>
                   ) : null}
                   {enquiry.destination ? (
                     <p className="flex items-center gap-2 font-semibold">
-                      <MessageCircle className="h-3.5 w-3.5 text-saffron-600" />
+                      <MessageCircle className="h-3.5 w-3.5 text-blue-600" />
                       {enquiry.destination}
                     </p>
                   ) : null}
@@ -172,20 +172,20 @@ export default async function AdminEnquiriesPage({
                 </div>
 
                 {enquiry.tour ? (
-                  <p className="mt-3 inline-flex rounded-full bg-cream-100 px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-wider text-forest-800">
+                  <p className="mt-3 inline-flex rounded-full bg-sand-100 px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-wider text-navy-800">
                     {enquiry.tour}
                   </p>
                 ) : null}
 
                 {enquiry.message ? (
-                  <p className="mt-3 rounded-2xl bg-cream-50 px-4 py-3 text-[12px] leading-6 text-stone-600">
+                  <p className="mt-3 rounded-2xl bg-sand-50 px-4 py-3 text-[12px] leading-6 text-stone-600">
                     {enquiry.message}
                   </p>
                 ) : null}
 
                 <Link
                   href={enquiry.email ? `mailto:${enquiry.email}` : "/admin"}
-                  className="mt-3 inline-block text-[10px] font-extrabold uppercase tracking-wider text-saffron-700 hover:text-saffron-800"
+                  className="mt-3 inline-block text-[10px] font-extrabold uppercase tracking-wider text-blue-700 hover:text-blue-800"
                 >
                   Reply by email
                 </Link>

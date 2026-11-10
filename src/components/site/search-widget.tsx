@@ -58,13 +58,13 @@ export function SearchWidget({
     <form
       onSubmit={handleSubmit}
       className={
-        "rounded-[28px] border border-white/50 bg-white/95 p-3 shadow-2xl shadow-forest-950/15 backdrop-blur-xl sm:p-4 " +
+        "rounded-[28px] border border-white/50 bg-white/95 p-3 shadow-2xl shadow-navy-950/15 backdrop-blur-xl sm:p-4 " +
         (className ?? "")
       }
     >
       <div className="grid gap-2 lg:grid-cols-[1.25fr_1.1fr_1fr_0.8fr_auto]">
-        <label className="group flex items-center gap-3 rounded-2xl px-3 py-2.5 transition hover:bg-cream-100">
-          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-saffron-100 text-saffron-700">
+        <label className="group flex items-center gap-3 rounded-2xl px-3 py-2.5 transition hover:bg-sand-100">
+          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-blue-100 text-blue-700">
             <MapPin className="h-4 w-4" />
           </span>
           <span className="min-w-0 flex-1">
@@ -75,7 +75,7 @@ export function SearchWidget({
               value={destination}
               onChange={(event) => setDestination(event.target.value)}
               aria-label="Destination"
-              className="mt-0.5 w-full cursor-pointer appearance-none bg-transparent text-sm font-bold text-forest-950 outline-none"
+              className="mt-0.5 w-full cursor-pointer appearance-none bg-transparent text-sm font-bold text-navy-950 outline-none"
             >
               <option value="">Anywhere beautiful</option>
               {destinations.map((item) => (
@@ -88,8 +88,8 @@ export function SearchWidget({
           <ChevronDown className="h-3.5 w-3.5 shrink-0 text-stone-400" />
         </label>
 
-        <label className="group flex items-center gap-3 rounded-2xl px-3 py-2.5 transition hover:bg-cream-100">
-          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-forest-100 text-forest-700">
+        <label className="group flex items-center gap-3 rounded-2xl px-3 py-2.5 transition hover:bg-sand-100">
+          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-navy-100 text-navy-700">
             <Compass className="h-4 w-4" />
           </span>
           <span className="min-w-0 flex-1">
@@ -100,7 +100,7 @@ export function SearchWidget({
               value={experience}
               onChange={(event) => setExperience(event.target.value)}
               aria-label="Travel style"
-              className="mt-0.5 w-full cursor-pointer appearance-none bg-transparent text-sm font-bold text-forest-950 outline-none"
+              className="mt-0.5 w-full cursor-pointer appearance-none bg-transparent text-sm font-bold text-navy-950 outline-none"
             >
               <option value="">All experiences</option>
               {experiences.map((item) => (
@@ -113,8 +113,8 @@ export function SearchWidget({
           <ChevronDown className="h-3.5 w-3.5 shrink-0 text-stone-400" />
         </label>
 
-        <label className="group flex items-center gap-3 rounded-2xl px-3 py-2.5 transition hover:bg-cream-100">
-          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-saffron-100 text-saffron-700">
+        <label className="group flex items-center gap-3 rounded-2xl px-3 py-2.5 transition hover:bg-sand-100">
+          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-blue-100 text-blue-700">
             <CalendarDays className="h-4 w-4" />
           </span>
           <span className="min-w-0 flex-1">
@@ -125,7 +125,7 @@ export function SearchWidget({
               value={month}
               onChange={(event) => setMonth(event.target.value)}
               aria-label="Travel month"
-              className="mt-0.5 w-full cursor-pointer appearance-none bg-transparent text-sm font-bold text-forest-950 outline-none"
+              className="mt-0.5 w-full cursor-pointer appearance-none bg-transparent text-sm font-bold text-navy-950 outline-none"
             >
               {months.map((item) => (
                 <option key={item} value={item}>
@@ -137,8 +137,8 @@ export function SearchWidget({
           <ChevronDown className="h-3.5 w-3.5 shrink-0 text-stone-400" />
         </label>
 
-        <label className="group flex items-center gap-3 rounded-2xl px-3 py-2.5 transition hover:bg-cream-100">
-          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-forest-100 text-forest-700">
+        <label className="group flex items-center gap-3 rounded-2xl px-3 py-2.5 transition hover:bg-sand-100">
+          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-navy-100 text-navy-700">
             <Users className="h-4 w-4" />
           </span>
           <span className="min-w-0 flex-1">
@@ -149,7 +149,7 @@ export function SearchWidget({
               value={travellers}
               onChange={(event) => setTravellers(event.target.value)}
               aria-label="Number of travellers"
-              className="mt-0.5 w-full cursor-pointer appearance-none bg-transparent text-sm font-bold text-forest-950 outline-none"
+              className="mt-0.5 w-full cursor-pointer appearance-none bg-transparent text-sm font-bold text-navy-950 outline-none"
             >
               {["1", "2", "3", "4", "5", "6", "7", "8", "9", "10+"].map(
                 (item) => (

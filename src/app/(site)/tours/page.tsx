@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowUpRight, BadgeCheck, CalendarDays, MapPin } from "lucide-react";
-import { PageHero } from "@/components/page-hero";
-import { ToursExplorer } from "@/components/tours-explorer";
+import { PageHero } from "@/components/site/page-hero";
+import { ToursExplorer } from "@/components/site/tours-explorer";
 import { loadDestinations, loadExperiences, loadTours } from "@/lib/content";
 
 export const metadata: Metadata = {
@@ -41,13 +41,13 @@ export default async function ToursPage({
         description="Group departures, private escapes, family adventures and honeymoons — every itinerary is tried, tested and led by people who know the place by heart."
         breadcrumbs={[{ label: "Tour packages" }]}
       >
-        <div className="rounded-[28px] border border-stone-200 bg-white p-6 shadow-lg shadow-forest-950/5">
-          <p className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-saffron-700">
+        <div className="rounded-[28px] border border-stone-200 bg-white p-6 shadow-lg shadow-navy-950/5">
+          <p className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-blue-700">
             At a glance
           </p>
           <div className="mt-4 grid grid-cols-3 gap-3">
             <div>
-              <p className="font-display text-3xl font-semibold text-forest-950">
+              <p className="font-display text-3xl font-semibold text-navy-950">
                 {tours.length}
               </p>
               <p className="mt-1 text-[10px] font-bold uppercase tracking-wider text-stone-400">
@@ -55,7 +55,7 @@ export default async function ToursPage({
               </p>
             </div>
             <div>
-              <p className="font-display text-3xl font-semibold text-forest-950">
+              <p className="font-display text-3xl font-semibold text-navy-950">
                 {destinations.length}
               </p>
               <p className="mt-1 text-[10px] font-bold uppercase tracking-wider text-stone-400">
@@ -63,7 +63,7 @@ export default async function ToursPage({
               </p>
             </div>
             <div>
-              <p className="font-display text-3xl font-semibold text-forest-950">
+              <p className="font-display text-3xl font-semibold text-navy-950">
                 4.9
               </p>
               <p className="mt-1 text-[10px] font-bold uppercase tracking-wider text-stone-400">
@@ -73,15 +73,15 @@ export default async function ToursPage({
           </div>
           <div className="mt-5 space-y-2.5 border-t border-dashed border-stone-200 pt-4">
             <p className="flex items-center gap-2 text-[11px] font-semibold text-stone-500">
-              <BadgeCheck className="h-3.5 w-3.5 text-forest-600" />
+              <BadgeCheck className="h-3.5 w-3.5 text-navy-600" />
               All-inclusive pricing, no surprises
             </p>
             <p className="flex items-center gap-2 text-[11px] font-semibold text-stone-500">
-              <CalendarDays className="h-3.5 w-3.5 text-forest-600" />
+              <CalendarDays className="h-3.5 w-3.5 text-navy-600" />
               Guaranteed departures all year
             </p>
             <p className="flex items-center gap-2 text-[11px] font-semibold text-stone-500">
-              <MapPin className="h-3.5 w-3.5 text-forest-600" />
+              <MapPin className="h-3.5 w-3.5 text-navy-600" />
               Expert leaders on every journey
             </p>
           </div>
@@ -98,9 +98,9 @@ export default async function ToursPage({
       />
 
       <section className="container-page pb-16">
-        <div className="flex flex-col items-start justify-between gap-5 rounded-[30px] bg-forest-950 px-6 py-8 text-cream-50 sm:flex-row sm:items-center sm:px-10">
+        <div className="flex flex-col items-start justify-between gap-5 rounded-[30px] bg-navy-950 px-6 py-8 text-sand-50 sm:flex-row sm:items-center sm:px-10">
           <div>
-            <p className="eyebrow text-saffron-300">Prefer something personal?</p>
+            <p className="eyebrow text-blue-300">Prefer something personal?</p>
             <h2 className="mt-2 font-display text-2xl font-medium sm:text-3xl">
               We can build a journey around your dates and people.
             </h2>

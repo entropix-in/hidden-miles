@@ -1,6 +1,6 @@
-import { SiteHeader } from "@/components/site-header";
-import { SiteFooter } from "@/components/site-footer";
-import { FloatingActions } from "@/components/floating-actions";
+import { SiteHeader } from "@/components/site/site-header";
+import { SiteFooter } from "@/components/site/site-footer";
+import { FloatingActions } from "@/components/site/floating-actions";
 import { loadDestinations } from "@/lib/content";
 
 export const dynamic = "force-dynamic";

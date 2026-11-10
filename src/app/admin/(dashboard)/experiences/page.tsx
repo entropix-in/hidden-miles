@@ -6,10 +6,10 @@ import {
   AdminNotice,
   AdminPageHeader,
   DatabaseSetupNotice,
-} from "@/components/admin-ui";
-import { AdminDeleteButton } from "@/components/admin-delete-button";
+} from "@/components/admin/admin-ui";
+import { AdminDeleteButton } from "@/components/admin/admin-delete-button";
 import { deleteExperienceAction } from "@/app/admin/actions";
-import { ExperienceIcon } from "@/components/experience-icon";
+import { ExperienceIcon } from "@/components/site/experience-icon";
 import { loadAdminExperiences } from "@/lib/content";
 import { imageUrl } from "@/lib/utils";
 
@@ -71,17 +71,17 @@ export default async function AdminExperiencesPage({
                     className="object-cover"
                   />
                 ) : (
-                  <div className="grid h-full w-full place-items-center bg-cream-200 text-[10px] font-bold uppercase tracking-wider text-stone-400">
+                  <div className="grid h-full w-full place-items-center bg-sand-200 text-[10px] font-bold uppercase tracking-wider text-stone-400">
                     No image
                   </div>
                 )}
-                <div className="absolute inset-0 bg-gradient-to-t from-forest-950/60 to-transparent" />
-                <span className="absolute left-4 top-4 grid h-10 w-10 place-items-center rounded-full bg-white/90 text-saffron-700">
+                <div className="absolute inset-0 bg-gradient-to-t from-navy-950/60 to-transparent" />
+                <span className="absolute left-4 top-4 grid h-10 w-10 place-items-center rounded-full bg-white/90 text-blue-700">
                   <ExperienceIcon icon={experience.icon} />
                 </span>
               </div>
               <div className="p-4">
-                <h2 className="font-display text-xl font-semibold text-forest-950">
+                <h2 className="font-display text-xl font-semibold text-navy-950">
                   {experience.title}
                 </h2>
                 <p className="mt-1 line-clamp-2 text-[12px] leading-5 text-stone-500">
@@ -91,14 +91,14 @@ export default async function AdminExperiencesPage({
                   <Link
                     href={`/tours?experience=${experience.slug}`}
                     target="_blank"
-                    className="grid h-9 w-9 place-items-center rounded-full border border-stone-200 text-stone-500 transition hover:border-saffron-400 hover:text-saffron-700"
+                    className="grid h-9 w-9 place-items-center rounded-full border border-stone-200 text-stone-500 transition hover:border-blue-400 hover:text-blue-700"
                     aria-label={`View ${experience.title} on the website`}
                   >
                     <ExternalLink className="h-3.5 w-3.5" />
                   </Link>
                   <Link
                     href={`/admin/experiences/${experience._id}`}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-stone-200 bg-cream-50 px-3.5 py-2 text-[11px] font-extrabold uppercase tracking-wider text-forest-950 transition hover:border-saffron-400"
+                    className="inline-flex items-center gap-1.5 rounded-full border border-stone-200 bg-sand-50 px-3.5 py-2 text-[11px] font-extrabold uppercase tracking-wider text-navy-950 transition hover:border-blue-400"
                   >
                     <Pencil className="h-3.5 w-3.5" />
                     Edit

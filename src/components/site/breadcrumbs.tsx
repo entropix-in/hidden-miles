@@ -14,14 +14,14 @@ export function Breadcrumbs({
       aria-label="Breadcrumb"
       className={cn(
         "flex flex-wrap items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider",
-        light ? "text-cream-200/70" : "text-stone-500",
+        light ? "text-sand-200/70" : "text-stone-500",
       )}
     >
       <Link
         href="/"
         className={cn(
           "transition",
-          light ? "hover:text-saffron-300" : "hover:text-saffron-700",
+          light ? "hover:text-blue-300" : "hover:text-blue-700",
         )}
       >
         Home
@@ -31,7 +31,7 @@ export function Breadcrumbs({
           <ChevronRight
             className={cn(
               "h-3 w-3",
-              light ? "text-cream-200/40" : "text-stone-300",
+              light ? "text-sand-200/40" : "text-stone-300",
             )}
           />
           {item.href ? (
@@ -39,13 +39,13 @@ export function Breadcrumbs({
               href={item.href}
               className={cn(
                 "transition",
-                light ? "hover:text-saffron-300" : "hover:text-saffron-700",
+                light ? "hover:text-blue-300" : "hover:text-blue-700",
               )}
             >
               {item.label}
             </Link>
           ) : (
-            <span className={light ? "text-cream-50" : "text-forest-950"}>
+            <span className={light ? "text-sand-50" : "text-navy-950"}>
               {item.label}
             </span>
           )}

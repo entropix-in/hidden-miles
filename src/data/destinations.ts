@@ -14,7 +14,7 @@ export const destinations: Destination[] = [
     slug: "kashmir",
     name: "Kashmir",
     region: "India",
-    tagline: "Shikaras, snow and saffron valleys",
+    tagline: "Shikaras, snow and blue valleys",
     description:
       "Dal Lake at dawn, the meadows of Gulmarg and a cup of kahwa by a crackling fire. Kashmir is poetry in every season, and our houseboat stays make it personal.",
     image: "https://images.unsplash.com/photo-1593181629936-11c609b8db9b",
@@ -58,7 +58,7 @@ export const destinations: Destination[] = [
     slug: "himachal",
     name: "Himachal",
     region: "India",
-    tagline: "Pine forests and Himalayan air",
+    tagline: "Pine navys and Himalayan air",
     description:
       "Colonial Shimla, the cafés of Manali and hidden trails around Kasuali. Perfect for families, first-time mountain travellers and slow summer escapes.",
     image: "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23",

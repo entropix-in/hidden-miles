@@ -19,10 +19,10 @@ import {
   Users,
   X,
 } from "lucide-react";
-import { Breadcrumbs } from "@/components/breadcrumbs";
-import { EnquiryForm } from "@/components/enquiry-form";
-import { SectionHeading } from "@/components/section-heading";
-import { TourCard } from "@/components/tour-card";
+import { Breadcrumbs } from "@/components/site/breadcrumbs";
+import { EnquiryForm } from "@/components/site/enquiry-form";
+import { SectionHeading } from "@/components/site/section-heading";
+import { TourCard } from "@/components/site/tour-card";
 import { loadDestinations, loadTour, loadTours } from "@/lib/content";
 import { site } from "@/data/site";
 import { formatINR, imageUrl } from "@/lib/utils";
@@ -97,7 +97,7 @@ export default async function TourDetailPage({
 
   return (
     <>
-      <section className="border-b border-stone-200/80 bg-cream-100">
+      <section className="border-b border-stone-200/80 bg-sand-100">
         <div className="container-page py-8 sm:py-10">
           <Breadcrumbs
             items={[
@@ -107,14 +107,14 @@ export default async function TourDetailPage({
           />
 
           <div className="mt-6 flex flex-wrap items-center gap-2">
-            <span className="rounded-full bg-saffron-100 px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-wider text-saffron-800">
+            <span className="rounded-full bg-blue-100 px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-wider text-blue-800">
               {tour.region}
             </span>
             <span className="rounded-full bg-white px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-wider text-stone-600">
               {tour.nights} nights · {tour.days} days
             </span>
             {tour.badge ? (
-              <span className="rounded-full bg-forest-950 px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-wider text-saffron-300">
+              <span className="rounded-full bg-navy-950 px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-wider text-blue-300">
                 {tour.badge}
               </span>
             ) : null}
@@ -122,24 +122,24 @@ export default async function TourDetailPage({
 
           <div className="mt-4 grid gap-6 lg:grid-cols-[1.5fr_1fr] lg:items-end">
             <div>
-              <h1 className="font-display text-4xl font-medium leading-[1.06] tracking-tight text-forest-950 sm:text-5xl">
+              <h1 className="font-display text-4xl font-medium leading-[1.06] tracking-tight text-navy-950 sm:text-5xl">
                 {tour.title}
               </h1>
               <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-[12px] font-bold text-stone-600">
                 <span className="inline-flex items-center gap-1.5">
-                  <MapPin className="h-4 w-4 text-saffron-600" />
+                  <MapPin className="h-4 w-4 text-blue-600" />
                   {tour.destinationName}
                 </span>
                 <span className="inline-flex items-center gap-1.5">
-                  <CalendarDays className="h-4 w-4 text-saffron-600" />
+                  <CalendarDays className="h-4 w-4 text-blue-600" />
                   {tour.departure}
                 </span>
                 <span className="inline-flex items-center gap-1.5">
-                  <Users className="h-4 w-4 text-saffron-600" />
+                  <Users className="h-4 w-4 text-blue-600" />
                   {tour.groupSize}
                 </span>
-                <span className="inline-flex items-center gap-1 text-forest-950">
-                  <Star className="h-4 w-4 fill-saffron-500 text-saffron-500" />
+                <span className="inline-flex items-center gap-1 text-navy-950">
+                  <Star className="h-4 w-4 fill-gold-500 text-gold-500" />
                   {tour.rating.toFixed(1)}
                   <span className="font-semibold text-stone-400">
                     ({tour.reviews} reviews)
@@ -152,7 +152,7 @@ export default async function TourDetailPage({
             </p>
           </div>
 
-          <div className="relative mt-7 aspect-[16/9] overflow-hidden rounded-[32px] shadow-2xl shadow-forest-950/15 sm:aspect-[16/7]">
+          <div className="relative mt-7 aspect-[16/9] overflow-hidden rounded-[32px] shadow-2xl shadow-navy-950/15 sm:aspect-[16/7]">
             <Image
               src={imageUrl(tour.image, 1800)}
               alt={tour.title}
@@ -161,12 +161,12 @@ export default async function TourDetailPage({
               sizes="100vw"
               className="object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-forest-950/60 via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-navy-950/60 via-transparent to-transparent" />
             <div className="absolute bottom-5 left-5 flex flex-wrap gap-2">
-              <span className="rounded-full bg-white/95 px-4 py-2 text-[11px] font-extrabold text-forest-950 backdrop-blur">
+              <span className="rounded-full bg-white/95 px-4 py-2 text-[11px] font-extrabold text-navy-950 backdrop-blur">
                 Next departure · {tour.departure}
               </span>
-              <span className="rounded-full bg-forest-950/70 px-4 py-2 text-[11px] font-extrabold text-cream-50 backdrop-blur">
+              <span className="rounded-full bg-navy-950/70 px-4 py-2 text-[11px] font-extrabold text-sand-50 backdrop-blur">
                 {tour.groupSize}
               </span>
             </div>
@@ -178,7 +178,7 @@ export default async function TourDetailPage({
         <div className="min-w-0 space-y-12">
           <section>
             <p className="eyebrow">The journey</p>
-            <h2 className="mt-2 font-display text-3xl font-medium text-forest-950">
+            <h2 className="mt-2 font-display text-3xl font-medium text-navy-950">
               A closer look
             </h2>
             <div className="prose-narrow mt-5 space-y-4">
@@ -197,10 +197,10 @@ export default async function TourDetailPage({
                   key={highlight}
                   className="flex items-start gap-3 rounded-2xl border border-stone-200 bg-white px-4 py-3.5"
                 >
-                  <span className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-saffron-100 text-saffron-700">
+                  <span className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-blue-100 text-blue-700">
                     <Check className="h-3 w-3" strokeWidth={3} />
                   </span>
-                  <p className="text-[13px] font-bold leading-5 text-forest-950">
+                  <p className="text-[13px] font-bold leading-5 text-navy-950">
                     {highlight}
                   </p>
                 </div>
@@ -210,7 +210,7 @@ export default async function TourDetailPage({
 
           <section>
             <p className="eyebrow">Day by day</p>
-            <h2 className="mt-2 font-display text-3xl font-medium text-forest-950">
+            <h2 className="mt-2 font-display text-3xl font-medium text-navy-950">
               Your itinerary
             </h2>
             <div className="mt-6 space-y-3">
@@ -221,13 +221,13 @@ export default async function TourDetailPage({
                   className="group overflow-hidden rounded-3xl border border-stone-200 bg-white"
                 >
                   <summary className="flex cursor-pointer list-none items-center gap-4 p-5 [&::-webkit-details-marker]:hidden">
-                    <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-forest-950 text-[10px] font-extrabold uppercase tracking-wider text-saffron-300">
+                    <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-navy-950 text-[10px] font-extrabold uppercase tracking-wider text-blue-300">
                       Day {day.day}
                     </span>
-                    <span className="flex-1 font-display text-lg font-semibold text-forest-950">
+                    <span className="flex-1 font-display text-lg font-semibold text-navy-950">
                       {day.title}
                     </span>
-                    <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-cream-100 text-forest-950 transition duration-300 group-open:rotate-45">
+                    <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-sand-100 text-navy-950 transition duration-300 group-open:rotate-45">
                       <Plus className="h-4 w-4" />
                     </span>
                   </summary>
@@ -240,9 +240,9 @@ export default async function TourDetailPage({
           </section>
 
           <section className="grid gap-4 md:grid-cols-2">
-            <div className="rounded-3xl border border-forest-200 bg-forest-50 p-6">
-              <h2 className="flex items-center gap-2 font-display text-xl font-semibold text-forest-950">
-                <span className="grid h-8 w-8 place-items-center rounded-full bg-forest-600 text-white">
+            <div className="rounded-3xl border border-navy-200 bg-navy-50 p-6">
+              <h2 className="flex items-center gap-2 font-display text-xl font-semibold text-navy-950">
+                <span className="grid h-8 w-8 place-items-center rounded-full bg-navy-600 text-white">
                   <Check className="h-4 w-4" strokeWidth={3} />
                 </span>
                 What&apos;s included
@@ -253,14 +253,14 @@ export default async function TourDetailPage({
                     key={item}
                     className="flex items-start gap-2.5 text-[12px] leading-5 text-stone-600"
                   >
-                    <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-forest-600" />
+                    <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-navy-600" />
                     {item}
                   </li>
                 ))}
               </ul>
             </div>
-            <div className="rounded-3xl border border-stone-200 bg-cream-100/70 p-6">
-              <h2 className="flex items-center gap-2 font-display text-xl font-semibold text-forest-950">
+            <div className="rounded-3xl border border-stone-200 bg-sand-100/70 p-6">
+              <h2 className="flex items-center gap-2 font-display text-xl font-semibold text-navy-950">
                 <span className="grid h-8 w-8 place-items-center rounded-full bg-stone-300 text-white">
                   <X className="h-4 w-4" strokeWidth={3} />
                 </span>
@@ -282,7 +282,7 @@ export default async function TourDetailPage({
 
           <section>
             <p className="eyebrow">Before you go</p>
-            <h2 className="mt-2 font-display text-3xl font-medium text-forest-950">
+            <h2 className="mt-2 font-display text-3xl font-medium text-navy-950">
               Good to know
             </h2>
             <div className="mt-6 grid gap-3 sm:grid-cols-2">
@@ -291,10 +291,10 @@ export default async function TourDetailPage({
                   key={item.title}
                   className="rounded-2xl border border-stone-200 bg-white p-5"
                 >
-                  <span className="grid h-9 w-9 place-items-center rounded-full bg-cream-200 text-saffron-700">
+                  <span className="grid h-9 w-9 place-items-center rounded-full bg-sand-200 text-blue-700">
                     <item.icon className="h-4 w-4" />
                   </span>
-                  <h3 className="mt-3 text-[13px] font-extrabold text-forest-950">
+                  <h3 className="mt-3 text-[13px] font-extrabold text-navy-950">
                     {item.title}
                   </h3>
                   <p className="mt-1 text-[12px] leading-5 text-stone-500">
@@ -307,9 +307,9 @@ export default async function TourDetailPage({
         </div>
 
         <aside className="space-y-4 lg:sticky lg:top-28">
-          <div className="overflow-hidden rounded-[30px] border border-stone-200 bg-white shadow-xl shadow-forest-950/5">
-            <div className="bg-forest-950 px-6 py-5 text-cream-50">
-              <p className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-saffron-300">
+          <div className="overflow-hidden rounded-[30px] border border-stone-200 bg-white shadow-xl shadow-navy-950/5">
+            <div className="bg-navy-950 px-6 py-5 text-sand-50">
+              <p className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-blue-300">
                 All-inclusive from
               </p>
               <div className="mt-1 flex items-baseline gap-3">
@@ -317,45 +317,45 @@ export default async function TourDetailPage({
                   {formatINR(tour.price)}
                 </p>
                 {tour.oldPrice ? (
-                  <p className="text-sm font-semibold text-cream-200/50 line-through">
+                  <p className="text-sm font-semibold text-sand-200/50 line-through">
                     {formatINR(tour.oldPrice)}
                   </p>
                 ) : null}
               </div>
-              <p className="mt-1 text-[11px] font-semibold text-cream-200/60">
+              <p className="mt-1 text-[11px] font-semibold text-sand-200/60">
                 per person on twin sharing · EMI from {formatINR(emi)}/month
               </p>
             </div>
             <div className="space-y-3 p-5">
               <div className="flex items-center justify-between text-[12px] font-semibold text-stone-600">
                 <span className="inline-flex items-center gap-2">
-                  <CalendarDays className="h-4 w-4 text-saffron-600" />
+                  <CalendarDays className="h-4 w-4 text-blue-600" />
                   Departure
                 </span>
-                <span className="font-bold text-forest-950">{tour.departure}</span>
+                <span className="font-bold text-navy-950">{tour.departure}</span>
               </div>
               <div className="flex items-center justify-between text-[12px] font-semibold text-stone-600">
                 <span className="inline-flex items-center gap-2">
-                  <Clock className="h-4 w-4 text-saffron-600" />
+                  <Clock className="h-4 w-4 text-blue-600" />
                   Duration
                 </span>
-                <span className="font-bold text-forest-950">
+                <span className="font-bold text-navy-950">
                   {tour.nights}N / {tour.days}D
                 </span>
               </div>
               <div className="flex items-center justify-between text-[12px] font-semibold text-stone-600">
                 <span className="inline-flex items-center gap-2">
-                  <Users className="h-4 w-4 text-saffron-600" />
+                  <Users className="h-4 w-4 text-blue-600" />
                   Group size
                 </span>
-                <span className="font-bold text-forest-950">{tour.groupSize}</span>
+                <span className="font-bold text-navy-950">{tour.groupSize}</span>
               </div>
               <div className="flex items-center justify-between text-[12px] font-semibold text-stone-600">
                 <span className="inline-flex items-center gap-2">
-                  <IndianRupee className="h-4 w-4 text-saffron-600" />
+                  <IndianRupee className="h-4 w-4 text-blue-600" />
                   Booking deposit
                 </span>
-                <span className="font-bold text-forest-950">
+                <span className="font-bold text-navy-950">
                   {formatINR(Math.round(tour.price * 0.25))}
                 </span>
               </div>
@@ -376,16 +376,16 @@ export default async function TourDetailPage({
                 </a>
                 <a
                   href={site.phoneHref}
-                  className="inline-flex items-center justify-center gap-2 pt-1 text-[12px] font-extrabold text-forest-950 transition hover:text-saffron-700"
+                  className="inline-flex items-center justify-center gap-2 pt-1 text-[12px] font-extrabold text-navy-950 transition hover:text-blue-700"
                 >
                   <Phone className="h-3.5 w-3.5" />
                   {site.phone}
                 </a>
               </div>
 
-              <div className="rounded-2xl bg-cream-100 p-3 text-[11px] leading-5 text-stone-500">
+              <div className="rounded-2xl bg-sand-100 p-3 text-[11px] leading-5 text-stone-500">
                 <p className="flex items-start gap-2">
-                  <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-saffron-600" />
+                  <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-blue-600" />
                   Prices are per person on twin sharing. Solo travellers and
                   single supplements quoted on request.
                 </p>
@@ -399,14 +399,14 @@ export default async function TourDetailPage({
               defaultDestination={tour.destinationSlug}
               tourTitle={tour.title}
               destinations={allDestinations}
-              className="border border-stone-200 shadow-xl shadow-forest-950/5"
+              className="border border-stone-200 shadow-xl shadow-navy-950/5"
             />
           </div>
         </aside>
       </div>
 
       {related.length ? (
-        <section className="bg-cream-100/70 py-16">
+        <section className="bg-sand-100/70 py-16">
           <div className="container-page">
             <SectionHeading
               eyebrow="You might also love"

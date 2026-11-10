@@ -84,14 +84,14 @@ export function EnquiryForm({
     return (
       <div
         className={cn(
-          "rounded-3xl border border-forest-200 bg-forest-50 p-8 text-center",
+          "rounded-3xl border border-navy-200 bg-navy-50 p-8 text-center",
           className,
         )}
       >
-        <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-forest-600 text-white">
+        <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-navy-600 text-white">
           <CheckCircle2 className="h-7 w-7" />
         </span>
-        <h3 className="mt-5 font-display text-2xl font-semibold text-forest-950">
+        <h3 className="mt-5 font-display text-2xl font-semibold text-navy-950">
           Your holiday is in good hands.
         </h3>
         <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-stone-600">
@@ -121,7 +121,7 @@ export function EnquiryForm({
       {!compact ? (
         <div className="mb-6">
           <p className="eyebrow">Talk to a real traveller</p>
-          <h3 className="mt-2 font-display text-2xl font-semibold text-forest-950">
+          <h3 className="mt-2 font-display text-2xl font-semibold text-navy-950">
             Tell us about your dream trip
           </h3>
           <p className="mt-2 text-sm leading-6 text-stone-500">

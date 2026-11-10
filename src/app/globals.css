@@ -4,34 +4,46 @@
   --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-fraunces), ui-serif, Georgia, serif;
 
-  --color-cream-50: #fffdf8;
-  --color-cream-100: #fdf7ec;
-  --color-cream-200: #f8ecd7;
-  --color-cream-300: #f0dcbb;
+  --color-sand-50: #fdfbf5;
+  --color-sand-100: #fbf6ea;
+  --color-sand-200: #f6eed8;
+  --color-sand-300: #eeddb8;
 
-  --color-saffron-50: #fff8ed;
-  --color-saffron-100: #ffefd4;
-  --color-saffron-200: #ffdba8;
-  --color-saffron-300: #ffc071;
-  --color-saffron-400: #ff9a38;
-  --color-saffron-500: #fb7c12;
-  --color-saffron-600: #ec5f07;
-  --color-saffron-700: #c34708;
-  --color-saffron-800: #9b380f;
-  --color-saffron-900: #7d3010;
-  --color-saffron-950: #431605;
+  --color-blue-50: #eef9fd;
+  --color-blue-100: #d6f1fb;
+  --color-blue-200: #b0e3f5;
+  --color-blue-300: #78cfeb;
+  --color-blue-400: #3bb2db;
+  --color-blue-500: #2698bd;
+  --color-blue-600: #1c7fa4;
+  --color-blue-700: #196785;
+  --color-blue-800: #1b546b;
+  --color-blue-900: #1a4659;
+  --color-blue-950: #0a2c3c;
 
-  --color-forest-50: #f2fbf8;
-  --color-forest-100: #d9f4ea;
-  --color-forest-200: #b6e8d8;
-  --color-forest-300: #84d5c0;
-  --color-forest-400: #4abaa2;
-  --color-forest-500: #2a9d86;
-  --color-forest-600: #1e7e6c;
-  --color-forest-700: #1b6558;
-  --color-forest-800: #195148;
-  --color-forest-900: #16433c;
-  --color-forest-950: #062a26;
+  --color-navy-50: #f1f8fa;
+  --color-navy-100: #dbedf3;
+  --color-navy-200: #bedee8;
+  --color-navy-300: #8fc6d6;
+  --color-navy-400: #5aa5bb;
+  --color-navy-500: #36879f;
+  --color-navy-600: #2a6d84;
+  --color-navy-700: #265a6d;
+  --color-navy-800: #254b5b;
+  --color-navy-900: #23404e;
+  --color-navy-950: #0b2735;
+
+  --color-gold-50: #fdf9ea;
+  --color-gold-100: #f9f0c9;
+  --color-gold-200: #f2df8e;
+  --color-gold-300: #e9c94f;
+  --color-gold-400: #ddb02a;
+  --color-gold-500: #c9971a;
+  --color-gold-600: #a87612;
+  --color-gold-700: #855710;
+  --color-gold-800: #6f4714;
+  --color-gold-900: #5e3c16;
+  --color-gold-950: #362006;
 }
 
 @layer base {
@@ -40,15 +52,15 @@
   }
 
   body {
-    @apply bg-cream-50 font-sans text-stone-800 antialiased;
+    @apply bg-sand-50 font-sans text-stone-800 antialiased;
   }
 
   ::selection {
-    @apply bg-saffron-200 text-saffron-950;
+    @apply bg-blue-200 text-blue-950;
   }
 
   :focus-visible {
-    @apply outline-2 outline-offset-2 outline-saffron-600;
+    @apply outline-2 outline-offset-2 outline-blue-600;
   }
 }
 
@@ -58,7 +70,7 @@
   }
 
   .eyebrow {
-    @apply inline-flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-[0.22em] text-saffron-700;
+    @apply inline-flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-[0.22em] text-blue-700;
   }
 
   .btn,
@@ -70,23 +82,23 @@
   }
 
   .btn-primary {
-    @apply bg-saffron-600 text-white shadow-lg shadow-saffron-900/15 hover:-translate-y-0.5 hover:bg-saffron-700 hover:shadow-xl hover:shadow-saffron-900/20;
+    @apply bg-blue-600 text-white shadow-lg shadow-blue-900/15 hover:-translate-y-0.5 hover:bg-blue-700 hover:shadow-xl hover:shadow-blue-900/20;
   }
 
   .btn-dark {
-    @apply bg-forest-950 text-cream-50 hover:-translate-y-0.5 hover:bg-forest-900;
+    @apply bg-navy-950 text-sand-50 hover:-translate-y-0.5 hover:bg-navy-900;
   }
 
   .btn-outline {
-    @apply border border-stone-300 bg-white/70 text-stone-800 backdrop-blur hover:border-saffron-500 hover:text-saffron-700;
+    @apply border border-stone-300 bg-white/70 text-stone-800 backdrop-blur hover:border-blue-500 hover:text-blue-700;
   }
 
   .btn-light {
-    @apply bg-white text-forest-950 shadow-lg shadow-forest-950/10 hover:-translate-y-0.5 hover:bg-cream-100;
+    @apply bg-white text-navy-950 shadow-lg shadow-navy-950/10 hover:-translate-y-0.5 hover:bg-sand-100;
   }
 
   .field {
-    @apply w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-800 shadow-sm outline-none transition placeholder:text-stone-400 focus:border-saffron-500 focus:ring-4 focus:ring-saffron-500/10;
+    @apply w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-800 shadow-sm outline-none transition placeholder:text-stone-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10;
   }
 
   .field-label {

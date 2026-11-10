@@ -1,5 +1,5 @@
-import { AdminPageHeader } from "@/components/admin-ui";
-import { AdminExperienceForm } from "@/components/admin-experience-form";
+import { AdminPageHeader } from "@/components/admin/admin-ui";
+import { AdminExperienceForm } from "@/components/admin/admin-experience-form";
 
 export default function NewExperiencePage() {
   return (

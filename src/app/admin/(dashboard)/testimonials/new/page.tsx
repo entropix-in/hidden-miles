@@ -1,5 +1,5 @@
-import { AdminPageHeader } from "@/components/admin-ui";
-import { AdminTestimonialForm } from "@/components/admin-testimonial-form";
+import { AdminPageHeader } from "@/components/admin/admin-ui";
+import { AdminTestimonialForm } from "@/components/admin/admin-testimonial-form";
 
 export default function NewTestimonialPage() {
   return (

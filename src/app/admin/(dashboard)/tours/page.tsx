@@ -6,8 +6,8 @@ import {
   AdminNotice,
   AdminPageHeader,
   DatabaseSetupNotice,
-} from "@/components/admin-ui";
-import { AdminDeleteButton } from "@/components/admin-delete-button";
+} from "@/components/admin/admin-ui";
+import { AdminDeleteButton } from "@/components/admin/admin-delete-button";
 import { deleteTourAction } from "@/app/admin/actions";
 import { loadAdminTours } from "@/lib/content";
 import { formatINR, imageUrl } from "@/lib/utils";
@@ -55,7 +55,7 @@ export default async function AdminToursPage({
       ) : null}
 
       {!result.status.seeded ? (
-        <div className="mb-5 rounded-2xl border border-saffron-200 bg-saffron-50 px-4 py-3 text-[12px] font-semibold text-saffron-900">
+        <div className="mb-5 rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3 text-[12px] font-semibold text-blue-900">
           Starter content has not been imported yet.{" "}
           <Link href="/admin" className="underline">
             Import it from the dashboard
@@ -81,7 +81,7 @@ export default async function AdminToursPage({
                     className="object-cover"
                   />
                 ) : (
-                  <div className="grid h-full w-full place-items-center bg-cream-200 text-[10px] font-bold uppercase tracking-wider text-stone-400">
+                  <div className="grid h-full w-full place-items-center bg-sand-200 text-[10px] font-bold uppercase tracking-wider text-stone-400">
                     No image
                   </div>
                 )}
@@ -89,11 +89,11 @@ export default async function AdminToursPage({
 
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="rounded-full bg-cream-200 px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-wider text-forest-800">
+                  <span className="rounded-full bg-sand-200 px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-wider text-navy-800">
                     {tour.region}
                   </span>
                   {tour.featured ? (
-                    <span className="rounded-full bg-saffron-100 px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-wider text-saffron-800">
+                    <span className="rounded-full bg-blue-100 px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-wider text-blue-800">
                       Featured
                     </span>
                   ) : null}
@@ -101,7 +101,7 @@ export default async function AdminToursPage({
                     {tour.nights}N / {tour.days}D
                   </span>
                 </div>
-                <h2 className="mt-1.5 font-display text-xl font-semibold text-forest-950">
+                <h2 className="mt-1.5 font-display text-xl font-semibold text-navy-950">
                   {tour.title}
                 </h2>
                 <p className="mt-0.5 text-[11px] font-semibold text-stone-500">
@@ -113,14 +113,14 @@ export default async function AdminToursPage({
                 <Link
                   href={`/tours/${tour.slug}`}
                   target="_blank"
-                  className="grid h-9 w-9 place-items-center rounded-full border border-stone-200 text-stone-500 transition hover:border-saffron-400 hover:text-saffron-700"
+                  className="grid h-9 w-9 place-items-center rounded-full border border-stone-200 text-stone-500 transition hover:border-blue-400 hover:text-blue-700"
                   aria-label={`View ${tour.title} on the website`}
                 >
                   <ExternalLink className="h-3.5 w-3.5" />
                 </Link>
                 <Link
                   href={`/admin/tours/${tour._id}`}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-stone-200 bg-cream-50 px-3.5 py-2 text-[11px] font-extrabold uppercase tracking-wider text-forest-950 transition hover:border-saffron-400"
+                  className="inline-flex items-center gap-1.5 rounded-full border border-stone-200 bg-sand-50 px-3.5 py-2 text-[11px] font-extrabold uppercase tracking-wider text-navy-950 transition hover:border-blue-400"
                 >
                   <Pencil className="h-3.5 w-3.5" />
                   Edit

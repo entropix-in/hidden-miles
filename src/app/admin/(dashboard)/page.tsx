@@ -12,7 +12,7 @@ import {
   AdminNotice,
   AdminPageHeader,
   DatabaseSetupNotice,
-} from "@/components/admin-ui";
+} from "@/components/admin/admin-ui";
 import { seedContentAction } from "@/app/admin/actions";
 import {
   loadAdminDestinations,
@@ -94,15 +94,15 @@ export default async function AdminDashboardPage({
               <Link
                 key={stat.label}
                 href={stat.href}
-                className="group rounded-[26px] border border-stone-200 bg-white p-5 transition hover:-translate-y-0.5 hover:border-saffron-300 hover:shadow-xl hover:shadow-forest-950/5"
+                className="group rounded-[26px] border border-stone-200 bg-white p-5 transition hover:-translate-y-0.5 hover:border-blue-300 hover:shadow-xl hover:shadow-navy-950/5"
               >
                 <div className="flex items-center justify-between">
-                  <span className="grid h-10 w-10 place-items-center rounded-full bg-cream-200 text-saffron-700">
+                  <span className="grid h-10 w-10 place-items-center rounded-full bg-sand-200 text-blue-700">
                     <stat.icon className="h-5 w-5" />
                   </span>
-                  <ArrowUpRight className="h-4 w-4 text-stone-300 transition group-hover:text-saffron-600" />
+                  <ArrowUpRight className="h-4 w-4 text-stone-300 transition group-hover:text-blue-600" />
                 </div>
-                <p className="mt-4 font-display text-4xl font-semibold text-forest-950">
+                <p className="mt-4 font-display text-4xl font-semibold text-navy-950">
                   {stat.value}
                 </p>
                 <p className="mt-1 text-[11px] font-bold uppercase tracking-wider text-stone-400">
@@ -113,13 +113,13 @@ export default async function AdminDashboardPage({
           </div>
 
           {!status.seeded ? (
-            <div className="mt-6 flex flex-col items-start justify-between gap-5 rounded-[28px] border border-saffron-200 bg-saffron-50 p-6 sm:flex-row sm:items-center">
+            <div className="mt-6 flex flex-col items-start justify-between gap-5 rounded-[28px] border border-blue-200 bg-blue-50 p-6 sm:flex-row sm:items-center">
               <div className="flex items-start gap-4">
-                <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-saffron-100 text-saffron-700">
+                <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-blue-100 text-blue-700">
                   <Database className="h-5 w-5" />
                 </span>
                 <div>
-                  <h2 className="font-display text-xl font-semibold text-forest-950">
+                  <h2 className="font-display text-xl font-semibold text-navy-950">
                     Import your starter content
                   </h2>
                   <p className="mt-1 max-w-xl text-[12px] leading-5 text-stone-600">
@@ -136,14 +136,14 @@ export default async function AdminDashboardPage({
               </form>
             </div>
           ) : (
-            <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-[28px] border border-forest-200 bg-forest-50 px-6 py-4">
-              <p className="text-[12px] font-bold text-forest-800">
+            <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-[28px] border border-navy-200 bg-navy-50 px-6 py-4">
+              <p className="text-[12px] font-bold text-navy-800">
                 Content is live from MySQL. New changes publish to the website
                 immediately.
               </p>
               <Link
                 href="/tours"
-                className="inline-flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wider text-forest-700 hover:text-forest-900"
+                className="inline-flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wider text-navy-700 hover:text-navy-900"
               >
                 View website
                 <ArrowUpRight className="h-3.5 w-3.5" />
@@ -156,11 +156,11 @@ export default async function AdminDashboardPage({
               <div className="flex items-center justify-between">
                 <div>
                   <p className="eyebrow">Inbox</p>
-                  <h2 className="mt-2 font-display text-2xl font-semibold text-forest-950">
+                  <h2 className="mt-2 font-display text-2xl font-semibold text-navy-950">
                     Recent enquiries
                   </h2>
                 </div>
-                <span className="rounded-full bg-saffron-100 px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-wider text-saffron-800">
+                <span className="rounded-full bg-blue-100 px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-wider text-blue-800">
                   {newEnquiries} new
                 </span>
               </div>
@@ -170,10 +170,10 @@ export default async function AdminDashboardPage({
                   {enquiries.data.slice(0, 5).map((enquiry) => (
                     <div
                       key={enquiry._id}
-                      className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-stone-100 bg-cream-50 px-4 py-3"
+                      className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-stone-100 bg-sand-50 px-4 py-3"
                     >
                       <div className="min-w-0">
-                        <p className="truncate text-[13px] font-extrabold text-forest-950">
+                        <p className="truncate text-[13px] font-extrabold text-navy-950">
                           {enquiry.name}
                           <span className="ml-2 text-[10px] font-bold uppercase tracking-wider text-stone-400">
                             {enquiry.type}
@@ -193,7 +193,7 @@ export default async function AdminDashboardPage({
                   ))}
                 </div>
               ) : (
-                <div className="mt-6 flex items-center gap-3 rounded-2xl bg-cream-50 px-4 py-8 text-sm text-stone-500">
+                <div className="mt-6 flex items-center gap-3 rounded-2xl bg-sand-50 px-4 py-8 text-sm text-stone-500">
                   <Inbox className="h-5 w-5 text-stone-300" />
                   No enquiries yet. They will appear here as travellers get in
                   touch.
@@ -202,15 +202,15 @@ export default async function AdminDashboardPage({
 
               <Link
                 href="/admin/enquiries"
-                className="mt-5 inline-flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wider text-saffron-700 hover:text-saffron-800"
+                className="mt-5 inline-flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 hover:text-blue-800"
               >
                 Open enquiries
                 <ArrowUpRight className="h-3.5 w-3.5" />
               </Link>
             </section>
 
-            <section className="rounded-[28px] bg-forest-950 p-6 text-cream-50">
-              <p className="eyebrow text-saffron-300">Quick actions</p>
+            <section className="rounded-[28px] bg-navy-950 p-6 text-sand-50">
+              <p className="eyebrow text-blue-300">Quick actions</p>
               <h2 className="mt-2 font-display text-2xl font-semibold">
                 Publish something new
               </h2>
@@ -240,11 +240,11 @@ export default async function AdminDashboardPage({
                   <Link
                     key={action.href}
                     href={action.href}
-                    className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-[12px] font-bold text-cream-100 transition hover:border-saffron-400/40 hover:bg-white/10"
+                    className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-[12px] font-bold text-sand-100 transition hover:border-blue-400/40 hover:bg-white/10"
                   >
-                    <action.icon className="h-4 w-4 text-saffron-300" />
+                    <action.icon className="h-4 w-4 text-blue-300" />
                     {action.label}
-                    <ArrowUpRight className="ml-auto h-3.5 w-3.5 text-cream-200/40" />
+                    <ArrowUpRight className="ml-auto h-3.5 w-3.5 text-sand-200/40" />
                   </Link>
                 ))}
               </div>

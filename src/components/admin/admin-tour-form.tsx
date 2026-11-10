@@ -65,7 +65,7 @@ export function AdminTourForm({
 
       <section className="rounded-[28px] border border-stone-200 bg-white p-6">
         <p className="eyebrow">The basics</p>
-        <h2 className="mt-2 font-display text-2xl font-semibold text-forest-950">
+        <h2 className="mt-2 font-display text-2xl font-semibold text-navy-950">
           Package details
         </h2>
 
@@ -186,7 +186,7 @@ export function AdminTourForm({
 
       <section className="rounded-[28px] border border-stone-200 bg-white p-6">
         <p className="eyebrow">Pricing & departures</p>
-        <h2 className="mt-2 font-display text-2xl font-semibold text-forest-950">
+        <h2 className="mt-2 font-display text-2xl font-semibold text-navy-950">
           Numbers & details
         </h2>
 
@@ -298,12 +298,12 @@ export function AdminTourForm({
           </div>
         </div>
 
-        <label className="mt-4 flex items-center gap-2.5 text-[12px] font-bold text-forest-950">
+        <label className="mt-4 flex items-center gap-2.5 text-[12px] font-bold text-navy-950">
           <input
             type="checkbox"
             name="featured"
             defaultChecked={Boolean(tour?.featured)}
-            className="h-4 w-4 rounded border-stone-300 text-saffron-600"
+            className="h-4 w-4 rounded border-stone-300 text-blue-600"
           />
           Feature this package on the home page
         </label>
@@ -311,7 +311,7 @@ export function AdminTourForm({
 
       <section className="rounded-[28px] border border-stone-200 bg-white p-6">
         <p className="eyebrow">The story</p>
-        <h2 className="mt-2 font-display text-2xl font-semibold text-forest-950">
+        <h2 className="mt-2 font-display text-2xl font-semibold text-navy-950">
           Highlights & inclusions
         </h2>
 
@@ -358,21 +358,21 @@ export function AdminTourForm({
 
       <section className="rounded-[28px] border border-stone-200 bg-white p-6">
         <p className="eyebrow">Travel styles</p>
-        <h2 className="mt-2 font-display text-2xl font-semibold text-forest-950">
+        <h2 className="mt-2 font-display text-2xl font-semibold text-navy-950">
           Experiences included
         </h2>
         <div className="mt-4 flex flex-wrap gap-2">
           {experienceOptions.map((experience) => (
             <label
               key={experience.slug}
-              className="flex cursor-pointer items-center gap-2 rounded-full border border-stone-200 bg-cream-50 px-4 py-2 text-[11px] font-bold text-stone-600 transition hover:border-saffron-400"
+              className="flex cursor-pointer items-center gap-2 rounded-full border border-stone-200 bg-sand-50 px-4 py-2 text-[11px] font-bold text-stone-600 transition hover:border-blue-400"
             >
               <input
                 type="checkbox"
                 name="experiences"
                 value={experience.slug}
                 defaultChecked={tour?.experiences.includes(experience.slug)}
-                className="h-3.5 w-3.5 rounded border-stone-300 text-saffron-600"
+                className="h-3.5 w-3.5 rounded border-stone-300 text-blue-600"
               />
               {experience.shortTitle}
             </label>
@@ -389,14 +389,14 @@ export function AdminTourForm({
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <p className="eyebrow">Day by day</p>
-            <h2 className="mt-2 font-display text-2xl font-semibold text-forest-950">
+            <h2 className="mt-2 font-display text-2xl font-semibold text-navy-950">
               Itinerary
             </h2>
           </div>
           <button
             type="button"
             onClick={addDay}
-            className="inline-flex items-center gap-2 rounded-full border border-stone-200 bg-cream-50 px-4 py-2 text-[11px] font-extrabold uppercase tracking-wider text-forest-950 transition hover:border-saffron-400"
+            className="inline-flex items-center gap-2 rounded-full border border-stone-200 bg-sand-50 px-4 py-2 text-[11px] font-extrabold uppercase tracking-wider text-navy-950 transition hover:border-blue-400"
           >
             <Plus className="h-3.5 w-3.5" />
             Add day
@@ -407,7 +407,7 @@ export function AdminTourForm({
           {itinerary.map((day, index) => (
             <div
               key={index}
-              className="rounded-2xl border border-stone-200 bg-cream-50 p-4"
+              className="rounded-2xl border border-stone-200 bg-sand-50 p-4"
             >
               <div className="flex items-center gap-3">
                 <input

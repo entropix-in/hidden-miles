@@ -23,7 +23,7 @@ export function AdminExperienceForm({
 
       <section className="rounded-[28px] border border-stone-200 bg-white p-6">
         <p className="eyebrow">The basics</p>
-        <h2 className="mt-2 font-display text-2xl font-semibold text-forest-950">
+        <h2 className="mt-2 font-display text-2xl font-semibold text-navy-950">
           Experience details
         </h2>
 

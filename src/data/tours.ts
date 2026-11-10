@@ -75,7 +75,7 @@ export const tours: Tour[] = [
     departure: "Every Saturday",
     groupSize: "16–26 guests",
     summary:
-      "Six days in the valley of kings: a night on Dal Lake, the meadows of Gulmarg, the pine forests of Pahalgam and the gardens of Srinagar. A gentle, beautiful introduction to Kashmir for families and couples alike.",
+      "Six days in the valley of kings: a night on Dal Lake, the meadows of Gulmarg, the pine navys of Pahalgam and the gardens of Srinagar. A gentle, beautiful introduction to Kashmir for families and couples alike.",
     highlights: [
       "Overnight stay on a traditional Dal Lake houseboat",
       "Gondola ride to Apharwat Peak in Gulmarg",
@@ -376,7 +376,7 @@ export const tours: Tour[] = [
     departure: "Every Sunday",
     groupSize: "20–32 guests",
     summary:
-      "A classic Himalayan summer: the toy train to Shimla, the cafés and valleys of Manali and a quiet finish in the pine forests of Kasauli. Made for families.",
+      "A classic Himalayan summer: the toy train to Shimla, the cafés and valleys of Manali and a quiet finish in the pine navys of Kasauli. Made for families.",
     highlights: [
       "UNESCO-listed Kalka–Shimla toy train",
       "Solang Valley and Atal Tunnel",

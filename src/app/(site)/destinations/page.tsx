@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowUpRight, Compass, Globe2, MapPin } from "lucide-react";
-import { PageHero } from "@/components/page-hero";
-import { SectionHeading } from "@/components/section-heading";
-import { DestinationCard } from "@/components/destination-card";
+import { PageHero } from "@/components/site/page-hero";
+import { SectionHeading } from "@/components/site/section-heading";
+import { DestinationCard } from "@/components/site/destination-card";
 import { loadDestinations, loadTours } from "@/lib/content";
 
 export const metadata: Metadata = {
@@ -34,8 +34,8 @@ export default async function DestinationsPage() {
       >
         <div className="grid grid-cols-2 gap-3">
           <div className="rounded-2xl border border-stone-200 bg-white p-5">
-            <MapPin className="h-5 w-5 text-saffron-600" />
-            <p className="mt-3 font-display text-3xl font-semibold text-forest-950">
+            <MapPin className="h-5 w-5 text-blue-600" />
+            <p className="mt-3 font-display text-3xl font-semibold text-navy-950">
               {destinations.length}
             </p>
             <p className="mt-1 text-[10px] font-bold uppercase tracking-wider text-stone-400">
@@ -43,22 +43,22 @@ export default async function DestinationsPage() {
             </p>
           </div>
           <div className="rounded-2xl border border-stone-200 bg-white p-5">
-            <Globe2 className="h-5 w-5 text-forest-600" />
-            <p className="mt-3 font-display text-3xl font-semibold text-forest-950">
+            <Globe2 className="h-5 w-5 text-navy-600" />
+            <p className="mt-3 font-display text-3xl font-semibold text-navy-950">
               2
             </p>
             <p className="mt-1 text-[10px] font-bold uppercase tracking-wider text-stone-400">
               Continents
             </p>
           </div>
-          <div className="col-span-2 rounded-2xl bg-forest-950 p-5 text-cream-50">
-            <p className="flex items-center gap-2 text-[11px] font-bold text-cream-200/70">
-              <Compass className="h-4 w-4 text-saffron-300" />
+          <div className="col-span-2 rounded-2xl bg-navy-950 p-5 text-sand-50">
+            <p className="flex items-center gap-2 text-[11px] font-bold text-sand-200/70">
+              <Compass className="h-4 w-4 text-blue-300" />
               Cannot decide? We will help.
             </p>
             <Link
               href="/contact"
-              className="mt-3 inline-flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider text-saffron-300 transition hover:text-saffron-200"
+              className="mt-3 inline-flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider text-blue-300 transition hover:text-blue-200"
             >
               Talk to an expert
               <ArrowUpRight className="h-3.5 w-3.5" />
@@ -85,7 +85,7 @@ export default async function DestinationsPage() {
         </div>
       </section>
 
-      <section className="bg-cream-100/70 py-16">
+      <section className="bg-sand-100/70 py-16">
         <div className="container-page">
           <SectionHeading
             eyebrow="Across the world"
@@ -108,7 +108,7 @@ export default async function DestinationsPage() {
         <div className="flex flex-col items-start justify-between gap-5 rounded-[30px] border border-stone-200 bg-white px-6 py-8 sm:flex-row sm:items-center sm:px-10">
           <div>
             <p className="eyebrow">Not on the list?</p>
-            <h2 className="mt-2 font-display text-2xl font-medium text-forest-950 sm:text-3xl">
+            <h2 className="mt-2 font-display text-2xl font-medium text-navy-950 sm:text-3xl">
               Tell us where you want to go. We will make it happen.
             </h2>
           </div>

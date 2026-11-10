@@ -21,7 +21,7 @@ export function AdminNotice({
       className={
         error
           ? "mb-5 flex items-start gap-3 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700"
-          : "mb-5 flex items-start gap-3 rounded-2xl border border-forest-200 bg-forest-50 px-4 py-3 text-sm font-semibold text-forest-800"
+          : "mb-5 flex items-start gap-3 rounded-2xl border border-navy-200 bg-navy-50 px-4 py-3 text-sm font-semibold text-navy-800"
       }
     >
       {error ? (
@@ -51,7 +51,7 @@ export function AdminPageHeader({
     <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
       <div>
         <p className="eyebrow">{eyebrow}</p>
-        <h1 className="mt-2 font-display text-3xl font-semibold text-forest-950 sm:text-4xl">
+        <h1 className="mt-2 font-display text-3xl font-semibold text-navy-950 sm:text-4xl">
           {title}
         </h1>
         {description ? (
@@ -80,11 +80,11 @@ export function DatabaseSetupNotice({
   if (configured && !error) return null;
 
   return (
-    <div className="rounded-3xl border border-saffron-200 bg-saffron-50 p-6 sm:p-8">
-      <span className="grid h-12 w-12 place-items-center rounded-full bg-saffron-100 text-saffron-700">
+    <div className="rounded-3xl border border-blue-200 bg-blue-50 p-6 sm:p-8">
+      <span className="grid h-12 w-12 place-items-center rounded-full bg-blue-100 text-blue-700">
         <Database className="h-6 w-6" />
       </span>
-      <h2 className="mt-4 font-display text-2xl font-semibold text-forest-950">
+      <h2 className="mt-4 font-display text-2xl font-semibold text-navy-950">
         Connect your MySQL database
       </h2>
       <p className="mt-2 max-w-2xl text-sm leading-6 text-stone-600">
@@ -92,7 +92,7 @@ export function DatabaseSetupNotice({
         saved. Start the Docker stack and the schema will be created
         automatically.
       </p>
-      <pre className="mt-4 overflow-x-auto rounded-2xl bg-forest-950 p-4 text-xs leading-6 text-cream-100">
+      <pre className="mt-4 overflow-x-auto rounded-2xl bg-navy-950 p-4 text-xs leading-6 text-sand-100">
 {`./dx setup
 
 # then open
@@ -127,10 +127,10 @@ export function AdminEmptyState({
 }) {
   return (
     <div className="rounded-3xl border border-dashed border-stone-300 bg-white px-6 py-14 text-center">
-      <span className="mx-auto grid h-12 w-12 place-items-center rounded-full bg-cream-200 text-saffron-700">
+      <span className="mx-auto grid h-12 w-12 place-items-center rounded-full bg-sand-200 text-blue-700">
         <Plus className="h-5 w-5" />
       </span>
-      <h2 className="mt-4 font-display text-2xl font-semibold text-forest-950">
+      <h2 className="mt-4 font-display text-2xl font-semibold text-navy-950">
         {title}
       </h2>
       <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-stone-500">

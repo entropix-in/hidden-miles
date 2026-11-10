@@ -50,9 +50,6 @@ export const metadata: Metadata = {
       "https://images.unsplash.com/photo-1593181629936-11c609b8db9b?auto=format&fit=crop&w=1200&q=78",
     ],
   },
-  icons: {
-    icon: "/favicon.svg",
-  },
 };
 
 export default function RootLayout({
