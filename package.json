@@ -32,5 +32,8 @@
     "eslint-config-next": "16.4.5",
     "tailwindcss": "^4.3.5",
     "typescript": "^5"
+  },
+  "volta": {
+    "node": "26.13.0"
   }
 }
