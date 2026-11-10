@@ -62,6 +62,7 @@ export type Testimonial = {
   tour: string;
   rating: number;
   quote: string;
+  createdAt?: number;
 };
 
 export const testimonials: Testimonial[] = [

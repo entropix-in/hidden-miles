@@ -417,6 +417,8 @@ export default async function HomePage() {
           eyebrow="My Hidden Miles story"
           title="The best reviews come from the heart"
           description="A few words from travellers who let us plan their holidays — and then came back for the next one."
+          href="/testimonials"
+          linkLabel="All guest stories"
         />
         <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
           {testimonials.slice(0, 3).map((testimonial) => (

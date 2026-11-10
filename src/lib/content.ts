@@ -192,6 +192,7 @@ function mapTestimonial(row: TestimonialRow): AdminTestimonial {
     tour: row.tour,
     rating: Number(row.rating),
     quote: row.quote,
+    createdAt: createdTime(row.created_at),
   };
 }
 

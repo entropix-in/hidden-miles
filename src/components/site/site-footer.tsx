@@ -9,6 +9,7 @@ const exploreLinks = [
   { label: "Tour packages", href: "/tours" },
   { label: "Destinations", href: "/destinations" },
   { label: "Experiences", href: "/experiences" },
+  { label: "Guest stories", href: "/testimonials" },
   { label: "About Hidden Miles", href: "/about" },
   { label: "Contact us", href: "/contact" },
 ];

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Save } from "lucide-react";
 import { saveTestimonialAction } from "@/app/admin/actions";
+import { AdminStarRating } from "@/components/admin/admin-star-rating";
 import type { AdminTestimonial } from "@/lib/types";
 
 export function AdminTestimonialForm({
@@ -57,19 +58,7 @@ export function AdminTestimonialForm({
             />
           </div>
           <div>
-            <label htmlFor="rating" className="field-label">
-              Rating (1–5)
-            </label>
-            <input
-              id="rating"
-              name="rating"
-              type="number"
-              min="1"
-              max="5"
-              step="1"
-              defaultValue={testimonial?.rating ?? 5}
-              className="field"
-            />
+            <AdminStarRating defaultValue={testimonial?.rating ?? 5} />
           </div>
           <div className="sm:col-span-2">
             <label htmlFor="quote" className="field-label">
