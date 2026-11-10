@@ -5,14 +5,14 @@ services:
     image: mysql:8.4
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootsecret}
-      MYSQL_DATABASE: ${DB_NAME:-hiddenmiles}
-      MYSQL_USER: ${DB_USER:-hiddenmiles}
-      MYSQL_PASSWORD: ${DB_PASSWORD:-hiddenmiles}
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: www
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
     ports:
       - "3307:3306"
     volumes:
-      - ${HOME}/.docker/hidden-miles/data:/var/lib/mysql
+      - ~/.docker/hidden-miles/data:/var/lib/mysql
     healthcheck:
       test:
         [
@@ -31,8 +31,8 @@ services:
       PMA_HOST: mysql
       PMA_PORT: 3306
       PMA_USER: root
-      PMA_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootsecret}
-      UPLOAD_LIMIT: 64M
+      PMA_PASSWORD: password
+      UPLOAD_LIMIT: 240M
     ports:
       - "88:80"
     depends_on:
