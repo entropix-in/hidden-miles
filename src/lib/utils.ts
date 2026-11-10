@@ -18,15 +18,20 @@ export function slugify(value: string) {
     .replace(/^-+|-+$/g, "");
 }
 
-export function imageUrl(src: string, width = 1200) {
+const fallbackImage =
+  "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee";
+
+export function imageUrl(src?: string | null, width = 1200) {
+  const source = src?.trim() || fallbackImage;
+
   try {
-    const url = new URL(src);
+    const url = new URL(source);
     url.searchParams.set("auto", "format");
     url.searchParams.set("fit", "crop");
     url.searchParams.set("w", String(width));
     url.searchParams.set("q", "78");
     return url.toString();
   } catch {
-    return src;
+    return source;
   }
 }
