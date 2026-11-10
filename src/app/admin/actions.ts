@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { count, eq } from "drizzle-orm";
 import {
   adminConfigured,
   createAdminSession,
@@ -9,12 +10,15 @@ import {
   isAdminPassword,
   requireAdmin,
 } from "@/lib/admin-auth";
+import { dbErrorMessage, getDb, type AppDb } from "@/db";
 import {
-  dbErrorMessage,
-  dbExecute,
-  dbQuery,
-  isDbConfigured,
-} from "@/lib/db";
+  destinations as destinationsTable,
+  enquiries as enquiriesTable,
+  experiences as experiencesTable,
+  settings,
+  testimonials as testimonialsTable,
+  tours as toursTable,
+} from "@/db/schema";
 import { slugify } from "@/lib/utils";
 import { destinations as staticDestinations } from "@/data/destinations";
 import type { Destination } from "@/data/destinations";
@@ -27,89 +31,6 @@ import type { Tour } from "@/data/tours";
 import type { EnquiryStatus } from "@/lib/types";
 
 const enquiryStatuses: EnquiryStatus[] = ["new", "contacted", "closed"];
-
-const TOUR_COLUMNS = [
-  "slug",
-  "title",
-  "destination_slug",
-  "destination_name",
-  "region",
-  "experiences",
-  "image",
-  "nights",
-  "days",
-  "price",
-  "old_price",
-  "rating",
-  "reviews",
-  "badge",
-  "departure",
-  "group_size",
-  "summary",
-  "highlights",
-  "inclusions",
-  "exclusions",
-  "itinerary",
-  "featured",
-] as const;
-
-const DESTINATION_COLUMNS = [
-  "slug",
-  "name",
-  "region",
-  "tagline",
-  "description",
-  "image",
-  "best_time",
-  "highlights",
-] as const;
-
-const EXPERIENCE_COLUMNS = [
-  "slug",
-  "title",
-  "short_title",
-  "description",
-  "image",
-  "icon",
-  "highlights",
-] as const;
-
-const TESTIMONIAL_COLUMNS = ["name", "city", "tour", "rating", "quote"] as const;
-
-function insertSql(table: string, columns: readonly string[], ignore = false) {
-  return `INSERT ${ignore ? "IGNORE " : ""}INTO ${table} (${columns.join(", ")}) VALUES (${columns.map(() => "?").join(", ")})`;
-}
-
-function updateSql(table: string, columns: readonly string[]) {
-  return `UPDATE ${table} SET ${columns.map((column) => `${column} = ?`).join(", ")} WHERE id = ?`;
-}
-
-const TOUR_INSERT = insertSql("tours", TOUR_COLUMNS);
-const TOUR_INSERT_IGNORE = insertSql("tours", TOUR_COLUMNS, true);
-const TOUR_UPDATE = updateSql("tours", TOUR_COLUMNS);
-const DESTINATION_INSERT = insertSql("destinations", DESTINATION_COLUMNS);
-const DESTINATION_INSERT_IGNORE = insertSql(
-  "destinations",
-  DESTINATION_COLUMNS,
-  true,
-);
-const DESTINATION_UPDATE = updateSql("destinations", DESTINATION_COLUMNS);
-const EXPERIENCE_INSERT = insertSql("experiences", EXPERIENCE_COLUMNS);
-const EXPERIENCE_INSERT_IGNORE = insertSql(
-  "experiences",
-  EXPERIENCE_COLUMNS,
-  true,
-);
-const EXPERIENCE_UPDATE = updateSql("experiences", EXPERIENCE_COLUMNS);
-const TESTIMONIAL_INSERT = insertSql("testimonials", TESTIMONIAL_COLUMNS);
-const TESTIMONIAL_INSERT_IGNORE = insertSql(
-  "testimonials",
-  TESTIMONIAL_COLUMNS,
-  true,
-);
-const TESTIMONIAL_UPDATE = updateSql("testimonials", TESTIMONIAL_COLUMNS);
-const MARK_SEEDED =
-  "INSERT INTO settings (setting_key, seeded) VALUES ('content', 1) ON DUPLICATE KEY UPDATE seeded = 1";
 
 function getString(formData: FormData, key: string) {
   return String(formData.get(key) ?? "").trim();
@@ -158,12 +79,14 @@ function succeed(path: string, notice: string): never {
   redirect(`${path}?notice=${encodeURIComponent(notice)}`);
 }
 
-function ensureDb() {
-  if (!isDbConfigured()) {
+function requireDb(): AppDb {
+  const db = getDb();
+  if (!db) {
     throw new Error(
       "MySQL is not configured. Add DB_HOST and your credentials, then restart the app.",
     );
   }
+  return db;
 }
 
 function revalidateContent() {
@@ -175,98 +98,112 @@ function revalidateContent() {
 }
 
 function tourValues(tour: Tour) {
-  return [
-    tour.slug,
-    tour.title,
-    tour.destinationSlug,
-    tour.destinationName,
-    tour.region,
-    JSON.stringify(tour.experiences),
-    tour.image,
-    tour.nights,
-    tour.days,
-    tour.price,
-    tour.oldPrice ?? null,
-    tour.rating,
-    tour.reviews,
-    tour.badge ?? null,
-    tour.departure,
-    tour.groupSize,
-    tour.summary,
-    JSON.stringify(tour.highlights),
-    JSON.stringify(tour.inclusions),
-    JSON.stringify(tour.exclusions),
-    JSON.stringify(tour.itinerary),
-    tour.featured ? 1 : 0,
-  ];
+  return {
+    slug: tour.slug,
+    title: tour.title,
+    destinationSlug: tour.destinationSlug,
+    destinationName: tour.destinationName,
+    region: tour.region,
+    experiences: tour.experiences,
+    image: tour.image,
+    nights: tour.nights,
+    days: tour.days,
+    price: tour.price,
+    oldPrice: tour.oldPrice ?? null,
+    rating: String(tour.rating),
+    reviews: tour.reviews,
+    badge: tour.badge ?? null,
+    departure: tour.departure,
+    groupSize: tour.groupSize,
+    summary: tour.summary,
+    highlights: tour.highlights,
+    inclusions: tour.inclusions,
+    exclusions: tour.exclusions,
+    itinerary: tour.itinerary,
+    featured: tour.featured ? 1 : 0,
+  } satisfies typeof toursTable.$inferInsert;
 }
 
 function destinationValues(destination: Destination) {
-  return [
-    destination.slug,
-    destination.name,
-    destination.region,
-    destination.tagline,
-    destination.description,
-    destination.image,
-    destination.bestTime,
-    JSON.stringify(destination.highlights),
-  ];
+  return {
+    slug: destination.slug,
+    name: destination.name,
+    region: destination.region,
+    tagline: destination.tagline,
+    description: destination.description,
+    image: destination.image,
+    bestTime: destination.bestTime,
+    highlights: destination.highlights,
+  } satisfies typeof destinationsTable.$inferInsert;
 }
 
 function experienceValues(experience: Experience) {
-  return [
-    experience.slug,
-    experience.title,
-    experience.shortTitle,
-    experience.description,
-    experience.image,
-    experience.icon,
-    JSON.stringify(experience.highlights),
-  ];
+  return {
+    slug: experience.slug,
+    title: experience.title,
+    shortTitle: experience.shortTitle,
+    description: experience.description,
+    image: experience.image,
+    icon: experience.icon,
+    highlights: experience.highlights,
+  } satisfies typeof experiencesTable.$inferInsert;
 }
 
 function testimonialValues(testimonial: Testimonial) {
-  return [
-    testimonial.name,
-    testimonial.city,
-    testimonial.tour,
-    testimonial.rating,
-    testimonial.quote,
-  ];
+  return {
+    name: testimonial.name,
+    city: testimonial.city,
+    tour: testimonial.tour,
+    rating: testimonial.rating,
+    quote: testimonial.quote,
+  } satisfies typeof testimonialsTable.$inferInsert;
 }
 
-async function seedAll() {
+async function seedAll(db: AppDb) {
   for (const destination of staticDestinations) {
-    await dbExecute(DESTINATION_INSERT_IGNORE, destinationValues(destination));
+    await db
+      .insert(destinationsTable)
+      .ignore()
+      .values(destinationValues(destination));
   }
 
   for (const experience of staticExperiences) {
-    await dbExecute(EXPERIENCE_INSERT_IGNORE, experienceValues(experience));
+    await db
+      .insert(experiencesTable)
+      .ignore()
+      .values(experienceValues(experience));
   }
 
   for (const testimonial of staticTestimonials) {
-    await dbExecute(TESTIMONIAL_INSERT_IGNORE, testimonialValues(testimonial));
+    await db
+      .insert(testimonialsTable)
+      .ignore()
+      .values(testimonialValues(testimonial));
   }
 
   for (const tour of staticTours) {
-    await dbExecute(TOUR_INSERT_IGNORE, tourValues(tour));
+    await db.insert(toursTable).ignore().values(tourValues(tour));
   }
 }
 
-async function markSeeded() {
-  await dbExecute(MARK_SEEDED);
+async function markSeeded(db: AppDb) {
+  await db
+    .insert(settings)
+    .values({ settingKey: "content", seeded: 1 })
+    .onDuplicateKeyUpdate({ set: { seeded: 1 } });
 }
 
-async function ensureSeeded() {
-  const rows = await dbQuery<Array<{ seeded: number }>>(
-    "SELECT seeded FROM settings WHERE setting_key = 'content' LIMIT 1",
-  );
+async function ensureSeeded(db: AppDb) {
+  const rows = await db
+    .select({ seeded: settings.seeded })
+    .from(settings)
+    .where(eq(settings.settingKey, "content"))
+    .limit(1);
 
   if (rows[0]?.seeded) return;
 
-  await seedAll();
-  await markSeeded();
+  await seedAll(db);
+  await markSeeded(db);
 }
 
 export async function loginAction(formData: FormData) {
@@ -301,7 +238,7 @@ export async function saveTourAction(formData: FormData) {
   const backPath = id ? `/admin/tours/${id}` : "/admin/tours/new";
 
   try {
-    ensureDb();
+    const db = requireDb();
     const title = getString(formData, "title");
 
     if (!title) throw new Error("Package title is required.");
@@ -355,19 +292,23 @@ export async function saveTourAction(formData: FormData) {
       featured: getBoolean(formData, "featured"),
     };
 
-    await ensureSeeded();
+    await ensureSeeded(db);
 
     if (id) {
       const numericId = parseId(id);
-      const existing = await dbQuery<Array<{ id: number }>>(
-        "SELECT id FROM tours WHERE id = ? LIMIT 1",
-        [numericId],
-      );
+      const existing = await db
+        .select({ id: toursTable.id })
+        .from(toursTable)
+        .where(eq(toursTable.id, numericId))
+        .limit(1);
       if (!existing.length) throw new Error("Package not found.");
 
-      await dbExecute(TOUR_UPDATE, [...tourValues(data), numericId]);
+      await db
+        .update(toursTable)
+        .set(tourValues(data))
+        .where(eq(toursTable.id, numericId));
     } else {
-      await dbExecute(TOUR_INSERT, tourValues(data));
+      await db.insert(toursTable).values(tourValues(data));
     }
   } catch (error) {
     fail(backPath, error);
@@ -381,10 +322,10 @@ export async function deleteTourAction(formData: FormData) {
   await requireAdmin();
 
   try {
-    ensureDb();
-    const result = await dbExecute("DELETE FROM tours WHERE id = ?", [
-      parseId(getString(formData, "id")),
-    ]);
+    const db = requireDb();
+    const [result] = await db
+      .delete(toursTable)
+      .where(eq(toursTable.id, parseId(getString(formData, "id"))));
     if (!result.affectedRows) throw new Error("Package not found.");
   } catch (error) {
     fail("/admin/tours", error);
@@ -403,7 +344,7 @@ export async function saveDestinationAction(formData: FormData) {
     : "/admin/destinations/new";
 
   try {
-    ensureDb();
+    const db = requireDb();
     const name = getString(formData, "name");
     if (!name) throw new Error("Destination name is required.");
 
@@ -421,22 +362,23 @@ export async function saveDestinationAction(formData: FormData) {
       highlights: getLines(formData, "highlights"),
     };
 
-    await ensureSeeded();
+    await ensureSeeded(db);
 
     if (id) {
       const numericId = parseId(id);
-      const existing = await dbQuery<Array<{ id: number }>>(
-        "SELECT id FROM destinations WHERE id = ? LIMIT 1",
-        [numericId],
-      );
+      const existing = await db
+        .select({ id: destinationsTable.id })
+        .from(destinationsTable)
+        .where(eq(destinationsTable.id, numericId))
+        .limit(1);
       if (!existing.length) throw new Error("Destination not found.");
 
-      await dbExecute(DESTINATION_UPDATE, [
-        ...destinationValues(data),
-        numericId,
-      ]);
+      await db
+        .update(destinationsTable)
+        .set(destinationValues(data))
+        .where(eq(destinationsTable.id, numericId));
     } else {
-      await dbExecute(DESTINATION_INSERT, destinationValues(data));
+      await db.insert(destinationsTable).values(destinationValues(data));
     }
   } catch (error) {
     fail(backPath, error);
@@ -453,27 +395,30 @@ export async function deleteDestinationAction(formData: FormData) {
   await requireAdmin();
 
   try {
-    ensureDb();
+    const db = requireDb();
     const numericId = parseId(getString(formData, "id"));
-    const destinations = await dbQuery<Array<{ slug: string }>>(
-      "SELECT slug FROM destinations WHERE id = ? LIMIT 1",
-      [numericId],
-    );
+    const [destination] = await db
+      .select({ slug: destinationsTable.slug })
+      .from(destinationsTable)
+      .where(eq(destinationsTable.id, numericId))
+      .limit(1);
 
-    if (!destinations.length) throw new Error("Destination not found.");
+    if (!destination) throw new Error("Destination not found.");
 
-    const linked = await dbQuery<Array<{ count: number }>>(
-      "SELECT COUNT(*) AS count FROM tours WHERE destination_slug = ?",
-      [destinations[0].slug],
-    );
+    const [linked] = await db
+      .select({ value: count() })
+      .from(toursTable)
+      .where(eq(toursTable.destinationSlug, destination.slug));
 
-    if (Number(linked[0]?.count) > 0) {
+    if (Number(linked?.value ?? 0) > 0) {
       throw new Error(
         "This destination still has packages. Move or delete them first.",
       );
     }
 
-    await dbExecute("DELETE FROM destinations WHERE id = ?", [numericId]);
+    await db
+      .delete(destinationsTable)
+      .where(eq(destinationsTable.id, numericId));
   } catch (error) {
     fail("/admin/destinations", error);
   }
@@ -489,7 +434,7 @@ export async function saveExperienceAction(formData: FormData) {
   const backPath = id ? `/admin/experiences/${id}` : "/admin/experiences/new";
 
   try {
-    ensureDb();
+    const db = requireDb();
     const title = getString(formData, "title");
     if (!title) throw new Error("Experience title is required.");
 
@@ -514,22 +459,23 @@ export async function saveExperienceAction(formData: FormData) {
       highlights: getLines(formData, "highlights"),
     };
 
-    await ensureSeeded();
+    await ensureSeeded(db);
 
     if (id) {
       const numericId = parseId(id);
-      const existing = await dbQuery<Array<{ id: number }>>(
-        "SELECT id FROM experiences WHERE id = ? LIMIT 1",
-        [numericId],
-      );
+      const existing = await db
+        .select({ id: experiencesTable.id })
+        .from(experiencesTable)
+        .where(eq(experiencesTable.id, numericId))
+        .limit(1);
       if (!existing.length) throw new Error("Experience not found.");
 
-      await dbExecute(EXPERIENCE_UPDATE, [
-        ...experienceValues(data),
-        numericId,
-      ]);
+      await db
+        .update(experiencesTable)
+        .set(experienceValues(data))
+        .where(eq(experiencesTable.id, numericId));
     } else {
-      await dbExecute(EXPERIENCE_INSERT, experienceValues(data));
+      await db.insert(experiencesTable).values(experienceValues(data));
     }
   } catch (error) {
     fail(backPath, error);
@@ -546,10 +492,10 @@ export async function deleteExperienceAction(formData: FormData) {
   await requireAdmin();
 
   try {
-    ensureDb();
-    const result = await dbExecute("DELETE FROM experiences WHERE id = ?", [
-      parseId(getString(formData, "id")),
-    ]);
+    const db = requireDb();
+    const [result] = await db
+      .delete(experiencesTable)
+      .where(eq(experiencesTable.id, parseId(getString(formData, "id"))));
     if (!result.affectedRows) throw new Error("Experience not found.");
   } catch (error) {
     fail("/admin/experiences", error);
@@ -566,7 +512,7 @@ export async function saveTestimonialAction(formData: FormData) {
   const backPath = id ? `/admin/testimonials/${id}` : "/admin/testimonials/new";
 
   try {
-    ensureDb();
+    const db = requireDb();
     const name = getString(formData, "name");
     if (!name) throw new Error("Guest name is required.");
 
@@ -578,22 +524,23 @@ export async function saveTestimonialAction(formData: FormData) {
       quote: getString(formData, "quote"),
     };
 
-    await ensureSeeded();
+    await ensureSeeded(db);
 
     if (id) {
       const numericId = parseId(id);
-      const existing = await dbQuery<Array<{ id: number }>>(
-        "SELECT id FROM testimonials WHERE id = ? LIMIT 1",
-        [numericId],
-      );
+      const existing = await db
+        .select({ id: testimonialsTable.id })
+        .from(testimonialsTable)
+        .where(eq(testimonialsTable.id, numericId))
+        .limit(1);
       if (!existing.length) throw new Error("Testimonial not found.");
 
-      await dbExecute(TESTIMONIAL_UPDATE, [
-        ...testimonialValues(data),
-        numericId,
-      ]);
+      await db
+        .update(testimonialsTable)
+        .set(testimonialValues(data))
+        .where(eq(testimonialsTable.id, numericId));
     } else {
-      await dbExecute(TESTIMONIAL_INSERT, testimonialValues(data));
+      await db.insert(testimonialsTable).values(testimonialValues(data));
     }
   } catch (error) {
     fail(backPath, error);
@@ -610,10 +557,10 @@ export async function deleteTestimonialAction(formData: FormData) {
   await requireAdmin();
 
   try {
-    ensureDb();
-    const result = await dbExecute("DELETE FROM testimonials WHERE id = ?", [
-      parseId(getString(formData, "id")),
-    ]);
+    const db = requireDb();
+    const [result] = await db
+      .delete(testimonialsTable)
+      .where(eq(testimonialsTable.id, parseId(getString(formData, "id"))));
     if (!result.affectedRows) throw new Error("Testimonial not found.");
   } catch (error) {
     fail("/admin/testimonials", error);
@@ -627,7 +574,7 @@ export async function updateEnquiryStatusAction(formData: FormData) {
   await requireAdmin();
 
   try {
-    ensureDb();
+    const db = requireDb();
     const status = getString(formData, "status") as EnquiryStatus;
 
     if (!enquiryStatuses.includes(status)) {
@@ -635,16 +582,17 @@ export async function updateEnquiryStatusAction(formData: FormData) {
     }
 
     const numericId = parseId(getString(formData, "id"));
-    const existing = await dbQuery<Array<{ id: number }>>(
-      "SELECT id FROM enquiries WHERE id = ? LIMIT 1",
-      [numericId],
-    );
+    const existing = await db
+      .select({ id: enquiriesTable.id })
+      .from(enquiriesTable)
+      .where(eq(enquiriesTable.id, numericId))
+      .limit(1);
     if (!existing.length) throw new Error("Enquiry not found.");
 
-    await dbExecute("UPDATE enquiries SET status = ? WHERE id = ?", [
-      status,
-      numericId,
-    ]);
+    await db
+      .update(enquiriesTable)
+      .set({ status })
+      .where(eq(enquiriesTable.id, numericId));
   } catch (error) {
     fail("/admin/enquiries", error);
   }
@@ -656,9 +604,9 @@ export async function seedContentAction() {
   await requireAdmin();
 
   try {
-    ensureDb();
-    await seedAll();
-    await markSeeded();
+    const db = requireDb();
+    await seedAll(db);
+    await markSeeded(db);
   } catch (error) {
     fail("/admin", error);
   }

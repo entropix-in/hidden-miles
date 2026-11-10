@@ -89,18 +89,18 @@ export function DatabaseSetupNotice({
       </h2>
       <p className="mt-2 max-w-2xl text-sm leading-6 text-stone-600">
         The admin panel is ready, but it needs MySQL before content can be
-        saved. Start the Docker stack and the schema will be created
-        automatically.
+        saved. Start MySQL with Docker Compose, then run the migrations.
       </p>
       <pre className="mt-4 overflow-x-auto rounded-2xl bg-navy-950 p-4 text-xs leading-6 text-sand-100">
-{`./dx setup
+{`docker compose up -d
+pnpm db:migrate
 
 # then open
 http://localhost:3000/admin`}
       </pre>
       <p className="mt-4 text-xs leading-5 text-stone-500">
         <Settings2 className="mr-1 inline h-3.5 w-3.5" />
-        Running outside Docker? Set <code className="font-bold">DB_HOST</code>,{" "}
+        Running without Docker? Set <code className="font-bold">DB_HOST</code>,{" "}
         <code className="font-bold">DB_NAME</code>,{" "}
         <code className="font-bold">DB_USER</code> and{" "}
         <code className="font-bold">DB_PASSWORD</code> in your environment.

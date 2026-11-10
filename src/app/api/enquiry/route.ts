@@ -1,9 +1,6 @@
 import { NextResponse } from "next/server";
-import {
-  dbErrorMessage,
-  dbExecute,
-  isDbConfigured,
-} from "@/lib/db";
+import { dbErrorMessage, getDb } from "@/db";
+import { enquiries } from "@/db/schema";
 
 export const runtime = "nodejs";
 
@@ -74,7 +71,8 @@ export async function POST(request: Request) {
     source: clean(payload.source, 190) || null,
   };
 
-  if (!isDbConfigured()) {
+  const db = getDb();
+  if (!db) {
     console.info(
       "[hidden-miles] enquiry received (database not configured)",
       record,
@@ -83,23 +81,19 @@ export async function POST(request: Request) {
   }
 
   try {
-    await dbExecute(
-      `INSERT INTO enquiries
-        (type, name, email, phone, destination, travellers, travel_month, message, tour, source, status)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'new')`,
-      [
-        record.type,
-        record.name,
-        record.email,
-        record.phone,
-        record.destination,
-        record.travellers,
-        record.travelMonth,
-        record.message,
-        record.tour,
-        record.source,
-      ],
-    );
+    await db.insert(enquiries).values({
+      type: record.type,
+      name: record.name,
+      email: record.email,
+      phone: record.phone,
+      destination: record.destination,
+      travellers: record.travellers,
+      travelMonth: record.travelMonth,
+      message: record.message,
+      tour: record.tour,
+      source: record.source,
+      status: "new",
+    });
 
     return NextResponse.json({ ok: true });
   } catch (error) {

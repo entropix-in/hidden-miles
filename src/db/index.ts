@@ -1,20 +1,20 @@
-import mysql, {
-  type Pool,
-  type ResultSetHeader,
-  type RowDataPacket,
-} from "mysql2/promise";
+import { drizzle, type MySql2Database } from "drizzle-orm/mysql2";
+import mysql from "mysql2/promise";
+import * as schema from "./schema";
 
 const globalForDb = globalThis as unknown as {
-  hiddenMilesPool?: Pool;
+  hiddenMilesDb?: AppDb;
 };
+
+export type AppDb = MySql2Database<typeof schema>;
 
 export function isDbConfigured() {
   return Boolean(process.env.DB_HOST?.trim());
 }
 
-export function getPool(): Pool | null {
+export function getDb(): AppDb | null {
   if (!isDbConfigured()) return null;
-  if (globalForDb.hiddenMilesPool) return globalForDb.hiddenMilesPool;
+  if (globalForDb.hiddenMilesDb) return globalForDb.hiddenMilesDb;
 
   const pool = mysql.createPool({
     host: process.env.DB_HOST,
@@ -26,35 +26,11 @@ export function getPool(): Pool | null {
     connectionLimit: 8,
     connectTimeout: 5000,
     charset: "utf8mb4",
-    jsonStrings: true,
   });
 
-  globalForDb.hiddenMilesPool = pool;
-  return pool;
-}
-
-export async function dbQuery<T = RowDataPacket[]>(
-  sql: string,
-  params: unknown[] = [],
-): Promise<T> {
-  const pool = getPool();
-  if (!pool) throw new Error("The database is not configured.");
-  const [rows] = await pool.query(sql, params);
-  return rows as T;
-}
-
-export async function dbExecute(
-  sql: string,
-  params: unknown[] = [],
-): Promise<ResultSetHeader> {
-  const pool = getPool();
-  if (!pool) throw new Error("The database is not configured.");
-  const [result] = await pool.query(sql, params);
-  return result as ResultSetHeader;
-}
-
-export async function dbPing() {
-  await dbQuery("SELECT 1 AS ok");
+  const db = drizzle(pool, { schema, mode: "default" });
+  globalForDb.hiddenMilesDb = db;
+  return db;
 }
 
 export function dbErrorMessage(error: unknown) {
@@ -73,7 +49,7 @@ export function dbErrorMessage(error: unknown) {
   }
 
   if (candidate.code === "ER_NO_SUCH_TABLE") {
-    return "The database tables are missing. Restart the stack so the schema can run.";
+    return "The database tables are missing. Run `pnpm db:migrate` to create them.";
   }
 
   return candidate.message || "Something went wrong with the database.";
