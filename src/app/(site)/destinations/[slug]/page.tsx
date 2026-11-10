@@ -184,8 +184,8 @@ export default async function DestinationDetailPage({
               eyebrow="Ready when you are"
               title={`Journeys to ${destination.name}`}
               description="Every one of these departures is led by a Hidden Miles expert and includes the details that matter."
-              href="/tours"
-              linkLabel="All tours"
+              href={`/tours?destination=${destination.slug}`}
+              linkLabel="Sort & filter"
             />
             <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {destinationTours.map((tour, index) => (
