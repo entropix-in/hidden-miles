@@ -1,9 +1,9 @@
-name: safarnest
+name: hidden-miles
 
 services:
     # Next.js application with hot reload
     www:
-        image: safarnest-local:dev
+        image: hidden-miles-local:dev
         build:
             context: ../../..
             dockerfile: extra/docker/production/Dockerfile
@@ -15,9 +15,9 @@ services:
             NODE_ENV: development
             DB_HOST: mysql
             DB_PORT: 3306
-            DB_NAME: ${DB_NAME:-safarnest}
-            DB_USER: ${DB_USER:-safarnest}
-            DB_PASSWORD: ${DB_PASSWORD:-safarnest}
+            DB_NAME: ${DB_NAME:-hiddenmiles}
+            DB_USER: ${DB_USER:-hiddenmiles}
+            DB_PASSWORD: ${DB_PASSWORD:-hiddenmiles}
             NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-http://localhost:3000}
             WATCHPACK_POLLING: "true"
             CHOKIDAR_USEPOLLING: "true"
@@ -25,24 +25,24 @@ services:
             - '3000:3000'
         volumes:
             - ../../../:/app:rw,delegated
-            - safarnest-node-modules:/app/node_modules
-            - safarnest-next:/app/.next
+            - hidden-miles-node-modules:/app/node_modules
+            - hidden-miles-next:/app/.next
         depends_on:
             mysql:
                 condition: service_healthy
 
-    # Enquiries database
+    # Content + enquiries database
     mysql:
         image: mysql:8.4
         environment:
             MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootsecret}
-            MYSQL_DATABASE: ${DB_NAME:-safarnest}
-            MYSQL_USER: ${DB_USER:-safarnest}
-            MYSQL_PASSWORD: ${DB_PASSWORD:-safarnest}
+            MYSQL_DATABASE: ${DB_NAME:-hiddenmiles}
+            MYSQL_USER: ${DB_USER:-hiddenmiles}
+            MYSQL_PASSWORD: ${DB_PASSWORD:-hiddenmiles}
         ports:
             - '3307:3306'
         volumes:
-            - safarnest-db:/var/lib/mysql
+            - hidden-miles-db:/var/lib/mysql
             - ../mysql/init:/docker-entrypoint-initdb.d:ro
         healthcheck:
             test: ['CMD-SHELL', 'mysqladmin ping -h 127.0.0.1 -uroot -p"$$MYSQL_ROOT_PASSWORD" --silent']
@@ -69,6 +69,6 @@ services:
                 condition: service_healthy
 
 volumes:
-    safarnest-db:
-    safarnest-node-modules:
-    safarnest-next:
+    hidden-miles-db:
+    hidden-miles-node-modules:
+    hidden-miles-next:

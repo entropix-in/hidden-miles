@@ -10,8 +10,8 @@ import {
   Search,
   Users,
 } from "lucide-react";
-import { destinations } from "@/data/destinations";
-import { experiences } from "@/data/experiences";
+import type { Destination } from "@/data/destinations";
+import type { Experience } from "@/data/experiences";
 
 const months = [
   "Any month",
@@ -29,7 +29,15 @@ const months = [
   "December",
 ];
 
-export function SearchWidget({ className }: { className?: string }) {
+export function SearchWidget({
+  destinations,
+  experiences,
+  className,
+}: {
+  destinations: Destination[];
+  experiences: Experience[];
+  className?: string;
+}) {
   const router = useRouter();
   const [destination, setDestination] = useState("");
   const [experience, setExperience] = useState("");

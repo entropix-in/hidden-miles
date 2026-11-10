@@ -1,5 +1,9 @@
 import { NextResponse } from "next/server";
-import mysql, { type Pool } from "mysql2/promise";
+import {
+  dbErrorMessage,
+  dbExecute,
+  isDbConfigured,
+} from "@/lib/db";
 
 export const runtime = "nodejs";
 
@@ -16,27 +20,6 @@ type EnquiryPayload = {
   source?: string;
   company?: string;
 };
-
-const globalForDb = globalThis as unknown as { safarnestPool?: Pool };
-
-function getPool(): Pool | null {
-  if (!process.env.DB_HOST) return null;
-  if (globalForDb.safarnestPool) return globalForDb.safarnestPool;
-
-  const pool = mysql.createPool({
-    host: process.env.DB_HOST,
-    port: Number(process.env.DB_PORT ?? 3306),
-    database: process.env.DB_NAME ?? "safarnest",
-    user: process.env.DB_USER ?? "safarnest",
-    password: process.env.DB_PASSWORD ?? "",
-    waitForConnections: true,
-    connectionLimit: 5,
-    connectTimeout: 5000,
-  });
-
-  globalForDb.safarnestPool = pool;
-  return pool;
-}
 
 function clean(value: unknown, max = 500) {
   return typeof value === "string" ? value.trim().slice(0, max) : "";
@@ -83,26 +66,27 @@ export async function POST(request: Request) {
     name: name || "Newsletter subscriber",
     email,
     phone,
-    destination: clean(payload.destination, 80),
-    travellers: clean(payload.travellers, 20),
-    travel_month: clean(payload.month, 40),
-    message: clean(payload.message, 4000),
-    tour: clean(payload.tour, 190),
-    source: clean(payload.source, 190),
+    destination: clean(payload.destination, 80) || null,
+    travellers: clean(payload.travellers, 20) || null,
+    travelMonth: clean(payload.month, 40) || null,
+    message: clean(payload.message, 4000) || null,
+    tour: clean(payload.tour, 190) || null,
+    source: clean(payload.source, 190) || null,
   };
 
-  const pool = getPool();
-
-  if (!pool) {
-    console.info("[safarnest] enquiry received (no database configured)", record);
+  if (!isDbConfigured()) {
+    console.info(
+      "[hidden-miles] enquiry received (database not configured)",
+      record,
+    );
     return NextResponse.json({ ok: true });
   }
 
   try {
-    await pool.execute(
+    await dbExecute(
       `INSERT INTO enquiries
-        (type, name, email, phone, destination, travellers, travel_month, message, tour, source)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        (type, name, email, phone, destination, travellers, travel_month, message, tour, source, status)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'new')`,
       [
         record.type,
         record.name,
@@ -110,7 +94,7 @@ export async function POST(request: Request) {
         record.phone,
         record.destination,
         record.travellers,
-        record.travel_month,
+        record.travelMonth,
         record.message,
         record.tour,
         record.source,
@@ -120,11 +104,14 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true });
   } catch (error) {
     console.error(
-      "[safarnest] failed to save enquiry",
+      "[hidden-miles] failed to save enquiry to MySQL",
       error instanceof Error ? error.message : error,
     );
     return NextResponse.json(
-      { ok: false, error: "We could not save your enquiry. Please call us." },
+      {
+        ok: false,
+        error: dbErrorMessage(error),
+      },
       { status: 500 },
     );
   }

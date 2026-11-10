@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
 import { Fraunces, Manrope } from "next/font/google";
 import "./globals.css";
-import { SiteHeader } from "@/components/site-header";
-import { SiteFooter } from "@/components/site-footer";
-import { FloatingActions } from "@/components/floating-actions";
 import { site } from "@/data/site";
 
 const manrope = Manrope({
@@ -26,7 +23,7 @@ export const metadata: Metadata = {
   },
   description: site.description,
   keywords: [
-    "Safarnest",
+    "Hidden Miles",
     "tour packages",
     "India tours",
     "international holidays",
@@ -83,10 +80,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${manrope.variable} ${fraunces.variable}`}>
       <body>
-        <SiteHeader />
-        <main>{children}</main>
-        <SiteFooter />
-        <FloatingActions />
+        {children}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

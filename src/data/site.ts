@@ -1,17 +1,17 @@
 export const site = {
-  name: "Safarnest",
-  legalName: "Safarnest Holidays Pvt. Ltd.",
-  tagline: "Journeys that feel like home",
+  name: "Hidden Miles",
+  legalName: "Hidden Miles Holidays Pvt. Ltd.",
+  tagline: "Offbeat journeys, thoughtfully planned",
   description:
     "Thoughtfully crafted group tours, family holidays, honeymoons and bespoke escapes across India and the world. Travel with experts who treat you like family.",
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://safarnest.in",
+  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://hiddenmiles.in",
   phone: "+91 98204 12345",
   phoneHref: "tel:+919820412345",
   whatsappNumber: "919820412345",
   whatsappHref:
-    "https://wa.me/919820412345?text=Hi%20Safarnest!%20I'd%20like%20to%20plan%20a%20holiday.",
-  email: "hello@safarnest.in",
-  emailHref: "mailto:hello@safarnest.in",
+    "https://wa.me/919820412345?text=Hi%20Hidden Miles!%20I'd%20like%20to%20plan%20a%20holiday.",
+  email: "hello@hiddenmiles.in",
+  emailHref: "mailto:hello@hiddenmiles.in",
   address: "302, Meridian House, Andheri East, Mumbai 400069",
   hours: "Mon – Sat · 9:30 am to 7:00 pm",
   socials: [
@@ -56,14 +56,22 @@ export const trustPoints = [
   },
 ];
 
-export const testimonials = [
+export type Testimonial = {
+  name: string;
+  city: string;
+  tour: string;
+  rating: number;
+  quote: string;
+};
+
+export const testimonials: Testimonial[] = [
   {
     name: "Ananya Deshpande",
     city: "Pune",
     tour: "Magical Kashmir",
     rating: 5,
     quote:
-      "Our tour leader felt like family by day two. Every hotel, every meal and every shikara ride was arranged beautifully. Kashmir has our heart, and Safarnest made it effortless.",
+      "Our tour leader felt like family by day two. Every hotel, every meal and every shikara ride was arranged beautifully. Kashmir has our heart, and Hidden Miles made it effortless.",
   },
   {
     name: "Rohan & Meera Shah",

@@ -3,9 +3,9 @@
 import { useMemo, useState } from "react";
 import { Filter, RotateCcw, SearchX, SlidersHorizontal } from "lucide-react";
 import { TourCard } from "@/components/tour-card";
-import { destinations } from "@/data/destinations";
-import { experiences } from "@/data/experiences";
-import { tours } from "@/data/tours";
+import type { Destination } from "@/data/destinations";
+import type { Experience } from "@/data/experiences";
+import type { Tour } from "@/data/tours";
 import { cn } from "@/lib/utils";
 
 const months = [
@@ -27,10 +27,16 @@ const months = [
 const regions = ["All", "India", "International"] as const;
 
 export function ToursExplorer({
+  tours,
+  destinations,
+  experiences,
   initialDestination = "",
   initialExperience = "",
   initialMonth = "",
 }: {
+  tours: Tour[];
+  destinations: Destination[];
+  experiences: Experience[];
   initialDestination?: string;
   initialExperience?: string;
   initialMonth?: string;
@@ -77,7 +83,7 @@ export function ToursExplorer({
     }
 
     return list;
-  }, [destination, experience, month, region, sort]);
+  }, [destination, experience, month, region, sort, tours]);
 
   const hasFilters =
     Boolean(destination) ||
@@ -220,7 +226,7 @@ export function ToursExplorer({
           <h2 className="mt-2 font-display text-2xl font-semibold text-forest-950 sm:text-3xl">
             {destination
               ? `Journeys to ${destinations.find((item) => item.slug === destination)?.name ?? "your destination"}`
-              : "All Safarnest journeys"}
+              : "All Hidden Miles journeys"}
           </h2>
         </div>
         {month !== "Any month" ? (

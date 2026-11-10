@@ -33,9 +33,6 @@ yarn-error.log*
 .env.local
 .env*.local
 
-# local Docker environment (non-secret defaults)
-!extra/docker/local/.env
-
 # vercel
 .vercel
 

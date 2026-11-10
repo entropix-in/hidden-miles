@@ -1,0 +1,96 @@
+import Link from "next/link";
+import { ExternalLink, LogOut, Sparkles } from "lucide-react";
+import { AdminNav } from "@/components/admin-nav";
+import { Logo } from "@/components/logo";
+import { logoutAction } from "@/app/admin/actions";
+import { requireAdmin } from "@/lib/admin-auth";
+import { getContentStatus } from "@/lib/content";
+
+export const dynamic = "force-dynamic";
+
+export const metadata = {
+  robots: { index: false, follow: false },
+};
+
+export default async function AdminDashboardLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  await requireAdmin();
+  const status = await getContentStatus();
+
+  return (
+    <div className="min-h-screen bg-cream-100 lg:grid lg:grid-cols-[260px_1fr]">
+      <aside className="bg-forest-950 px-4 py-5 lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col lg:p-6">
+        <div className="flex items-center justify-between gap-3">
+          <Logo light />
+          <span className="rounded-full bg-white/10 px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-widest text-saffron-300">
+            Admin
+          </span>
+        </div>
+
+        <div className="mt-6 lg:mt-9 lg:flex-1">
+          <p className="mb-2 hidden px-2 text-[9px] font-extrabold uppercase tracking-[0.2em] text-cream-200/35 lg:block">
+            Manage
+          </p>
+          <AdminNav />
+        </div>
+
+        <div className="mt-5 grid gap-2 border-t border-white/10 pt-4 lg:mt-0">
+          <Link
+            href="/"
+            className="flex items-center gap-2 rounded-xl px-3 py-2 text-[11px] font-bold text-cream-200/60 transition hover:bg-white/10 hover:text-cream-50"
+          >
+            <ExternalLink className="h-3.5 w-3.5" />
+            View website
+          </Link>
+          <form action={logoutAction}>
+            <button
+              type="submit"
+              className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-[11px] font-bold text-cream-200/60 transition hover:bg-white/10 hover:text-cream-50"
+            >
+              <LogOut className="h-3.5 w-3.5" />
+              Sign out
+            </button>
+          </form>
+        </div>
+      </aside>
+
+      <div className="min-w-0">
+        <header className="border-b border-stone-200 bg-cream-50/90 px-4 py-3 backdrop-blur sm:px-8">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <p className="flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-[0.18em] text-stone-500">
+              <Sparkles className="h-3.5 w-3.5 text-saffron-600" />
+              Hidden Miles content studio
+            </p>
+            <div className="flex items-center gap-2">
+              <span
+                className={
+                  status.configured && !status.error
+                    ? "inline-flex items-center gap-1.5 rounded-full bg-forest-100 px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-wider text-forest-800"
+                    : "inline-flex items-center gap-1.5 rounded-full bg-saffron-100 px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-wider text-saffron-800"
+                }
+              >
+                <span
+                  className={
+                    status.configured && !status.error
+                      ? "h-1.5 w-1.5 rounded-full bg-forest-600"
+                      : "h-1.5 w-1.5 rounded-full bg-saffron-600"
+                  }
+                />
+                {status.configured && !status.error
+                  ? status.seeded
+                    ? "MySQL live"
+                    : "MySQL ready"
+                  : "Database not connected"}
+              </span>
+            </div>
+          </div>
+        </header>
+
+        <main className="px-4 py-6 sm:px-8 sm:py-8">{children}</main>
+      </div>
+    </div>
+  );
+}

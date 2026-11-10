@@ -6,7 +6,7 @@ export function FloatingActions() {
     <div className="fixed bottom-5 right-5 z-40 flex flex-col items-end gap-3">
       <a
         href={site.phoneHref}
-        aria-label={`Call Safarnest on ${site.phone}`}
+        aria-label={`Call Hidden Miles on ${site.phone}`}
         className="grid h-12 w-12 place-items-center rounded-full border border-stone-200 bg-white text-forest-950 shadow-xl shadow-forest-950/10 transition hover:-translate-y-0.5 hover:text-saffron-600"
       >
         <Phone className="h-5 w-5" />

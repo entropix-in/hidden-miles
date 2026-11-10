@@ -1,9 +1,15 @@
 import type { MetadataRoute } from "next";
-import { destinations } from "@/data/destinations";
-import { tours } from "@/data/tours";
+import { loadDestinations, loadTours } from "@/lib/content";
 import { site } from "@/data/site";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export const dynamic = "force-dynamic";
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const [tours, destinations] = await Promise.all([
+    loadTours(),
+    loadDestinations(),
+  ]);
+
   const staticPages = [
     "",
     "/tours",

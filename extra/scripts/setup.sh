@@ -9,7 +9,7 @@ cd "$BASE_DIR"
 
 COMPOSE=(docker compose --env-file extra/docker/local/.env -f extra/docker/local/docker-compose.yml)
 
-echo "🚀 Setting up the Safarnest development environment 🚀"
+echo "🚀 Setting up the Hidden Miles development environment 🚀"
 
 if ! command -v docker >/dev/null 2>&1; then
     echo "❌ Docker not installed."
@@ -33,6 +33,14 @@ if [ ! -f .env.local ]; then
     echo "✅ Created .env.local for running the app outside Docker"
 fi
 
+if ! grep -Eq '^ADMIN_PASSWORD=.+' extra/docker/local/.env; then
+    echo "⚠️  ADMIN_PASSWORD is empty — the admin panel will be disabled."
+fi
+
+if ! grep -Eq '^ADMIN_SESSION_SECRET=.+' extra/docker/local/.env; then
+    echo "⚠️  ADMIN_SESSION_SECRET is empty — admin login will fail."
+fi
+
 echo "⌛️ Building and starting containers..."
 "${COMPOSE[@]}" up -d --build
 
@@ -49,11 +57,12 @@ echo "🎉 Setup completed successfully 🎉"
 echo ""
 echo "------------------------------------------------------"
 echo "🔗 Website:    http://localhost:3000"
+echo "🔗 Admin:      http://localhost:3000/admin"
 echo "🔗 Health:     http://localhost:3000/api/health"
-echo "🔗 MySQL:      localhost:3307 (safarnest / safarnest)"
+echo "🔗 MySQL:      localhost:3307 (hiddenmiles / hiddenmiles)"
 echo ""
 echo "Optional database admin:"
-echo "  docker compose --env-file extra/docker/local/.env \\"
+echo "  docker compose --env-file extra/docker/local/.env \"
 echo "    -f extra/docker/local/docker-compose.yml --profile tools up -d phpmyadmin"
 echo "🔗 PhpMyAdmin: http://localhost:88"
 echo "------------------------------------------------------"

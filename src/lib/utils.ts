@@ -10,6 +10,14 @@ export function formatINR(value: number) {
   }).format(value);
 }
 
+export function slugify(value: string) {
+  return value
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 export function imageUrl(src: string, width = 1200) {
   try {
     const url = new URL(src);

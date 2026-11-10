@@ -3,7 +3,10 @@
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { CheckCircle2, Loader2, Send } from "lucide-react";
-import { destinations } from "@/data/destinations";
+import {
+  destinations as staticDestinations,
+  type Destination,
+} from "@/data/destinations";
 import { cn } from "@/lib/utils";
 
 const months = [
@@ -27,11 +30,13 @@ export function EnquiryForm({
   tourTitle,
   compact = false,
   className,
+  destinations = staticDestinations,
 }: {
   defaultDestination?: string;
   tourTitle?: string;
   compact?: boolean;
   className?: string;
+  destinations?: Destination[];
 }) {
   const pathname = usePathname();
   const [form, setForm] = useState({
@@ -90,7 +95,7 @@ export function EnquiryForm({
           Your holiday is in good hands.
         </h3>
         <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-stone-600">
-          Thank you, {form.name.split(" ")[0] || "traveller"}. A Safarnest travel
+          Thank you, {form.name.split(" ")[0] || "traveller"}. A Hidden Miles travel
           expert will call you within one working day with ideas and a tailored
           quote.
         </p>
@@ -277,7 +282,7 @@ export function EnquiryForm({
       ) : null}
 
       <p className="mt-4 text-center text-[11px] leading-5 text-stone-400">
-        By submitting, you agree to be contacted by a Safarnest travel expert.
+        By submitting, you agree to be contacted by a Hidden Miles travel expert.
         We never share your details.
       </p>
     </form>

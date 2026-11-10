@@ -15,11 +15,15 @@ import {
   X,
 } from "lucide-react";
 import { Logo } from "@/components/logo";
-import { destinations } from "@/data/destinations";
 import { navLinks, site } from "@/data/site";
+import type { Destination } from "@/data/destinations";
 import { cn } from "@/lib/utils";
 
-export function SiteHeader() {
+export function SiteHeader({
+  destinations,
+}: {
+  destinations: Destination[];
+}) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
 

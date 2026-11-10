@@ -3,25 +3,23 @@ import { Clock, Mail, MapPin, Phone } from "lucide-react";
 import { Logo } from "@/components/logo";
 import { NewsletterForm } from "@/components/newsletter-form";
 import { site } from "@/data/site";
+import type { Destination } from "@/data/destinations";
 
 const exploreLinks = [
   { label: "Tour packages", href: "/tours" },
   { label: "Destinations", href: "/destinations" },
   { label: "Experiences", href: "/experiences" },
-  { label: "About Safarnest", href: "/about" },
+  { label: "About Hidden Miles", href: "/about" },
   { label: "Contact us", href: "/contact" },
 ];
 
-const destinationLinks = [
-  { label: "Kashmir", href: "/destinations/kashmir" },
-  { label: "Kerala", href: "/destinations/kerala" },
-  { label: "Rajasthan", href: "/destinations/rajasthan" },
-  { label: "Ladakh", href: "/destinations/ladakh" },
-  { label: "Europe", href: "/destinations/europe" },
-  { label: "Bali", href: "/destinations/bali" },
-];
 
-export function SiteFooter() {
+
+export function SiteFooter({
+  destinations,
+}: {
+  destinations: Destination[];
+}) {
   return (
     <footer className="relative overflow-hidden bg-forest-950 text-cream-100">
       <div className="pointer-events-none absolute -left-24 top-0 h-72 w-72 rounded-full bg-saffron-500/10 blur-3xl" />
@@ -30,7 +28,7 @@ export function SiteFooter() {
       <div className="container-page relative">
         <div className="grid gap-8 border-b border-white/10 py-12 lg:grid-cols-[1.2fr_1fr] lg:items-center">
           <div>
-            <p className="eyebrow text-saffron-300">The Safarnest letter</p>
+            <p className="eyebrow text-saffron-300">The Hidden Miles letter</p>
             <h2 className="mt-3 font-display text-3xl font-medium leading-tight text-cream-50 sm:text-4xl">
               Small stories, big journeys.
               <br />
@@ -91,13 +89,13 @@ export function SiteFooter() {
               Destinations
             </h3>
             <ul className="mt-5 space-y-3 text-sm">
-              {destinationLinks.map((link) => (
-                <li key={link.href}>
+              {destinations.slice(0, 6).map((destination) => (
+                <li key={destination.slug}>
                   <Link
-                    href={link.href}
+                    href={`/destinations/${destination.slug}`}
                     className="text-cream-200/75 transition hover:text-saffron-300"
                   >
-                    {link.label}
+                    {destination.name}
                   </Link>
                 </li>
               ))}
