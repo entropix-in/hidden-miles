@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Safarnest">
+  <rect width="64" height="64" rx="16" fill="#ec5f07"/>
+  <path d="M14 42c5-4 10-4 15 0s10 4 15 0 7-3 8-1" fill="none" stroke="#fff8ed" stroke-width="3" stroke-linecap="round"/>
+  <path d="M17 50c4-3 8-3 12 0s8 3 12 0" fill="none" stroke="#fff8ed" stroke-width="3" stroke-linecap="round" opacity=".6"/>
+  <circle cx="32" cy="34" r="9" fill="#fff8ed"/>
+  <path d="M32 14v6M19 19l4 5M45 19l-4 5" stroke="#fff8ed" stroke-width="3" stroke-linecap="round"/>
+</svg>

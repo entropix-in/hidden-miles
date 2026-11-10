@@ -1,0 +1,139 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-fraunces), ui-serif, Georgia, serif;
+
+  --color-cream-50: #fffdf8;
+  --color-cream-100: #fdf7ec;
+  --color-cream-200: #f8ecd7;
+  --color-cream-300: #f0dcbb;
+
+  --color-saffron-50: #fff8ed;
+  --color-saffron-100: #ffefd4;
+  --color-saffron-200: #ffdba8;
+  --color-saffron-300: #ffc071;
+  --color-saffron-400: #ff9a38;
+  --color-saffron-500: #fb7c12;
+  --color-saffron-600: #ec5f07;
+  --color-saffron-700: #c34708;
+  --color-saffron-800: #9b380f;
+  --color-saffron-900: #7d3010;
+  --color-saffron-950: #431605;
+
+  --color-forest-50: #f2fbf8;
+  --color-forest-100: #d9f4ea;
+  --color-forest-200: #b6e8d8;
+  --color-forest-300: #84d5c0;
+  --color-forest-400: #4abaa2;
+  --color-forest-500: #2a9d86;
+  --color-forest-600: #1e7e6c;
+  --color-forest-700: #1b6558;
+  --color-forest-800: #195148;
+  --color-forest-900: #16433c;
+  --color-forest-950: #062a26;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-cream-50 font-sans text-stone-800 antialiased;
+  }
+
+  ::selection {
+    @apply bg-saffron-200 text-saffron-950;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-saffron-600;
+  }
+}
+
+@layer components {
+  .container-page {
+    @apply mx-auto w-full max-w-7xl px-5 sm:px-8;
+  }
+
+  .eyebrow {
+    @apply inline-flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-[0.22em] text-saffron-700;
+  }
+
+  .btn,
+  .btn-primary,
+  .btn-dark,
+  .btn-outline,
+  .btn-light {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3.5 text-sm font-bold transition duration-300 focus-visible:outline-2 focus-visible:outline-offset-2;
+  }
+
+  .btn-primary {
+    @apply bg-saffron-600 text-white shadow-lg shadow-saffron-900/15 hover:-translate-y-0.5 hover:bg-saffron-700 hover:shadow-xl hover:shadow-saffron-900/20;
+  }
+
+  .btn-dark {
+    @apply bg-forest-950 text-cream-50 hover:-translate-y-0.5 hover:bg-forest-900;
+  }
+
+  .btn-outline {
+    @apply border border-stone-300 bg-white/70 text-stone-800 backdrop-blur hover:border-saffron-500 hover:text-saffron-700;
+  }
+
+  .btn-light {
+    @apply bg-white text-forest-950 shadow-lg shadow-forest-950/10 hover:-translate-y-0.5 hover:bg-cream-100;
+  }
+
+  .field {
+    @apply w-full rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm text-stone-800 shadow-sm outline-none transition placeholder:text-stone-400 focus:border-saffron-500 focus:ring-4 focus:ring-saffron-500/10;
+  }
+
+  .field-label {
+    @apply mb-2 block text-[11px] font-extrabold uppercase tracking-[0.16em] text-stone-500;
+  }
+
+  .card-lift {
+    @apply transition duration-500 hover:-translate-y-1.5;
+  }
+
+  .prose-narrow p {
+    @apply text-[15px] leading-8 text-stone-600;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.animate-rise {
+  animation: rise 0.8s cubic-bezier(0.22, 0.68, 0.28, 1) both;
+}
+
+.animate-float-slow {
+  animation: float-slow 7s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-rise,
+  .animate-float-slow {
+    animation: none;
+  }
+}
