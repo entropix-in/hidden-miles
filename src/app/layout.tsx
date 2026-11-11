@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     "group tours",
     "speciality tours",
     "corporate tours",
-    "tailormade holidays",
+    "personalised holidays",
     "cruises",
     "honeymoon packages",
     "travel agency",

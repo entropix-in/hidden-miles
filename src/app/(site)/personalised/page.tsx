@@ -12,9 +12,9 @@ import { EnquiryForm } from "@/components/site/enquiry-form";
 import { loadDestinations } from "@/lib/content";
 
 export const metadata: Metadata = {
-  title: "Tailormade Holidays",
+  title: "Personalised Holidays",
   description:
-    "Custom holidays designed around your dates, pace and people. Honeymoons, family trips, milestone celebrations and private journeys across India and the world.",
+    "Personalised holidays designed around your dates, pace and people. Honeymoons, family trips, milestone celebrations and private journeys across India and the world.",
 };
 
 export const dynamic = "force-dynamic";
@@ -81,16 +81,16 @@ const tailorIdeas = [
   },
 ];
 
-export default async function TailormadePage() {
+export default async function PersonalisedPage() {
   const destinations = await loadDestinations();
 
   return (
     <>
       <PageHero
-        eyebrow="Tailormade holidays"
+        eyebrow="Personalised holidays"
         title="A holiday built around you, not a brochure."
         description="Tell us who you are travelling with, what you love and how you like to move. We will shape the route, the stays and the little details around you — then handle everything in between."
-        breadcrumbs={[{ label: "Tailormade holidays" }]}
+        breadcrumbs={[{ label: "Personalised holidays" }]}
       >
         <div className="rounded-[28px] border border-stone-200 bg-white p-6 shadow-lg shadow-navy-950/5">
           <Sparkles className="h-6 w-6 text-blue-600" />

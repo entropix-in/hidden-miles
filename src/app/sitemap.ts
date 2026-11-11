@@ -14,7 +14,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "",
     "/tours",
     "/speciality-tours",
-    "/tailormade",
+    "/personalised",
     "/corporate",
     "/cruise",
     "/deals",

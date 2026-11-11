@@ -8,7 +8,7 @@ import type { Destination } from "@/data/destinations";
 const exploreLinks = [
   { label: "Group tours", href: "/tours" },
   { label: "Speciality tours", href: "/speciality-tours" },
-  { label: "Tailormade holidays", href: "/tailormade" },
+  { label: "Personalised holidays", href: "/personalised" },
   { label: "Corporate tours", href: "/corporate" },
   { label: "Cruises", href: "/cruise" },
   { label: "Deals & offers", href: "/deals" },

@@ -107,7 +107,7 @@ export const navLinks: NavLink[] = [
     ],
   },
   { label: "Destinations", href: "/destinations" },
-  { label: "Tailormade", href: "/tailormade" },
+  { label: "Personalised", href: "/personalised" },
   { label: "Corporate", href: "/corporate" },
   { label: "Cruise", href: "/cruise" },
   { label: "Deals", href: "/deals" },

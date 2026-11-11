@@ -149,7 +149,7 @@ export default async function SpecialityToursPage() {
               We will design a speciality journey around you.
             </h2>
           </div>
-          <Link href="/tailormade" className="btn-primary shrink-0">
+          <Link href="/personalised" className="btn-primary shrink-0">
             Build my trip
             <ArrowUpRight className="h-4 w-4" />
           </Link>
