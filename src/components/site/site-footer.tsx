@@ -6,7 +6,12 @@ import { site } from "@/data/site";
 import type { Destination } from "@/data/destinations";
 
 const exploreLinks = [
-  { label: "Tour packages", href: "/tours" },
+  { label: "Group tours", href: "/tours" },
+  { label: "Speciality tours", href: "/speciality-tours" },
+  { label: "Tailormade holidays", href: "/tailormade" },
+  { label: "Corporate tours", href: "/corporate" },
+  { label: "Cruises", href: "/cruise" },
+  { label: "Deals & offers", href: "/deals" },
   { label: "Destinations", href: "/destinations" },
   { label: "Experiences", href: "/experiences" },
   { label: "Guest stories", href: "/testimonials" },

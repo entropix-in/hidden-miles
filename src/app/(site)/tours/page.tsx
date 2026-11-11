@@ -26,6 +26,10 @@ export default async function ToursPage({
   const experience =
     typeof params.experience === "string" ? params.experience : "";
   const month = typeof params.month === "string" ? params.month : "";
+  const initialRegion =
+    params.region === "India" || params.region === "International"
+      ? params.region
+      : "All";
 
   const [tours, destinations, experiences] = await Promise.all([
     loadTours(),
@@ -95,6 +99,7 @@ export default async function ToursPage({
         initialDestination={destination}
         initialExperience={experience}
         initialMonth={month}
+        initialRegion={initialRegion}
       />
 
       <section className="container-page pb-16">

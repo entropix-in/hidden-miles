@@ -28,13 +28,99 @@ export const stats = [
   { value: "60", suffix: "+", label: "Destinations worldwide" },
 ];
 
-export const navLinks = [
-  { label: "Home", href: "/" },
+export type NavLink = {
+  label: string;
+  href: string;
+  children?: Array<{
+    label: string;
+    href: string;
+    description?: string;
+    group?: string;
+  }>;
+};
+
+export const navLinks: NavLink[] = [
+  {
+    label: "Group Tours",
+    href: "/tours",
+    children: [
+      {
+        label: "All Group Tours",
+        href: "/tours",
+        description: "Every departure, in one place",
+      },
+      {
+        label: "Indian Group Tours",
+        href: "/tours?region=India",
+        description: "Himalayas, backwaters, deserts and islands",
+      },
+      {
+        label: "International Group Tours",
+        href: "/tours?region=International",
+        description: "Europe, Asia and the Indian Ocean",
+      },
+      {
+        label: "Women's Special",
+        href: "/tours?experience=women",
+        description: "Women-led groups, designed for women",
+      },
+    ],
+  },
+  {
+    label: "Speciality Tours",
+    href: "/speciality-tours",
+    children: [
+      {
+        label: "Women's Special",
+        href: "/tours?experience=women",
+        description: "Safe, welcoming women-only groups",
+      },
+      {
+        label: "Honeymoons & Celebrations",
+        href: "/tours?experience=honeymoon",
+        description: "Private villas and romantic escapes",
+      },
+      {
+        label: "Spiritual Journeys",
+        href: "/tours?experience=spiritual",
+        description: "Temple trails and meaningful yatras",
+      },
+      {
+        label: "Family Holidays",
+        href: "/tours?experience=family",
+        description: "Easy pacing for every generation",
+      },
+      {
+        label: "Himalayan Adventures",
+        href: "/tours?experience=adventure",
+        description: "High passes and small groups",
+      },
+      {
+        label: "Luxury Escapes",
+        href: "/tours?experience=luxury",
+        description: "Five-star stays and private guides",
+      },
+      {
+        label: "View all Speciality Tours",
+        href: "/speciality-tours",
+      },
+    ],
+  },
   { label: "Destinations", href: "/destinations" },
-  { label: "Tour Packages", href: "/tours" },
-  { label: "Experiences", href: "/experiences" },
-  { label: "About Us", href: "/about" },
-  { label: "Contact", href: "/contact" },
+  { label: "Tailormade", href: "/tailormade" },
+  { label: "Corporate", href: "/corporate" },
+  { label: "Cruise", href: "/cruise" },
+  { label: "Deals", href: "/deals" },
+  {
+    label: "More",
+    href: "/about",
+    children: [
+      { label: "Experiences", href: "/experiences" },
+      { label: "About Us", href: "/about" },
+      { label: "Guest Stories", href: "/testimonials" },
+      { label: "Contact Us", href: "/contact" },
+    ],
+  },
 ];
 
 export const trustPoints = [

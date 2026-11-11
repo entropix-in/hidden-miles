@@ -79,6 +79,7 @@ export function ToursExplorer({
   initialDestination = "",
   initialExperience = "",
   initialMonth = "",
+  initialRegion = "All",
 }: {
   tours: Tour[];
   destinations: Destination[];
@@ -86,10 +87,11 @@ export function ToursExplorer({
   initialDestination?: string;
   initialExperience?: string;
   initialMonth?: string;
+  initialRegion?: Region;
 }) {
   const [destination, setDestination] = useState(initialDestination);
   const [experience, setExperience] = useState(initialExperience);
-  const [region, setRegion] = useState<Region>("All");
+  const [region, setRegion] = useState<Region>(initialRegion);
   const [duration, setDuration] = useState<DurationValue>("any");
   const [price, setPrice] = useState<PriceValue>("any");
   const [month, setMonth] = useState(
