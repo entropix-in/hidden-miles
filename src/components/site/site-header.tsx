@@ -30,6 +30,17 @@ export function SiteHeader({
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname.startsWith(href);
 
+  const destinationGroups = [
+    {
+      label: "Indian Group Tours",
+      items: destinations.filter((item) => item.region === "India"),
+    },
+    {
+      label: "International Group Tours",
+      items: destinations.filter((item) => item.region === "International"),
+    },
+  ];
+
   return (
     <header className="sticky top-0 z-50">
       <div className="hidden bg-navy-950 text-sand-100 md:block">
@@ -83,18 +94,25 @@ export function SiteHeader({
                   </Link>
                   <div className="invisible absolute left-1/2 top-full w-[560px] -translate-x-1/2 pt-3 opacity-0 transition duration-200 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
                     <div className="overflow-hidden rounded-3xl border border-stone-200 bg-white p-3 shadow-2xl shadow-navy-950/10">
-                      <div className="grid grid-cols-2 gap-1">
-                        {destinations.slice(0, 10).map((destination) => (
-                          <Link
-                            key={destination.slug}
-                            href={`/destinations/${destination.slug}`}
-                            className="flex items-center justify-between rounded-2xl px-4 py-3 text-sm font-semibold text-stone-700 transition hover:bg-sand-100 hover:text-navy-950"
-                          >
-                            {destination.name}
-                            <span className="text-sm font-bold uppercase tracking-widest text-blue-600">
-                              {destination.region}
-                            </span>
-                          </Link>
+                      <div className="grid grid-cols-2 gap-2">
+                        {destinationGroups.map((group) => (
+                          <div key={group.label}>
+                            <p className="px-4 pb-2 pt-3 text-sm font-extrabold uppercase tracking-[0.12em] text-blue-700">
+                              {group.label}
+                            </p>
+                            <div className="grid gap-0.5">
+                              {group.items.map((destination) => (
+                                <Link
+                                  key={destination.slug}
+                                  href={`/destinations/${destination.slug}`}
+                                  className="flex items-center justify-between gap-3 rounded-xl px-4 py-2.5 text-sm font-semibold text-stone-700 transition hover:bg-sand-100 hover:text-navy-950"
+                                >
+                                  {destination.name}
+                                  <ArrowUpRight className="h-3.5 w-3.5 shrink-0 text-stone-400" />
+                                </Link>
+                              ))}
+                            </div>
+                          </div>
                         ))}
                       </div>
                       <Link
@@ -164,21 +182,25 @@ export function SiteHeader({
             </nav>
 
             <div className="mt-5 rounded-3xl border border-stone-200 bg-white p-4">
-              <p className="mb-3 text-sm font-extrabold uppercase tracking-[0.2em] text-blue-700">
-                Popular destinations
-              </p>
-              <div className="grid grid-cols-2 gap-1">
-                {destinations.slice(0, 8).map((destination) => (
-                  <Link
-                    key={destination.slug}
-                    href={`/destinations/${destination.slug}`}
-                    onClick={() => setMobileOpen(false)}
-                    className="rounded-xl px-3 py-2 text-sm font-semibold text-stone-600 hover:bg-sand-100 hover:text-navy-950"
-                  >
-                    {destination.name}
-                  </Link>
-                ))}
-              </div>
+              {destinationGroups.map((group) => (
+                <div key={group.label} className="mb-4 last:mb-0">
+                  <p className="mb-2 text-sm font-extrabold uppercase tracking-[0.14em] text-blue-700">
+                    {group.label}
+                  </p>
+                  <div className="grid grid-cols-2 gap-1">
+                    {group.items.map((destination) => (
+                      <Link
+                        key={destination.slug}
+                        href={`/destinations/${destination.slug}`}
+                        onClick={() => setMobileOpen(false)}
+                        className="rounded-xl px-3 py-2 text-sm font-semibold text-stone-600 hover:bg-sand-100 hover:text-navy-950"
+                      >
+                        {destination.name}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              ))}
             </div>
 
             <div className="mt-5 grid gap-2 text-sm">

@@ -78,11 +78,24 @@ export function SearchWidget({
               className="mt-0.5 w-full cursor-pointer appearance-none bg-transparent text-sm font-bold text-navy-950 outline-none"
             >
               <option value="">Anywhere beautiful</option>
-              {destinations.map((item) => (
-                <option key={item.slug} value={item.slug}>
-                  {item.name}
-                </option>
-              ))}
+              <optgroup label="Indian Group Tours">
+                {destinations
+                  .filter((item) => item.region === "India")
+                  .map((item) => (
+                    <option key={item.slug} value={item.slug}>
+                      {item.name}
+                    </option>
+                  ))}
+              </optgroup>
+              <optgroup label="International Group Tours">
+                {destinations
+                  .filter((item) => item.region === "International")
+                  .map((item) => (
+                    <option key={item.slug} value={item.slug}>
+                      {item.name}
+                    </option>
+                  ))}
+              </optgroup>
             </select>
           </span>
           <ChevronDown className="h-3.5 w-3.5 shrink-0 text-stone-400" />

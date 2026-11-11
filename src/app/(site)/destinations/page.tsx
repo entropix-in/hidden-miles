@@ -69,7 +69,7 @@ export default async function DestinationsPage() {
 
       <section className="container-page py-16">
         <SectionHeading
-          eyebrow="Closer to home"
+          eyebrow="Indian Group Tours"
           title="India, beautifully"
           description="Himalayan escapes, southern backwaters, desert palaces and island shores. There is always another India waiting."
         />
@@ -88,7 +88,7 @@ export default async function DestinationsPage() {
       <section className="bg-sand-100/70 py-16">
         <div className="container-page">
           <SectionHeading
-            eyebrow="Across the world"
+            eyebrow="International Group Tours"
             title="International favourites"
             description="From the canals of Europe to the islands of the Indian Ocean, these are the journeys our travellers ask for again and again."
           />
