@@ -55,7 +55,7 @@ export default async function AdminToursPage({
       ) : null}
 
       {!result.status.seeded ? (
-        <div className="mb-5 rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3 text-[12px] font-semibold text-blue-900">
+        <div className="mb-5 rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm font-semibold text-blue-900">
           Starter content has not been imported yet.{" "}
           <Link href="/admin" className="underline">
             Import it from the dashboard
@@ -81,7 +81,7 @@ export default async function AdminToursPage({
                     className="object-cover"
                   />
                 ) : (
-                  <div className="grid h-full w-full place-items-center bg-sand-200 text-[10px] font-bold uppercase tracking-wider text-stone-400">
+                  <div className="grid h-full w-full place-items-center bg-sand-200 text-sm font-bold uppercase tracking-wider text-stone-400">
                     No image
                   </div>
                 )}
@@ -89,22 +89,22 @@ export default async function AdminToursPage({
 
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="rounded-full bg-sand-200 px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-wider text-navy-800">
+                  <span className="rounded-full bg-sand-200 px-2.5 py-1 text-sm font-extrabold uppercase tracking-wider text-navy-800">
                     {tour.region}
                   </span>
                   {tour.featured ? (
-                    <span className="rounded-full bg-blue-100 px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-wider text-blue-800">
+                    <span className="rounded-full bg-blue-100 px-2.5 py-1 text-sm font-extrabold uppercase tracking-wider text-blue-800">
                       Featured
                     </span>
                   ) : null}
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-stone-400">
+                  <span className="text-sm font-bold uppercase tracking-wider text-stone-400">
                     {tour.nights}N / {tour.days}D
                   </span>
                 </div>
                 <h2 className="mt-1.5 font-display text-xl font-semibold text-navy-950">
                   {tour.title}
                 </h2>
-                <p className="mt-0.5 text-[11px] font-semibold text-stone-500">
+                <p className="mt-0.5 text-sm font-semibold text-stone-500">
                   {tour.destinationName} · {formatINR(tour.price)} per person
                 </p>
               </div>
@@ -120,7 +120,7 @@ export default async function AdminToursPage({
                 </Link>
                 <Link
                   href={`/admin/tours/${tour._id}`}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-stone-200 bg-sand-50 px-3.5 py-2 text-[11px] font-extrabold uppercase tracking-wider text-navy-950 transition hover:border-blue-400"
+                  className="inline-flex items-center gap-1.5 rounded-full border border-stone-200 bg-sand-50 px-3.5 py-2 text-sm font-extrabold uppercase tracking-wider text-navy-950 transition hover:border-blue-400"
                 >
                   <Pencil className="h-3.5 w-3.5" />
                   Edit

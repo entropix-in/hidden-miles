@@ -71,7 +71,7 @@ export default async function AdminExperiencesPage({
                     className="object-cover"
                   />
                 ) : (
-                  <div className="grid h-full w-full place-items-center bg-sand-200 text-[10px] font-bold uppercase tracking-wider text-stone-400">
+                  <div className="grid h-full w-full place-items-center bg-sand-200 text-sm font-bold uppercase tracking-wider text-stone-400">
                     No image
                   </div>
                 )}
@@ -84,7 +84,7 @@ export default async function AdminExperiencesPage({
                 <h2 className="font-display text-xl font-semibold text-navy-950">
                   {experience.title}
                 </h2>
-                <p className="mt-1 line-clamp-2 text-[12px] leading-5 text-stone-500">
+                <p className="mt-1 line-clamp-2 text-sm leading-5 text-stone-500">
                   {experience.description}
                 </p>
                 <div className="mt-4 flex flex-wrap items-center gap-2">
@@ -98,7 +98,7 @@ export default async function AdminExperiencesPage({
                   </Link>
                   <Link
                     href={`/admin/experiences/${experience._id}`}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-stone-200 bg-sand-50 px-3.5 py-2 text-[11px] font-extrabold uppercase tracking-wider text-navy-950 transition hover:border-blue-400"
+                    className="inline-flex items-center gap-1.5 rounded-full border border-stone-200 bg-sand-50 px-3.5 py-2 text-sm font-extrabold uppercase tracking-wider text-navy-950 transition hover:border-blue-400"
                   >
                     <Pencil className="h-3.5 w-3.5" />
                     Edit

@@ -38,7 +38,7 @@ export default async function DestinationsPage() {
             <p className="mt-3 font-display text-3xl font-semibold text-navy-950">
               {destinations.length}
             </p>
-            <p className="mt-1 text-[10px] font-bold uppercase tracking-wider text-stone-400">
+            <p className="mt-1 text-sm font-bold uppercase tracking-wider text-stone-400">
               Destinations
             </p>
           </div>
@@ -47,18 +47,18 @@ export default async function DestinationsPage() {
             <p className="mt-3 font-display text-3xl font-semibold text-navy-950">
               2
             </p>
-            <p className="mt-1 text-[10px] font-bold uppercase tracking-wider text-stone-400">
+            <p className="mt-1 text-sm font-bold uppercase tracking-wider text-stone-400">
               Continents
             </p>
           </div>
           <div className="col-span-2 rounded-2xl bg-navy-950 p-5 text-sand-50">
-            <p className="flex items-center gap-2 text-[11px] font-bold text-sand-200/70">
+            <p className="flex items-center gap-2 text-sm font-bold text-sand-200/70">
               <Compass className="h-4 w-4 text-blue-300" />
               Cannot decide? We will help.
             </p>
             <Link
               href="/contact"
-              className="mt-3 inline-flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider text-blue-300 transition hover:text-blue-200"
+              className="mt-3 inline-flex items-center gap-1.5 text-sm font-extrabold uppercase tracking-wider text-blue-300 transition hover:text-blue-200"
             >
               Talk to an expert
               <ArrowUpRight className="h-3.5 w-3.5" />

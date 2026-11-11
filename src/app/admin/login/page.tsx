@@ -43,7 +43,7 @@ export default async function AdminLoginPage({
             by MySQL.
           </p>
         </div>
-        <p className="relative flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em] text-sand-200/40">
+        <p className="relative flex items-center gap-2 text-sm font-bold uppercase tracking-[0.18em] text-sand-200/40">
           <ShieldCheck className="h-4 w-4 text-blue-300" />
           Private admin area
         </p>
@@ -53,7 +53,7 @@ export default async function AdminLoginPage({
         <div className="w-full max-w-md">
           <Link
             href="/"
-            className="inline-flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-wider text-stone-400 transition hover:text-blue-700"
+            className="inline-flex items-center gap-2 text-sm font-extrabold uppercase tracking-wider text-stone-400 transition hover:text-blue-700"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
             Back to website
@@ -71,14 +71,14 @@ export default async function AdminLoginPage({
             </p>
 
             {error ? (
-              <div className="mt-5 flex items-start gap-2 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-xs font-semibold text-red-700">
+              <div className="mt-5 flex items-start gap-2 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">
                 <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
                 {error}
               </div>
             ) : null}
 
             {!configured ? (
-              <div className="mt-5 rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3 text-xs leading-5 text-blue-900">
+              <div className="mt-5 rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm leading-5 text-blue-900">
                 Set <code className="font-bold">ADMIN_PASSWORD</code> and{" "}
                 <code className="font-bold">ADMIN_SESSION_SECRET</code> in your
                 environment to enable admin login.
@@ -107,7 +107,7 @@ export default async function AdminLoginPage({
             </form>
           </div>
 
-          <p className="mt-6 text-center text-[11px] font-semibold text-stone-400">
+          <p className="mt-6 text-center text-sm font-semibold text-stone-400">
             Hidden Miles Holidays · Content Studio
           </p>
         </div>

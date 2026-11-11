@@ -95,7 +95,7 @@ export function AdminTourForm({
               placeholder="magical-kashmir"
               className="field"
             />
-            <p className="mt-1.5 text-[11px] text-stone-400">
+            <p className="mt-1.5 text-sm text-stone-400">
               Leave blank to generate from the title.
             </p>
           </div>
@@ -298,7 +298,7 @@ export function AdminTourForm({
           </div>
         </div>
 
-        <label className="mt-4 flex items-center gap-2.5 text-[12px] font-bold text-navy-950">
+        <label className="mt-4 flex items-center gap-2.5 text-sm font-bold text-navy-950">
           <input
             type="checkbox"
             name="featured"
@@ -365,7 +365,7 @@ export function AdminTourForm({
           {experienceOptions.map((experience) => (
             <label
               key={experience.slug}
-              className="flex cursor-pointer items-center gap-2 rounded-full border border-stone-200 bg-sand-50 px-4 py-2 text-[11px] font-bold text-stone-600 transition hover:border-blue-400"
+              className="flex cursor-pointer items-center gap-2 rounded-full border border-stone-200 bg-sand-50 px-4 py-2 text-sm font-bold text-stone-600 transition hover:border-blue-400"
             >
               <input
                 type="checkbox"
@@ -378,7 +378,7 @@ export function AdminTourForm({
             </label>
           ))}
           {!experienceOptions.length ? (
-            <p className="text-xs text-stone-400">
+            <p className="text-sm text-stone-400">
               Add experiences first to tag them on packages.
             </p>
           ) : null}
@@ -396,7 +396,7 @@ export function AdminTourForm({
           <button
             type="button"
             onClick={addDay}
-            className="inline-flex items-center gap-2 rounded-full border border-stone-200 bg-sand-50 px-4 py-2 text-[11px] font-extrabold uppercase tracking-wider text-navy-950 transition hover:border-blue-400"
+            className="inline-flex items-center gap-2 rounded-full border border-stone-200 bg-sand-50 px-4 py-2 text-sm font-extrabold uppercase tracking-wider text-navy-950 transition hover:border-blue-400"
           >
             <Plus className="h-3.5 w-3.5" />
             Add day

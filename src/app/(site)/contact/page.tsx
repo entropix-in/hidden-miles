@@ -94,7 +94,7 @@ export default async function ContactPage({
               <Phone className="h-4 w-4" />
             </span>
             <span>
-              <span className="block text-[10px] font-extrabold uppercase tracking-wider text-stone-400">
+              <span className="block text-sm font-extrabold uppercase tracking-wider text-stone-400">
                 Call us
               </span>
               <span className="text-sm font-extrabold text-navy-950">
@@ -111,7 +111,7 @@ export default async function ContactPage({
               <Mail className="h-4 w-4" />
             </span>
             <span>
-              <span className="block text-[10px] font-extrabold uppercase tracking-wider text-stone-400">
+              <span className="block text-sm font-extrabold uppercase tracking-wider text-stone-400">
                 Email us
               </span>
               <span className="text-sm font-extrabold text-navy-950">
@@ -125,7 +125,7 @@ export default async function ContactPage({
               <Clock className="h-4 w-4" />
             </span>
             <span>
-              <span className="block text-[10px] font-extrabold uppercase tracking-wider text-sand-200/50">
+              <span className="block text-sm font-extrabold uppercase tracking-wider text-sand-200/50">
                 Office hours
               </span>
               <span className="text-sm font-extrabold">{site.hours}</span>
@@ -142,7 +142,7 @@ export default async function ContactPage({
             </p>
             <Link
               href={`/tours/${selectedTour.slug}`}
-              className="inline-flex items-center gap-1 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 hover:text-blue-800"
+              className="inline-flex items-center gap-1 text-sm font-extrabold uppercase tracking-wider text-blue-700 hover:text-blue-800"
             >
               View tour
               <ArrowUpRight className="h-3.5 w-3.5" />
@@ -172,14 +172,14 @@ export default async function ContactPage({
                 <h2 className="mt-2 font-display text-2xl font-semibold text-navy-950">
                   Our Mumbai home
                 </h2>
-                <p className="mt-2 text-[13px] leading-6 text-stone-500">
+                <p className="mt-2 text-sm leading-6 text-stone-500">
                   {site.address}
                 </p>
                 <a
                   href={`https://www.google.com/maps/search/?api=1&query=${mapQuery}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-4 inline-flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 transition hover:text-blue-800"
+                  className="mt-4 inline-flex items-center gap-2 text-sm font-extrabold uppercase tracking-wider text-blue-700 transition hover:text-blue-800"
                 >
                   Get directions
                   <ArrowUpRight className="h-3.5 w-3.5" />
@@ -198,15 +198,15 @@ export default async function ContactPage({
                     key={office.city}
                     className="border-t border-dashed border-stone-200 pt-4 first:border-0 first:pt-0"
                   >
-                    <p className="text-[11px] font-extrabold uppercase tracking-wider text-blue-700">
+                    <p className="text-sm font-extrabold uppercase tracking-wider text-blue-700">
                       {office.city}
                     </p>
-                    <p className="mt-1 text-[12px] leading-5 text-stone-500">
+                    <p className="mt-1 text-sm leading-5 text-stone-500">
                       {office.address}
                     </p>
                     <a
                       href={`tel:${office.phone.replace(/\s/g, "")}`}
-                      className="mt-1 inline-block text-[12px] font-bold text-navy-950 hover:text-blue-700"
+                      className="mt-1 inline-block text-sm font-bold text-navy-950 hover:text-blue-700"
                     >
                       {office.phone}
                     </a>
@@ -249,7 +249,7 @@ export default async function ContactPage({
                     <Plus className="h-4 w-4" />
                   </span>
                 </summary>
-                <p className="mt-3 text-[13px] leading-6 text-stone-500">
+                <p className="mt-3 text-sm leading-6 text-stone-500">
                   {faq.answer}
                 </p>
               </details>

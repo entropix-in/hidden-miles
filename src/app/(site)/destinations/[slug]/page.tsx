@@ -98,15 +98,15 @@ export default async function DestinationDetailPage({
               {destination.tagline}
             </p>
             <div className="mt-6 flex flex-wrap gap-2">
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-[11px] font-bold text-sand-50 backdrop-blur">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-bold text-sand-50 backdrop-blur">
                 <MapPin className="h-3.5 w-3.5 text-blue-300" />
                 {destination.region}
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-[11px] font-bold text-sand-50 backdrop-blur">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-bold text-sand-50 backdrop-blur">
                 <CalendarDays className="h-3.5 w-3.5 text-blue-300" />
                 Best time · {destination.bestTime}
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-[11px] font-bold text-sand-50 backdrop-blur">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-bold text-sand-50 backdrop-blur">
                 <Sparkles className="h-3.5 w-3.5 text-blue-300" />
                 {destinationTours.length}{" "}
                 {destinationTours.length === 1 ? "journey" : "journeys"}
@@ -132,7 +132,7 @@ export default async function DestinationDetailPage({
             itinerary that feels unhurried and entirely yours.
           </p>
 
-          <h3 className="mt-8 text-[11px] font-extrabold uppercase tracking-[0.2em] text-blue-700">
+          <h3 className="mt-8 text-sm font-extrabold uppercase tracking-[0.2em] text-blue-700">
             Do not miss
           </h3>
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
@@ -144,7 +144,7 @@ export default async function DestinationDetailPage({
                 <span className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-navy-600 text-white">
                   <Check className="h-3 w-3" strokeWidth={3} />
                 </span>
-                <p className="text-[13px] font-bold leading-5 text-navy-950">
+                <p className="text-sm font-bold leading-5 text-navy-950">
                   {highlight}
                 </p>
               </div>
@@ -216,7 +216,7 @@ export default async function DestinationDetailPage({
         </section>
       ) : (
         <section className="container-page py-16">
-          <div className="flex items-center gap-2 text-xs font-bold text-stone-500">
+          <div className="flex items-center gap-2 text-sm font-bold text-stone-500">
             <Star className="h-4 w-4 text-gold-500" />
             More destinations are being added every season.
           </div>

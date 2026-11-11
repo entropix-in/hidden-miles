@@ -13,7 +13,7 @@ export function Breadcrumbs({
     <nav
       aria-label="Breadcrumb"
       className={cn(
-        "flex flex-wrap items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider",
+        "flex flex-wrap items-center gap-1.5 text-sm font-bold uppercase tracking-wider",
         light ? "text-sand-200/70" : "text-stone-500",
       )}
     >

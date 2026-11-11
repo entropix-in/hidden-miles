@@ -42,7 +42,7 @@ export default async function ToursPage({
         breadcrumbs={[{ label: "Tour packages" }]}
       >
         <div className="rounded-[28px] border border-stone-200 bg-white p-6 shadow-lg shadow-navy-950/5">
-          <p className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-blue-700">
+          <p className="text-sm font-extrabold uppercase tracking-[0.18em] text-blue-700">
             At a glance
           </p>
           <div className="mt-4 grid grid-cols-3 gap-3">
@@ -50,7 +50,7 @@ export default async function ToursPage({
               <p className="font-display text-3xl font-semibold text-navy-950">
                 {tours.length}
               </p>
-              <p className="mt-1 text-[10px] font-bold uppercase tracking-wider text-stone-400">
+              <p className="mt-1 text-sm font-bold uppercase tracking-wider text-stone-400">
                 Curated tours
               </p>
             </div>
@@ -58,7 +58,7 @@ export default async function ToursPage({
               <p className="font-display text-3xl font-semibold text-navy-950">
                 {destinations.length}
               </p>
-              <p className="mt-1 text-[10px] font-bold uppercase tracking-wider text-stone-400">
+              <p className="mt-1 text-sm font-bold uppercase tracking-wider text-stone-400">
                 Destinations
               </p>
             </div>
@@ -66,21 +66,21 @@ export default async function ToursPage({
               <p className="font-display text-3xl font-semibold text-navy-950">
                 4.9
               </p>
-              <p className="mt-1 text-[10px] font-bold uppercase tracking-wider text-stone-400">
+              <p className="mt-1 text-sm font-bold uppercase tracking-wider text-stone-400">
                 Guest rating
               </p>
             </div>
           </div>
           <div className="mt-5 space-y-2.5 border-t border-dashed border-stone-200 pt-4">
-            <p className="flex items-center gap-2 text-[11px] font-semibold text-stone-500">
+            <p className="flex items-center gap-2 text-sm font-semibold text-stone-500">
               <BadgeCheck className="h-3.5 w-3.5 text-navy-600" />
               All-inclusive pricing, no surprises
             </p>
-            <p className="flex items-center gap-2 text-[11px] font-semibold text-stone-500">
+            <p className="flex items-center gap-2 text-sm font-semibold text-stone-500">
               <CalendarDays className="h-3.5 w-3.5 text-navy-600" />
               Guaranteed departures all year
             </p>
-            <p className="flex items-center gap-2 text-[11px] font-semibold text-stone-500">
+            <p className="flex items-center gap-2 text-sm font-semibold text-stone-500">
               <MapPin className="h-3.5 w-3.5 text-navy-600" />
               Expert leaders on every journey
             </p>

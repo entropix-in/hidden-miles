@@ -242,7 +242,7 @@ export function ToursExplorer({
     return (
     <div className="rounded-[28px] border border-stone-200 bg-white p-5 shadow-[0_14px_50px_-38px_rgba(11,39,53,0.5)]">
       <div className="flex items-center justify-between gap-3">
-        <p className="flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-[0.18em] text-stone-500">
+        <p className="flex items-center gap-2 text-sm font-extrabold uppercase tracking-[0.18em] text-stone-500">
           <SlidersHorizontal className="h-4 w-4 text-blue-600" />
           Filters
         </p>
@@ -250,7 +250,7 @@ export function ToursExplorer({
           type="button"
           onClick={resetFilters}
           disabled={!hasFilters && sort === "recommended"}
-          className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1.5 text-[10px] font-extrabold uppercase tracking-wider text-stone-500 transition hover:bg-sand-100 hover:text-blue-700 disabled:cursor-not-allowed disabled:opacity-40"
+          className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1.5 text-sm font-extrabold uppercase tracking-wider text-stone-500 transition hover:bg-sand-100 hover:text-blue-700 disabled:cursor-not-allowed disabled:opacity-40"
         >
           <RotateCcw className="h-3 w-3" />
           Reset
@@ -267,7 +267,7 @@ export function ToursExplorer({
                 type="button"
                 onClick={() => setRegion(item)}
                 className={cn(
-                  "rounded-full border px-3 py-1.5 text-[11px] font-extrabold uppercase tracking-wider transition",
+                  "rounded-full border px-3 py-1.5 text-sm font-extrabold uppercase tracking-wider transition",
                   region === item
                     ? "border-navy-950 bg-navy-950 text-sand-50"
                     : "border-stone-200 bg-sand-50 text-stone-600 hover:border-blue-400 hover:text-blue-700",
@@ -305,7 +305,7 @@ export function ToursExplorer({
               type="button"
               onClick={() => setExperience("")}
               className={cn(
-                "rounded-full border px-3 py-1.5 text-[11px] font-bold transition",
+                "rounded-full border px-3 py-1.5 text-sm font-bold transition",
                 !experience
                   ? "border-blue-500 bg-blue-50 text-blue-800"
                   : "border-stone-200 text-stone-500 hover:border-stone-300",
@@ -319,7 +319,7 @@ export function ToursExplorer({
                 type="button"
                 onClick={() => setExperience(item.slug)}
                 className={cn(
-                  "rounded-full border px-3 py-1.5 text-[11px] font-bold transition",
+                  "rounded-full border px-3 py-1.5 text-sm font-bold transition",
                   experience === item.slug
                     ? "border-blue-500 bg-blue-50 text-blue-800"
                     : "border-stone-200 text-stone-500 hover:border-stone-300",
@@ -344,7 +344,7 @@ export function ToursExplorer({
                     setDuration(duration === item.value ? "any" : item.value)
                   }
                   className={cn(
-                    "rounded-xl border px-3 py-2 text-left text-[11px] font-bold transition",
+                    "rounded-xl border px-3 py-2 text-left text-sm font-bold transition",
                     duration === item.value
                       ? "border-blue-500 bg-blue-50 text-blue-800"
                       : "border-stone-200 text-stone-500 hover:border-stone-300",
@@ -369,7 +369,7 @@ export function ToursExplorer({
                     setPrice(price === item.value ? "any" : item.value)
                   }
                   className={cn(
-                    "rounded-xl border px-3 py-2 text-left text-[11px] font-bold transition",
+                    "rounded-xl border px-3 py-2 text-left text-sm font-bold transition",
                     price === item.value
                       ? "border-blue-500 bg-blue-50 text-blue-800"
                       : "border-stone-200 text-stone-500 hover:border-stone-300",
@@ -415,7 +415,7 @@ export function ToursExplorer({
     <div className="container-page py-12 sm:py-16">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-[0.18em] text-blue-700">
+          <p className="flex items-center gap-2 text-sm font-extrabold uppercase tracking-[0.18em] text-blue-700">
             <Filter className="h-3.5 w-3.5" />
             {filtered.length} {filtered.length === 1 ? "journey" : "journeys"}{" "}
             found
@@ -434,12 +434,12 @@ export function ToursExplorer({
           <button
             type="button"
             onClick={() => setFiltersOpen((open) => !open)}
-            className="inline-flex items-center gap-2 rounded-full border border-stone-300 bg-white px-4 py-2.5 text-[11px] font-extrabold uppercase tracking-wider text-navy-950 transition hover:border-blue-400 hover:text-blue-700 lg:hidden"
+            className="inline-flex items-center gap-2 rounded-full border border-stone-300 bg-white px-4 py-2.5 text-sm font-extrabold uppercase tracking-wider text-navy-950 transition hover:border-blue-400 hover:text-blue-700 lg:hidden"
           >
             <SlidersHorizontal className="h-3.5 w-3.5" />
             Filters
             {activeFilters.length ? (
-              <span className="grid h-5 min-w-5 place-items-center rounded-full bg-blue-600 px-1 text-[10px] text-white">
+              <span className="grid h-5 min-w-5 place-items-center rounded-full bg-blue-600 px-1 text-sm text-white">
                 {activeFilters.length}
               </span>
             ) : null}
@@ -447,7 +447,7 @@ export function ToursExplorer({
 
           <label
             htmlFor="sort"
-            className="text-[10px] font-extrabold uppercase tracking-wider text-stone-400"
+            className="text-sm font-extrabold uppercase tracking-wider text-stone-400"
           >
             Sort by
           </label>
@@ -455,7 +455,7 @@ export function ToursExplorer({
             id="sort"
             value={sort}
             onChange={(event) => setSort(event.target.value)}
-            className="rounded-full border border-stone-200 bg-white px-4 py-2.5 text-[11px] font-bold text-navy-950 outline-none focus:border-blue-500"
+            className="rounded-full border border-stone-200 bg-white px-4 py-2.5 text-sm font-bold text-navy-950 outline-none focus:border-blue-500"
           >
             {sortOptions.map((option) => (
               <option key={option.value} value={option.value}>
@@ -485,7 +485,7 @@ export function ToursExplorer({
                   key={filter.key}
                   type="button"
                   onClick={filter.clear}
-                  className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-wider text-blue-800 transition hover:bg-blue-100"
+                  className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-3 py-1.5 text-sm font-extrabold uppercase tracking-wider text-blue-800 transition hover:bg-blue-100"
                 >
                   {filter.label}
                   <X className="h-3 w-3" />
@@ -494,7 +494,7 @@ export function ToursExplorer({
               <button
                 type="button"
                 onClick={resetFilters}
-                className="text-[10px] font-extrabold uppercase tracking-wider text-stone-400 underline decoration-dotted underline-offset-4 transition hover:text-blue-700"
+                className="text-sm font-extrabold uppercase tracking-wider text-stone-400 underline decoration-dotted underline-offset-4 transition hover:text-blue-700"
               >
                 Clear all
               </button>

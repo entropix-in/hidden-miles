@@ -10,7 +10,7 @@ export default function NotFound() {
         <span className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-navy-950 text-blue-300">
           <Compass className="h-8 w-8" />
         </span>
-        <p className="mt-6 text-[11px] font-extrabold uppercase tracking-[0.24em] text-blue-700">
+        <p className="mt-6 text-sm font-extrabold uppercase tracking-[0.24em] text-blue-700">
           Error 404
         </p>
         <h1 className="mx-auto mt-3 max-w-xl font-display text-4xl font-medium leading-tight text-navy-950 sm:text-5xl">

@@ -90,7 +90,7 @@ export default function AboutPage() {
             <p className="font-display text-2xl font-semibold text-navy-950">
               42 years
             </p>
-            <p className="text-[10px] font-bold uppercase tracking-wider text-stone-400">
+            <p className="text-sm font-bold uppercase tracking-wider text-stone-400">
               Of happy holidays
             </p>
           </div>
@@ -167,7 +167,7 @@ export default function AboutPage() {
                   {stat.value}
                   <span className="text-2xl text-blue-600">{stat.suffix}</span>
                 </p>
-                <p className="mt-2 text-[11px] font-bold leading-4 text-stone-500">
+                <p className="mt-2 text-sm font-bold leading-4 text-stone-500">
                   {stat.label}
                 </p>
               </div>
@@ -189,7 +189,7 @@ export default function AboutPage() {
               key={item.year}
               className="relative rounded-[26px] border border-stone-200 bg-white p-6"
             >
-              <span className="absolute right-5 top-5 text-[10px] font-extrabold uppercase tracking-widest text-stone-300">
+              <span className="absolute right-5 top-5 text-sm font-extrabold uppercase tracking-widest text-stone-300">
                 0{index + 1}
               </span>
               <p className="font-display text-3xl font-semibold text-blue-600">
@@ -198,7 +198,7 @@ export default function AboutPage() {
               <h3 className="mt-3 font-display text-xl font-semibold text-navy-950">
                 {item.title}
               </h3>
-              <p className="mt-2 text-[12px] leading-6 text-stone-500">
+              <p className="mt-2 text-sm leading-6 text-stone-500">
                 {item.text}
               </p>
             </div>
@@ -231,7 +231,7 @@ export default function AboutPage() {
                   <h3 className="mt-4 font-display text-xl font-semibold">
                     {value.title}
                   </h3>
-                  <p className="mt-2 text-[12px] leading-6 text-sand-200/65">
+                  <p className="mt-2 text-sm leading-6 text-sand-200/65">
                     {value.text}
                   </p>
                 </div>

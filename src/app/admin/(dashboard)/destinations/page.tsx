@@ -78,13 +78,13 @@ export default async function AdminDestinationsPage({
                       className="object-cover"
                     />
                   ) : (
-                    <div className="grid h-full w-full place-items-center bg-sand-200 text-[10px] font-bold uppercase tracking-wider text-stone-400">
+                    <div className="grid h-full w-full place-items-center bg-sand-200 text-sm font-bold uppercase tracking-wider text-stone-400">
                       No image
                     </div>
                   )}
                   <div className="absolute inset-0 bg-gradient-to-t from-navy-950/70 to-transparent" />
                   <div className="absolute bottom-3 left-4 text-sand-50">
-                    <p className="text-[9px] font-extrabold uppercase tracking-wider text-blue-300">
+                    <p className="text-sm font-extrabold uppercase tracking-wider text-blue-300">
                       {destination.region} · {count}{" "}
                       {count === 1 ? "package" : "packages"}
                     </p>
@@ -94,7 +94,7 @@ export default async function AdminDestinationsPage({
                   </div>
                 </div>
                 <div className="p-4">
-                  <p className="line-clamp-2 text-[12px] leading-5 text-stone-500">
+                  <p className="line-clamp-2 text-sm leading-5 text-stone-500">
                     {destination.tagline || destination.description}
                   </p>
                   <div className="mt-4 flex flex-wrap items-center gap-2">
@@ -108,7 +108,7 @@ export default async function AdminDestinationsPage({
                     </Link>
                     <Link
                       href={`/admin/destinations/${destination._id}`}
-                      className="inline-flex items-center gap-1.5 rounded-full border border-stone-200 bg-sand-50 px-3.5 py-2 text-[11px] font-extrabold uppercase tracking-wider text-navy-950 transition hover:border-blue-400"
+                      className="inline-flex items-center gap-1.5 rounded-full border border-stone-200 bg-sand-50 px-3.5 py-2 text-sm font-extrabold uppercase tracking-wider text-navy-950 transition hover:border-blue-400"
                     >
                       <Pencil className="h-3.5 w-3.5" />
                       Edit

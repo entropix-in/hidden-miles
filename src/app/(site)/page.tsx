@@ -80,7 +80,7 @@ export default async function HomePage() {
 
         <div className="container-page relative flex min-h-[660px] flex-col justify-center pb-40 pt-16 sm:min-h-[700px] sm:pb-44 sm:pt-20 lg:min-h-[720px]">
           <div className="animate-rise max-w-3xl">
-            <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-[10px] font-extrabold uppercase tracking-[0.2em] text-sand-50 backdrop-blur">
+            <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-extrabold uppercase tracking-[0.2em] text-sand-50 backdrop-blur">
               <Sparkles className="h-3.5 w-3.5 text-blue-300" />
               Crafting journeys since 1984
             </span>
@@ -117,7 +117,7 @@ export default async function HomePage() {
                 ].map(([initial, color]) => (
                   <span
                     key={initial}
-                    className={`grid h-9 w-9 place-items-center rounded-full border-2 border-navy-950 text-[11px] font-extrabold text-white ${color}`}
+                    className={`grid h-9 w-9 place-items-center rounded-full border-2 border-navy-950 text-sm font-extrabold text-white ${color}`}
                   >
                     {initial}
                   </span>
@@ -131,11 +131,11 @@ export default async function HomePage() {
                       className="h-3.5 w-3.5 fill-current"
                     />
                   ))}
-                  <span className="ml-1 text-xs font-extrabold text-sand-50">
+                  <span className="ml-1 text-sm font-extrabold text-sand-50">
                     4.9 / 5
                   </span>
                 </span>
-                <p className="mt-1 text-[11px] font-semibold tracking-wide text-sand-200/70">
+                <p className="mt-1 text-sm font-semibold tracking-wide text-sand-200/70">
                   Loved by 12,400+ verified travellers
                 </p>
               </div>
@@ -146,7 +146,7 @@ export default async function HomePage() {
             <div className="animate-float-slow absolute right-8 top-28 hidden w-64 xl:block">
               <div className="rounded-[28px] border border-white/20 bg-white/10 p-5 text-sand-50 shadow-2xl backdrop-blur-md">
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-blue-300">
+                  <span className="text-sm font-extrabold uppercase tracking-[0.18em] text-blue-300">
                     This week&apos;s favourite
                   </span>
                   <Compass className="h-4 w-4 text-sand-200/70" />
@@ -154,13 +154,13 @@ export default async function HomePage() {
                 <p className="mt-3 font-display text-2xl font-semibold">
                   {spotlight.title}
                 </p>
-                <p className="mt-1 text-xs font-semibold text-sand-200/70">
+                <p className="mt-1 text-sm font-semibold text-sand-200/70">
                   {spotlight.nights} nights · {spotlight.days} days · From{" "}
                   {formatINR(spotlight.price)}
                 </p>
                 <Link
                   href={`/tours/${spotlight.slug}`}
-                  className="mt-4 flex items-center justify-between rounded-full bg-sand-50 px-4 py-2.5 text-[11px] font-extrabold uppercase tracking-wider text-navy-950"
+                  className="mt-4 flex items-center justify-between rounded-full bg-sand-50 px-4 py-2.5 text-sm font-extrabold uppercase tracking-wider text-navy-950"
                 >
                   View journey
                   <ArrowUpRight className="h-3.5 w-3.5" />
@@ -185,10 +185,10 @@ export default async function HomePage() {
                   <Icon className="h-4 w-4" />
                 </span>
                 <div>
-                  <p className="text-[13px] font-extrabold text-navy-950">
+                  <p className="text-sm font-extrabold text-navy-950">
                     {point.title}
                   </p>
-                  <p className="mt-0.5 text-[11px] leading-5 text-stone-500">
+                  <p className="mt-0.5 text-sm leading-5 text-stone-500">
                     {point.description}
                   </p>
                 </div>
@@ -228,10 +228,10 @@ export default async function HomePage() {
                 <h3 className="font-display text-2xl font-semibold">
                   {experience.shortTitle}
                 </h3>
-                <p className="mt-1.5 max-w-[90%] text-[12px] leading-5 text-sand-100/75">
+                <p className="mt-1.5 max-w-[90%] text-sm leading-5 text-sand-100/75">
                   {experience.description}
                 </p>
-                <span className="mt-3 inline-flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-[0.16em] text-blue-300">
+                <span className="mt-3 inline-flex items-center gap-1.5 text-sm font-extrabold uppercase tracking-[0.16em] text-blue-300">
                   Explore
                   <ArrowUpRight className="h-3.5 w-3.5 transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                 </span>
@@ -292,7 +292,7 @@ export default async function HomePage() {
                     {stat.value}
                     <span className="text-2xl">{stat.suffix}</span>
                   </p>
-                  <p className="mt-2 text-[11px] font-semibold leading-4 text-sand-200/60">
+                  <p className="mt-2 text-sm font-semibold leading-4 text-sand-200/60">
                     {stat.label}
                   </p>
                 </div>
@@ -352,7 +352,7 @@ export default async function HomePage() {
                   <p className="font-display text-xl font-semibold text-navy-950">
                     100% safe
                   </p>
-                  <p className="text-[11px] font-semibold text-stone-500">
+                  <p className="text-sm font-semibold text-stone-500">
                     Handpicked stays & leaders
                   </p>
                 </div>
@@ -386,7 +386,7 @@ export default async function HomePage() {
                   <span className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-navy-600 text-white">
                     <Check className="h-3 w-3" strokeWidth={3} />
                   </span>
-                  <p className="text-[13px] font-bold leading-5 text-navy-950">
+                  <p className="text-sm font-bold leading-5 text-navy-950">
                     {item}
                   </p>
                 </div>
@@ -442,10 +442,10 @@ export default async function HomePage() {
                   {testimonial.name.charAt(0)}
                 </span>
                 <div>
-                  <p className="text-[13px] font-extrabold text-navy-950">
+                  <p className="text-sm font-extrabold text-navy-950">
                     {testimonial.name}
                   </p>
-                  <p className="text-[11px] font-semibold text-stone-400">
+                  <p className="text-sm font-semibold text-stone-400">
                     {testimonial.city} · {testimonial.tour}
                   </p>
                 </div>

@@ -105,7 +105,7 @@ export default async function AdminDashboardPage({
                 <p className="mt-4 font-display text-4xl font-semibold text-navy-950">
                   {stat.value}
                 </p>
-                <p className="mt-1 text-[11px] font-bold uppercase tracking-wider text-stone-400">
+                <p className="mt-1 text-sm font-bold uppercase tracking-wider text-stone-400">
                   {stat.label}
                 </p>
               </Link>
@@ -122,7 +122,7 @@ export default async function AdminDashboardPage({
                   <h2 className="font-display text-xl font-semibold text-navy-950">
                     Import your starter content
                   </h2>
-                  <p className="mt-1 max-w-xl text-[12px] leading-5 text-stone-600">
+                  <p className="mt-1 max-w-xl text-sm leading-5 text-stone-600">
                     Bring the existing packages, destinations, experiences and
                     testimonials into MySQL. You can edit or delete anything
                     afterwards.
@@ -137,13 +137,13 @@ export default async function AdminDashboardPage({
             </div>
           ) : (
             <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-[28px] border border-navy-200 bg-navy-50 px-6 py-4">
-              <p className="text-[12px] font-bold text-navy-800">
+              <p className="text-sm font-bold text-navy-800">
                 Content is live from MySQL. New changes publish to the website
                 immediately.
               </p>
               <Link
                 href="/tours"
-                className="inline-flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wider text-navy-700 hover:text-navy-900"
+                className="inline-flex items-center gap-1.5 text-sm font-extrabold uppercase tracking-wider text-navy-700 hover:text-navy-900"
               >
                 View website
                 <ArrowUpRight className="h-3.5 w-3.5" />
@@ -160,7 +160,7 @@ export default async function AdminDashboardPage({
                     Recent enquiries
                   </h2>
                 </div>
-                <span className="rounded-full bg-blue-100 px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-wider text-blue-800">
+                <span className="rounded-full bg-blue-100 px-3 py-1.5 text-sm font-extrabold uppercase tracking-wider text-blue-800">
                   {newEnquiries} new
                 </span>
               </div>
@@ -173,20 +173,20 @@ export default async function AdminDashboardPage({
                       className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-stone-100 bg-sand-50 px-4 py-3"
                     >
                       <div className="min-w-0">
-                        <p className="truncate text-[13px] font-extrabold text-navy-950">
+                        <p className="truncate text-sm font-extrabold text-navy-950">
                           {enquiry.name}
-                          <span className="ml-2 text-[10px] font-bold uppercase tracking-wider text-stone-400">
+                          <span className="ml-2 text-sm font-bold uppercase tracking-wider text-stone-400">
                             {enquiry.type}
                           </span>
                         </p>
-                        <p className="truncate text-[11px] text-stone-500">
+                        <p className="truncate text-sm text-stone-500">
                           {enquiry.tour ||
                             enquiry.destination ||
                             enquiry.email ||
                             "General enquiry"}
                         </p>
                       </div>
-                      <span className="rounded-full bg-white px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-wider text-stone-500">
+                      <span className="rounded-full bg-white px-2.5 py-1 text-sm font-extrabold uppercase tracking-wider text-stone-500">
                         {enquiry.status ?? "new"}
                       </span>
                     </div>
@@ -202,7 +202,7 @@ export default async function AdminDashboardPage({
 
               <Link
                 href="/admin/enquiries"
-                className="mt-5 inline-flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wider text-blue-700 hover:text-blue-800"
+                className="mt-5 inline-flex items-center gap-1.5 text-sm font-extrabold uppercase tracking-wider text-blue-700 hover:text-blue-800"
               >
                 Open enquiries
                 <ArrowUpRight className="h-3.5 w-3.5" />
@@ -240,7 +240,7 @@ export default async function AdminDashboardPage({
                   <Link
                     key={action.href}
                     href={action.href}
-                    className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-[12px] font-bold text-sand-100 transition hover:border-blue-400/40 hover:bg-white/10"
+                    className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-bold text-sand-100 transition hover:border-blue-400/40 hover:bg-white/10"
                   >
                     <action.icon className="h-4 w-4 text-blue-300" />
                     {action.label}

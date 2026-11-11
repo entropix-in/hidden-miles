@@ -107,14 +107,14 @@ export default async function TourDetailPage({
           />
 
           <div className="mt-6 flex flex-wrap items-center gap-2">
-            <span className="rounded-full bg-blue-100 px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-wider text-blue-800">
+            <span className="rounded-full bg-blue-100 px-3 py-1.5 text-sm font-extrabold uppercase tracking-wider text-blue-800">
               {tour.region}
             </span>
-            <span className="rounded-full bg-white px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-wider text-stone-600">
+            <span className="rounded-full bg-white px-3 py-1.5 text-sm font-extrabold uppercase tracking-wider text-stone-600">
               {tour.nights} nights · {tour.days} days
             </span>
             {tour.badge ? (
-              <span className="rounded-full bg-navy-950 px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-wider text-blue-300">
+              <span className="rounded-full bg-navy-950 px-3 py-1.5 text-sm font-extrabold uppercase tracking-wider text-blue-300">
                 {tour.badge}
               </span>
             ) : null}
@@ -125,7 +125,7 @@ export default async function TourDetailPage({
               <h1 className="font-display text-4xl font-medium leading-[1.06] tracking-tight text-navy-950 sm:text-5xl">
                 {tour.title}
               </h1>
-              <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-[12px] font-bold text-stone-600">
+              <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm font-bold text-stone-600">
                 <span className="inline-flex items-center gap-1.5">
                   <MapPin className="h-4 w-4 text-blue-600" />
                   {tour.destinationName}
@@ -163,10 +163,10 @@ export default async function TourDetailPage({
             />
             <div className="absolute inset-0 bg-gradient-to-t from-navy-950/60 via-transparent to-transparent" />
             <div className="absolute bottom-5 left-5 flex flex-wrap gap-2">
-              <span className="rounded-full bg-white/95 px-4 py-2 text-[11px] font-extrabold text-navy-950 backdrop-blur">
+              <span className="rounded-full bg-white/95 px-4 py-2 text-sm font-extrabold text-navy-950 backdrop-blur">
                 Next departure · {tour.departure}
               </span>
-              <span className="rounded-full bg-navy-950/70 px-4 py-2 text-[11px] font-extrabold text-sand-50 backdrop-blur">
+              <span className="rounded-full bg-navy-950/70 px-4 py-2 text-sm font-extrabold text-sand-50 backdrop-blur">
                 {tour.groupSize}
               </span>
             </div>
@@ -200,7 +200,7 @@ export default async function TourDetailPage({
                   <span className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-blue-100 text-blue-700">
                     <Check className="h-3 w-3" strokeWidth={3} />
                   </span>
-                  <p className="text-[13px] font-bold leading-5 text-navy-950">
+                  <p className="text-sm font-bold leading-5 text-navy-950">
                     {highlight}
                   </p>
                 </div>
@@ -221,7 +221,7 @@ export default async function TourDetailPage({
                   className="group overflow-hidden rounded-3xl border border-stone-200 bg-white"
                 >
                   <summary className="flex cursor-pointer list-none items-center gap-4 p-5 [&::-webkit-details-marker]:hidden">
-                    <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-navy-950 text-[10px] font-extrabold uppercase tracking-wider text-blue-300">
+                    <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-navy-950 text-sm font-extrabold uppercase tracking-wider text-blue-300">
                       Day {day.day}
                     </span>
                     <span className="flex-1 font-display text-lg font-semibold text-navy-950">
@@ -231,7 +231,7 @@ export default async function TourDetailPage({
                       <Plus className="h-4 w-4" />
                     </span>
                   </summary>
-                  <p className="px-5 pb-5 text-[13px] leading-7 text-stone-600 sm:pl-20">
+                  <p className="px-5 pb-5 text-sm leading-7 text-stone-600 sm:pl-20">
                     {day.description}
                   </p>
                 </details>
@@ -251,7 +251,7 @@ export default async function TourDetailPage({
                 {tour.inclusions.map((item) => (
                   <li
                     key={item}
-                    className="flex items-start gap-2.5 text-[12px] leading-5 text-stone-600"
+                    className="flex items-start gap-2.5 text-sm leading-5 text-stone-600"
                   >
                     <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-navy-600" />
                     {item}
@@ -270,7 +270,7 @@ export default async function TourDetailPage({
                 {tour.exclusions.map((item) => (
                   <li
                     key={item}
-                    className="flex items-start gap-2.5 text-[12px] leading-5 text-stone-600"
+                    className="flex items-start gap-2.5 text-sm leading-5 text-stone-600"
                   >
                     <X className="mt-0.5 h-3.5 w-3.5 shrink-0 text-stone-400" />
                     {item}
@@ -294,10 +294,10 @@ export default async function TourDetailPage({
                   <span className="grid h-9 w-9 place-items-center rounded-full bg-sand-200 text-blue-700">
                     <item.icon className="h-4 w-4" />
                   </span>
-                  <h3 className="mt-3 text-[13px] font-extrabold text-navy-950">
+                  <h3 className="mt-3 text-sm font-extrabold text-navy-950">
                     {item.title}
                   </h3>
-                  <p className="mt-1 text-[12px] leading-5 text-stone-500">
+                  <p className="mt-1 text-sm leading-5 text-stone-500">
                     {item.text}
                   </p>
                 </div>
@@ -309,7 +309,7 @@ export default async function TourDetailPage({
         <aside className="space-y-4 lg:sticky lg:top-28">
           <div className="overflow-hidden rounded-[30px] border border-stone-200 bg-white shadow-xl shadow-navy-950/5">
             <div className="bg-navy-950 px-6 py-5 text-sand-50">
-              <p className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-blue-300">
+              <p className="text-sm font-extrabold uppercase tracking-[0.18em] text-blue-300">
                 All-inclusive from
               </p>
               <div className="mt-1 flex items-baseline gap-3">
@@ -322,19 +322,19 @@ export default async function TourDetailPage({
                   </p>
                 ) : null}
               </div>
-              <p className="mt-1 text-[11px] font-semibold text-sand-200/60">
+              <p className="mt-1 text-sm font-semibold text-sand-200/60">
                 per person on twin sharing · EMI from {formatINR(emi)}/month
               </p>
             </div>
             <div className="space-y-3 p-5">
-              <div className="flex items-center justify-between text-[12px] font-semibold text-stone-600">
+              <div className="flex items-center justify-between text-sm font-semibold text-stone-600">
                 <span className="inline-flex items-center gap-2">
                   <CalendarDays className="h-4 w-4 text-blue-600" />
                   Departure
                 </span>
                 <span className="font-bold text-navy-950">{tour.departure}</span>
               </div>
-              <div className="flex items-center justify-between text-[12px] font-semibold text-stone-600">
+              <div className="flex items-center justify-between text-sm font-semibold text-stone-600">
                 <span className="inline-flex items-center gap-2">
                   <Clock className="h-4 w-4 text-blue-600" />
                   Duration
@@ -343,14 +343,14 @@ export default async function TourDetailPage({
                   {tour.nights}N / {tour.days}D
                 </span>
               </div>
-              <div className="flex items-center justify-between text-[12px] font-semibold text-stone-600">
+              <div className="flex items-center justify-between text-sm font-semibold text-stone-600">
                 <span className="inline-flex items-center gap-2">
                   <Users className="h-4 w-4 text-blue-600" />
                   Group size
                 </span>
                 <span className="font-bold text-navy-950">{tour.groupSize}</span>
               </div>
-              <div className="flex items-center justify-between text-[12px] font-semibold text-stone-600">
+              <div className="flex items-center justify-between text-sm font-semibold text-stone-600">
                 <span className="inline-flex items-center gap-2">
                   <IndianRupee className="h-4 w-4 text-blue-600" />
                   Booking deposit
@@ -376,14 +376,14 @@ export default async function TourDetailPage({
                 </a>
                 <a
                   href={site.phoneHref}
-                  className="inline-flex items-center justify-center gap-2 pt-1 text-[12px] font-extrabold text-navy-950 transition hover:text-blue-700"
+                  className="inline-flex items-center justify-center gap-2 pt-1 text-sm font-extrabold text-navy-950 transition hover:text-blue-700"
                 >
                   <Phone className="h-3.5 w-3.5" />
                   {site.phone}
                 </a>
               </div>
 
-              <div className="rounded-2xl bg-sand-100 p-3 text-[11px] leading-5 text-stone-500">
+              <div className="rounded-2xl bg-sand-100 p-3 text-sm leading-5 text-stone-500">
                 <p className="flex items-start gap-2">
                   <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-blue-600" />
                   Prices are per person on twin sharing. Solo travellers and

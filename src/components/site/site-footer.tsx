@@ -59,7 +59,7 @@ export function SiteFooter({
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="rounded-full border border-white/15 px-4 py-2 text-[11px] font-bold uppercase tracking-wider text-sand-100 transition hover:border-blue-400 hover:text-blue-300"
+                  className="rounded-full border border-white/15 px-4 py-2 text-sm font-bold uppercase tracking-wider text-sand-100 transition hover:border-blue-400 hover:text-blue-300"
                 >
                   {social.label}
                 </a>
@@ -68,7 +68,7 @@ export function SiteFooter({
           </div>
 
           <div>
-            <h3 className="text-[11px] font-extrabold uppercase tracking-[0.2em] text-blue-300">
+            <h3 className="text-sm font-extrabold uppercase tracking-[0.2em] text-blue-300">
               Explore
             </h3>
             <ul className="mt-5 space-y-3 text-sm">
@@ -86,7 +86,7 @@ export function SiteFooter({
           </div>
 
           <div>
-            <h3 className="text-[11px] font-extrabold uppercase tracking-[0.2em] text-blue-300">
+            <h3 className="text-sm font-extrabold uppercase tracking-[0.2em] text-blue-300">
               Destinations
             </h3>
             <ul className="mt-5 space-y-3 text-sm">
@@ -104,7 +104,7 @@ export function SiteFooter({
           </div>
 
           <div>
-            <h3 className="text-[11px] font-extrabold uppercase tracking-[0.2em] text-blue-300">
+            <h3 className="text-sm font-extrabold uppercase tracking-[0.2em] text-blue-300">
               Say hello
             </h3>
             <ul className="mt-5 space-y-4 text-sm">
@@ -138,7 +138,7 @@ export function SiteFooter({
           </div>
         </div>
 
-        <div className="flex flex-col gap-3 border-t border-white/10 py-6 text-[11px] font-semibold tracking-wide text-sand-200/50 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-3 border-t border-white/10 py-6 text-sm font-semibold tracking-wide text-sand-200/50 sm:flex-row sm:items-center sm:justify-between">
           <p>
             © {new Date().getFullYear()} {site.legalName} All rights reserved.
           </p>

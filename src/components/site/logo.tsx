@@ -36,7 +36,7 @@ export function Logo({
         </span>
         <span
           className={cn(
-            "mt-1 block text-[9px] font-extrabold uppercase tracking-[0.28em]",
+            "mt-1 block text-sm font-extrabold uppercase tracking-[0.28em]",
             light ? "text-sand-200/75" : "text-blue-700",
           )}
         >

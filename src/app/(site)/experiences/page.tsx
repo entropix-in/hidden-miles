@@ -58,7 +58,7 @@ export default async function ExperiencesPage() {
             “The best holidays are the ones that feel like they were made for
             you.”
           </p>
-          <p className="mt-3 text-[11px] font-extrabold uppercase tracking-[0.16em] text-stone-400">
+          <p className="mt-3 text-sm font-extrabold uppercase tracking-[0.16em] text-stone-400">
             The Hidden Miles promise
           </p>
         </div>
@@ -84,7 +84,7 @@ export default async function ExperiencesPage() {
                 <span className="absolute left-5 top-5 grid h-11 w-11 place-items-center rounded-full bg-white/90 text-blue-700 backdrop-blur">
                   <ExperienceIcon icon={experience.icon} />
                 </span>
-                <span className="absolute bottom-5 left-5 text-[10px] font-extrabold uppercase tracking-[0.18em] text-sand-50">
+                <span className="absolute bottom-5 left-5 text-sm font-extrabold uppercase tracking-[0.18em] text-sand-50">
                   0{index + 1} · Hidden Miles experience
                 </span>
               </div>
@@ -99,7 +99,7 @@ export default async function ExperiencesPage() {
                   {experience.highlights.map((highlight) => (
                     <p
                       key={highlight}
-                      className="flex items-center gap-2 text-[12px] font-bold text-stone-600"
+                      className="flex items-center gap-2 text-sm font-bold text-stone-600"
                     >
                       <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full bg-navy-100 text-navy-700">
                         <Check className="h-2.5 w-2.5" strokeWidth={3} />
@@ -110,7 +110,7 @@ export default async function ExperiencesPage() {
                 </div>
                 <Link
                   href={`/tours?experience=${experience.slug}`}
-                  className="mt-6 inline-flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-[0.16em] text-blue-700 transition hover:text-blue-800"
+                  className="mt-6 inline-flex items-center gap-2 text-sm font-extrabold uppercase tracking-[0.16em] text-blue-700 transition hover:text-blue-800"
                 >
                   View {experience.shortTitle.toLowerCase()} journeys
                   <ArrowUpRight className="h-4 w-4" />
@@ -145,7 +145,7 @@ export default async function ExperiencesPage() {
                 <h3 className="mt-4 font-display text-xl font-semibold">
                   {step.title}
                 </h3>
-                <p className="mt-2 text-[12px] leading-6 text-sand-200/65">
+                <p className="mt-2 text-sm leading-6 text-sand-200/65">
                   {step.text}
                 </p>
               </div>
@@ -196,7 +196,7 @@ export default async function ExperiencesPage() {
               <h3 className="mt-4 font-display text-xl font-semibold text-navy-950">
                 {item.title}
               </h3>
-              <p className="mt-2 text-[12px] leading-6 text-stone-500">
+              <p className="mt-2 text-sm leading-6 text-stone-500">
                 {item.text}
               </p>
             </div>

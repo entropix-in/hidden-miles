@@ -68,7 +68,7 @@ export function SearchWidget({
             <MapPin className="h-4 w-4" />
           </span>
           <span className="min-w-0 flex-1">
-            <span className="block text-[9px] font-extrabold uppercase tracking-[0.18em] text-stone-400">
+            <span className="block text-sm font-extrabold uppercase tracking-[0.18em] text-stone-400">
               Destination
             </span>
             <select
@@ -93,7 +93,7 @@ export function SearchWidget({
             <Compass className="h-4 w-4" />
           </span>
           <span className="min-w-0 flex-1">
-            <span className="block text-[9px] font-extrabold uppercase tracking-[0.18em] text-stone-400">
+            <span className="block text-sm font-extrabold uppercase tracking-[0.18em] text-stone-400">
               Travel style
             </span>
             <select
@@ -118,7 +118,7 @@ export function SearchWidget({
             <CalendarDays className="h-4 w-4" />
           </span>
           <span className="min-w-0 flex-1">
-            <span className="block text-[9px] font-extrabold uppercase tracking-[0.18em] text-stone-400">
+            <span className="block text-sm font-extrabold uppercase tracking-[0.18em] text-stone-400">
               When
             </span>
             <select
@@ -142,7 +142,7 @@ export function SearchWidget({
             <Users className="h-4 w-4" />
           </span>
           <span className="min-w-0 flex-1">
-            <span className="block text-[9px] font-extrabold uppercase tracking-[0.18em] text-stone-400">
+            <span className="block text-sm font-extrabold uppercase tracking-[0.18em] text-stone-400">
               Travellers
             </span>
             <select

@@ -60,14 +60,14 @@ export function NewsletterForm() {
         <button
           type="submit"
           disabled={status === "sending"}
-          className="inline-flex shrink-0 items-center gap-2 rounded-full bg-blue-500 px-5 py-2.5 text-xs font-extrabold uppercase tracking-wider text-white transition hover:bg-blue-400 disabled:opacity-70"
+          className="inline-flex shrink-0 items-center gap-2 rounded-full bg-blue-500 px-5 py-2.5 text-sm font-extrabold uppercase tracking-wider text-white transition hover:bg-blue-400 disabled:opacity-70"
         >
           {status === "sending" ? "Joining" : "Subscribe"}
           <ArrowRight className="h-3.5 w-3.5" />
         </button>
       </div>
       {status === "error" ? (
-        <p className="mt-2 pl-2 text-xs font-semibold text-blue-200">
+        <p className="mt-2 pl-2 text-sm font-semibold text-blue-200">
           Something went wrong. Please try again.
         </p>
       ) : null}

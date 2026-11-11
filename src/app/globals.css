@@ -70,7 +70,7 @@
   }
 
   .eyebrow {
-    @apply inline-flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-[0.22em] text-blue-700;
+    @apply inline-flex items-center gap-2 text-sm font-extrabold uppercase tracking-[0.22em] text-blue-700;
   }
 
   .btn,
@@ -102,7 +102,7 @@
   }
 
   .field-label {
-    @apply mb-2 block text-[11px] font-extrabold uppercase tracking-[0.16em] text-stone-500;
+    @apply mb-2 block text-sm font-extrabold uppercase tracking-[0.16em] text-stone-500;
   }
 
   .card-lift {

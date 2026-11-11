@@ -91,14 +91,14 @@ export function DatabaseSetupNotice({
         The admin panel is ready, but it needs MySQL before content can be
         saved. Start MySQL with Docker Compose, then run the migrations.
       </p>
-      <pre className="mt-4 overflow-x-auto rounded-2xl bg-navy-950 p-4 text-xs leading-6 text-sand-100">
+      <pre className="mt-4 overflow-x-auto rounded-2xl bg-navy-950 p-4 text-sm leading-6 text-sand-100">
 {`docker compose up -d
 pnpm db:migrate
 
 # then open
 http://localhost:3000/admin`}
       </pre>
-      <p className="mt-4 text-xs leading-5 text-stone-500">
+      <p className="mt-4 text-sm leading-5 text-stone-500">
         <Settings2 className="mr-1 inline h-3.5 w-3.5" />
         Running without Docker? Set <code className="font-bold">DB_HOST</code>,{" "}
         <code className="font-bold">DB_NAME</code>,{" "}
@@ -106,7 +106,7 @@ http://localhost:3000/admin`}
         <code className="font-bold">DB_PASSWORD</code> in your environment.
       </p>
       {error ? (
-        <p className="mt-4 rounded-xl bg-red-50 px-3 py-2 text-xs font-semibold text-red-700">
+        <p className="mt-4 rounded-xl bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
           {error}
         </p>
       ) : null}

@@ -42,7 +42,7 @@ export default async function TestimonialsPage() {
             <p className="mt-3 font-display text-3xl font-semibold text-navy-950">
               {average}
             </p>
-            <p className="mt-1 text-[10px] font-bold uppercase tracking-wider text-stone-400">
+            <p className="mt-1 text-sm font-bold uppercase tracking-wider text-stone-400">
               Guest rating
             </p>
           </div>
@@ -51,7 +51,7 @@ export default async function TestimonialsPage() {
             <p className="mt-3 font-display text-3xl font-semibold text-navy-950">
               {testimonials.length}
             </p>
-            <p className="mt-1 text-[10px] font-bold uppercase tracking-wider text-stone-400">
+            <p className="mt-1 text-sm font-bold uppercase tracking-wider text-stone-400">
               Stories
             </p>
           </div>
@@ -60,7 +60,7 @@ export default async function TestimonialsPage() {
             <p className="mt-3 font-display text-3xl font-semibold text-navy-950">
               {tours}
             </p>
-            <p className="mt-1 text-[10px] font-bold uppercase tracking-wider text-stone-400">
+            <p className="mt-1 text-sm font-bold uppercase tracking-wider text-stone-400">
               Journeys
             </p>
           </div>

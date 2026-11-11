@@ -61,7 +61,7 @@ export function TestimonialsExplorer({
             type="button"
             onClick={() => chooseTour("All stories")}
             className={cn(
-              "rounded-full border px-4 py-2 text-[11px] font-extrabold uppercase tracking-wider transition",
+              "rounded-full border px-4 py-2 text-sm font-extrabold uppercase tracking-wider transition",
               tour === "All stories"
                 ? "border-navy-950 bg-navy-950 text-sand-50"
                 : "border-stone-200 bg-white text-stone-600 hover:border-blue-400 hover:text-blue-700",
@@ -82,7 +82,7 @@ export function TestimonialsExplorer({
                 type="button"
                 onClick={() => chooseTour(item)}
                 className={cn(
-                  "rounded-full border px-4 py-2 text-[11px] font-bold transition",
+                  "rounded-full border px-4 py-2 text-sm font-bold transition",
                   tour === item
                     ? "border-blue-500 bg-blue-50 text-blue-800"
                     : "border-stone-200 bg-white text-stone-500 hover:border-blue-300 hover:text-blue-700",
@@ -98,7 +98,7 @@ export function TestimonialsExplorer({
         <div className="flex shrink-0 items-center gap-2">
           <label
             htmlFor="testimonial-sort"
-            className="text-[10px] font-extrabold uppercase tracking-wider text-stone-400"
+            className="text-sm font-extrabold uppercase tracking-wider text-stone-400"
           >
             Sort by
           </label>
@@ -109,7 +109,7 @@ export function TestimonialsExplorer({
               setSort(event.target.value);
               setVisible(PAGE_SIZE);
             }}
-            className="rounded-full border border-stone-200 bg-white px-4 py-2.5 text-[11px] font-bold text-navy-950 outline-none focus:border-blue-500"
+            className="rounded-full border border-stone-200 bg-white px-4 py-2.5 text-sm font-bold text-navy-950 outline-none focus:border-blue-500"
           >
             <option value="newest">Newest first</option>
             <option value="oldest">Oldest first</option>
@@ -118,7 +118,7 @@ export function TestimonialsExplorer({
         </div>
       </div>
 
-      <p className="mt-5 text-[11px] font-bold uppercase tracking-wider text-stone-400">
+      <p className="mt-5 text-sm font-bold uppercase tracking-wider text-stone-400">
         Showing {shown.length} of {filtered.length}{" "}
         {filtered.length === 1 ? "story" : "stories"}
       </p>
@@ -145,7 +145,7 @@ export function TestimonialsExplorer({
             </blockquote>
 
             {testimonial.tour ? (
-              <span className="mt-5 inline-flex w-fit rounded-full bg-blue-50 px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-wider text-blue-800">
+              <span className="mt-5 inline-flex w-fit rounded-full bg-blue-50 px-3 py-1.5 text-sm font-extrabold uppercase tracking-wider text-blue-800">
                 {testimonial.tour}
               </span>
             ) : null}
@@ -155,15 +155,15 @@ export function TestimonialsExplorer({
                 {testimonial.name.charAt(0)}
               </span>
               <div className="min-w-0">
-                <p className="truncate text-[13px] font-extrabold text-navy-950">
+                <p className="truncate text-sm font-extrabold text-navy-950">
                   {testimonial.name}
                 </p>
-                <p className="truncate text-[11px] font-semibold text-stone-400">
+                <p className="truncate text-sm font-semibold text-stone-400">
                   {testimonial.city || "Traveller"}
                 </p>
               </div>
               {testimonial.createdAt ? (
-                <span className="ml-auto shrink-0 text-[10px] font-bold uppercase tracking-wider text-stone-400">
+                <span className="ml-auto shrink-0 text-sm font-bold uppercase tracking-wider text-stone-400">
                   {new Intl.DateTimeFormat("en-IN", {
                     dateStyle: "medium",
                   }).format(new Date(testimonial.createdAt))}

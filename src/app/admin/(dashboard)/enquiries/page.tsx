@@ -74,7 +74,7 @@ export default async function AdminEnquiriesPage({
             className={`rounded-2xl border border-stone-200 bg-white px-4 py-3 ${statusStyles[status]}`}
           >
             <p className="text-2xl font-extrabold">{value}</p>
-            <p className="text-[10px] font-extrabold uppercase tracking-wider opacity-70">
+            <p className="text-sm font-extrabold uppercase tracking-wider opacity-70">
               {label}
             </p>
           </div>
@@ -98,17 +98,17 @@ export default async function AdminEnquiriesPage({
                         {enquiry.name}
                       </h2>
                       <span
-                        className={`rounded-full px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-wider ${statusStyles[status]}`}
+                        className={`rounded-full px-2.5 py-1 text-sm font-extrabold uppercase tracking-wider ${statusStyles[status]}`}
                       >
                         {status}
                       </span>
-                      <span className="rounded-full bg-sand-200 px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-wider text-navy-800">
+                      <span className="rounded-full bg-sand-200 px-2.5 py-1 text-sm font-extrabold uppercase tracking-wider text-navy-800">
                         {enquiry.type === "newsletter"
                           ? "Newsletter"
                           : "Enquiry"}
                       </span>
                     </div>
-                    <p className="mt-1 text-[11px] font-semibold text-stone-400">
+                    <p className="mt-1 text-sm font-semibold text-stone-400">
                       {new Intl.DateTimeFormat("en-IN", {
                         dateStyle: "medium",
                         timeStyle: "short",
@@ -125,7 +125,7 @@ export default async function AdminEnquiriesPage({
                     <select
                       name="status"
                       defaultValue={status}
-                      className="rounded-full border border-stone-200 bg-sand-50 px-3 py-2 text-[11px] font-bold text-navy-950 outline-none focus:border-blue-500"
+                      className="rounded-full border border-stone-200 bg-sand-50 px-3 py-2 text-sm font-bold text-navy-950 outline-none focus:border-blue-500"
                     >
                       <option value="new">New</option>
                       <option value="contacted">Contacted</option>
@@ -133,14 +133,14 @@ export default async function AdminEnquiriesPage({
                     </select>
                     <button
                       type="submit"
-                      className="rounded-full bg-navy-950 px-3.5 py-2 text-[10px] font-extrabold uppercase tracking-wider text-sand-50 transition hover:bg-navy-900"
+                      className="rounded-full bg-navy-950 px-3.5 py-2 text-sm font-extrabold uppercase tracking-wider text-sand-50 transition hover:bg-navy-900"
                     >
                       Save
                     </button>
                   </form>
                 </div>
 
-                <div className="mt-4 grid gap-2 text-[12px] leading-5 text-stone-600 sm:grid-cols-2 lg:grid-cols-4">
+                <div className="mt-4 grid gap-2 text-sm leading-5 text-stone-600 sm:grid-cols-2 lg:grid-cols-4">
                   <a
                     href={`mailto:${enquiry.email}`}
                     className="flex items-center gap-2 font-semibold hover:text-blue-700"
@@ -172,20 +172,20 @@ export default async function AdminEnquiriesPage({
                 </div>
 
                 {enquiry.tour ? (
-                  <p className="mt-3 inline-flex rounded-full bg-sand-100 px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-wider text-navy-800">
+                  <p className="mt-3 inline-flex rounded-full bg-sand-100 px-3 py-1.5 text-sm font-extrabold uppercase tracking-wider text-navy-800">
                     {enquiry.tour}
                   </p>
                 ) : null}
 
                 {enquiry.message ? (
-                  <p className="mt-3 rounded-2xl bg-sand-50 px-4 py-3 text-[12px] leading-6 text-stone-600">
+                  <p className="mt-3 rounded-2xl bg-sand-50 px-4 py-3 text-sm leading-6 text-stone-600">
                     {enquiry.message}
                   </p>
                 ) : null}
 
                 <Link
                   href={enquiry.email ? `mailto:${enquiry.email}` : "/admin"}
-                  className="mt-3 inline-block text-[10px] font-extrabold uppercase tracking-wider text-blue-700 hover:text-blue-800"
+                  className="mt-3 inline-block text-sm font-extrabold uppercase tracking-wider text-blue-700 hover:text-blue-800"
                 >
                   Reply by email
                 </Link>

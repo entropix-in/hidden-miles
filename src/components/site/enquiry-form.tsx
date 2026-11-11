@@ -276,12 +276,12 @@ export function EnquiryForm({
       </button>
 
       {status === "error" ? (
-        <p className="mt-3 text-center text-xs font-semibold text-red-600">
+        <p className="mt-3 text-center text-sm font-semibold text-red-600">
           We could not send that just now. Please call us on +91 98204 12345.
         </p>
       ) : null}
 
-      <p className="mt-4 text-center text-[11px] leading-5 text-stone-400">
+      <p className="mt-4 text-center text-sm leading-5 text-stone-400">
         By submitting, you agree to be contacted by a Hidden Miles travel expert.
         We never share your details.
       </p>
