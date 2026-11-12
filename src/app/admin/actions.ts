@@ -27,7 +27,7 @@ import type { Experience } from "@/data/experiences";
 import { testimonials as staticTestimonials } from "@/data/site";
 import type { Testimonial } from "@/data/site";
 import { tours as staticTours } from "@/data/tours";
-import type { Tour } from "@/data/tours";
+import type { ItineraryBadge, ItineraryBadgeKind, Tour } from "@/data/tours";
 import type { EnquiryStatus } from "@/lib/types";
 
 const enquiryStatuses: EnquiryStatus[] = ["new", "contacted", "closed"];
@@ -57,6 +57,53 @@ function getList(formData: FormData, key: string) {
     .getAll(key)
     .map((value) => String(value).trim())
     .filter(Boolean);
+}
+
+const itineraryBadgeKinds: ItineraryBadgeKind[] = [
+  "meal",
+  "stay",
+  "travel",
+  "experience",
+  "leisure",
+];
+
+function parseItineraryBadges(raw: string): ItineraryBadge[] {
+  if (!raw) return [];
+
+  try {
+    const parsed: unknown = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+
+    const badges: ItineraryBadge[] = [];
+
+    for (const item of parsed) {
+      if (!item || typeof item !== "object") continue;
+      const candidate = item as { label?: unknown; kind?: unknown };
+      const label =
+        typeof candidate.label === "string"
+          ? candidate.label.trim().slice(0, 40)
+          : "";
+      const kind = candidate.kind as ItineraryBadgeKind;
+
+      if (!label || !itineraryBadgeKinds.includes(kind)) continue;
+      if (
+        badges.some(
+          (badge) =>
+            badge.kind === kind &&
+            badge.label.toLowerCase() === label.toLowerCase(),
+        )
+      ) {
+        continue;
+      }
+
+      badges.push({ label, kind });
+      if (badges.length === 8) break;
+    }
+
+    return badges;
+  } catch {
+    return [];
+  }
 }
 
 function parseId(value: string) {
@@ -251,12 +298,14 @@ export async function saveTourAction(formData: FormData) {
     const itineraryDescriptions = formData
       .getAll("itineraryDescription")
       .map(String);
+    const itineraryBadges = formData.getAll("itineraryBadges").map(String);
 
     const itinerary = itineraryTitles
       .map((itineraryTitle, index) => ({
         day: Number(days[index]) || index + 1,
         title: itineraryTitle.trim(),
         description: (itineraryDescriptions[index] ?? "").trim(),
+        badges: parseItineraryBadges(itineraryBadges[index] ?? ""),
       }))
       .filter((item) => item.title);
 

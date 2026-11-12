@@ -1,105 +1,31 @@
 import {
   BedDouble,
   BusFront,
-  Coffee,
   Compass,
-  Footprints,
-  Mountain,
   Plus,
-  Ship,
   Sun,
   UtensilsCrossed,
-  Wine,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import type { ItineraryDay } from "@/data/tours";
+import type { ItineraryBadgeKind, ItineraryDay } from "@/data/tours";
+import { getItineraryBadges, itineraryBadgeKindLabels } from "@/lib/itinerary";
 
-type BadgeTone = "meal" | "stay" | "travel" | "experience" | "leisure";
+type BadgeTone = ItineraryBadgeKind;
 
-type BadgeRule = {
-  pattern: RegExp;
+type DisplayBadge = {
   label: string;
   icon: LucideIcon;
   tone: BadgeTone;
 };
 
-const badgeRules: BadgeRule[] = [
-  { pattern: /breakfast/i, label: "Breakfast", icon: Coffee, tone: "meal" },
-  { pattern: /lunch|sadya/i, label: "Lunch", icon: UtensilsCrossed, tone: "meal" },
-  {
-    pattern: /dinner|wazwan|seafood/i,
-    label: "Dinner",
-    icon: Wine,
-    tone: "meal",
-  },
-  {
-    pattern: /meals? (?:included|cooked|on board)|on board/i,
-    label: "Meals included",
-    icon: UtensilsCrossed,
-    tone: "meal",
-  },
-  {
-    pattern: /tea (?:estate|tasting|garden)/i,
-    label: "Tea tasting",
-    icon: Coffee,
-    tone: "meal",
-  },
-  { pattern: /houseboat/i, label: "Houseboat stay", icon: Ship, tone: "stay" },
-  {
-    pattern: /hotel|resort|homestay|heritage stay|overnight/i,
-    label: "Overnight stay",
-    icon: BedDouble,
-    tone: "stay",
-  },
-  {
-    pattern: /transfer|airport|flight|train|coach|inter-city/i,
-    label: "Transfer",
-    icon: BusFront,
-    tone: "travel",
-  },
-  {
-    pattern: /gondola|cable car/i,
-    label: "Gondola ride",
-    icon: Mountain,
-    tone: "experience",
-  },
-  {
-    pattern: /shikara/i,
-    label: "Shikara ride",
-    icon: Ship,
-    tone: "experience",
-  },
-  {
-    pattern: /cruise|boat ride|boat safari/i,
-    label: "Boat ride",
-    icon: Ship,
-    tone: "experience",
-  },
-  {
-    pattern: /safari|wildlife/i,
-    label: "Wildlife safari",
-    icon: Footprints,
-    tone: "experience",
-  },
-  {
-    pattern: /walk|trek|hike/i,
-    label: "Guided walk",
-    icon: Compass,
-    tone: "experience",
-  },
-  {
-    pattern: /workshop|performance|temple|monastery|museum|fort|palace/i,
-    label: "Culture & sights",
-    icon: Compass,
-    tone: "experience",
-  },
-  {
-    pattern: /leisure|free time|at your own pace|relaxed/i,
-    label: "Free time",
-    icon: Sun,
-    tone: "leisure",
-  },
-];
+const kindIcons: Record<BadgeTone, LucideIcon> = {
+  meal: UtensilsCrossed,
+  stay: BedDouble,
+  travel: BusFront,
+  experience: Compass,
+  leisure: Sun,
+};
+
 
 const toneStyles: Record<BadgeTone, string> = {
   meal: "border-gold-200 bg-gold-50 text-gold-800",
@@ -109,34 +35,14 @@ const toneStyles: Record<BadgeTone, string> = {
   leisure: "border-sand-300 bg-sand-100 text-stone-600",
 };
 
-function badgesFor(day: ItineraryDay) {
-  const text = `${day.title} ${day.description}`;
-  const badges: BadgeRule[] = [];
-
-  for (const rule of badgeRules) {
-    if (!rule.pattern.test(text)) continue;
-    if (badges.some((badge) => badge.label === rule.label)) continue;
-    // A houseboat already covers the stay badge for that day.
-    if (
-      rule.label === "Overnight stay" &&
-      badges.some((badge) => badge.label === "Houseboat stay")
-    ) {
-      continue;
-    }
-    badges.push(rule);
-    if (badges.length === 4) break;
-  }
-
-  if (!badges.length) {
-    badges.push({
-      pattern: /./,
-      label: "Sightseeing",
-      icon: Compass,
-      tone: "experience",
-    });
-  }
-
-  return badges;
+function badgesFor(day: ItineraryDay): DisplayBadge[] {
+  return getItineraryBadges(day)
+    .slice(0, 8)
+    .map((badge) => ({
+      label: badge.label,
+      icon: kindIcons[badge.kind] ?? Compass,
+      tone: badge.kind,
+    }));
 }
 
 export function ItineraryTimeline({ days }: { days: ItineraryDay[] }) {
@@ -178,9 +84,10 @@ export function ItineraryTimeline({ days }: { days: ItineraryDay[] }) {
                   </h3>
                   {badges.length ? (
                     <div className="mt-3 flex flex-wrap gap-1.5">
-                      {badges.map((badge) => (
+                      {badges.map((badge, badgeIndex) => (
                         <span
-                          key={badge.label}
+                          key={`${badge.label}-${badgeIndex}`}
+                          title={itineraryBadgeKindLabels[badge.tone]}
                           className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-[0.1em] ${toneStyles[badge.tone]}`}
                         >
                           <badge.icon className="h-3 w-3" strokeWidth={2.5} />

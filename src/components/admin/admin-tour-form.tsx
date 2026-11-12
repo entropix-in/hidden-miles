@@ -2,14 +2,20 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Plus, Save, Trash2 } from "lucide-react";
+import { Plus, Save, Trash2, X } from "lucide-react";
 import { saveTourAction } from "@/app/admin/actions";
 import type { AdminTour } from "@/lib/types";
+import type { ItineraryBadge, ItineraryBadgeKind } from "@/data/tours";
+import {
+  getItineraryBadges,
+  itineraryBadgeKindLabels,
+} from "@/lib/itinerary";
 
 type Day = {
   day: number;
   title: string;
   description: string;
+  badges: ItineraryBadge[];
 };
 
 type ExperienceOption = {
@@ -17,6 +23,182 @@ type ExperienceOption = {
   title: string;
   shortTitle: string;
 };
+
+const badgeToneClasses: Record<ItineraryBadgeKind, string> = {
+  meal: "border-gold-200 bg-gold-50 text-gold-800",
+  stay: "border-blue-200 bg-blue-50 text-blue-800",
+  travel: "border-navy-200 bg-navy-50 text-navy-800",
+  experience: "border-stone-200 bg-white text-stone-700",
+  leisure: "border-sand-300 bg-sand-100 text-stone-600",
+};
+
+const badgePresets: ItineraryBadge[] = [
+  { label: "Breakfast", kind: "meal" },
+  { label: "Lunch", kind: "meal" },
+  { label: "Dinner", kind: "meal" },
+  { label: "Meals included", kind: "meal" },
+  { label: "Tea tasting", kind: "meal" },
+  { label: "Overnight stay", kind: "stay" },
+  { label: "Houseboat stay", kind: "stay" },
+  { label: "Hotel stay", kind: "stay" },
+  { label: "Resort stay", kind: "stay" },
+  { label: "Transfer", kind: "travel" },
+  { label: "Flight", kind: "travel" },
+  { label: "Train", kind: "travel" },
+  { label: "Drive", kind: "travel" },
+  { label: "Sightseeing", kind: "experience" },
+  { label: "Guided walk", kind: "experience" },
+  { label: "Wildlife safari", kind: "experience" },
+  { label: "Boat ride", kind: "experience" },
+  { label: "Gondola ride", kind: "experience" },
+  { label: "Cultural site", kind: "experience" },
+  { label: "Cultural show", kind: "experience" },
+  { label: "Free time", kind: "leisure" },
+  { label: "At leisure", kind: "leisure" },
+];
+
+function DayBadges({
+  badges,
+  onChange,
+}: {
+  badges: ItineraryBadge[];
+  onChange: (badges: ItineraryBadge[]) => void;
+}) {
+  const [customLabel, setCustomLabel] = useState("");
+  const [customKind, setCustomKind] =
+    useState<ItineraryBadgeKind>("experience");
+
+  function addBadge(badge: ItineraryBadge) {
+    const label = badge.label.trim();
+    if (!label) return;
+    if (badges.length >= 8) return;
+    if (
+      badges.some(
+        (item) =>
+          item.label.toLowerCase() === label.toLowerCase() &&
+          item.kind === badge.kind,
+      )
+    ) {
+      return;
+    }
+    onChange([...badges, { label, kind: badge.kind }]);
+  }
+
+  function removeBadge(index: number) {
+    onChange(badges.filter((_, badgeIndex) => badgeIndex !== index));
+  }
+
+  return (
+    <div className="mt-2 rounded-xl border border-stone-200 bg-white p-3">
+      <input
+        type="hidden"
+        name="itineraryBadges"
+        value={JSON.stringify(badges)}
+      />
+
+      <p className="text-[11px] font-extrabold uppercase tracking-[0.16em] text-stone-400">
+        Day badges
+      </p>
+
+      {badges.length ? (
+        <div className="mt-2 flex flex-wrap gap-1.5">
+          {badges.map((badge, badgeIndex) => (
+            <span
+              key={`${badge.label}-${badgeIndex}`}
+              className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-[0.1em] ${badgeToneClasses[badge.kind]}`}
+            >
+              {badge.label}
+              <button
+                type="button"
+                onClick={() => removeBadge(badgeIndex)}
+                aria-label={`Remove ${badge.label} badge`}
+                className="grid h-3.5 w-3.5 place-items-center rounded-full transition hover:bg-black/10"
+              >
+                <X className="h-2.5 w-2.5" strokeWidth={3} />
+              </button>
+            </span>
+          ))}
+        </div>
+      ) : (
+        <p className="mt-1.5 text-sm text-stone-400">
+          No badges yet. Leave empty to auto-detect from the description.
+        </p>
+      )}
+
+      <div className="mt-3 flex flex-wrap gap-2">
+        <select
+          value=""
+          onChange={(event) => {
+            const preset = badgePresets.find(
+              (item) =>
+                `${item.kind}:${item.label}` === event.target.value,
+            );
+            if (preset) addBadge(preset);
+            event.target.value = "";
+          }}
+          aria-label="Add a preset badge"
+          className="field h-10 w-full py-0 text-sm sm:w-48"
+        >
+          <option value="">Add a badge…</option>
+          {(Object.keys(itineraryBadgeKindLabels) as ItineraryBadgeKind[]).map(
+            (kind) => (
+              <optgroup key={kind} label={itineraryBadgeKindLabels[kind]}>
+                {badgePresets
+                  .filter((preset) => preset.kind === kind)
+                  .map((preset) => (
+                    <option
+                      key={`${kind}:${preset.label}`}
+                      value={`${kind}:${preset.label}`}
+                    >
+                      {preset.label}
+                    </option>
+                  ))}
+              </optgroup>
+            ),
+          )}
+        </select>
+
+        <input
+          value={customLabel}
+          onChange={(event) => setCustomLabel(event.target.value)}
+          placeholder="Custom badge"
+          aria-label="Custom badge label"
+          maxLength={40}
+          className="field h-10 min-w-36 flex-1 py-0 text-sm"
+        />
+        <select
+          value={customKind}
+          onChange={(event) =>
+            setCustomKind(event.target.value as ItineraryBadgeKind)
+          }
+          aria-label="Custom badge type"
+          className="field h-10 w-full py-0 text-sm sm:w-40"
+        >
+          {(Object.keys(itineraryBadgeKindLabels) as ItineraryBadgeKind[]).map(
+            (kind) => (
+              <option key={kind} value={kind}>
+                {itineraryBadgeKindLabels[kind]}
+              </option>
+            ),
+          )}
+        </select>
+        <button
+          type="button"
+          onClick={() => {
+            addBadge({ label: customLabel, kind: customKind });
+            setCustomLabel("");
+          }}
+          disabled={!customLabel.trim() || badges.length >= 8}
+          className="inline-flex h-10 items-center gap-1.5 rounded-xl border border-stone-200 bg-sand-50 px-4 text-sm font-extrabold uppercase tracking-wider text-navy-950 transition hover:border-blue-400 disabled:cursor-not-allowed disabled:opacity-40"
+        >
+          <Plus className="h-3.5 w-3.5" />
+          Add
+        </button>
+      </div>
+    </div>
+  );
+}
+
 
 export function AdminTourForm({
   tour,
@@ -27,11 +209,20 @@ export function AdminTourForm({
 }) {
   const [itinerary, setItinerary] = useState<Day[]>(
     tour?.itinerary?.length
-      ? tour.itinerary
-      : [{ day: 1, title: "", description: "" }],
+      ? tour.itinerary.map((day) => ({
+          day: day.day,
+          title: day.title,
+          description: day.description,
+          badges: getItineraryBadges(day),
+        }))
+      : [{ day: 1, title: "", description: "", badges: [] }],
   );
 
-  function updateDay(index: number, field: keyof Day, value: string) {
+  function updateDay(
+    index: number,
+    field: "day" | "title" | "description",
+    value: string,
+  ) {
     setItinerary((days) =>
       days.map((day, dayIndex) =>
         dayIndex === index
@@ -44,10 +235,18 @@ export function AdminTourForm({
     );
   }
 
+  function updateDayBadges(index: number, badges: ItineraryBadge[]) {
+    setItinerary((days) =>
+      days.map((day, dayIndex) =>
+        dayIndex === index ? { ...day, badges } : day,
+      ),
+    );
+  }
+
   function addDay() {
     setItinerary((days) => [
       ...days,
-      { day: days.length + 1, title: "", description: "" },
+      { day: days.length + 1, title: "", description: "", badges: [] },
     ]);
   }
 
@@ -392,6 +591,10 @@ export function AdminTourForm({
             <h2 className="mt-2 font-display text-2xl font-semibold text-navy-950">
               Itinerary
             </h2>
+            <p className="mt-1 text-sm text-stone-400">
+              Add badges for meals, stay, travel and activities. These appear
+              on the public day-by-day timeline.
+            </p>
           </div>
           <button
             type="button"
@@ -450,6 +653,10 @@ export function AdminTourForm({
                 aria-label={`Day description for itinerary row ${index + 1}`}
                 rows={2}
                 className="field mt-2 resize-none"
+              />
+              <DayBadges
+                badges={day.badges}
+                onChange={(badges) => updateDayBadges(index, badges)}
               />
             </div>
           ))}

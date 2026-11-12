@@ -44,7 +44,15 @@ export const tours = mysqlTable(
     inclusions: json("inclusions").$type<string[]>().notNull(),
     exclusions: json("exclusions").$type<string[]>().notNull(),
     itinerary: json("itinerary").$type<
-      Array<{ day: number; title: string; description: string }>
+      Array<{
+        day: number;
+        title: string;
+        description: string;
+        badges?: Array<{
+          label: string;
+          kind: "meal" | "stay" | "travel" | "experience" | "leisure";
+        }>;
+      }>
     >().notNull(),
     featured: tinyint("featured").notNull().default(0),
     createdAt: timestamp("created_at").notNull().defaultNow(),

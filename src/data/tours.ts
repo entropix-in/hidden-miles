@@ -1,7 +1,20 @@
+export type ItineraryBadgeKind =
+  | "meal"
+  | "stay"
+  | "travel"
+  | "experience"
+  | "leisure";
+
+export type ItineraryBadge = {
+  label: string;
+  kind: ItineraryBadgeKind;
+};
+
 export type ItineraryDay = {
   day: number;
   title: string;
   description: string;
+  badges?: ItineraryBadge[];
 };
 
 export type Tour = {
