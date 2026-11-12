@@ -12,6 +12,8 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
+    "db:seed": "tsx scripts/seed.ts",
+    "db:seed:force": "tsx scripts/seed.ts --force",
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
@@ -31,6 +33,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.4.5",
     "tailwindcss": "^4.3.5",
+    "tsx": "^4.23.15",
     "typescript": "^5"
   },
   "volta": {

@@ -16,21 +16,25 @@ import {
   destinations as destinationsTable,
   enquiries as enquiriesTable,
   experiences as experiencesTable,
-  settings,
   testimonials as testimonialsTable,
   tourDepartures as tourDeparturesTable,
   tours as toursTable,
 } from "@/db/schema";
 import { slugify } from "@/lib/utils";
-import { destinations as staticDestinations } from "@/data/destinations";
 import type { Destination } from "@/data/destinations";
-import { experiences as staticExperiences } from "@/data/experiences";
 import type { Experience } from "@/data/experiences";
-import { testimonials as staticTestimonials } from "@/data/site";
 import type { Testimonial } from "@/data/site";
-import { tours as staticTours } from "@/data/tours";
 import type { ItineraryBadge, ItineraryBadgeKind, Tour } from "@/data/tours";
 import type { EnquiryStatus } from "@/lib/types";
+import {
+  ensureContentSeeded,
+  markContentSeeded,
+  seedStaticContent,
+  destinationValues,
+  experienceValues,
+  testimonialValues,
+  tourValues,
+} from "@/lib/seed";
 
 const enquiryStatuses: EnquiryStatus[] = ["new", "contacted", "closed"];
 
@@ -151,115 +155,6 @@ function revalidateContent() {
   revalidatePath("/sitemap.xml");
 }
 
-function tourValues(tour: Tour) {
-  return {
-    slug: tour.slug,
-    title: tour.title,
-    destinationSlug: tour.destinationSlug,
-    destinationName: tour.destinationName,
-    region: tour.region,
-    experiences: tour.experiences,
-    image: tour.image,
-    nights: tour.nights,
-    days: tour.days,
-    price: tour.price,
-    oldPrice: tour.oldPrice ?? null,
-    rating: String(tour.rating),
-    reviews: tour.reviews,
-    badge: tour.badge ?? null,
-    departure: tour.departure,
-    groupSize: tour.groupSize,
-    summary: tour.summary,
-    highlights: tour.highlights,
-    inclusions: tour.inclusions,
-    exclusions: tour.exclusions,
-    itinerary: tour.itinerary,
-    featured: tour.featured ? 1 : 0,
-  } satisfies typeof toursTable.$inferInsert;
-}
-
-function destinationValues(destination: Destination) {
-  return {
-    slug: destination.slug,
-    name: destination.name,
-    region: destination.region,
-    tagline: destination.tagline,
-    description: destination.description,
-    image: destination.image,
-    bestTime: destination.bestTime,
-    highlights: destination.highlights,
-  } satisfies typeof destinationsTable.$inferInsert;
-}
-
-function experienceValues(experience: Experience) {
-  return {
-    slug: experience.slug,
-    title: experience.title,
-    shortTitle: experience.shortTitle,
-    description: experience.description,
-    image: experience.image,
-    icon: experience.icon,
-    highlights: experience.highlights,
-  } satisfies typeof experiencesTable.$inferInsert;
-}
-
-function testimonialValues(testimonial: Testimonial) {
-  return {
-    name: testimonial.name,
-    city: testimonial.city,
-    tour: testimonial.tour,
-    rating: testimonial.rating,
-    quote: testimonial.quote,
-  } satisfies typeof testimonialsTable.$inferInsert;
-}
-
-async function seedAll(db: AppDb) {
-  for (const destination of staticDestinations) {
-    await db
-      .insert(destinationsTable)
-      .ignore()
-      .values(destinationValues(destination));
-  }
-
-  for (const experience of staticExperiences) {
-    await db
-      .insert(experiencesTable)
-      .ignore()
-      .values(experienceValues(experience));
-  }
-
-  for (const testimonial of staticTestimonials) {
-    await db
-      .insert(testimonialsTable)
-      .ignore()
-      .values(testimonialValues(testimonial));
-  }
-
-  for (const tour of staticTours) {
-    await db.insert(toursTable).ignore().values(tourValues(tour));
-  }
-}
-
-async function markSeeded(db: AppDb) {
-  await db
-    .insert(settings)
-    .values({ settingKey: "content", seeded: 1 })
-    .onDuplicateKeyUpdate({ set: { seeded: 1 } });
-}
-
-async function ensureSeeded(db: AppDb) {
-  const rows = await db
-    .select({ seeded: settings.seeded })
-    .from(settings)
-    .where(eq(settings.settingKey, "content"))
-    .limit(1);
-
-  if (rows[0]?.seeded) return;
-
-  await seedAll(db);
-  await markSeeded(db);
-}
-
 export async function loginAction(formData: FormData) {
   if (!adminConfigured()) {
     redirect(
@@ -348,7 +243,7 @@ export async function saveTourAction(formData: FormData) {
       featured: getBoolean(formData, "featured"),
     };
 
-    await ensureSeeded(db);
+    await ensureContentSeeded(db);
 
     if (id) {
       const numericId = parseId(id);
@@ -418,7 +313,7 @@ export async function saveDestinationAction(formData: FormData) {
       highlights: getLines(formData, "highlights"),
     };
 
-    await ensureSeeded(db);
+    await ensureContentSeeded(db);
 
     if (id) {
       const numericId = parseId(id);
@@ -515,7 +410,7 @@ export async function saveExperienceAction(formData: FormData) {
       highlights: getLines(formData, "highlights"),
     };
 
-    await ensureSeeded(db);
+    await ensureContentSeeded(db);
 
     if (id) {
       const numericId = parseId(id);
@@ -580,7 +475,7 @@ export async function saveTestimonialAction(formData: FormData) {
       quote: getString(formData, "quote"),
     };
 
-    await ensureSeeded(db);
+    await ensureContentSeeded(db);
 
     if (id) {
       const numericId = parseId(id);
@@ -661,8 +556,8 @@ export async function seedContentAction() {
 
   try {
     const db = requireDb();
-    await seedAll(db);
-    await markSeeded(db);
+    await seedStaticContent(db);
+    await markContentSeeded(db);
   } catch (error) {
     fail("/admin", error);
   }
@@ -714,7 +609,7 @@ export async function saveDepartureAction(formData: FormData) {
     if (price <= 0) throw new Error("Price must be greater than zero.");
     if (capacity <= 0) throw new Error("Travellers allowed must be at least 1.");
 
-    await ensureSeeded(db);
+    await ensureContentSeeded(db);
 
     if (id) {
       const numericId = parseId(id);
