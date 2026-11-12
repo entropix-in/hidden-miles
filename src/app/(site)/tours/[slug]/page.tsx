@@ -55,6 +55,17 @@ export async function generateMetadata({
   };
 }
 
+const departureDateFormatter = new Intl.DateTimeFormat("en-IN", {
+  day: "numeric",
+  month: "short",
+  year: "numeric",
+  timeZone: "UTC",
+});
+
+function formatDepartureDate(value: string) {
+  return departureDateFormatter.format(new Date(`${value}T00:00:00Z`));
+}
+
 const goodToKnow = [
   {
     icon: Clock,
@@ -106,12 +117,7 @@ export default async function TourDetailPage({
     : tour.price;
   const emi = Math.round(fromPrice / 12);
   const nextDepartureLabel = nextDeparture
-    ? new Intl.DateTimeFormat("en-IN", {
-        day: "numeric",
-        month: "short",
-        year: "numeric",
-        timeZone: "UTC",
-      }).format(new Date(`${nextDeparture.startDate}T00:00:00Z`))
+    ? formatDepartureDate(nextDeparture.startDate)
     : tour.departure;
 
   return (
@@ -376,6 +382,36 @@ export default async function TourDetailPage({
                   {formatINR(Math.round(fromPrice * 0.25))}
                 </span>
               </div>
+
+              {departures.length ? (
+                <div className="rounded-2xl border border-stone-200 bg-sand-50 p-3">
+                  <p className="text-sm font-extrabold uppercase tracking-wider text-stone-500">
+                    Available dates
+                  </p>
+                  <div className="mt-2 space-y-1.5">
+                    {departures.slice(0, 4).map((departure) => (
+                      <Link
+                        key={departure._id}
+                        href="#book"
+                        className="flex items-center justify-between gap-2 text-sm font-semibold text-stone-600 transition hover:text-blue-700"
+                      >
+                        <span className="inline-flex items-center gap-1.5">
+                          <CalendarDays className="h-3.5 w-3.5 text-blue-600" />
+                          {formatDepartureDate(departure.startDate)}
+                        </span>
+                        <span className="font-bold text-navy-950">
+                          {formatINR(departure.price)}
+                        </span>
+                      </Link>
+                    ))}
+                  </div>
+                  {departures.length > 4 ? (
+                    <p className="mt-2 text-sm font-semibold text-stone-400">
+                      +{departures.length - 4} more dates
+                    </p>
+                  ) : null}
+                </div>
+              ) : null}
 
               <div className="grid gap-2 pt-2">
                 <Link href="#book" className="btn-primary w-full">

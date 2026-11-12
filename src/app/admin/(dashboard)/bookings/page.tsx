@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { CalendarDays, IndianRupee, Ticket, Users } from "lucide-react";
 import { AdminDeleteButton } from "@/components/admin/admin-delete-button";
+import { DepartureCalendar } from "@/components/admin/departure-calendar";
 import {
   AdminEmptyState,
   AdminNotice,
@@ -153,7 +154,7 @@ export default async function AdminBookingsPage({
               <section className="mt-8 rounded-[28px] border border-stone-200 bg-white p-5 sm:p-6">
                 <div className="flex flex-wrap items-end justify-between gap-3">
                   <div>
-                    <p className="eyebrow">2. Add a date</p>
+                    <p className="eyebrow">2. Add dates</p>
                     <h2 className="mt-1 font-display text-2xl font-semibold text-navy-950">
                       {selectedTour.title}
                     </h2>
@@ -165,55 +166,56 @@ export default async function AdminBookingsPage({
 
                 <form
                   action={saveDepartureAction}
-                  className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_1.4fr_auto]"
+                  className="mt-4 grid gap-4 lg:grid-cols-[1.1fr_1fr]"
                 >
                   <input type="hidden" name="tourSlug" value={selectedTour.slug} />
                   <input type="hidden" name="returnTo" value={returnTo} />
 
-                  <label>
-                    <span className="field-label">Departure date</span>
-                    <input
-                      type="date"
-                      name="startDate"
-                      required
-                      min={today}
-                      className="field py-2.5"
-                    />
-                  </label>
-                  <label>
-                    <span className="field-label">Price per person</span>
-                    <input
-                      type="number"
-                      name="price"
-                      required
-                      min="1"
-                      defaultValue={selectedTour.price}
-                      className="field py-2.5"
-                    />
-                  </label>
-                  <label>
-                    <span className="field-label">Seats / capacity</span>
-                    <input
-                      type="number"
-                      name="capacity"
-                      required
-                      min="1"
-                      defaultValue={20}
-                      className="field py-2.5"
-                    />
-                  </label>
-                  <label>
-                    <span className="field-label">Note (optional)</span>
-                    <input
-                      name="note"
-                      placeholder="Diwali special"
-                      className="field py-2.5"
-                    />
-                  </label>
-                  <div className="flex items-end">
-                    <button type="submit" className="btn-primary w-full py-2.5">
+                  <DepartureCalendar minDate={today} />
+
+                  <div className="grid content-start gap-3">
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <label>
+                        <span className="field-label">Price per person</span>
+                        <input
+                          type="number"
+                          name="price"
+                          required
+                          min="1"
+                          defaultValue={selectedTour.price}
+                          className="field py-2.5"
+                        />
+                      </label>
+                      <label>
+                        <span className="field-label">Travellers allowed</span>
+                        <input
+                          type="number"
+                          name="capacity"
+                          required
+                          min="1"
+                          defaultValue={20}
+                          className="field py-2.5"
+                        />
+                        <span className="mt-1 block text-sm text-stone-400">
+                          Maximum seats on each selected date.
+                        </span>
+                      </label>
+                    </div>
+                    <label>
+                      <span className="field-label">Note (optional)</span>
+                      <input
+                        name="note"
+                        placeholder="Diwali special"
+                        className="field py-2.5"
+                      />
+                    </label>
+                    <div className="rounded-2xl bg-sand-100 p-3 text-sm leading-5 text-stone-500">
+                      Every selected date gets the same price and traveller
+                      limit. You can edit each date afterwards.
+                    </div>
+                    <button type="submit" className="btn-primary w-full">
                       <Ticket className="h-4 w-4" />
-                      Add date
+                      Add selected dates
                     </button>
                   </div>
                 </form>
@@ -228,10 +230,17 @@ export default async function AdminBookingsPage({
                     {departures.length} dates
                   </span>
                 </div>
+                <p className="mt-1 text-sm text-stone-400">
+                  Only today and future dates appear on the website. Past dates
+                  stay here for your records.
+                </p>
 
                 {departures.length ? (
                   <div className="mt-3 space-y-2">
-                    {departures.map((departure) => (
+                    {departures.map((departure) => {
+                      const isPast = departure.startDate < today;
+
+                      return (
                       <article
                         key={departure._id}
                         className="rounded-2xl border border-stone-200 bg-white p-3 sm:p-4"
@@ -275,7 +284,7 @@ export default async function AdminBookingsPage({
                               />
                             </label>
                             <label>
-                              <span className="field-label">Seats</span>
+                              <span className="field-label">Travellers</span>
                               <input
                                 type="number"
                                 name="capacity"
@@ -305,6 +314,11 @@ export default async function AdminBookingsPage({
                           </form>
 
                           <div className="flex shrink-0 flex-wrap items-center gap-2 lg:pb-0.5">
+                            {isPast ? (
+                              <span className="rounded-full bg-stone-200 px-3 py-1.5 text-sm font-extrabold uppercase tracking-wider text-stone-500">
+                                Past
+                              </span>
+                            ) : null}
                             <span className="inline-flex items-center gap-1.5 rounded-full bg-sand-100 px-3 py-1.5 text-sm font-bold text-stone-600">
                               <Users className="h-3.5 w-3.5 text-blue-600" />
                               {departure.booked}/{departure.capacity} booked ·{" "}
@@ -324,7 +338,8 @@ export default async function AdminBookingsPage({
                           </div>
                         </div>
                       </article>
-                    ))}
+                      );
+                    })}
                   </div>
                 ) : (
                   <div className="mt-3 rounded-2xl border border-dashed border-stone-300 bg-white px-5 py-8 text-center">

@@ -690,19 +690,29 @@ export async function saveDepartureAction(formData: FormData) {
   const tourSlug = getString(formData, "tourSlug");
   const backPath = bookingsBackPath(formData);
 
+  let message = "Departure saved.";
+
   try {
     const db = requireDb();
-    const startDate = getString(formData, "startDate");
+    const dates = [
+      ...new Set(
+        formData
+          .getAll("startDate")
+          .map((value) => String(value).trim())
+          .filter(Boolean),
+      ),
+    ].sort();
     const price = getNumber(formData, "price");
     const capacity = getNumber(formData, "capacity", 20);
     const note = getString(formData, "note");
 
     if (!tourSlug) throw new Error("Choose a tour package first.");
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(startDate)) {
-      throw new Error("Choose a valid departure date.");
+    if (!dates.length) throw new Error("Choose at least one departure date.");
+    if (dates.some((startDate) => !/^\d{4}-\d{2}-\d{2}$/.test(startDate))) {
+      throw new Error("Choose valid departure dates.");
     }
     if (price <= 0) throw new Error("Price must be greater than zero.");
-    if (capacity <= 0) throw new Error("Capacity must be at least 1.");
+    if (capacity <= 0) throw new Error("Travellers allowed must be at least 1.");
 
     await ensureSeeded(db);
 
@@ -719,34 +729,50 @@ export async function saveDepartureAction(formData: FormData) {
         .update(tourDeparturesTable)
         .set({
           tourSlug,
-          startDate,
+          startDate: dates[0],
           price,
           capacity,
           note: note || null,
         })
         .where(eq(tourDeparturesTable.id, numericId));
+
+      message = "Departure updated.";
     } else {
-      const [duplicate] = await db
-        .select({ id: tourDeparturesTable.id })
+      const existingRows = await db
+        .select({ startDate: tourDeparturesTable.startDate })
         .from(tourDeparturesTable)
-        .where(
-          and(
-            eq(tourDeparturesTable.tourSlug, tourSlug),
-            eq(tourDeparturesTable.startDate, startDate),
-          ),
-        )
-        .limit(1);
-      if (duplicate) {
-        throw new Error("A departure already exists on that date.");
+        .where(eq(tourDeparturesTable.tourSlug, tourSlug));
+      const existingDates = new Set(
+        existingRows.map((row) => String(row.startDate)),
+      );
+      const datesToAdd = dates.filter(
+        (startDate) => !existingDates.has(startDate),
+      );
+
+      if (!datesToAdd.length) {
+        throw new Error("Those dates already exist for this tour.");
       }
 
-      await db.insert(tourDeparturesTable).values({
-        tourSlug,
-        startDate,
-        price,
-        capacity,
-        note: note || null,
-      });
+      await db.insert(tourDeparturesTable).values(
+        datesToAdd.map((startDate) => ({
+          tourSlug,
+          startDate,
+          price,
+          capacity,
+          note: note || null,
+        })),
+      );
+
+      const skipped = dates.length - datesToAdd.length;
+      message = `${datesToAdd.length} ${
+        datesToAdd.length === 1 ? "date" : "dates"
+      } added.${
+        skipped
+          ? ` ${skipped} already existed and ${
+              skipped === 1 ? "was" : "were"
+            } skipped.`
+          : ""
+      }`;
     }
   } catch (error) {
     fail(backPath, error);
@@ -754,7 +780,7 @@ export async function saveDepartureAction(formData: FormData) {
 
   revalidatePath(`/tours/${tourSlug}`);
   revalidatePath("/admin/bookings");
-  succeed(backPath, id ? "Departure updated." : "Departure added.");
+  succeed(backPath, message);
 }
 
 export async function deleteDepartureAction(formData: FormData) {
