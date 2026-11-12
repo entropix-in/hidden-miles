@@ -109,8 +109,6 @@ export const navLinks: NavLink[] = [
   { label: "Destinations", href: "/destinations" },
   { label: "Personalised", href: "/personalised" },
   { label: "Corporate", href: "/corporate" },
-  { label: "Cruise", href: "/cruise" },
-  { label: "Deals", href: "/deals" },
   {
     label: "More",
     href: "/about",

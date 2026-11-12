@@ -10,8 +10,6 @@ const exploreLinks = [
   { label: "Speciality tours", href: "/speciality-tours" },
   { label: "Personalised holidays", href: "/personalised" },
   { label: "Corporate tours", href: "/corporate" },
-  { label: "Cruises", href: "/cruise" },
-  { label: "Deals & offers", href: "/deals" },
   { label: "Destinations", href: "/destinations" },
   { label: "Experiences", href: "/experiences" },
   { label: "Guest stories", href: "/testimonials" },
