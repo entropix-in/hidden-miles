@@ -51,12 +51,12 @@ export function TourCard({ tour, priority = false }: { tour: Tour; priority?: bo
           {tour.summary}
         </p>
 
-        <div className="mt-auto flex items-end justify-between gap-3 border-t border-dashed border-stone-200 pt-4">
-          <div>
+        <div className="mt-auto flex flex-wrap items-end justify-between gap-x-3 gap-y-2.5 border-t border-dashed border-stone-200 pt-4">
+          <div className="min-w-0">
             <p className="text-sm font-bold uppercase tracking-wider text-stone-400">
               Starting from
             </p>
-            <p className="mt-0.5 flex items-baseline gap-2">
+            <p className="mt-0.5 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
               <span className="font-display text-xl font-semibold text-navy-950">
                 {formatINR(tour.price)}
               </span>
@@ -71,7 +71,7 @@ export function TourCard({ tour, priority = false }: { tour: Tour; priority?: bo
           <Link
             href={`/tours/${tour.slug}#book`}
             aria-label={`Book ${tour.title}`}
-            className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-blue-600 px-4 py-2.5 text-sm font-extrabold uppercase tracking-wider text-white transition duration-300 hover:bg-blue-700"
+            className="ml-auto inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full bg-blue-600 px-4 py-2.5 text-sm font-extrabold uppercase tracking-wider text-white transition duration-300 hover:bg-blue-700"
           >
             Book now
             <ArrowUpRight className="h-3.5 w-3.5" />
