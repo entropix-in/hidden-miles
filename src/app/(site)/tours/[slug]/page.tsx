@@ -13,7 +13,6 @@ import {
   MapPin,
   MessageCircle,
   Phone,
-  Plus,
   ShieldCheck,
   Star,
   Users,
@@ -21,6 +20,7 @@ import {
 } from "lucide-react";
 import { Breadcrumbs } from "@/components/site/breadcrumbs";
 import { EnquiryForm } from "@/components/site/enquiry-form";
+import { ItineraryTimeline } from "@/components/site/itinerary-timeline";
 import { SectionHeading } from "@/components/site/section-heading";
 import { TourCard } from "@/components/site/tour-card";
 import { loadDestinations, loadTour, loadTours } from "@/lib/content";
@@ -213,29 +213,8 @@ export default async function TourDetailPage({
             <h2 className="mt-2 font-display text-3xl font-medium text-navy-950">
               Your itinerary
             </h2>
-            <div className="mt-6 space-y-3">
-              {tour.itinerary.map((day, index) => (
-                <details
-                  key={day.day}
-                  open={index === 0}
-                  className="group overflow-hidden rounded-3xl border border-stone-200 bg-white"
-                >
-                  <summary className="flex cursor-pointer list-none items-center gap-4 p-5 [&::-webkit-details-marker]:hidden">
-                    <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-navy-950 text-sm font-extrabold uppercase tracking-wider text-blue-300">
-                      Day {day.day}
-                    </span>
-                    <span className="flex-1 font-display text-lg font-semibold text-navy-950">
-                      {day.title}
-                    </span>
-                    <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-sand-100 text-navy-950 transition duration-300 group-open:rotate-45">
-                      <Plus className="h-4 w-4" />
-                    </span>
-                  </summary>
-                  <p className="px-5 pb-5 text-sm leading-7 text-stone-600 sm:pl-20">
-                    {day.description}
-                  </p>
-                </details>
-              ))}
+            <div className="mt-6">
+              <ItineraryTimeline days={tour.itinerary} />
             </div>
           </section>
 
