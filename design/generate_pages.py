@@ -1232,7 +1232,7 @@ def p_contact(x):
     hl = V(hh, "Left", gap=24, w=380, sh="fixed")
     kicker(hl, None, "Good to know")
     headline(hl, "Questions,", "answered.", "h2")
-    T(hl, "Can't find yours? Call us — it's what we're here for.", "body", INK2)
+    T(hl, "Can't find yours? Call us — it's what we're here for.", "body", INK2, sizingH="fill")
     faq(hh, [("How do I book a Hidden Miles holiday?", "Pick a departure online and pay 25% to reserve, or call us and we'll book it for you. The balance is due 30 days before travel."),
              ("Can you customise an existing tour?", ""), ("Do you handle visas and travel insurance?", ""), ("What if my plans change after booking?", ""), ("Is there an EMI option?", "")])
     footer(pg)
