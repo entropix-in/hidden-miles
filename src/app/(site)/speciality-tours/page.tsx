@@ -72,55 +72,61 @@ export default async function SpecialityToursPage() {
         />
 
         <div className="mt-10 grid gap-5 lg:grid-cols-2">
-          {specialities.map((experience, index) => (
-            <article
-              key={experience.slug}
-              className="group overflow-hidden rounded-[32px] border border-stone-200 bg-white shadow-[0_14px_50px_-38px_rgba(6,42,38,0.5)] transition duration-500 hover:-translate-y-1"
-            >
-              <div className="relative aspect-[16/9] overflow-hidden">
-                <Image
-                  src={imageUrl(experience.image, 1200)}
-                  alt={experience.title}
-                  fill
-                  priority={index < 2}
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                  className="object-cover transition duration-700 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-navy-950/60 via-transparent to-transparent" />
-                <span className="absolute bottom-5 left-5 inline-flex items-center gap-2 rounded-full bg-white/95 px-4 py-2 text-sm font-extrabold uppercase tracking-wider text-navy-950 backdrop-blur">
-                  <ExperienceIcon icon={experience.icon} className="h-4 w-4" />
-                  {experience.shortTitle}
-                </span>
-              </div>
+          {specialities.map((experience, index) => {
+            const href = `/speciality-tours/${experience.slug}`;
 
-              <div className="p-6">
-                <h2 className="font-display text-2xl font-semibold text-navy-950">
-                  {experience.title}
-                </h2>
-                <p className="mt-3 text-sm leading-7 text-stone-600">
-                  {experience.description}
-                </p>
-                <ul className="mt-4 flex flex-wrap gap-2">
-                  {experience.highlights.map((highlight) => (
-                    <li
-                      key={highlight}
-                      className="inline-flex items-center gap-1.5 rounded-full bg-sand-100 px-3 py-1.5 text-sm font-semibold text-stone-600"
-                    >
-                      <Check className="h-3.5 w-3.5 text-blue-600" />
-                      {highlight}
-                    </li>
-                  ))}
-                </ul>
-                <Link
-                  href={`/tours?experience=${experience.slug}`}
-                  className="mt-6 inline-flex items-center gap-2 text-sm font-extrabold text-navy-950 transition hover:text-blue-700"
-                >
-                  Explore {experience.shortTitle} tours
-                  <ArrowUpRight className="h-4 w-4" />
+            return (
+              <article
+                key={experience.slug}
+                className="group overflow-hidden rounded-[32px] border border-stone-200 bg-white shadow-[0_14px_50px_-38px_rgba(6,42,38,0.5)] transition duration-500 hover:-translate-y-1"
+              >
+                <Link href={href} className="block">
+                  <div className="relative aspect-[16/9] overflow-hidden">
+                    <Image
+                      src={imageUrl(experience.image, 1200)}
+                      alt={experience.title}
+                      fill
+                      priority={index < 2}
+                      sizes="(max-width: 1024px) 100vw, 50vw"
+                      className="object-cover transition duration-700 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-navy-950/60 via-transparent to-transparent" />
+                    <span className="absolute bottom-5 left-5 inline-flex items-center gap-2 rounded-full bg-white/95 px-4 py-2 text-sm font-extrabold uppercase tracking-wider text-navy-950 backdrop-blur">
+                      <ExperienceIcon
+                        icon={experience.icon}
+                        className="h-4 w-4"
+                      />
+                      {experience.shortTitle}
+                    </span>
+                  </div>
+
+                  <div className="p-6">
+                    <h2 className="font-display text-2xl font-semibold text-navy-950">
+                      {experience.title}
+                    </h2>
+                    <p className="mt-3 text-sm leading-7 text-stone-600">
+                      {experience.description}
+                    </p>
+                    <ul className="mt-4 flex flex-wrap gap-2">
+                      {experience.highlights.map((highlight) => (
+                        <li
+                          key={highlight}
+                          className="inline-flex items-center gap-1.5 rounded-full bg-sand-100 px-3 py-1.5 text-sm font-semibold text-stone-600"
+                        >
+                          <Check className="h-3.5 w-3.5 text-blue-600" />
+                          {highlight}
+                        </li>
+                      ))}
+                    </ul>
+                    <span className="mt-6 inline-flex items-center gap-2 text-sm font-extrabold text-navy-950 transition group-hover:text-blue-700">
+                      Explore {experience.shortTitle} tours
+                      <ArrowUpRight className="h-4 w-4" />
+                    </span>
+                  </div>
                 </Link>
-              </div>
-            </article>
-          ))}
+              </article>
+            );
+          })}
         </div>
       </section>
 

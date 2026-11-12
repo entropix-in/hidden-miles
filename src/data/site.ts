@@ -72,32 +72,32 @@ export const navLinks: NavLink[] = [
     children: [
       {
         label: "Women's Special",
-        href: "/tours?experience=women",
+        href: "/speciality-tours/women",
         description: "Safe, welcoming women-only groups",
       },
       {
         label: "Honeymoons & Celebrations",
-        href: "/tours?experience=honeymoon",
+        href: "/speciality-tours/honeymoon",
         description: "Private villas and romantic escapes",
       },
       {
         label: "Spiritual Journeys",
-        href: "/tours?experience=spiritual",
+        href: "/speciality-tours/spiritual",
         description: "Temple trails and meaningful yatras",
       },
       {
         label: "Family Holidays",
-        href: "/tours?experience=family",
+        href: "/speciality-tours/family",
         description: "Easy pacing for every generation",
       },
       {
         label: "Himalayan Adventures",
-        href: "/tours?experience=adventure",
+        href: "/speciality-tours/adventure",
         description: "High passes and small groups",
       },
       {
         label: "Luxury Escapes",
-        href: "/tours?experience=luxury",
+        href: "/speciality-tours/luxury",
         description: "Five-star stays and private guides",
       },
       {

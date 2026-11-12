@@ -1,13 +1,14 @@
 import type { MetadataRoute } from "next";
-import { loadDestinations, loadTours } from "@/lib/content";
+import { loadDestinations, loadExperiences, loadTours } from "@/lib/content";
 import { site } from "@/data/site";
 
 export const dynamic = "force-dynamic";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [tours, destinations] = await Promise.all([
+  const [tours, destinations, experiences] = await Promise.all([
     loadTours(),
     loadDestinations(),
+    loadExperiences(),
   ]);
 
   const staticPages = [
@@ -42,5 +43,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  return [...staticPages, ...tourPages, ...destinationPages];
+  const specialityPages = experiences.map((experience) => ({
+    url: `${site.url}/speciality-tours/${experience.slug}`,
+    lastModified: new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.7,
+  }));
+
+  return [
+    ...staticPages,
+    ...tourPages,
+    ...destinationPages,
+    ...specialityPages,
+  ];
 }
