@@ -1,0 +1,4 @@
+# design generators (local only)
+*.py
+__pycache__/
+.gen/
