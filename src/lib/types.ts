@@ -32,6 +32,36 @@ export type Enquiry = {
 
 export type AdminEnquiry = Enquiry & DatabaseDoc;
 
+export type BookingStatus = "pending" | "confirmed" | "cancelled";
+
+export type TourDeparture = {
+  _id: string;
+  tourSlug: string;
+  startDate: string;
+  price: number;
+  capacity: number;
+  booked: number;
+  seatsLeft: number;
+  note?: string;
+  createdAt?: number;
+};
+
+export type TourBooking = {
+  _id: string;
+  departureId?: string;
+  tourSlug: string;
+  tourTitle: string;
+  startDate?: string;
+  name: string;
+  email: string;
+  phone: string;
+  travellers: number;
+  amount: number;
+  notes?: string;
+  status: BookingStatus;
+  createdAt: number;
+};
+
 export type ContentStatus = {
   configured: boolean;
   seeded: boolean;

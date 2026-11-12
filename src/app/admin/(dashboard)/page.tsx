@@ -1,12 +1,14 @@
 import Link from "next/link";
 import {
   ArrowUpRight,
+  CalendarCheck,
   Database,
   Inbox,
   MapPin,
   MessageSquareQuote,
   Package,
   Sparkles,
+  Ticket,
 } from "lucide-react";
 import {
   AdminNotice,
@@ -15,6 +17,8 @@ import {
 } from "@/components/admin/admin-ui";
 import { seedContentAction } from "@/app/admin/actions";
 import {
+  loadAdminBookings,
+  loadAdminDepartures,
   loadAdminDestinations,
   loadAdminEnquiries,
   loadAdminExperiences,
@@ -31,18 +35,30 @@ export default async function AdminDashboardPage({
   const notice = typeof params.notice === "string" ? params.notice : "";
   const error = typeof params.error === "string" ? params.error : "";
 
-  const [tours, destinations, experiences, testimonials, enquiries] =
-    await Promise.all([
-      loadAdminTours(),
-      loadAdminDestinations(),
-      loadAdminExperiences(),
-      loadAdminTestimonials(),
-      loadAdminEnquiries(),
-    ]);
+  const [
+    tours,
+    destinations,
+    experiences,
+    testimonials,
+    enquiries,
+    departures,
+    bookings,
+  ] = await Promise.all([
+    loadAdminTours(),
+    loadAdminDestinations(),
+    loadAdminExperiences(),
+    loadAdminTestimonials(),
+    loadAdminEnquiries(),
+    loadAdminDepartures(),
+    loadAdminBookings(),
+  ]);
 
   const status = tours.status;
   const newEnquiries = enquiries.data.filter(
     (enquiry) => (enquiry.status ?? "new") === "new",
+  ).length;
+  const newBookings = bookings.data.filter(
+    (booking) => booking.status === "pending",
   ).length;
 
   const stats = [
@@ -51,6 +67,18 @@ export default async function AdminDashboardPage({
       value: tours.data.length,
       href: "/admin/tours",
       icon: Package,
+    },
+    {
+      label: "Departures",
+      value: departures.data.length,
+      href: "/admin/bookings",
+      icon: CalendarCheck,
+    },
+    {
+      label: "Bookings",
+      value: bookings.data.length,
+      href: "/admin/bookings",
+      icon: Ticket,
     },
     {
       label: "Destinations",
@@ -220,6 +248,11 @@ export default async function AdminDashboardPage({
                     label: "Create a tour package",
                     href: "/admin/tours/new",
                     icon: Package,
+                  },
+                  {
+                    label: `Manage bookings (${newBookings} pending)`,
+                    href: "/admin/bookings",
+                    icon: CalendarCheck,
                   },
                   {
                     label: "Add a destination",

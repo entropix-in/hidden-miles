@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { count, eq } from "drizzle-orm";
+import { count, eq, and, ne } from "drizzle-orm";
 import {
   adminConfigured,
   createAdminSession,
@@ -12,11 +12,13 @@ import {
 } from "@/lib/admin-auth";
 import { dbErrorMessage, getDb, type AppDb } from "@/db";
 import {
+  bookings as bookingsTable,
   destinations as destinationsTable,
   enquiries as enquiriesTable,
   experiences as experiencesTable,
   settings,
   testimonials as testimonialsTable,
+  tourDepartures as tourDeparturesTable,
   tours as toursTable,
 } from "@/db/schema";
 import { slugify } from "@/lib/utils";
@@ -118,12 +120,17 @@ function messageFor(error: unknown) {
   return dbErrorMessage(error);
 }
 
+function withParam(path: string, key: string, value: string) {
+  const separator = path.includes("?") ? "&" : "?";
+  return `${path}${separator}${key}=${encodeURIComponent(value)}`;
+}
+
 function fail(path: string, error: unknown): never {
-  redirect(`${path}?error=${encodeURIComponent(messageFor(error))}`);
+  redirect(withParam(path, "error", messageFor(error)));
 }
 
 function succeed(path: string, notice: string): never {
-  redirect(`${path}?notice=${encodeURIComponent(notice)}`);
+  redirect(withParam(path, "notice", notice));
 }
 
 function requireDb(): AppDb {
@@ -662,4 +669,191 @@ export async function seedContentAction() {
 
   revalidateContent();
   succeed("/admin", "Starter content imported.");
+}
+
+const bookingStatuses = ["pending", "confirmed", "cancelled"] as const;
+
+function bookingsBackPath(formData: FormData) {
+  const returnTo = getString(formData, "returnTo");
+  if (returnTo.startsWith("/admin/bookings")) return returnTo;
+
+  const tour = getString(formData, "tourSlug");
+  return tour
+    ? `/admin/bookings?tour=${encodeURIComponent(tour)}`
+    : "/admin/bookings";
+}
+
+export async function saveDepartureAction(formData: FormData) {
+  await requireAdmin();
+
+  const id = getString(formData, "id");
+  const tourSlug = getString(formData, "tourSlug");
+  const backPath = bookingsBackPath(formData);
+
+  try {
+    const db = requireDb();
+    const startDate = getString(formData, "startDate");
+    const price = getNumber(formData, "price");
+    const capacity = getNumber(formData, "capacity", 20);
+    const note = getString(formData, "note");
+
+    if (!tourSlug) throw new Error("Choose a tour package first.");
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(startDate)) {
+      throw new Error("Choose a valid departure date.");
+    }
+    if (price <= 0) throw new Error("Price must be greater than zero.");
+    if (capacity <= 0) throw new Error("Capacity must be at least 1.");
+
+    await ensureSeeded(db);
+
+    if (id) {
+      const numericId = parseId(id);
+      const existing = await db
+        .select({ id: tourDeparturesTable.id })
+        .from(tourDeparturesTable)
+        .where(eq(tourDeparturesTable.id, numericId))
+        .limit(1);
+      if (!existing.length) throw new Error("Departure not found.");
+
+      await db
+        .update(tourDeparturesTable)
+        .set({
+          tourSlug,
+          startDate,
+          price,
+          capacity,
+          note: note || null,
+        })
+        .where(eq(tourDeparturesTable.id, numericId));
+    } else {
+      const [duplicate] = await db
+        .select({ id: tourDeparturesTable.id })
+        .from(tourDeparturesTable)
+        .where(
+          and(
+            eq(tourDeparturesTable.tourSlug, tourSlug),
+            eq(tourDeparturesTable.startDate, startDate),
+          ),
+        )
+        .limit(1);
+      if (duplicate) {
+        throw new Error("A departure already exists on that date.");
+      }
+
+      await db.insert(tourDeparturesTable).values({
+        tourSlug,
+        startDate,
+        price,
+        capacity,
+        note: note || null,
+      });
+    }
+  } catch (error) {
+    fail(backPath, error);
+  }
+
+  revalidatePath(`/tours/${tourSlug}`);
+  revalidatePath("/admin/bookings");
+  succeed(backPath, id ? "Departure updated." : "Departure added.");
+}
+
+export async function deleteDepartureAction(formData: FormData) {
+  await requireAdmin();
+
+  const backPath = bookingsBackPath(formData);
+
+  try {
+    const db = requireDb();
+    const numericId = parseId(getString(formData, "id"));
+
+    const [departure] = await db
+      .select({
+        tourSlug: tourDeparturesTable.tourSlug,
+      })
+      .from(tourDeparturesTable)
+      .where(eq(tourDeparturesTable.id, numericId))
+      .limit(1);
+    if (!departure) throw new Error("Departure not found.");
+
+    const [activeBookings] = await db
+      .select({ value: count() })
+      .from(bookingsTable)
+      .where(
+        and(
+          eq(bookingsTable.departureId, numericId),
+          ne(bookingsTable.status, "cancelled"),
+        ),
+      );
+    if (Number(activeBookings?.value ?? 0) > 0) {
+      throw new Error(
+        "This departure has bookings. Cancel them before deleting the date.",
+      );
+    }
+
+    await db
+      .delete(tourDeparturesTable)
+      .where(eq(tourDeparturesTable.id, numericId));
+
+    revalidatePath(`/tours/${departure.tourSlug}`);
+  } catch (error) {
+    fail(backPath, error);
+  }
+
+  revalidatePath("/admin/bookings");
+  succeed(backPath, "Departure deleted.");
+}
+
+export async function updateBookingStatusAction(formData: FormData) {
+  await requireAdmin();
+
+  const backPath = bookingsBackPath(formData);
+
+  try {
+    const db = requireDb();
+    const status = getString(formData, "status") as (typeof bookingStatuses)[number];
+
+    if (!bookingStatuses.includes(status)) {
+      throw new Error("Invalid booking status.");
+    }
+
+    const numericId = parseId(getString(formData, "id"));
+    const [result] = await db
+      .update(bookingsTable)
+      .set({ status })
+      .where(eq(bookingsTable.id, numericId));
+
+    if (!result.affectedRows) throw new Error("Booking not found.");
+  } catch (error) {
+    fail(backPath, error);
+  }
+
+  revalidatePath("/admin/bookings");
+  succeed(backPath, "Booking status updated.");
+}
+
+export async function deleteBookingAction(formData: FormData) {
+  await requireAdmin();
+
+  const backPath = bookingsBackPath(formData);
+
+  try {
+    const db = requireDb();
+    const [booking] = await db
+      .select({ tourSlug: bookingsTable.tourSlug })
+      .from(bookingsTable)
+      .where(eq(bookingsTable.id, parseId(getString(formData, "id"))))
+      .limit(1);
+    if (!booking) throw new Error("Booking not found.");
+
+    await db
+      .delete(bookingsTable)
+      .where(eq(bookingsTable.id, parseId(getString(formData, "id"))));
+
+    revalidatePath(`/tours/${booking.tourSlug}`);
+  } catch (error) {
+    fail(backPath, error);
+  }
+
+  revalidatePath("/admin/bookings");
+  succeed(backPath, "Booking deleted.");
 }

@@ -1,13 +1,17 @@
 import { cache } from "react";
-import { asc, desc, eq } from "drizzle-orm";
+import { and, asc, desc, eq, gte, ne, sum } from "drizzle-orm";
 import { dbErrorMessage, getDb, type AppDb } from "@/db";
 import {
+  bookings as bookingsTable,
   destinations as destinationsTable,
   enquiries as enquiriesTable,
   experiences as experiencesTable,
   settings,
   testimonials as testimonialsTable,
+  tourDepartures as tourDeparturesTable,
   tours as toursTable,
+  type BookingRow,
+  type DepartureRow,
   type DestinationRow,
   type EnquiryRow,
   type ExperienceRow,
@@ -22,6 +26,8 @@ import type {
   AdminTour,
   ContentStatus,
   EnquiryStatus,
+  TourBooking,
+  TourDeparture,
 } from "@/lib/types";
 import { destinations as staticDestinations } from "@/data/destinations";
 import type { Destination } from "@/data/destinations";
@@ -212,6 +218,155 @@ export async function loadExperiences(): Promise<Experience[]> {
     return rows.map(mapExperience);
   } catch {
     return staticExperiences;
+  }
+}
+
+async function bookedSeatsByDeparture(db: AppDb) {
+  const rows = await db
+    .select({
+      departureId: bookingsTable.departureId,
+      travellers: sum(bookingsTable.travellers),
+    })
+    .from(bookingsTable)
+    .where(ne(bookingsTable.status, "cancelled"))
+    .groupBy(bookingsTable.departureId);
+
+  const booked = new Map<number, number>();
+  for (const row of rows) {
+    if (row.departureId === null) continue;
+    booked.set(Number(row.departureId), Number(row.travellers ?? 0));
+  }
+  return booked;
+}
+
+function mapDeparture(row: DepartureRow, booked: number): TourDeparture {
+  const capacity = Number(row.capacity);
+  return {
+    _id: String(row.id),
+    tourSlug: row.tourSlug,
+    startDate: String(row.startDate),
+    price: Number(row.price),
+    capacity,
+    booked,
+    seatsLeft: Math.max(0, capacity - booked),
+    note: row.note ?? undefined,
+    createdAt: row.createdAt.getTime(),
+  };
+}
+
+export async function loadDepartures(
+  tourSlug: string,
+): Promise<TourDeparture[]> {
+  const db = getDb();
+  if (!db) return [];
+
+  try {
+    const today = new Date().toISOString().slice(0, 10);
+    const [rows, booked] = await Promise.all([
+      db
+        .select()
+        .from(tourDeparturesTable)
+        .where(
+          and(
+            eq(tourDeparturesTable.tourSlug, tourSlug),
+            gte(tourDeparturesTable.startDate, today),
+          ),
+        )
+        .orderBy(asc(tourDeparturesTable.startDate)),
+      bookedSeatsByDeparture(db),
+    ]);
+
+    return rows.map((row) =>
+      mapDeparture(row, booked.get(Number(row.id)) ?? 0),
+    );
+  } catch {
+    return [];
+  }
+}
+
+export async function loadAdminDepartures(
+  tourSlug?: string,
+): Promise<AdminResult<TourDeparture>> {
+  const status = await getContentStatus();
+  if (!status.configured) return { data: [], status };
+
+  const db = getDb();
+  if (!db) return { data: [], status };
+
+  try {
+    const [rows, booked] = await Promise.all([
+      tourSlug
+        ? db
+            .select()
+            .from(tourDeparturesTable)
+            .where(eq(tourDeparturesTable.tourSlug, tourSlug))
+            .orderBy(asc(tourDeparturesTable.startDate))
+        : db
+            .select()
+            .from(tourDeparturesTable)
+            .orderBy(asc(tourDeparturesTable.startDate)),
+      bookedSeatsByDeparture(db),
+    ]);
+
+    return {
+      data: rows.map((row) =>
+        mapDeparture(row, booked.get(Number(row.id)) ?? 0),
+      ),
+      status,
+    };
+  } catch (error) {
+    return {
+      data: [],
+      status: { ...status, error: dbErrorMessage(error) },
+    };
+  }
+}
+
+function mapBooking(row: BookingRow): TourBooking {
+  return {
+    _id: String(row.id),
+    departureId: row.departureId === null ? undefined : String(row.departureId),
+    tourSlug: row.tourSlug,
+    tourTitle: row.tourTitle,
+    startDate: row.startDate ? String(row.startDate) : undefined,
+    name: row.name,
+    email: row.email,
+    phone: row.phone,
+    travellers: Number(row.travellers),
+    amount: Number(row.amount),
+    notes: row.notes ?? undefined,
+    status: row.status,
+    createdAt: row.createdAt.getTime(),
+  };
+}
+
+export async function loadAdminBookings(
+  tourSlug?: string,
+): Promise<AdminResult<TourBooking>> {
+  const status = await getContentStatus();
+  if (!status.configured) return { data: [], status };
+
+  const db = getDb();
+  if (!db) return { data: [], status };
+
+  try {
+    const rows = tourSlug
+      ? await db
+          .select()
+          .from(bookingsTable)
+          .where(eq(bookingsTable.tourSlug, tourSlug))
+          .orderBy(desc(bookingsTable.createdAt))
+      : await db
+          .select()
+          .from(bookingsTable)
+          .orderBy(desc(bookingsTable.createdAt));
+
+    return { data: rows.map(mapBooking), status };
+  } catch (error) {
+    return {
+      data: [],
+      status: { ...status, error: dbErrorMessage(error) },
+    };
   }
 }
 

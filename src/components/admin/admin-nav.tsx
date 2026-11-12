@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
+  CalendarCheck,
   Inbox,
   LayoutDashboard,
   MapPin,
@@ -15,6 +16,7 @@ import { cn } from "@/lib/utils";
 const links = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { href: "/admin/tours", label: "Packages", icon: Package },
+  { href: "/admin/bookings", label: "Bookings", icon: CalendarCheck },
   { href: "/admin/destinations", label: "Destinations", icon: MapPin },
   { href: "/admin/experiences", label: "Experiences", icon: Sparkles },
   {

@@ -1,5 +1,6 @@
 import {
   bigint,
+  date,
   decimal,
   index,
   int,
@@ -164,8 +165,61 @@ export const settings = mysqlTable("settings", {
     .onUpdateNow(),
 });
 
+export const tourDepartures = mysqlTable(
+  "tour_departures",
+  {
+    id: bigint("id", { mode: "number", unsigned: true })
+      .autoincrement()
+      .primaryKey(),
+    tourSlug: varchar("tour_slug", { length: 190 }).notNull(),
+    startDate: date("start_date", { mode: "string" }).notNull(),
+    price: int("price", { unsigned: true }).notNull().default(0),
+    capacity: int("capacity", { unsigned: true }).notNull().default(20),
+    note: varchar("note", { length: 190 }),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at")
+      .notNull()
+      .defaultNow()
+      .onUpdateNow(),
+  },
+  (table) => [
+    index("idx_departures_tour").on(table.tourSlug),
+    index("idx_departures_start_date").on(table.startDate),
+  ],
+);
+
+export const bookings = mysqlTable(
+  "bookings",
+  {
+    id: bigint("id", { mode: "number", unsigned: true })
+      .autoincrement()
+      .primaryKey(),
+    departureId: bigint("departure_id", { mode: "number", unsigned: true }),
+    tourSlug: varchar("tour_slug", { length: 190 }).notNull(),
+    tourTitle: varchar("tour_title", { length: 190 }).notNull().default(""),
+    startDate: date("start_date", { mode: "string" }),
+    name: varchar("name", { length: 120 }).notNull(),
+    email: varchar("email", { length: 190 }).notNull(),
+    phone: varchar("phone", { length: 40 }).notNull().default(""),
+    travellers: int("travellers", { unsigned: true }).notNull().default(1),
+    amount: int("amount", { unsigned: true }).notNull().default(0),
+    notes: text("notes"),
+    status: mysqlEnum("status", ["pending", "confirmed", "cancelled"])
+      .notNull()
+      .default("pending"),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+  },
+  (table) => [
+    index("idx_bookings_tour").on(table.tourSlug),
+    index("idx_bookings_departure").on(table.departureId),
+    index("idx_bookings_status").on(table.status),
+  ],
+);
+
 export type TourRow = typeof tours.$inferSelect;
 export type DestinationRow = typeof destinations.$inferSelect;
 export type ExperienceRow = typeof experiences.$inferSelect;
 export type TestimonialRow = typeof testimonials.$inferSelect;
 export type EnquiryRow = typeof enquiries.$inferSelect;
+export type DepartureRow = typeof tourDepartures.$inferSelect;
+export type BookingRow = typeof bookings.$inferSelect;

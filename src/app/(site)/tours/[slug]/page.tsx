@@ -21,9 +21,15 @@ import {
 import { Breadcrumbs } from "@/components/site/breadcrumbs";
 import { EnquiryForm } from "@/components/site/enquiry-form";
 import { ItineraryTimeline } from "@/components/site/itinerary-timeline";
+import { TourBooking } from "@/components/site/tour-booking";
 import { SectionHeading } from "@/components/site/section-heading";
 import { TourCard } from "@/components/site/tour-card";
-import { loadDestinations, loadTour, loadTours } from "@/lib/content";
+import {
+  loadDepartures,
+  loadDestinations,
+  loadTour,
+  loadTours,
+} from "@/lib/content";
 import { site } from "@/data/site";
 import { formatINR, imageUrl } from "@/lib/utils";
 
@@ -81,9 +87,10 @@ export default async function TourDetailPage({
   const tour = await loadTour(slug);
   if (!tour) notFound();
 
-  const [allTours, allDestinations] = await Promise.all([
+  const [allTours, allDestinations, departures] = await Promise.all([
     loadTours(),
     loadDestinations(),
+    loadDepartures(tour.slug),
   ]);
   const related = allTours
     .filter(
@@ -93,7 +100,19 @@ export default async function TourDetailPage({
           candidate.region === tour.region),
     )
     .slice(0, 3);
-  const emi = Math.round(tour.price / 12);
+  const nextDeparture = departures[0];
+  const fromPrice = departures.length
+    ? Math.min(...departures.map((departure) => departure.price))
+    : tour.price;
+  const emi = Math.round(fromPrice / 12);
+  const nextDepartureLabel = nextDeparture
+    ? new Intl.DateTimeFormat("en-IN", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+        timeZone: "UTC",
+      }).format(new Date(`${nextDeparture.startDate}T00:00:00Z`))
+    : tour.departure;
 
   return (
     <>
@@ -132,7 +151,7 @@ export default async function TourDetailPage({
                 </span>
                 <span className="inline-flex items-center gap-1.5">
                   <CalendarDays className="h-4 w-4 text-blue-600" />
-                  {tour.departure}
+                  {nextDepartureLabel}
                 </span>
                 <span className="inline-flex items-center gap-1.5">
                   <Users className="h-4 w-4 text-blue-600" />
@@ -147,9 +166,20 @@ export default async function TourDetailPage({
                 </span>
               </div>
             </div>
-            <p className="max-w-xl text-[14px] leading-7 text-stone-600 lg:justify-self-end">
-              {tour.summary}
-            </p>
+            <div className="lg:justify-self-end lg:text-right">
+              <p className="max-w-xl text-[14px] leading-7 text-stone-600">
+                {tour.summary}
+              </p>
+              <div className="mt-4 flex flex-wrap items-center gap-2 lg:justify-end">
+                <Link href="#book" className="btn-primary">
+                  Book now
+                  <ArrowUpRight className="h-4 w-4" />
+                </Link>
+                <span className="rounded-full bg-white px-3 py-2 text-sm font-extrabold uppercase tracking-wider text-stone-600">
+                  From {formatINR(fromPrice)} pp
+                </span>
+              </div>
+            </div>
           </div>
 
           <div className="relative mt-7 aspect-[16/9] overflow-hidden rounded-[32px] shadow-2xl shadow-navy-950/15 sm:aspect-[16/7]">
@@ -164,7 +194,7 @@ export default async function TourDetailPage({
             <div className="absolute inset-0 bg-gradient-to-t from-navy-950/60 via-transparent to-transparent" />
             <div className="absolute bottom-5 left-5 flex flex-wrap gap-2">
               <span className="rounded-full bg-white/95 px-4 py-2 text-sm font-extrabold text-navy-950 backdrop-blur">
-                Next departure · {tour.departure}
+                Next departure · {nextDepartureLabel}
               </span>
               <span className="rounded-full bg-navy-950/70 px-4 py-2 text-sm font-extrabold text-sand-50 backdrop-blur">
                 {tour.groupSize}
@@ -217,6 +247,14 @@ export default async function TourDetailPage({
               <ItineraryTimeline days={tour.itinerary} />
             </div>
           </section>
+
+          <TourBooking
+            tourSlug={tour.slug}
+            tourTitle={tour.title}
+            basePrice={tour.price}
+            nights={tour.nights}
+            departures={departures}
+          />
 
           <section className="grid gap-4 md:grid-cols-2">
             <div className="rounded-3xl border border-navy-200 bg-navy-50 p-6">
@@ -293,7 +331,7 @@ export default async function TourDetailPage({
               </p>
               <div className="mt-1 flex items-baseline gap-3">
                 <p className="font-display text-4xl font-semibold">
-                  {formatINR(tour.price)}
+                  {formatINR(fromPrice)}
                 </p>
                 {tour.oldPrice ? (
                   <p className="text-sm font-semibold text-sand-200/50 line-through">
@@ -311,7 +349,7 @@ export default async function TourDetailPage({
                   <CalendarDays className="h-4 w-4 text-blue-600" />
                   Departure
                 </span>
-                <span className="font-bold text-navy-950">{tour.departure}</span>
+                <span className="font-bold text-navy-950">{nextDepartureLabel}</span>
               </div>
               <div className="flex items-center justify-between text-sm font-semibold text-stone-600">
                 <span className="inline-flex items-center gap-2">
@@ -335,13 +373,13 @@ export default async function TourDetailPage({
                   Booking deposit
                 </span>
                 <span className="font-bold text-navy-950">
-                  {formatINR(Math.round(tour.price * 0.25))}
+                  {formatINR(Math.round(fromPrice * 0.25))}
                 </span>
               </div>
 
               <div className="grid gap-2 pt-2">
-                <Link href="#enquiry" className="btn-primary w-full">
-                  Enquire about this tour
+                <Link href="#book" className="btn-primary w-full">
+                  Book now
                   <ArrowUpRight className="h-4 w-4" />
                 </Link>
                 <a
@@ -360,6 +398,12 @@ export default async function TourDetailPage({
                   <Phone className="h-3.5 w-3.5" />
                   {site.phone}
                 </a>
+                <Link
+                  href="#enquiry"
+                  className="text-center text-sm font-bold text-stone-500 underline decoration-dotted underline-offset-4 transition hover:text-blue-700"
+                >
+                  Have a question? Send an enquiry
+                </Link>
               </div>
 
               <div className="rounded-2xl bg-sand-100 p-3 text-sm leading-5 text-stone-500">

@@ -69,11 +69,12 @@ export function TourCard({ tour, priority = false }: { tour: Tour; priority?: bo
             <p className="text-sm font-semibold text-stone-400">per person</p>
           </div>
           <Link
-            href={`/tours/${tour.slug}`}
-            aria-label={`Explore ${tour.title}`}
-            className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-sand-100 text-navy-950 transition duration-300 group-hover:bg-blue-600 group-hover:text-white"
+            href={`/tours/${tour.slug}#book`}
+            aria-label={`Book ${tour.title}`}
+            className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-blue-600 px-4 py-2.5 text-sm font-extrabold uppercase tracking-wider text-white transition duration-300 hover:bg-blue-700"
           >
-            <ArrowUpRight className="h-5 w-5" />
+            Book now
+            <ArrowUpRight className="h-3.5 w-3.5" />
           </Link>
         </div>
       </div>
