@@ -24,16 +24,18 @@ export default async function AdminDashboardLayout({
     <div className="min-h-screen bg-sand-100 lg:grid lg:grid-cols-[260px_1fr]">
       <aside className="bg-navy-950 px-4 py-5 lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col lg:p-6">
         <div className="flex items-center justify-between gap-3">
-          <Logo light />
-          <span className="rounded-full bg-white/10 px-2.5 py-1 text-sm font-extrabold uppercase tracking-widest text-blue-300">
-            Admin
-          </span>
+          <Logo light compact />
         </div>
 
         <div className="mt-6 lg:mt-9 lg:flex-1">
-          <p className="mb-2 hidden px-2 text-sm font-extrabold uppercase tracking-[0.2em] text-sand-200/35 lg:block">
-            Manage
-          </p>
+          <div className="mb-2 hidden items-center justify-between gap-3 px-2 lg:flex">
+            <p className="text-sm font-extrabold uppercase tracking-[0.2em] text-sand-200/35">
+              Manage
+            </p>
+            <span className="rounded-full bg-white/10 px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-widest text-blue-300">
+              Admin
+            </span>
+          </div>
           <AdminNav />
         </div>
 
