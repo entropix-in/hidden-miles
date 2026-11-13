@@ -1,6 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
-import { CalendarDays, IndianRupee, Ticket, Users } from "lucide-react";
+import {
+  ArrowRight,
+  CalendarDays,
+  IndianRupee,
+  Ticket,
+  Users,
+} from "lucide-react";
 import { AdminDeleteButton } from "@/components/admin/admin-delete-button";
 import { DepartureCalendar } from "@/components/admin/departure-calendar";
 import {
@@ -324,6 +330,13 @@ export default async function AdminBookingsPage({
                               {departure.booked}/{departure.capacity} booked ·{" "}
                               {departure.seatsLeft} left
                             </span>
+                            <Link
+                              href={`/admin/bookings/departures/${departure._id}`}
+                              className="btn-outline px-4 py-2 text-sm"
+                            >
+                              Details
+                              <ArrowRight className="h-3.5 w-3.5" />
+                            </Link>
                             <AdminDeleteButton
                               action={deleteDepartureAction}
                               id={departure._id}

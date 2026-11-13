@@ -879,9 +879,7 @@ export default async function AdminDashboardPage({
                       return (
                         <Link
                           key={departure._id}
-                          href={`/admin/bookings?tour=${encodeURIComponent(
-                            departure.tourSlug,
-                          )}`}
+                          href={`/admin/bookings/departures/${departure._id}`}
                           className="flex items-center gap-3.5 px-5 py-3 transition hover:bg-sand-50/70 sm:px-6"
                         >
                           <span className="grid h-11 w-11 shrink-0 place-content-center rounded-xl border border-stone-200 bg-sand-50 text-center leading-none">

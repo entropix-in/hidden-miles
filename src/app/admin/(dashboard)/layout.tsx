@@ -4,7 +4,6 @@ import { AdminNav } from "@/components/admin/admin-nav";
 import { Logo } from "@/components/site/logo";
 import { logoutAction } from "@/app/admin/actions";
 import { requireAdmin } from "@/lib/admin-auth";
-import { getContentStatus } from "@/lib/content";
 
 export const dynamic = "force-dynamic";
 
@@ -18,7 +17,6 @@ export default async function AdminDashboardLayout({
   children: React.ReactNode;
 }) {
   await requireAdmin();
-  const status = await getContentStatus();
 
   return (
     <div className="min-h-screen bg-sand-100 lg:grid lg:grid-cols-[260px_1fr]">
@@ -61,34 +59,10 @@ export default async function AdminDashboardLayout({
 
       <div className="min-w-0">
         <header className="border-b border-stone-200 bg-sand-50/90 px-4 py-3 backdrop-blur sm:px-8">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <p className="flex items-center gap-2 text-sm font-extrabold uppercase tracking-[0.18em] text-stone-500">
-              <Sparkles className="h-3.5 w-3.5 text-blue-600" />
-              Hidden Miles content studio
-            </p>
-            <div className="flex items-center gap-2">
-              <span
-                className={
-                  status.configured && !status.error
-                    ? "inline-flex items-center gap-1.5 rounded-full bg-navy-100 px-3 py-1.5 text-sm font-extrabold uppercase tracking-wider text-navy-800"
-                    : "inline-flex items-center gap-1.5 rounded-full bg-blue-100 px-3 py-1.5 text-sm font-extrabold uppercase tracking-wider text-blue-800"
-                }
-              >
-                <span
-                  className={
-                    status.configured && !status.error
-                      ? "h-1.5 w-1.5 rounded-full bg-navy-600"
-                      : "h-1.5 w-1.5 rounded-full bg-blue-600"
-                  }
-                />
-                {status.configured && !status.error
-                  ? status.seeded
-                    ? "MySQL live"
-                    : "MySQL ready"
-                  : "Database not connected"}
-              </span>
-            </div>
-          </div>
+          <p className="flex items-center gap-2 text-sm font-extrabold uppercase tracking-[0.18em] text-stone-500">
+            <Sparkles className="h-3.5 w-3.5 text-blue-600" />
+            Hidden Miles content studio
+          </p>
         </header>
 
         <main className="px-4 py-6 sm:px-8 sm:py-8">{children}</main>
