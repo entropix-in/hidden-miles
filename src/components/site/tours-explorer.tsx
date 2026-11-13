@@ -5,16 +5,19 @@ import Link from "next/link";
 import {
   ArrowLeft,
   ArrowRight,
+  ChevronDown,
   Headset,
+  LayoutGrid,
+  List,
   SearchX,
   SlidersHorizontal,
   X,
 } from "lucide-react";
-import { TourCard } from "@/components/site/tour-card";
+import { TourCard, TourListCard } from "@/components/site/tour-card";
 import type { Destination } from "@/data/destinations";
 import type { Experience } from "@/data/experiences";
 import type { Tour } from "@/data/tours";
-import { cn } from "@/lib/utils";
+import { cn, formatINR } from "@/lib/utils";
 
 const months = [
   "Any month",
@@ -42,6 +45,71 @@ const sortOptions = [
   { value: "duration-short", label: "Duration: shortest first" },
   { value: "rating", label: "Highest rated" },
 ];
+
+function DualRange({
+  min,
+  max,
+  step,
+  valueMin,
+  valueMax,
+  onChangeMin,
+  onChangeMax,
+  minLabel,
+  maxLabel,
+}: {
+  min: number;
+  max: number;
+  step?: number;
+  valueMin: number;
+  valueMax: number;
+  onChangeMin: (value: number) => void;
+  onChangeMax: (value: number) => void;
+  minLabel: string;
+  maxLabel: string;
+}) {
+  const percent = (value: number) => ((value - min) / (max - min)) * 100;
+
+  return (
+    <div className="relative mt-4 h-[22px]">
+      <span className="absolute inset-x-0 top-1/2 h-1 -translate-y-1/2 rounded-full bg-sand-200" />
+      <span
+        className="absolute top-1/2 h-1 -translate-y-1/2 rounded-full bg-ink"
+        style={{
+          left: `${percent(valueMin)}%`,
+          right: `${100 - percent(valueMax)}%`,
+        }}
+      />
+      <input
+        type="range"
+        min={min}
+        max={max}
+        step={step}
+        value={valueMin}
+        onChange={(event) =>
+          onChangeMin(
+            Math.min(Number(event.target.value), valueMax - (step ?? 1)),
+          )
+        }
+        aria-label={minLabel}
+        className="range-input"
+      />
+      <input
+        type="range"
+        min={min}
+        max={max}
+        step={step}
+        value={valueMax}
+        onChange={(event) =>
+          onChangeMax(
+            Math.max(Number(event.target.value), valueMin + (step ?? 1)),
+          )
+        }
+        aria-label={maxLabel}
+        className="range-input"
+      />
+    </div>
+  );
+}
 
 export function ToursExplorer({
   tours,
@@ -72,11 +140,12 @@ export function ToursExplorer({
   );
   const [priceMin, setPriceMin] = useState(25000);
   const [priceMax, setPriceMax] = useState(initialPriceMax);
-  const [durationMin, setDurationMin] = useState(4);
+  const [durationMin, setDurationMin] = useState(5);
   const [durationMax, setDurationMax] = useState(16);
   const [sort, setSort] = useState("recommended");
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [query, setQuery] = useState(initialQuery);
+  const [view, setView] = useState<"grid" | "list">("grid");
 
   const filtered = useMemo(() => {
     let list = [...tours];
@@ -207,7 +276,7 @@ export function ToursExplorer({
     setMonth("Any month");
     setPriceMin(25000);
     setPriceMax(300000);
-    setDurationMin(4);
+    setDurationMin(5);
     setDurationMax(16);
     setSort("recommended");
     setQuery("");
@@ -242,27 +311,6 @@ export function ToursExplorer({
                 </button>
               ))}
             </div>
-          </section>
-
-          <div className="hr-dashed" />
-
-          <section>
-            <label htmlFor={`${idPrefix}-destination`} className="type-label mb-3 block text-navy-500">
-              Destination
-            </label>
-            <select
-              id={`${idPrefix}-destination`}
-              value={destination}
-              onChange={(event) => setDestination(event.target.value)}
-              className="field py-3"
-            >
-              <option value="">All destinations</option>
-              {destinations.map((item) => (
-                <option key={item.slug} value={item.slug}>
-                  {item.name}
-                </option>
-              ))}
-            </select>
           </section>
 
           <div className="hr-dashed" />
@@ -310,103 +358,95 @@ export function ToursExplorer({
           <div className="hr-dashed" />
 
           <section>
+            <label htmlFor={`${idPrefix}-destination`} className="type-label mb-3 block text-navy-500">
+              Destination
+            </label>
+            <div className="relative">
+              <select
+                id={`${idPrefix}-destination`}
+                value={destination}
+                onChange={(event) => setDestination(event.target.value)}
+                className="field appearance-none border-transparent bg-sand-100 py-3 pr-10"
+              >
+                <option value="">All destinations</option>
+                {destinations.map((item) => (
+                  <option key={item.slug} value={item.slug}>
+                    {item.name}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-navy-500" />
+            </div>
+          </section>
+
+          <div className="hr-dashed" />
+
+          <section>
             <label htmlFor={`${idPrefix}-month`} className="type-label mb-3 block text-navy-500">
               Departure month
             </label>
-            <select
-              id={`${idPrefix}-month`}
-              value={month}
-              onChange={(event) => setMonth(event.target.value)}
-              className="field py-3"
-            >
-              {months.map((item) => (
-                <option key={item} value={item}>
-                  {item}
-                </option>
-              ))}
-            </select>
+            <div className="relative">
+              <select
+                id={`${idPrefix}-month`}
+                value={month}
+                onChange={(event) => setMonth(event.target.value)}
+                className="field appearance-none border-transparent bg-sand-100 py-3 pr-10"
+              >
+                {months.map((item) => (
+                  <option key={item} value={item}>
+                    {item}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-navy-500" />
+            </div>
           </section>
 
           <div className="hr-dashed" />
 
           <section>
-            <div className="flex items-center justify-between">
-              <p className="type-label text-navy-500">Budget per person</p>
-              <span className="text-[13px] font-bold text-ink">
-                ₹{Math.round(priceMin / 1000)}k – ₹{Math.round(priceMax / 1000)}k
-              </span>
-            </div>
-            <div className="mt-4 space-y-2">
-              <input
-                type="range"
-                min={25000}
-                max={300000}
-                step={5000}
-                value={priceMin}
-                onChange={(event) =>
-                  setPriceMin(Math.min(Number(event.target.value), priceMax - 5000))
-                }
-                aria-label="Minimum budget"
-                className="h-1.5 w-full cursor-pointer accent-ink"
-              />
-              <input
-                type="range"
-                min={25000}
-                max={300000}
-                step={5000}
-                value={priceMax}
-                onChange={(event) =>
-                  setPriceMax(Math.max(Number(event.target.value), priceMin + 5000))
-                }
-                aria-label="Maximum budget"
-                className="h-1.5 w-full cursor-pointer accent-ink"
-              />
-            </div>
+            <p className="type-label text-navy-500">Budget per person</p>
+            <DualRange
+              min={25000}
+              max={300000}
+              step={5000}
+              valueMin={priceMin}
+              valueMax={priceMax}
+              onChangeMin={setPriceMin}
+              onChangeMax={setPriceMax}
+              minLabel="Minimum budget"
+              maxLabel="Maximum budget"
+            />
             <div className="mt-1 flex justify-between text-[13px] font-medium text-navy-500">
-              <span>₹25,000</span>
-              <span>₹3,00,000</span>
+              <span>{formatINR(priceMin)}</span>
+              <span>{formatINR(priceMax)}</span>
             </div>
           </section>
 
           <div className="hr-dashed" />
 
           <section>
-            <div className="flex items-center justify-between">
-              <p className="type-label text-navy-500">Duration</p>
-              <span className="text-[13px] font-bold text-ink">
-                {durationMin} – {durationMax} days
-              </span>
-            </div>
-            <div className="mt-4 space-y-2">
-              <input
-                type="range"
-                min={4}
-                max={16}
-                value={durationMin}
-                onChange={(event) =>
-                  setDurationMin(Math.min(Number(event.target.value), durationMax - 1))
-                }
-                aria-label="Minimum duration"
-                className="h-1.5 w-full cursor-pointer accent-ink"
-              />
-              <input
-                type="range"
-                min={4}
-                max={16}
-                value={durationMax}
-                onChange={(event) =>
-                  setDurationMax(Math.max(Number(event.target.value), durationMin + 1))
-                }
-                aria-label="Maximum duration"
-                className="h-1.5 w-full cursor-pointer accent-ink"
-              />
+            <p className="type-label text-navy-500">Duration</p>
+            <DualRange
+              min={5}
+              max={16}
+              valueMin={durationMin}
+              valueMax={durationMax}
+              onChangeMin={setDurationMin}
+              onChangeMax={setDurationMax}
+              minLabel="Minimum duration"
+              maxLabel="Maximum duration"
+            />
+            <div className="mt-1 flex justify-between text-[13px] font-medium text-navy-500">
+              <span>{durationMin} days</span>
+              <span>{durationMax} days</span>
             </div>
           </section>
 
           <button
             type="button"
             onClick={() => setFiltersOpen(false)}
-            className="btn btn-ink w-full lg:hidden"
+            className="btn btn-ink w-full"
           >
             Show {filtered.length} tours
             <span className="btn-dot">→</span>
@@ -450,24 +490,58 @@ export function ToursExplorer({
                 ) : null}
               </button>
 
-              <label
-                htmlFor="tour-sort"
-                className="rounded-full border border-sand-300 bg-paper px-4 py-2.5 text-[13px] font-medium text-navy-500"
-              >
-                Sort by
-              </label>
-              <select
-                id="tour-sort"
-                value={sort}
-                onChange={(event) => setSort(event.target.value)}
-                className="-ml-2 rounded-full bg-transparent text-sm font-bold text-ink outline-none"
-              >
-                {sortOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
+              <div className="relative flex items-center gap-1.5 rounded-full border border-sand-300 bg-paper py-2.5 pl-4 pr-3">
+                <label
+                  htmlFor="tour-sort"
+                  className="text-[13px] font-medium text-navy-500"
+                >
+                  Sort by
+                </label>
+                <select
+                  id="tour-sort"
+                  value={sort}
+                  onChange={(event) => setSort(event.target.value)}
+                  className="appearance-none bg-transparent pr-5 text-sm font-bold text-ink outline-none"
+                >
+                  {sortOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown className="pointer-events-none absolute right-3 h-3.5 w-3.5 text-navy-500" />
+              </div>
+
+              <div className="flex items-center gap-1 rounded-full bg-sand-200 p-1">
+                <button
+                  type="button"
+                  onClick={() => setView("grid")}
+                  aria-pressed={view === "grid"}
+                  className={cn(
+                    "flex items-center gap-1.5 rounded-full px-3.5 py-2 text-[13px] font-bold transition",
+                    view === "grid"
+                      ? "bg-ink text-paper"
+                      : "text-navy-700 hover:text-ink",
+                  )}
+                >
+                  <LayoutGrid className="h-3.5 w-3.5" />
+                  Grid
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setView("list")}
+                  aria-pressed={view === "list"}
+                  className={cn(
+                    "flex items-center gap-1.5 rounded-full px-3.5 py-2 text-[13px] font-bold transition",
+                    view === "list"
+                      ? "bg-ink text-paper"
+                      : "text-navy-700 hover:text-ink",
+                  )}
+                >
+                  <List className="h-3.5 w-3.5" />
+                  List
+                </button>
+              </div>
             </div>
           </div>
 
@@ -502,39 +576,27 @@ export function ToursExplorer({
 
           {filtered.length ? (
             <>
-              <div className="mt-7 grid gap-7 sm:grid-cols-2">
-                {filtered.slice(0, 12).map((tour, index) => (
-                  <TourCard
-                    key={tour.slug}
-                    tour={tour}
-                    priority={index < 2}
-                  />
-                ))}
-              </div>
-
-              <div className="mt-10 flex flex-wrap items-center justify-center gap-2">
-                <span className="grid h-11 w-11 place-items-center rounded-full border border-sand-300 text-navy-400">
-                  <ArrowLeft className="h-4 w-4" />
-                </span>
-                {["1", "2", "3"].map((page) => (
-                  <span
-                    key={page}
-                    className={cn(
-                      "grid h-11 w-11 place-items-center rounded-full border text-sm font-bold",
-                      page === "1"
-                        ? "border-ink bg-ink text-gold-400"
-                        : "border-sand-300 bg-paper text-ink",
-                    )}
-                  >
-                    {page}
-                  </span>
-                ))}
-                <span className="grid h-11 w-11 place-items-center rounded-full border border-sand-300 bg-paper text-ink">
-                  <ArrowRight className="h-4 w-4" />
-                </span>
-                <span className="ml-2 text-[13px] font-medium text-navy-500">
-                  Showing 1–{Math.min(filtered.length, 12)} of {filtered.length}
-                </span>
+              <div
+                className={cn(
+                  "mt-7 gap-7",
+                  view === "grid" ? "grid sm:grid-cols-2" : "grid grid-cols-1",
+                )}
+              >
+                {filtered.slice(0, 6).map((tour, index) =>
+                  view === "grid" ? (
+                    <TourCard
+                      key={tour.slug}
+                      tour={tour}
+                      priority={index < 2}
+                    />
+                  ) : (
+                    <TourListCard
+                      key={tour.slug}
+                      tour={tour}
+                      priority={index < 2}
+                    />
+                  ),
+                )}
               </div>
             </>
           ) : (
@@ -561,6 +623,8 @@ export function ToursExplorer({
             </div>
           )}
 
+          {filtered.length ? (
+            <>
           <div className="mt-10 flex flex-col items-start gap-5 rounded-[20px] bg-gold-100 px-7 py-6 sm:flex-row sm:items-center">
             <span className="grid h-[52px] w-[52px] shrink-0 place-items-center rounded-[16px] bg-gold-400 text-ink">
               <Headset className="h-6 w-6" />
@@ -577,6 +641,33 @@ export function ToursExplorer({
               <span className="btn-dot">→</span>
             </Link>
           </div>
+
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-2">
+            <span className="grid h-11 w-11 place-items-center rounded-full border border-sand-300 text-navy-400">
+              <ArrowLeft className="h-4 w-4" />
+            </span>
+            {["1", "2", "3"].map((page) => (
+              <span
+                key={page}
+                className={cn(
+                  "grid h-11 w-11 place-items-center rounded-full border text-sm font-bold",
+                  page === "1"
+                    ? "border-ink bg-ink text-gold-400"
+                    : "border-sand-300 bg-paper text-ink",
+                )}
+              >
+                {page}
+              </span>
+            ))}
+            <span className="grid h-11 w-11 place-items-center rounded-full border border-sand-300 bg-paper text-ink">
+              <ArrowRight className="h-4 w-4" />
+            </span>
+            <span className="ml-2 text-[13px] font-medium text-navy-500">
+              Showing 1–{Math.min(filtered.length, 6)} of {filtered.length}
+            </span>
+          </div>
+            </>
+          ) : null}
         </div>
       </div>
     </section>
