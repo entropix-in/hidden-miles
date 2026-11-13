@@ -42,13 +42,13 @@ export function SiteFooter() {
       <div className="container-page">
         <div className="flex flex-col gap-10 py-16 md:py-24 xl:flex-row xl:items-end xl:justify-between xl:gap-16">
           <div className="xl:min-w-0 xl:flex-1">
-            <p className="type-display text-paper xl:whitespace-nowrap">
+            <p className="type-display text-paper xl:whitespace-nowrap xl:text-[88px] xl:leading-[92px]">
               Wander well,
               <br />
               <span className="accent-line">we&apos;ll handle the rest.</span>
             </p>
           </div>
-          <div className="w-full shrink-0 xl:max-w-[400px]">
+          <div className="w-full shrink-0 xl:max-w-[440px]">
             <p className="type-title text-paper">Postcards, once a month</p>
             <p className="type-small mt-2 text-navy-200">
               New departures, early-bird fares and one good travel story. No spam,

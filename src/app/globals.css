@@ -228,7 +228,7 @@
     font-size: 12px;
     line-height: 16px;
     font-weight: 800;
-    letter-spacing: 0.14em;
+    letter-spacing: 0.1667em;
     text-transform: uppercase;
   }
 
@@ -277,7 +277,7 @@
     font-size: 12px;
     line-height: 16px;
     font-weight: 800;
-    letter-spacing: 0.14em;
+    letter-spacing: 0.1667em;
     text-transform: uppercase;
   }
 
@@ -308,8 +308,9 @@
     align-items: center;
     justify-content: center;
     gap: 12px;
+    min-height: 48px;
     border-radius: 999px;
-    padding: 14px 24px;
+    padding: 8px 24px;
     font-family: var(--font-sans);
     font-size: 15px;
     line-height: 20px;
@@ -326,12 +327,14 @@
   }
 
   .btn-sm {
-    padding: 10px 18px;
+    min-height: 34px;
+    padding: 4px 16px;
     font-size: 14px;
   }
 
   .btn-lg {
-    padding: 18px 30px;
+    min-height: 56px;
+    padding: 12px 30px;
   }
 
   .btn-primary {
@@ -644,7 +647,7 @@
     font-size: 11px;
     line-height: 14px;
     font-weight: 800;
-    letter-spacing: 0.14em;
+    letter-spacing: 0.1667em;
     text-transform: uppercase;
   }
 
@@ -661,7 +664,7 @@
     font-size: 12px;
     line-height: 16px;
     font-weight: 800;
-    letter-spacing: 0.14em;
+    letter-spacing: 0.1667em;
     text-transform: uppercase;
   }
 

@@ -68,7 +68,7 @@ export default async function HomePage() {
           <div className="animate-rise">
             <Kicker label="Group tours · Family holidays · Private escapes" />
 
-            <h1 className="type-display mt-6 text-ink">
+            <h1 className="type-display mt-8 text-ink">
               Journeys that
               <br />
               <span className="accent-line">stay with you</span>
@@ -76,7 +76,7 @@ export default async function HomePage() {
               long after.
             </h1>
 
-            <p className="type-lead mt-7 max-w-[500px] text-navy-700">
+            <p className="type-lead mt-8 max-w-[500px] text-navy-700">
               Thoughtfully planned trips across India and the world — with a tour
               leader from day one, honest all-inclusive prices and a real person
               on call, always.
@@ -135,7 +135,7 @@ export default async function HomePage() {
           {/* Collage */}
           <div className="relative mx-auto hidden aspect-square w-full max-w-[600px] xl:block">
             {heroDestination ? (
-              <div className="absolute right-0 top-0 h-[93%] w-[73%] overflow-hidden rounded-t-[220px] rounded-b-[28px] bg-ink">
+              <div className="absolute left-[160px] top-0 h-[560px] w-[440px] overflow-hidden rounded-t-[220px] rounded-b-[28px] bg-ink">
                 <Image
                   src={imageUrl(heroDestination.image, 1200)}
                   alt={heroDestination.name}
@@ -148,7 +148,7 @@ export default async function HomePage() {
             ) : null}
 
             {insetDestination ? (
-              <div className="absolute bottom-0 left-0 h-[50%] w-[40%] overflow-hidden rounded-[28px] border-8 border-paper bg-ink shadow-[0_18px_40px_-30px_rgba(11,39,53,0.5)]">
+              <div className="absolute left-0 top-[260px] h-[300px] w-[240px] overflow-hidden rounded-[28px] border-8 border-paper bg-ink shadow-[0_18px_40px_-30px_rgba(11,39,53,0.5)]">
                 <Image
                   src={imageUrl(insetDestination.image, 700)}
                   alt={insetDestination.name}
@@ -159,7 +159,7 @@ export default async function HomePage() {
               </div>
             ) : null}
 
-            <div className="absolute left-[8%] top-[7%] flex items-center gap-2.5 rounded-full bg-paper py-2.5 pl-2.5 pr-4 shadow-[0_12px_32px_-16px_rgba(11,39,53,0.45)]">
+            <div className="absolute left-[200px] top-[40px] flex items-center gap-2.5 rounded-full bg-paper py-2.5 pl-2.5 pr-4 shadow-[0_12px_32px_-16px_rgba(11,39,53,0.45)]">
               <span className="grid h-8 w-8 place-items-center rounded-full bg-gold-400 text-ink">
                 <MapPin className="h-4 w-4" />
               </span>
@@ -173,17 +173,17 @@ export default async function HomePage() {
               </span>
             </div>
 
-            <span className="absolute bottom-[9%] right-[8%]">
+            <span className="absolute left-[452px] top-[470px]">
               <Stamp size={140} />
             </span>
           </div>
         </div>
 
-        <div className="mt-12 md:mt-16">
+        <div className="mt-14">
           <SearchWidget destinations={destinations} experiences={experiences} />
         </div>
 
-        <div className="mt-4 flex flex-wrap items-center gap-2.5 pb-12 md:pb-16">
+        <div className="mt-14 flex flex-wrap items-center gap-2.5">
           <span className="text-sm font-bold text-navy-500">Popular:</span>
           {[
             { label: "Kashmir in spring", href: "/tours?destination=kashmir" },
@@ -200,16 +200,18 @@ export default async function HomePage() {
       </section>
 
       {/* --------------------------------------------------------------- stats */}
-      <section className="container-page">
-        <div className="grid grid-cols-2 gap-y-8 border-y border-sand-300 py-10 md:grid-cols-4 md:py-12">
+      <section className="container-page pt-20 md:pt-24">
+        <div className="grid grid-cols-2 gap-y-8 md:grid-cols-4">
           {stats.map((stat, index) => (
             <div
               key={stat.label}
-              className={`px-0 md:px-8 ${index ? "md:border-l md:border-sand-300" : ""}`}
+              className={`md:pr-8 ${
+                index ? "md:border-l md:border-sand-300 md:pl-8" : ""
+              }`}
             >
-              <p className="type-h3 text-ink">
+              <p className="type-h2 text-ink">
                 {stat.value}
-                <span className="type-h4">
+                <span>
                   {stat.suffix === "yrs" ? " years" : stat.suffix}
                 </span>
               </p>
