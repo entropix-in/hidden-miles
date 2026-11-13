@@ -1,123 +1,183 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowUpRight, Compass, Globe2, MapPin } from "lucide-react";
+import { Search } from "lucide-react";
+import { CtaBand } from "@/components/site/cta-band";
+import { DestinationCard } from "@/components/site/destination-card";
 import { PageHero } from "@/components/site/page-hero";
 import { SectionHeading } from "@/components/site/section-heading";
-import { DestinationCard } from "@/components/site/destination-card";
 import { loadDestinations, loadTours } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "Destinations",
   description:
-    "Explore Hidden Miles destinations across India and the world — from Kashmir and Kerala to Europe, Japan, Bali and the Maldives.",
+    "Explore the places Hidden Miles knows by heart — from Kashmir and Kerala to Japan, Europe and the Maldives.",
 };
+
+type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 
 export const dynamic = "force-dynamic";
 
-export default async function DestinationsPage() {
+export default async function DestinationsPage({
+  searchParams,
+}: {
+  searchParams: SearchParams;
+}) {
+  const params = await searchParams;
+  const query =
+    typeof params.q === "string" ? params.q.trim().toLowerCase() : "";
+
   const [destinations, tours] = await Promise.all([
     loadDestinations(),
     loadTours(),
   ]);
-  const india = destinations.filter((item) => item.region === "India");
-  const international = destinations.filter(
-    (item) => item.region === "International",
+
+  const matches = query
+    ? destinations.filter((destination) =>
+        `${destination.name} ${destination.tagline} ${destination.region}`
+          .toLowerCase()
+          .includes(query),
+      )
+    : destinations;
+
+  const india = matches.filter((destination) => destination.region === "India");
+  const international = matches.filter(
+    (destination) => destination.region === "International",
   );
+
+  const countTours = (slug: string) =>
+    tours.filter((tour) => tour.destinationSlug === slug).length;
+
+  const heroImage =
+    destinations.find((destination) => destination.slug === "ladakh")?.image ??
+    destinations[0]?.image;
+
+  const numberWords = [
+    "Zero",
+    "One",
+    "Two",
+    "Three",
+    "Four",
+    "Five",
+    "Six",
+    "Seven",
+    "Eight",
+    "Nine",
+    "Ten",
+    "Eleven",
+    "Twelve",
+    "Thirteen",
+    "Fourteen",
+    "Fifteen",
+    "Sixteen",
+    "Seventeen",
+    "Eighteen",
+    "Nineteen",
+    "Twenty",
+  ];
+  const destinationCount =
+    numberWords[destinations.length] ?? String(destinations.length);
 
   return (
     <>
       <PageHero
-        eyebrow="Destinations"
-        title="A world of places, a thousand ways to see them."
-        description="Start with a destination you have been dreaming about. We will take care of the route, the stays, the little local secrets and everything in between."
-        breadcrumbs={[{ label: "Destinations" }]}
+        items={[{ label: "Home", href: "/" }, { label: "Destinations" }]}
+        title={`${destinationCount} places`}
+        accent="we know by heart."
+        description="From houseboats in Srinagar to overwater villas in the Maldives — pick a place, and we'll handle everything else."
+        image={heroImage ?? ""}
+        imageAlt="A Himalayan landscape"
+        coords="LADAKH · 34.15° N  77.58° E"
       >
-        <div className="grid grid-cols-2 gap-3">
-          <div className="rounded-2xl border border-stone-200 bg-white p-5">
-            <MapPin className="h-5 w-5 text-blue-600" />
-            <p className="mt-3 font-display text-3xl font-semibold text-navy-950">
-              {destinations.length}
-            </p>
-            <p className="mt-1 text-sm font-bold uppercase tracking-wider text-stone-400">
-              Destinations
-            </p>
-          </div>
-          <div className="rounded-2xl border border-stone-200 bg-white p-5">
-            <Globe2 className="h-5 w-5 text-navy-600" />
-            <p className="mt-3 font-display text-3xl font-semibold text-navy-950">
-              2
-            </p>
-            <p className="mt-1 text-sm font-bold uppercase tracking-wider text-stone-400">
-              Continents
-            </p>
-          </div>
-          <div className="col-span-2 rounded-2xl bg-navy-950 p-5 text-sand-50">
-            <p className="flex items-center gap-2 text-sm font-bold text-sand-200/70">
-              <Compass className="h-4 w-4 text-blue-300" />
-              Cannot decide? We will help.
-            </p>
-            <Link
-              href="/contact"
-              className="mt-3 inline-flex items-center gap-1.5 text-sm font-extrabold uppercase tracking-wider text-blue-300 transition hover:text-blue-200"
-            >
-              Talk to an expert
-              <ArrowUpRight className="h-3.5 w-3.5" />
-            </Link>
-          </div>
-        </div>
+        <form
+          action="/destinations"
+          className="flex w-full max-w-[460px] items-center gap-3 rounded-full border-[1.5px] border-sand-300 bg-paper px-5 py-3.5"
+        >
+          <Search className="h-5 w-5 text-navy-500" />
+          <input
+            name="q"
+            defaultValue={query}
+            placeholder="Search a destination…"
+            aria-label="Search a destination"
+            className="min-w-0 flex-1 bg-transparent text-[15px] font-medium text-ink outline-none placeholder:text-navy-400"
+          />
+          <button type="submit" className="text-sm font-bold text-blue-700">
+            Search
+          </button>
+        </form>
       </PageHero>
 
-      <section className="container-page py-16">
+      <section className="container-page pb-16 md:pb-24">
         <SectionHeading
-          eyebrow="Indian Group Tours"
-          title="India, beautifully"
-          description="Himalayan escapes, southern backwaters, desert palaces and island shores. There is always another India waiting."
+          number="01"
+          label="India"
+          title="Across"
+          accent="India."
+          right={
+            <span className="text-sm font-bold text-blue-700">
+              Showing {india.length} of {destinations.filter((item) => item.region === "India").length} · View all →
+            </span>
+          }
         />
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {india.map((destination, index) => (
+        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
+          {india.map((destination) => (
             <DestinationCard
               key={destination.slug}
               destination={destination}
-              tourCount={tours.filter((tour) => tour.destinationSlug === destination.slug).length}
-              priority={index < 3}
+              tourCount={countTours(destination.slug)}
+              className="min-h-[440px]"
             />
           ))}
         </div>
+        {!india.length ? (
+          <p className="type-body mt-8 rounded-[20px] border border-dashed border-sand-300 p-8 text-center text-navy-500">
+            No Indian destinations match “{query}”. Try another name.
+          </p>
+        ) : null}
       </section>
 
-      <section className="bg-sand-100/70 py-16">
-        <div className="container-page">
+      <section className="bg-sand-100">
+        <div className="container-page section-major">
           <SectionHeading
-            eyebrow="International Group Tours"
-            title="International favourites"
-            description="From the canals of Europe to the islands of the Indian Ocean, these are the journeys our travellers ask for again and again."
+            number="02"
+            label="International"
+            title="Around"
+            accent="the world."
+            right={
+              <span className="text-sm font-bold text-blue-700">
+                Showing {international.length} of{" "}
+                {destinations.filter((item) => item.region === "International").length} · View all →
+              </span>
+            }
           />
-          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
             {international.map((destination) => (
               <DestinationCard
                 key={destination.slug}
                 destination={destination}
-                tourCount={tours.filter((tour) => tour.destinationSlug === destination.slug).length}
+                tourCount={countTours(destination.slug)}
+                className="min-h-[440px]"
               />
             ))}
+          </div>
+          {!international.length ? (
+            <p className="type-body mt-8 rounded-[20px] border border-dashed border-sand-300 p-8 text-center text-navy-500">
+              No international destinations match “{query}”. Try another name.
+            </p>
+          ) : null}
+          <div className="mt-10 flex justify-center">
+            <Link href="/tours" className="btn btn-outline">
+              Browse all tours
+              <span className="btn-dot">→</span>
+            </Link>
           </div>
         </div>
       </section>
 
-      <section className="container-page py-16">
-        <div className="flex flex-col items-start justify-between gap-5 rounded-[30px] border border-stone-200 bg-white px-6 py-8 sm:flex-row sm:items-center sm:px-10">
-          <div>
-            <p className="eyebrow">Not on the list?</p>
-            <h2 className="mt-2 font-display text-2xl font-medium text-navy-950 sm:text-3xl">
-              Tell us where you want to go. We will make it happen.
-            </h2>
-          </div>
-          <Link href="/contact" className="btn-primary shrink-0">
-            Start planning
-            <ArrowUpRight className="h-4 w-4" />
-          </Link>
-        </div>
-      </section>
+      <CtaBand
+        title="Two places,"
+        accent="one seamless trip."
+        description="Combine destinations into a single itinerary — we'll plan the flights, transfers and pacing so it feels effortless."
+      />
     </>
   );
 }

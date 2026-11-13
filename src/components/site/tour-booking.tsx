@@ -1,14 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import {
-  CalendarDays,
-  CheckCircle2,
-  Loader2,
-  Send,
-  Ticket,
-  Users,
-} from "lucide-react";
+import { CheckCircle2, Loader2 } from "lucide-react";
 import type { TourDeparture } from "@/lib/types";
 import { cn, formatINR } from "@/lib/utils";
 
@@ -60,9 +53,7 @@ export function TourBooking({
   );
   const [error, setError] = useState("");
 
-  const selected = departures.find(
-    (departure) => departure._id === selectedId,
-  );
+  const selected = departures.find((departure) => departure._id === selectedId);
   const maxTravellers = selected ? Math.max(1, selected.seatsLeft) : 10;
   const effectiveTravellers = Math.min(travellers, maxTravellers);
   const total = selected ? selected.price * effectiveTravellers : 0;
@@ -111,17 +102,15 @@ export function TourBooking({
 
   if (status === "done") {
     return (
-      <section
+      <div
         id="book"
-        className="scroll-mt-28 rounded-[32px] border border-navy-200 bg-navy-50 p-7 text-center sm:p-10"
+        className="scroll-mt-32 rounded-[28px] border border-sand-300 bg-paper p-8 text-center md:p-12"
       >
-        <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-navy-600 text-white">
+        <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-ink text-gold-400">
           <CheckCircle2 className="h-7 w-7" />
         </span>
-        <h2 className="mt-5 font-display text-2xl font-semibold text-navy-950">
-          Booking request received.
-        </h2>
-        <p className="mx-auto mt-2 max-w-lg text-sm leading-6 text-stone-600">
+        <h2 className="type-h3 mt-5 text-ink">Booking request received.</h2>
+        <p className="type-body mx-auto mt-2 max-w-lg text-navy-700">
           Thank you, {form.name.split(" ")[0] || "traveller"}. We have reserved
           your seats on <strong>{tourTitle}</strong>
           {selected ? ` for ${formatDate(selected.startDate)}` : ""} for{" "}
@@ -135,40 +124,30 @@ export function TourBooking({
             setStatus("idle");
             setForm((current) => ({ ...current, notes: "" }));
           }}
-          className="btn-outline mt-6"
+          className="btn btn-outline mt-6"
         >
           Make another booking
         </button>
-      </section>
+      </div>
     );
   }
 
   return (
-    <section
+    <div
       id="book"
-      className="scroll-mt-28 rounded-[32px] border border-stone-200 bg-white p-6 shadow-[0_18px_60px_-45px_rgba(11,39,53,0.6)] sm:p-8"
+      className="scroll-mt-32 rounded-[28px] border border-sand-300 bg-paper p-7 md:p-9"
     >
-      <p className="eyebrow">Book this tour</p>
-      <div className="mt-2 flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h2 className="font-display text-3xl font-medium text-navy-950">
-            Dates &amp; prices
-          </h2>
-          <p className="mt-1 text-sm text-stone-500">
-            Pick a departure, choose your travellers and we will hold the seats
-            while we confirm your booking.
-          </p>
-        </div>
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-sand-100 px-3 py-1.5 text-sm font-extrabold uppercase tracking-wider text-stone-600">
-          <CalendarDays className="h-3.5 w-3.5 text-blue-600" />
-          {nights}N / {nights + 1}D
-        </span>
-      </div>
+      <p className="type-label text-gold-600">Complete your booking</p>
+      <h2 className="type-h3 mt-2 text-ink">Choose your departure</h2>
+      <p className="type-small mt-2 text-navy-500">
+        Pick a date and tell us who&apos;s coming. We&apos;ll hold the seats while
+        we confirm.
+      </p>
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+      <div className="mt-7 grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
         <div>
           {departures.length ? (
-            <div className="space-y-3">
+            <div className="grid gap-3">
               {departures.map((departure) => {
                 const soldOut = departure.seatsLeft <= 0;
                 const low = !soldOut && departure.seatsLeft <= 5;
@@ -177,11 +156,13 @@ export function TourBooking({
                   <label
                     key={departure._id}
                     className={cn(
-                      "flex cursor-pointer items-center gap-4 rounded-2xl border p-4 transition",
+                      "flex cursor-pointer items-center gap-4 rounded-[16px] border-[1.5px] p-4 transition",
                       soldOut
-                        ? "cursor-not-allowed border-stone-200 bg-stone-50 opacity-70"
-                        : "border-stone-200 hover:border-blue-300",
-                      "has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50 has-[:checked]:shadow-md has-[:checked]:shadow-blue-900/5",
+                        ? "cursor-not-allowed border-sand-300 bg-sand-100 opacity-70"
+                        : "border-sand-300 bg-paper hover:border-navy-300",
+                      selectedId === departure._id &&
+                        !soldOut &&
+                        "border-ink bg-sand-100",
                     )}
                   >
                     <input
@@ -198,42 +179,30 @@ export function TourBooking({
                       }}
                       className="sr-only"
                     />
-                    <span
-                      className={cn(
-                        "grid h-11 w-11 shrink-0 place-items-center rounded-full",
-                        selectedId === departure._id && !soldOut
-                          ? "bg-blue-600 text-white"
-                          : "bg-sand-100 text-navy-950",
-                      )}
-                    >
-                      <Ticket className="h-5 w-5" />
-                    </span>
                     <span className="min-w-0 flex-1">
-                      <span className="block text-sm font-extrabold text-navy-950">
+                      <span className="block text-sm font-bold text-ink">
                         {formatRange(departure.startDate, nights)}
                       </span>
-                      <span className="mt-0.5 block text-sm font-semibold text-stone-500">
+                      <span className="mt-0.5 block text-[13px] font-medium text-navy-500">
                         {formatINR(departure.price)} per person
                         {departure.note ? ` · ${departure.note}` : ""}
                       </span>
                     </span>
                     <span className="shrink-0 text-right">
-                      <span className="block font-display text-lg font-semibold text-navy-950">
+                      <span className="block text-sm font-bold text-ink">
                         {formatINR(departure.price)}
                       </span>
                       <span
                         className={cn(
-                          "mt-1 inline-flex rounded-full px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-[0.1em]",
+                          "mt-1 inline-flex rounded-full px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-[0.08em]",
                           soldOut
-                            ? "bg-red-100 text-red-700"
+                            ? "bg-danger-soft text-danger"
                             : low
-                              ? "bg-gold-100 text-gold-800"
-                              : "bg-navy-100 text-navy-800",
+                              ? "bg-gold-100 text-gold-700"
+                              : "bg-success-soft text-success",
                         )}
                       >
-                        {soldOut
-                          ? "Sold out"
-                          : `${departure.seatsLeft} seats left`}
+                        {soldOut ? "Sold out" : `${departure.seatsLeft} seats left`}
                       </span>
                     </span>
                   </label>
@@ -241,45 +210,65 @@ export function TourBooking({
               })}
             </div>
           ) : (
-            <div className="rounded-2xl border border-dashed border-stone-300 bg-sand-50 p-6">
-              <p className="font-display text-xl font-semibold text-navy-950">
-                New dates are being finalised.
-              </p>
-              <p className="mt-2 text-sm leading-6 text-stone-600">
-                Send a booking request and our team will share the next
-                available departures and a personalised quote. You can also
-                call us on +91 98204 12345.
+            <div className="rounded-[16px] border border-dashed border-sand-300 bg-sand-100 p-6">
+              <p className="type-title text-ink">New dates are being finalised.</p>
+              <p className="type-small mt-2 text-navy-700">
+                Send a booking request and our team will share the next available
+                departures and a personalised quote.
               </p>
             </div>
           )}
 
-          {departures.length && !bookable.length ? (
-            <p className="mt-3 rounded-xl bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
-              All listed departures are sold out. Send a request and we will
-              add a new date for you.
-            </p>
-          ) : null}
+          <div className="mt-5">
+            <label htmlFor="booking-travellers" className="field-label">
+              Travellers
+            </label>
+            <div className="flex items-center gap-4">
+              <div className="inline-flex items-center rounded-full border border-sand-300 bg-paper">
+                <button
+                  type="button"
+                  onClick={() => setTravellers((current) => Math.max(1, current - 1))}
+                  className="grid h-10 w-10 place-items-center text-lg font-bold text-ink transition hover:text-gold-600"
+                  aria-label="Remove one traveller"
+                >
+                  −
+                </button>
+                <input
+                  id="booking-travellers"
+                  type="number"
+                  min="1"
+                  max={maxTravellers}
+                  value={effectiveTravellers}
+                  onChange={(event) =>
+                    setTravellers(
+                      Math.min(
+                        maxTravellers,
+                        Math.max(1, Number(event.target.value) || 1),
+                      ),
+                    )
+                  }
+                  className="h-10 w-12 border-x border-sand-300 bg-paper text-center text-sm font-bold text-ink outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() =>
+                    setTravellers((current) => Math.min(maxTravellers, current + 1))
+                  }
+                  className="grid h-10 w-10 place-items-center text-lg font-bold text-ink transition hover:text-gold-600"
+                  aria-label="Add one traveller"
+                >
+                  +
+                </button>
+              </div>
+              <span className="text-[13px] font-medium text-navy-500">
+                {selected ? `${selected.seatsLeft} seats left` : "Group size on request"}
+              </span>
+            </div>
+          </div>
         </div>
 
-        <form
-          onSubmit={handleSubmit}
-          className="rounded-3xl border border-stone-200 bg-sand-50/70 p-5"
-        >
-          <div className="flex items-center justify-between gap-3">
-            <p className="text-sm font-extrabold uppercase tracking-[0.16em] text-stone-500">
-              Your booking
-            </p>
-            {selected ? (
-              <span className="rounded-full bg-white px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider text-blue-700">
-                {formatDate(selected.startDate)}
-              </span>
-            ) : (
-              <span className="rounded-full bg-white px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider text-stone-500">
-                Request a date
-              </span>
-            )}
-          </div>
-
+        <form onSubmit={handleSubmit} className="rounded-[20px] bg-sand-100 p-5">
+          <p className="type-label text-navy-500">Lead traveller</p>
           <div className="mt-4 grid gap-3">
             <div>
               <label htmlFor="booking-name" className="field-label">
@@ -327,59 +316,6 @@ export function TourBooking({
                 />
               </div>
             </div>
-
-            <div>
-              <label htmlFor="booking-travellers" className="field-label">
-                Travellers
-              </label>
-              <div className="flex items-center gap-3">
-                <div className="inline-flex items-center rounded-full border border-stone-200 bg-white">
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setTravellers((current) => Math.max(1, current - 1))
-                    }
-                    className="grid h-10 w-10 place-items-center text-lg font-bold text-navy-950 transition hover:text-blue-700"
-                    aria-label="Remove one traveller"
-                  >
-                    −
-                  </button>
-                  <input
-                    id="booking-travellers"
-                    type="number"
-                    min="1"
-                    max={maxTravellers}
-                    value={effectiveTravellers}
-                    onChange={(event) =>
-                      setTravellers(
-                        Math.min(
-                          maxTravellers,
-                          Math.max(1, Number(event.target.value) || 1),
-                        ),
-                      )
-                    }
-                    className="h-10 w-12 border-x border-stone-200 bg-white text-center text-sm font-extrabold text-navy-950 outline-none"
-                  />
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setTravellers((current) =>
-                        Math.min(maxTravellers, current + 1),
-                      )
-                    }
-                    className="grid h-10 w-10 place-items-center text-lg font-bold text-navy-950 transition hover:text-blue-700"
-                    aria-label="Add one traveller"
-                  >
-                    +
-                  </button>
-                </div>
-                <span className="inline-flex items-center gap-1 text-sm font-semibold text-stone-500">
-                  <Users className="h-4 w-4 text-blue-600" />
-                  {selected ? `${selected.seatsLeft} seats left` : "Group size on request"}
-                </span>
-              </div>
-            </div>
-
             <div>
               <label htmlFor="booking-notes" className="field-label">
                 Anything we should know?
@@ -389,11 +325,10 @@ export function TourBooking({
                 value={form.notes}
                 onChange={(event) => update("notes", event.target.value)}
                 rows={2}
-                placeholder="Preferred date, dietary needs, rooms…"
+                placeholder="Dietary needs, rooms, celebrations…"
                 className="field resize-none"
               />
             </div>
-
             <div className="hidden" aria-hidden="true">
               <label htmlFor="booking-company">Company</label>
               <input
@@ -406,49 +341,42 @@ export function TourBooking({
             </div>
           </div>
 
-          <div className="mt-4 flex items-baseline justify-between gap-3 border-t border-dashed border-stone-300 pt-4">
-            <span className="text-sm font-bold uppercase tracking-wider text-stone-400">
-              Total
-            </span>
-            <span className="text-right">
-              <span className="block font-display text-2xl font-semibold text-navy-950">
+          <div className="mt-5 flex items-end justify-between gap-3 border-t border-dashed border-sand-300 pt-4">
+            <div>
+              <p className="text-[13px] font-medium text-navy-400">Total</p>
+              <p className="type-title text-ink">
                 {selected ? formatINR(total) : `From ${formatINR(basePrice)}`}
-              </span>
-              <span className="text-sm font-semibold text-stone-400">
+              </p>
+              <p className="text-xs font-medium text-navy-400">
                 {selected
-                  ? `${formatINR(selected.price)} × ${effectiveTravellers} ${
-                      effectiveTravellers === 1 ? "traveller" : "travellers"
-                    }`
+                  ? `${formatINR(selected.price)} × ${effectiveTravellers}`
                   : "per person · final quote on request"}
-              </span>
-            </span>
+              </p>
+            </div>
+            <button
+              type="submit"
+              disabled={status === "sending"}
+              className="btn btn-primary shrink-0 disabled:opacity-70"
+            >
+              {status === "sending" ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : null}
+              {status === "sending" ? "Reserving" : "Book now"}
+              {status !== "sending" ? <span className="btn-dot">→</span> : null}
+            </button>
           </div>
 
-          <button
-            type="submit"
-            disabled={status === "sending"}
-            className="btn-primary mt-4 w-full disabled:opacity-70"
-          >
-            {status === "sending" ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Send className="h-4 w-4" />
-            )}
-            {status === "sending" ? "Reserving your seats" : "Book now"}
-          </button>
-
           {status === "error" ? (
-            <p className="mt-3 text-center text-sm font-semibold text-red-600">
+            <p className="mt-3 text-sm font-semibold text-danger">
               {error} You can also call us on +91 98204 12345.
             </p>
           ) : null}
 
-          <p className="mt-3 text-center text-sm leading-5 text-stone-400">
-            No payment now. Our team confirms availability and payment options
-            within one working day.
+          <p className="mt-3 text-xs leading-5 text-navy-400">
+            No payment now. Our team confirms availability within one working day.
           </p>
         </form>
       </div>
-    </section>
+    </div>
   );
 }

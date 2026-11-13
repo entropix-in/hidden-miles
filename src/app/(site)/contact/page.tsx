@@ -1,259 +1,185 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import {
-  ArrowUpRight,
-  Clock,
-  Mail,
-  MapPin,
-  Phone,
-  Plus,
-} from "lucide-react";
-import { PageHero } from "@/components/site/page-hero";
-import { EnquiryForm } from "@/components/site/enquiry-form";
-import { loadDestinations, loadTour } from "@/lib/content";
+import { Mail, MapPin, MessageCircle, Phone } from "lucide-react";
+import { ContactForm } from "@/components/site/contact-form";
+import { Contours } from "@/components/site/contours";
+import { Kicker } from "@/components/site/section-heading";
 import { site } from "@/data/site";
 
 export const metadata: Metadata = {
-  title: "Contact Us",
+  title: "Contact",
   description:
-    "Talk to a Hidden Miles travel expert. Call, email, WhatsApp or send an enquiry — we usually respond within one working day.",
+    "Talk to the Hidden Miles team — real people, Monday to Saturday, 9:30 am to 7:00 pm. We usually reply within the hour.",
 };
-
-const offices = [
-  {
-    city: "Mumbai · Head office",
-    address: "302, Meridian House, Andheri East, Mumbai 400069",
-    phone: "+91 98204 12345",
-  },
-  {
-    city: "Pune",
-    address: "14, Riverside Arcade, Bund Garden Road, Pune 411001",
-    phone: "+91 98204 23456",
-  },
-  {
-    city: "Bengaluru",
-    address: "7th Floor, Indigo House, Indiranagar, Bengaluru 560038",
-    phone: "+91 98204 34567",
-  },
-];
 
 const faqs = [
   {
     question: "How do I book a Hidden Miles holiday?",
     answer:
-      "Start with an enquiry or a call. Your travel expert will share a detailed itinerary and quote, and once you are happy, a 25% deposit confirms your booking. The balance is due 30 days before departure.",
+      "Pick a departure online and pay 25% to reserve, or call us and we'll book it for you. The balance is due 30 days before travel.",
   },
   {
     question: "Can you customise an existing tour?",
     answer:
-      "Absolutely. Almost every Hidden Miles itinerary can be adjusted for dates, pace, hotel category or private departures. Tell us what you would like to change and we will re-plan it around you.",
+      "Yes. Every itinerary can be made private, extended or slowed down. Tell us what you'd change and we'll rework it within 24 hours.",
   },
   {
     question: "Do you handle visas and travel insurance?",
     answer:
-      "Yes. Visa assistance is included on international tours where mentioned, and our team guides you through documents. Travel insurance is included on all international journeys and available on request for India tours.",
+      "We guide visa documentation for every international destination and can arrange travel insurance as part of your booking.",
   },
   {
-    question: "What if plans change after booking?",
+    question: "What if my plans change after booking?",
     answer:
-      "We understand life happens. Date changes and cancellations are handled as per the booking terms shared with your confirmation. Our team will always try to find the most flexible solution.",
+      "You can change your departure date free up to 30 days before travel. Inside 30 days, we'll always try to find a solution.",
+  },
+  {
+    question: "Is there an EMI option?",
+    answer:
+      "Yes — no-cost EMI for 3 to 6 months is available on major credit cards, and longer tenures on request.",
   },
 ];
 
-type SearchParams = Promise<Record<string, string | string[] | undefined>>;
-
-export default async function ContactPage({
-  searchParams,
-}: {
-  searchParams: SearchParams;
-}) {
-  const params = await searchParams;
-  const tourSlug = typeof params.tour === "string" ? params.tour : "";
-  const [selectedTour, destinations] = await Promise.all([
-    tourSlug ? loadTour(tourSlug) : Promise.resolve(undefined),
-    loadDestinations(),
-  ]);
-  const mapQuery = encodeURIComponent(
-    "Meridian House, Andheri East, Mumbai 400069",
-  );
-
+export default function ContactPage() {
   return (
     <>
-      <PageHero
-        eyebrow="Contact us"
-        title="Let's plan something wonderful."
-        description="Call, email or send us a note. A real travel expert — not a chatbot — will get back to you within one working day with ideas and honest advice."
-        breadcrumbs={[{ label: "Contact" }]}
-      >
-        <div className="grid gap-3">
-          <a
-            href={site.phoneHref}
-            className="group flex items-center gap-3 rounded-2xl border border-stone-200 bg-white p-4 transition hover:border-blue-400"
-          >
-            <span className="grid h-10 w-10 place-items-center rounded-full bg-blue-100 text-blue-700">
-              <Phone className="h-4 w-4" />
-            </span>
-            <span>
-              <span className="block text-sm font-extrabold uppercase tracking-wider text-stone-400">
-                Call us
-              </span>
-              <span className="text-sm font-extrabold text-navy-950">
-                {site.phone}
-              </span>
-            </span>
-            <ArrowUpRight className="ml-auto h-4 w-4 text-stone-300 transition group-hover:text-blue-600" />
-          </a>
-          <a
-            href={site.emailHref}
-            className="group flex items-center gap-3 rounded-2xl border border-stone-200 bg-white p-4 transition hover:border-blue-400"
-          >
-            <span className="grid h-10 w-10 place-items-center rounded-full bg-navy-100 text-navy-700">
-              <Mail className="h-4 w-4" />
-            </span>
-            <span>
-              <span className="block text-sm font-extrabold uppercase tracking-wider text-stone-400">
-                Email us
-              </span>
-              <span className="text-sm font-extrabold text-navy-950">
-                {site.email}
-              </span>
-            </span>
-            <ArrowUpRight className="ml-auto h-4 w-4 text-stone-300 transition group-hover:text-blue-600" />
-          </a>
-          <div className="flex items-center gap-3 rounded-2xl bg-navy-950 p-4 text-sand-50">
-            <span className="grid h-10 w-10 place-items-center rounded-full bg-white/10 text-blue-300">
-              <Clock className="h-4 w-4" />
-            </span>
-            <span>
-              <span className="block text-sm font-extrabold uppercase tracking-wider text-sand-200/50">
-                Office hours
-              </span>
-              <span className="text-sm font-extrabold">{site.hours}</span>
-            </span>
-          </div>
-        </div>
-      </PageHero>
+      <section className="container-page py-12 text-center md:py-20">
+        <Kicker label="Contact us" className="justify-center" />
+        <h1 className="type-h1 mx-auto mt-5 max-w-3xl text-ink">
+          Let&apos;s plan something
+          <br />
+          <span className="accent-line">wonderful.</span>
+        </h1>
+        <p className="type-lead mx-auto mt-5 max-w-2xl text-navy-700">
+          Real people, Monday to Saturday, 9:30 am – 7:00 pm. We usually reply
+          within the hour.
+        </p>
+      </section>
 
-      <section className="container-page py-12 sm:py-16">
-        {selectedTour ? (
-          <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-blue-200 bg-blue-50 px-5 py-4">
-            <p className="text-sm font-bold text-blue-900">
-              Enquiring about <span className="font-extrabold">{selectedTour.title}</span>
-            </p>
-            <Link
-              href={`/tours/${selectedTour.slug}`}
-              className="inline-flex items-center gap-1 text-sm font-extrabold uppercase tracking-wider text-blue-700 hover:text-blue-800"
+      <section className="container-page pb-16">
+        <div className="grid gap-5 md:grid-cols-3">
+          {[
+            {
+              icon: Phone,
+              label: "Call us",
+              value: site.phone,
+              cta: "Call now",
+              href: site.phoneHref,
+              bg: "bg-ink",
+            },
+            {
+              icon: MessageCircle,
+              label: "WhatsApp",
+              value: site.phone,
+              cta: "Start a chat",
+              href: site.whatsappHref,
+              bg: "bg-whatsapp",
+            },
+            {
+              icon: Mail,
+              label: "Email",
+              value: site.email,
+              cta: "Write to us",
+              href: site.emailHref,
+              bg: "bg-blue-500",
+            },
+          ].map((channel) => (
+            <a
+              key={channel.label}
+              href={channel.href}
+              target={channel.href.startsWith("http") ? "_blank" : undefined}
+              rel={channel.href.startsWith("http") ? "noopener noreferrer" : undefined}
+              className="group rounded-[20px] border border-sand-300 bg-paper p-7 transition hover:border-navy-300"
             >
-              View tour
-              <ArrowUpRight className="h-3.5 w-3.5" />
-            </Link>
-          </div>
-        ) : null}
+              <span
+                className={`grid h-[52px] w-[52px] place-items-center rounded-[16px] text-paper ${channel.bg}`}
+              >
+                <channel.icon className="h-6 w-6" />
+              </span>
+              <p className="type-label mt-5 text-navy-500">{channel.label}</p>
+              <p className="type-title mt-1 text-ink">{channel.value}</p>
+              <p className="mt-4 text-sm font-bold text-blue-700 group-hover:text-blue-800">
+                {channel.cta} →
+              </p>
+            </a>
+          ))}
+        </div>
+      </section>
 
-        <div className="grid gap-8 lg:grid-cols-[1.3fr_1fr] lg:items-start">
-          <EnquiryForm
-            defaultDestination={selectedTour?.destinationSlug}
-            tourTitle={selectedTour?.title}
-            destinations={destinations}
-            className="border border-stone-200 shadow-xl shadow-navy-950/5"
-          />
+      <section className="container-page pb-16 md:pb-24">
+        <div className="grid gap-8 xl:grid-cols-[1fr_420px]">
+          <ContactForm />
 
-          <div className="space-y-4">
-            <div className="overflow-hidden rounded-[28px] border border-stone-200 bg-white">
-              <div className="relative h-40 overflow-hidden bg-navy-100">
-                <div className="absolute inset-0 opacity-70 [background-image:linear-gradient(30deg,transparent_49%,#ffffff_49%,#ffffff_51%,transparent_51%),linear-gradient(120deg,transparent_49%,#ffffff_49%,#ffffff_51%,transparent_51%)] [background-size:44px_44px]" />
-                <div className="absolute inset-0 bg-gradient-to-br from-navy-200/60 via-transparent to-blue-200/60" />
-                <span className="absolute left-1/2 top-1/2 grid h-14 w-14 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-navy-950 text-blue-300 shadow-xl">
-                  <MapPin className="h-6 w-6" />
+          <div className="space-y-6">
+            <div className="relative aspect-[420/300] overflow-hidden rounded-[28px] bg-navy-100">
+              <Contours
+                color="rgba(25,103,133,0.28)"
+                count={8}
+                cx={0.5}
+                cy={0.5}
+                seed={2.4}
+              />
+              <span className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center gap-2.5 rounded-full bg-ink py-2.5 pl-2.5 pr-4 text-[13px] font-bold text-paper shadow-lg">
+                <span className="grid h-7 w-7 place-items-center rounded-full bg-gold-400 text-ink">
+                  <MapPin className="h-3.5 w-3.5" />
                 </span>
-              </div>
-              <div className="p-6">
-                <p className="eyebrow">Visit us</p>
-                <h2 className="mt-2 font-display text-2xl font-semibold text-navy-950">
-                  Our Mumbai home
-                </h2>
-                <p className="mt-2 text-sm leading-6 text-stone-500">
-                  {site.address}
-                </p>
-                <a
-                  href={`https://www.google.com/maps/search/?api=1&query=${mapQuery}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-4 inline-flex items-center gap-2 text-sm font-extrabold uppercase tracking-wider text-blue-700 transition hover:text-blue-800"
-                >
-                  Get directions
-                  <ArrowUpRight className="h-3.5 w-3.5" />
-                </a>
-              </div>
+                Meridian House
+              </span>
             </div>
 
-            <div className="rounded-[28px] border border-stone-200 bg-white p-6">
-              <p className="eyebrow">Across India</p>
-              <h2 className="mt-2 font-display text-2xl font-semibold text-navy-950">
-                More Hidden Miles offices
-              </h2>
-              <div className="mt-4 space-y-4">
-                {offices.map((office) => (
-                  <div
-                    key={office.city}
-                    className="border-t border-dashed border-stone-200 pt-4 first:border-0 first:pt-0"
-                  >
-                    <p className="text-sm font-extrabold uppercase tracking-wider text-blue-700">
-                      {office.city}
-                    </p>
-                    <p className="mt-1 text-sm leading-5 text-stone-500">
-                      {office.address}
-                    </p>
-                    <a
-                      href={`tel:${office.phone.replace(/\s/g, "")}`}
-                      className="mt-1 inline-block text-sm font-bold text-navy-950 hover:text-blue-700"
-                    >
-                      {office.phone}
-                    </a>
-                  </div>
-                ))}
-              </div>
+            <div className="rounded-[28px] bg-ink p-8 text-paper">
+              <p className="type-label text-gold-400">Mumbai · Head office</p>
+              <p className="type-h4 mt-3 text-paper">302, Meridian House</p>
+              <p className="type-small mt-2 whitespace-pre-line text-navy-200">
+                Andheri East, Mumbai 400069{"\n"}
+                Mon – Sat · 9:30 am to 7:00 pm
+              </p>
+              <a
+                href="https://maps.google.com/?q=Meridian+House+Andheri+East+Mumbai"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-5 inline-flex text-sm font-bold text-gold-400 hover:text-gold-300"
+              >
+                Get directions ↗
+              </a>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="bg-sand-100/70 py-16">
-        <div className="container-page grid gap-8 lg:grid-cols-[1fr_1.2fr] lg:items-start">
-          <div>
-            <p className="eyebrow">Good to know</p>
-            <h2 className="mt-3 font-display text-3xl font-medium leading-tight text-navy-950 sm:text-4xl">
-              Questions we hear often.
-            </h2>
-            <p className="mt-4 max-w-sm text-[14px] leading-7 text-stone-600">
-              Still unsure about something? Call us — we would rather answer
-              properly than have you guess.
-            </p>
-            <a
-              href={site.phoneHref}
-              className="mt-5 inline-flex items-center gap-2 text-sm font-extrabold text-navy-950 transition hover:text-blue-700"
-            >
-              <Phone className="h-4 w-4 text-blue-600" />
-              {site.phone}
-            </a>
-          </div>
-          <div className="space-y-3">
-            {faqs.map((faq) => (
-              <details
-                key={faq.question}
-                className="group rounded-2xl border border-stone-200 bg-white p-5"
-              >
-                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-[14px] font-extrabold text-navy-950 [&::-webkit-details-marker]:hidden">
-                  {faq.question}
-                  <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-sand-100 text-navy-950 transition duration-300 group-open:rotate-45">
-                    <Plus className="h-4 w-4" />
-                  </span>
-                </summary>
-                <p className="mt-3 text-sm leading-6 text-stone-500">
-                  {faq.answer}
-                </p>
-              </details>
-            ))}
+      <section className="bg-sand-100">
+        <div className="container-page section-major">
+          <div className="grid gap-12 lg:grid-cols-[380px_1fr] lg:gap-24">
+            <div>
+              <Kicker label="Good to know" />
+              <h2 className="type-h2 mt-5 text-ink">
+                Questions,
+                <br />
+                <span className="accent-line">answered.</span>
+              </h2>
+              <p className="type-body mt-5 text-navy-700">
+                Can&apos;t find yours? Call us — it&apos;s what we&apos;re here
+                for.
+              </p>
+            </div>
+            <div>
+              {faqs.map((faq, index) => (
+                <details
+                  key={faq.question}
+                  open={index === 0}
+                  className="group border-t border-sand-300 py-7 last:border-b"
+                >
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-6 [&::-webkit-details-marker]:hidden">
+                    <span className="type-title text-ink">{faq.question}</span>
+                    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-sand-200 text-ink transition group-open:rotate-45 group-open:bg-ink group-open:text-gold-400">
+                      +
+                    </span>
+                  </summary>
+                  <p className="type-small mt-4 max-w-2xl text-navy-700">
+                    {faq.answer}
+                  </p>
+                </details>
+              ))}
+            </div>
           </div>
         </div>
       </section>

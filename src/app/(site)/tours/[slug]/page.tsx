@@ -3,34 +3,31 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
-  ArrowUpRight,
   CalendarDays,
   Check,
   Clock,
-  Globe2,
-  IndianRupee,
-  Info,
+  Download,
+  Heart,
   MapPin,
-  MessageCircle,
-  Phone,
-  ShieldCheck,
+  Mountain,
+  Plane,
+  Share2,
   Star,
-  Users,
+  Sun,
   X,
 } from "lucide-react";
+import { BookingCard } from "@/components/site/booking-card";
 import { Breadcrumbs } from "@/components/site/breadcrumbs";
-import { EnquiryForm } from "@/components/site/enquiry-form";
 import { ItineraryTimeline } from "@/components/site/itinerary-timeline";
-import { TourBooking } from "@/components/site/tour-booking";
 import { SectionHeading } from "@/components/site/section-heading";
 import { TourCard } from "@/components/site/tour-card";
 import {
   loadDepartures,
-  loadDestinations,
+  loadDestination,
+  loadTestimonials,
   loadTour,
   loadTours,
 } from "@/lib/content";
-import { site } from "@/data/site";
 import { formatINR, imageUrl } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -55,40 +52,6 @@ export async function generateMetadata({
   };
 }
 
-const departureDateFormatter = new Intl.DateTimeFormat("en-IN", {
-  day: "numeric",
-  month: "short",
-  year: "numeric",
-  timeZone: "UTC",
-});
-
-function formatDepartureDate(value: string) {
-  return departureDateFormatter.format(new Date(`${value}T00:00:00Z`));
-}
-
-const goodToKnow = [
-  {
-    icon: Clock,
-    title: "Pace & comfort",
-    text: "Moderately paced with some early starts. Free time is built into every itinerary.",
-  },
-  {
-    icon: Users,
-    title: "Who it suits",
-    text: "Families, couples, solo travellers and friend groups — everyone is welcome.",
-  },
-  {
-    icon: Globe2,
-    title: "Visas & documents",
-    text: "Visa support is included for international tours where mentioned in inclusions.",
-  },
-  {
-    icon: ShieldCheck,
-    title: "Flexible on the ground",
-    text: "Weather or local conditions may reorder activities. Your leader will keep you informed.",
-  },
-];
-
 export default async function TourDetailPage({
   params,
 }: {
@@ -98,11 +61,13 @@ export default async function TourDetailPage({
   const tour = await loadTour(slug);
   if (!tour) notFound();
 
-  const [allTours, allDestinations, departures] = await Promise.all([
+  const [allTours, departures, destination, testimonials] = await Promise.all([
     loadTours(),
-    loadDestinations(),
     loadDepartures(tour.slug),
+    loadDestination(tour.destinationSlug),
+    loadTestimonials(),
   ]);
+
   const related = allTours
     .filter(
       (candidate) =>
@@ -111,369 +76,349 @@ export default async function TourDetailPage({
           candidate.region === tour.region),
     )
     .slice(0, 3);
+
+  const gallery = [
+    tour.image,
+    destination?.image,
+    ...allTours
+      .filter((candidate) => candidate.slug !== tour.slug)
+      .slice(0, 4)
+      .map((candidate) => candidate.image),
+  ].filter((image): image is string => Boolean(image));
+
+  const quote =
+    testimonials.find((item) => item.tour === tour.title) ?? testimonials[0];
   const nextDeparture = departures[0];
-  const fromPrice = departures.length
-    ? Math.min(...departures.map((departure) => departure.price))
-    : tour.price;
-  const emi = Math.round(fromPrice / 12);
-  const nextDepartureLabel = nextDeparture
-    ? formatDepartureDate(nextDeparture.startDate)
-    : tour.departure;
+
+  const tabs = [
+    { label: "Overview", href: "#overview" },
+    { label: "Itinerary", href: "#itinerary" },
+    { label: "Inclusions", href: "#inclusions" },
+    { label: "Dates & prices", href: "#book" },
+    { label: "Reviews", href: "#reviews" },
+    { label: "FAQs", href: "#faqs" },
+  ];
 
   return (
     <>
-      <section className="border-b border-stone-200/80 bg-sand-100">
-        <div className="container-page py-8 sm:py-10">
-          <Breadcrumbs
-            items={[
-              { label: "Tour packages", href: "/tours" },
-              { label: tour.title },
-            ]}
-          />
+      <section className="container-page pt-8 md:pt-10">
+        <Breadcrumbs
+          items={[
+            { label: "Home", href: "/" },
+            { label: "Group Tours", href: "/tours" },
+            {
+              label: tour.destinationName,
+              href: `/destinations/${tour.destinationSlug}`,
+            },
+            { label: tour.title },
+          ]}
+        />
 
-          <div className="mt-6 flex flex-wrap items-center gap-2">
-            <span className="rounded-full bg-blue-100 px-3 py-1.5 text-sm font-extrabold uppercase tracking-wider text-blue-800">
-              {tour.region}
-            </span>
-            <span className="rounded-full bg-white px-3 py-1.5 text-sm font-extrabold uppercase tracking-wider text-stone-600">
-              {tour.nights} nights · {tour.days} days
-            </span>
-            {tour.badge ? (
-              <span className="rounded-full bg-navy-950 px-3 py-1.5 text-sm font-extrabold uppercase tracking-wider text-blue-300">
-                {tour.badge}
-              </span>
-            ) : null}
-          </div>
-
-          <div className="mt-4 grid gap-6 lg:grid-cols-[1.5fr_1fr] lg:items-end">
-            <div>
-              <h1 className="font-display text-4xl font-medium leading-[1.06] tracking-tight text-navy-950 sm:text-5xl">
-                {tour.title}
-              </h1>
-              <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm font-bold text-stone-600">
-                <span className="inline-flex items-center gap-1.5">
-                  <MapPin className="h-4 w-4 text-blue-600" />
-                  {tour.destinationName}
-                </span>
-                <span className="inline-flex items-center gap-1.5">
-                  <CalendarDays className="h-4 w-4 text-blue-600" />
-                  {nextDepartureLabel}
-                </span>
-                <span className="inline-flex items-center gap-1.5">
-                  <Users className="h-4 w-4 text-blue-600" />
-                  {tour.groupSize}
-                </span>
-                <span className="inline-flex items-center gap-1 text-navy-950">
-                  <Star className="h-4 w-4 fill-gold-500 text-gold-500" />
-                  {tour.rating.toFixed(1)}
-                  <span className="font-semibold text-stone-400">
-                    ({tour.reviews} reviews)
-                  </span>
-                </span>
-              </div>
+        <div className="mt-6 flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+          <div>
+            <div className="flex flex-wrap gap-2">
+              {tour.badge ? <span className="badge badge-gold">{tour.badge}</span> : null}
+              <span className="badge badge-blue">{tour.region} group tour</span>
+              <span className="badge badge-success">Family friendly</span>
             </div>
-            <div className="lg:justify-self-end lg:text-right">
-              <p className="max-w-xl text-[14px] leading-7 text-stone-600">
-                {tour.summary}
-              </p>
-              <div className="mt-4 flex flex-wrap items-center gap-2 lg:justify-end">
-                <Link href="#book" className="btn-primary">
-                  Book now
-                  <ArrowUpRight className="h-4 w-4" />
-                </Link>
-                <span className="rounded-full bg-white px-3 py-2 text-sm font-extrabold uppercase tracking-wider text-stone-600">
-                  From {formatINR(fromPrice)} pp
-                </span>
-              </div>
+            <h1 className="type-h1 mt-4 text-ink">{tour.title}</h1>
+            <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-[13px] font-medium text-navy-700">
+              <span className="inline-flex items-center gap-1.5">
+                <Star className="h-3.5 w-3.5 fill-gold-400 text-gold-400" />
+                <span className="font-bold text-ink">{tour.rating.toFixed(1)}</span>
+                <span className="text-navy-400">({tour.reviews} reviews)</span>
+              </span>
+              <span className="text-sand-300">·</span>
+              <span>
+                {tour.days} days · {tour.nights} nights
+              </span>
+              <span className="text-sand-300">·</span>
+              <span className="inline-flex items-center gap-1.5">
+                <MapPin className="h-3.5 w-3.5 text-navy-500" />
+                {tour.destinationName} · {tour.groupSize}
+              </span>
             </div>
           </div>
 
-          <div className="relative mt-7 aspect-[16/9] overflow-hidden rounded-[32px] shadow-2xl shadow-navy-950/15 sm:aspect-[16/7]">
-            <Image
-              src={imageUrl(tour.image, 1800)}
-              alt={tour.title}
-              fill
-              priority
-              sizes="100vw"
-              className="object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-navy-950/60 via-transparent to-transparent" />
-            <div className="absolute bottom-5 left-5 flex flex-wrap gap-2">
-              <span className="rounded-full bg-white/95 px-4 py-2 text-sm font-extrabold text-navy-950 backdrop-blur">
-                Next departure · {nextDepartureLabel}
-              </span>
-              <span className="rounded-full bg-navy-950/70 px-4 py-2 text-sm font-extrabold text-sand-50 backdrop-blur">
-                {tour.groupSize}
-              </span>
-            </div>
+          <div className="flex flex-wrap gap-2.5">
+            <button type="button" className="btn btn-light btn-sm">
+              <Heart className="h-4 w-4" /> Save
+            </button>
+            <button type="button" className="btn btn-light btn-sm">
+              <Share2 className="h-4 w-4" /> Share
+            </button>
+            <a
+              href={`/tours/${tour.slug}`}
+              className="btn btn-light btn-sm"
+              aria-label="Download brochure"
+            >
+              <Download className="h-4 w-4" /> Brochure
+            </a>
           </div>
         </div>
       </section>
 
-      <div className="container-page grid gap-10 py-12 lg:grid-cols-[1.6fr_1fr] lg:items-start">
-        <div className="min-w-0 space-y-12">
-          <section>
-            <p className="eyebrow">The journey</p>
-            <h2 className="mt-2 font-display text-3xl font-medium text-navy-950">
-              A closer look
-            </h2>
-            <div className="prose-narrow mt-5 space-y-4">
-              <p>{tour.summary}</p>
-              <p>
-                This journey is led end to end by a Hidden Miles tour leader, with
-                handpicked stays, comfortable transport and a pace that leaves
-                room to actually enjoy the places you came to see. Everything
-                listed as included is arranged and paid for before you leave
-                home — you just show up.
-              </p>
-            </div>
-            <div className="mt-6 grid gap-3 sm:grid-cols-2">
-              {tour.highlights.map((highlight) => (
-                <div
-                  key={highlight}
-                  className="flex items-start gap-3 rounded-2xl border border-stone-200 bg-white px-4 py-3.5"
-                >
-                  <span className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-blue-100 text-blue-700">
-                    <Check className="h-3 w-3" strokeWidth={3} />
-                  </span>
-                  <p className="text-sm font-bold leading-5 text-navy-950">
-                    {highlight}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          <section>
-            <p className="eyebrow">Day by day</p>
-            <h2 className="mt-2 font-display text-3xl font-medium text-navy-950">
-              Your itinerary
-            </h2>
-            <div className="mt-6">
-              <ItineraryTimeline days={tour.itinerary} />
-            </div>
-          </section>
-
-          <TourBooking
-            tourSlug={tour.slug}
-            tourTitle={tour.title}
-            basePrice={tour.price}
-            nights={tour.nights}
-            departures={departures}
-          />
-
-          <section className="grid gap-4 md:grid-cols-2">
-            <div className="rounded-3xl border border-navy-200 bg-navy-50 p-6">
-              <h2 className="flex items-center gap-2 font-display text-xl font-semibold text-navy-950">
-                <span className="grid h-8 w-8 place-items-center rounded-full bg-navy-600 text-white">
-                  <Check className="h-4 w-4" strokeWidth={3} />
-                </span>
-                What&apos;s included
-              </h2>
-              <ul className="mt-4 space-y-2.5">
-                {tour.inclusions.map((item) => (
-                  <li
-                    key={item}
-                    className="flex items-start gap-2.5 text-sm leading-5 text-stone-600"
-                  >
-                    <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-navy-600" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="rounded-3xl border border-stone-200 bg-sand-100/70 p-6">
-              <h2 className="flex items-center gap-2 font-display text-xl font-semibold text-navy-950">
-                <span className="grid h-8 w-8 place-items-center rounded-full bg-stone-300 text-white">
-                  <X className="h-4 w-4" strokeWidth={3} />
-                </span>
-                Not included
-              </h2>
-              <ul className="mt-4 space-y-2.5">
-                {tour.exclusions.map((item) => (
-                  <li
-                    key={item}
-                    className="flex items-start gap-2.5 text-sm leading-5 text-stone-600"
-                  >
-                    <X className="mt-0.5 h-3.5 w-3.5 shrink-0 text-stone-400" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </section>
-
-          <section>
-            <p className="eyebrow">Before you go</p>
-            <h2 className="mt-2 font-display text-3xl font-medium text-navy-950">
-              Good to know
-            </h2>
-            <div className="mt-6 grid gap-3 sm:grid-cols-2">
-              {goodToKnow.map((item) => (
-                <div
-                  key={item.title}
-                  className="rounded-2xl border border-stone-200 bg-white p-5"
-                >
-                  <span className="grid h-9 w-9 place-items-center rounded-full bg-sand-200 text-blue-700">
-                    <item.icon className="h-4 w-4" />
-                  </span>
-                  <h3 className="mt-3 text-sm font-extrabold text-navy-950">
-                    {item.title}
-                  </h3>
-                  <p className="mt-1 text-sm leading-5 text-stone-500">
-                    {item.text}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </section>
-        </div>
-
-        <aside className="space-y-4 lg:sticky lg:top-28">
-          <div className="overflow-hidden rounded-[30px] border border-stone-200 bg-white shadow-xl shadow-navy-950/5">
-            <div className="bg-navy-950 px-6 py-5 text-sand-50">
-              <p className="text-sm font-extrabold uppercase tracking-[0.18em] text-blue-300">
-                All-inclusive from
-              </p>
-              <div className="mt-1 flex items-baseline gap-3">
-                <p className="font-display text-4xl font-semibold">
-                  {formatINR(fromPrice)}
-                </p>
-                {tour.oldPrice ? (
-                  <p className="text-sm font-semibold text-sand-200/50 line-through">
-                    {formatINR(tour.oldPrice)}
-                  </p>
-                ) : null}
-              </div>
-              <p className="mt-1 text-sm font-semibold text-sand-200/60">
-                per person on twin sharing · EMI from {formatINR(emi)}/month
-              </p>
-            </div>
-            <div className="space-y-3 p-5">
-              <div className="flex items-center justify-between text-sm font-semibold text-stone-600">
-                <span className="inline-flex items-center gap-2">
-                  <CalendarDays className="h-4 w-4 text-blue-600" />
-                  Departure
-                </span>
-                <span className="font-bold text-navy-950">{nextDepartureLabel}</span>
-              </div>
-              <div className="flex items-center justify-between text-sm font-semibold text-stone-600">
-                <span className="inline-flex items-center gap-2">
-                  <Clock className="h-4 w-4 text-blue-600" />
-                  Duration
-                </span>
-                <span className="font-bold text-navy-950">
-                  {tour.nights}N / {tour.days}D
-                </span>
-              </div>
-              <div className="flex items-center justify-between text-sm font-semibold text-stone-600">
-                <span className="inline-flex items-center gap-2">
-                  <Users className="h-4 w-4 text-blue-600" />
-                  Group size
-                </span>
-                <span className="font-bold text-navy-950">{tour.groupSize}</span>
-              </div>
-              <div className="flex items-center justify-between text-sm font-semibold text-stone-600">
-                <span className="inline-flex items-center gap-2">
-                  <IndianRupee className="h-4 w-4 text-blue-600" />
-                  Booking deposit
-                </span>
-                <span className="font-bold text-navy-950">
-                  {formatINR(Math.round(fromPrice * 0.25))}
-                </span>
-              </div>
-
-              {departures.length ? (
-                <div className="rounded-2xl border border-stone-200 bg-sand-50 p-3">
-                  <p className="text-sm font-extrabold uppercase tracking-wider text-stone-500">
-                    Available dates
-                  </p>
-                  <div className="mt-2 space-y-1.5">
-                    {departures.slice(0, 4).map((departure) => (
-                      <Link
-                        key={departure._id}
-                        href="#book"
-                        className="flex items-center justify-between gap-2 text-sm font-semibold text-stone-600 transition hover:text-blue-700"
-                      >
-                        <span className="inline-flex items-center gap-1.5">
-                          <CalendarDays className="h-3.5 w-3.5 text-blue-600" />
-                          {formatDepartureDate(departure.startDate)}
-                        </span>
-                        <span className="font-bold text-navy-950">
-                          {formatINR(departure.price)}
-                        </span>
-                      </Link>
-                    ))}
-                  </div>
-                  {departures.length > 4 ? (
-                    <p className="mt-2 text-sm font-semibold text-stone-400">
-                      +{departures.length - 4} more dates
-                    </p>
-                  ) : null}
-                </div>
-              ) : null}
-
-              <div className="grid gap-2 pt-2">
-                <Link href="#book" className="btn-primary w-full">
-                  Book now
-                  <ArrowUpRight className="h-4 w-4" />
-                </Link>
-                <a
-                  href={site.whatsappHref}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-outline w-full"
-                >
-                  <MessageCircle className="h-4 w-4" />
-                  Chat on WhatsApp
-                </a>
-                <a
-                  href={site.phoneHref}
-                  className="inline-flex items-center justify-center gap-2 pt-1 text-sm font-extrabold text-navy-950 transition hover:text-blue-700"
-                >
-                  <Phone className="h-3.5 w-3.5" />
-                  {site.phone}
-                </a>
-                <Link
-                  href="#enquiry"
-                  className="text-center text-sm font-bold text-stone-500 underline decoration-dotted underline-offset-4 transition hover:text-blue-700"
-                >
-                  Have a question? Send an enquiry
-                </Link>
-              </div>
-
-              <div className="rounded-2xl bg-sand-100 p-3 text-sm leading-5 text-stone-500">
-                <p className="flex items-start gap-2">
-                  <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-blue-600" />
-                  Prices are per person on twin sharing. Solo travellers and
-                  single supplements quoted on request.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div id="enquiry" className="scroll-mt-28">
-            <EnquiryForm
-              compact
-              defaultDestination={tour.destinationSlug}
-              tourTitle={tour.title}
-              destinations={allDestinations}
-              className="border border-stone-200 shadow-xl shadow-navy-950/5"
+      <section className="container-page mt-8">
+        <div className="grid gap-3 lg:grid-cols-[1.5fr_1fr]">
+          <div className="relative aspect-[708/480] overflow-hidden rounded-[28px] bg-ink">
+            <Image
+              src={imageUrl(gallery[0] ?? tour.image, 1600)}
+              alt={tour.title}
+              fill
+              priority
+              sizes="(max-width: 1024px) 100vw, 708px"
+              className="object-cover"
             />
+            <div className="absolute inset-0 bg-gradient-to-t from-ink/40 via-transparent to-transparent" />
+            <span className="absolute bottom-6 left-6 rounded-full bg-paper px-4 py-2 text-[13px] font-bold text-ink">
+              ▦ View all {Math.max(24, gallery.length * 6)} photos
+            </span>
           </div>
-        </aside>
+
+          <div className="grid grid-cols-2 gap-3">
+            {gallery.slice(1, 5).map((image, index) => (
+              <div
+                key={`${image}-${index}`}
+                className="relative aspect-square overflow-hidden rounded-[20px] bg-ink"
+              >
+                <Image
+                  src={imageUrl(image, 600)}
+                  alt={`${tour.title} gallery ${index + 1}`}
+                  fill
+                  sizes="(max-width: 1024px) 50vw, 240px"
+                  className="object-cover transition duration-500 hover:scale-105"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <div className="container-page mt-14 pb-20 md:pb-28">
+        <div className="grid gap-12 lg:grid-cols-[1fr_392px] lg:items-start">
+          <main className="min-w-0">
+            <nav className="flex flex-wrap gap-0 border-b border-sand-300">
+              {tabs.map((tab, index) => (
+                <a
+                  key={tab.label}
+                  href={tab.href}
+                  className={`relative px-4 py-3 text-sm font-bold transition ${
+                    index === 0 ? "text-ink" : "text-navy-500 hover:text-ink"
+                  }`}
+                >
+                  {tab.label}
+                  {index === 0 ? (
+                    <span className="absolute inset-x-4 -bottom-px h-[3px] rounded-full bg-gold-400" />
+                  ) : null}
+                </a>
+              ))}
+            </nav>
+
+            <div className="mt-8 grid grid-cols-2 gap-0 rounded-[20px] border border-sand-300 bg-paper py-6 md:grid-cols-4">
+              {[
+                { icon: Clock, label: "Duration", value: `${tour.days}D / ${tour.nights}N` },
+                { icon: Mountain, label: "Activity", value: "Moderate" },
+                { icon: Sun, label: "Best time", value: destination?.bestTime.split("·")[0] ?? "Apr – Oct" },
+                { icon: Plane, label: "Starts in", value: tour.destinationName },
+              ].map((fact, index) => (
+                <div
+                  key={fact.label}
+                  className={`flex items-center gap-3.5 px-5 ${
+                    index ? "md:border-l md:border-sand-300" : ""
+                  } ${index < 2 ? "border-b border-sand-300 pb-5 md:border-b-0 md:pb-0" : "pt-5 md:pt-0"}`}
+                >
+                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-[14px] bg-sand-200 text-ink">
+                    <fact.icon className="h-5 w-5" />
+                  </span>
+                  <span>
+                    <span className="type-label block text-[10px] text-navy-500">
+                      {fact.label}
+                    </span>
+                    <span className="mt-0.5 block text-sm font-bold text-ink">
+                      {fact.value}
+                    </span>
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            <section id="overview" className="scroll-mt-32 pt-14">
+              <p className="kicker">
+                <span className="kicker-num">No. 01</span>
+                <span className="kicker-rule" />
+                <span className="kicker-label">Overview</span>
+              </p>
+              <h2 className="type-h3 mt-4 text-ink">Why you&apos;ll love it</h2>
+              <p className="type-lead mt-4 text-navy-700">{tour.summary}</p>
+
+              <div className="mt-7 grid gap-x-6 gap-y-4 sm:grid-cols-2">
+                {tour.highlights.map((highlight) => (
+                  <div key={highlight} className="flex items-center gap-3.5">
+                    <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-gold-100 text-gold-600">
+                      <Check className="h-3.5 w-3.5" strokeWidth={3} />
+                    </span>
+                    <span className="text-sm font-semibold text-ink">{highlight}</span>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            <section id="itinerary" className="scroll-mt-32 pt-16">
+              <div className="flex items-end justify-between gap-4">
+                <div>
+                  <p className="kicker">
+                    <span className="kicker-num">No. 02</span>
+                    <span className="kicker-rule" />
+                    <span className="kicker-label">Itinerary</span>
+                  </p>
+                  <h2 className="type-h3 mt-4 text-ink">Day by day</h2>
+                </div>
+                <span className="text-sm font-bold text-blue-700">Expand all days</span>
+              </div>
+              <ItineraryTimeline days={tour.itinerary} />
+            </section>
+
+            <section id="inclusions" className="scroll-mt-32 pt-14">
+              <div className="grid gap-6 md:grid-cols-2">
+                <div className="rounded-[20px] border border-sand-300 bg-paper p-7">
+                  <h2 className="type-title text-ink">What&apos;s included</h2>
+                  <ul className="mt-4 space-y-3">
+                    {tour.inclusions.map((item) => (
+                      <li key={item} className="flex items-start gap-3">
+                        <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-success-soft text-success">
+                          <Check className="h-3 w-3" strokeWidth={3} />
+                        </span>
+                        <span className="text-sm leading-6 text-navy-700">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="rounded-[20px] border border-sand-300 bg-sand-100 p-7">
+                  <h2 className="type-title text-ink">Not included</h2>
+                  <ul className="mt-4 space-y-3">
+                    {tour.exclusions.map((item) => (
+                      <li key={item} className="flex items-start gap-3">
+                        <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-danger-soft text-danger">
+                          <X className="h-3 w-3" strokeWidth={3} />
+                        </span>
+                        <span className="text-sm leading-6 text-navy-700">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </section>
+
+            {quote ? (
+              <section id="reviews" className="scroll-mt-32 pt-14">
+                <div className="on-ink relative overflow-hidden rounded-[28px] bg-ink p-9 md:p-10">
+                  <div className="grid items-center gap-8 sm:grid-cols-[auto_1fr]">
+                    <div>
+                      <p className="type-display text-paper">4.9</p>
+                      <p className="text-sm font-bold tracking-[0.1em] text-gold-400">
+                        ★★★★★
+                      </p>
+                      <p className="mt-1 text-[13px] font-medium text-navy-200">
+                        {tour.reviews} verified reviews
+                      </p>
+                    </div>
+                    <div>
+                      <p className="font-display text-2xl leading-9 text-paper">
+                        “{quote.quote}”
+                      </p>
+                      <p className="mt-3 text-sm font-bold text-gold-400">
+                        {quote.name} · {quote.city} → Read all reviews
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            ) : null}
+
+            <section id="faqs" className="scroll-mt-32 pt-14">
+              <h2 className="type-h3 text-ink">Good to know</h2>
+              <div className="mt-6 border-t border-sand-300">
+                {[
+                  {
+                    question: "What is the pace of this journey?",
+                    answer:
+                      "Moderately paced with a few early starts. Free time is built into every itinerary, and your leader will always share the plan the night before.",
+                  },
+                  {
+                    question: "Who is this tour best for?",
+                    answer:
+                      "Families, couples, solo travellers and friend groups. If you can walk comfortably for an hour, you will love it.",
+                  },
+                  {
+                    question: "Can you customise this itinerary?",
+                    answer:
+                      "Yes. We run private departures for groups of six or more — any date, any route, and we can add or remove days.",
+                  },
+                  {
+                    question: "How do payments work?",
+                    answer:
+                      "Reserve with 25% today and pay the balance 30 days before departure. EMI options are available on major cards.",
+                  },
+                ].map((faq, index) => (
+                  <details
+                    key={faq.question}
+                    open={index === 0}
+                    className="group border-b border-sand-300 py-5"
+                  >
+                    <summary className="flex cursor-pointer list-none items-center justify-between gap-4 [&::-webkit-details-marker]:hidden">
+                      <span className="type-title text-ink">{faq.question}</span>
+                      <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-sand-200 text-ink transition group-open:rotate-45 group-open:bg-ink group-open:text-gold-400">
+                        +
+                      </span>
+                    </summary>
+                    <p className="type-small mt-3 max-w-2xl text-navy-700">
+                      {faq.answer}
+                    </p>
+                  </details>
+                ))}
+              </div>
+            </section>
+          </main>
+
+          <aside id="book" className="scroll-mt-32 lg:sticky lg:top-32">
+            <BookingCard
+              tourSlug={tour.slug}
+              basePrice={tour.price}
+              oldPrice={tour.oldPrice}
+              departures={departures}
+              tourTitle={tour.title}
+            />
+            <div className="mt-4 rounded-[20px] border border-sand-300 bg-sand-100 p-5">
+              <p className="type-label text-navy-500">Prefer to talk?</p>
+              <p className="type-small mt-2 text-navy-700">
+                Call us on +91 98204 12345 or{" "}
+                <Link href="/contact" className="font-bold text-blue-700">
+                  send an enquiry
+                </Link>{" "}
+                and a specialist will call you back within the hour.
+              </p>
+              {nextDeparture ? (
+                <p className="mt-3 flex items-center gap-2 text-[13px] font-medium text-navy-500">
+                  <CalendarDays className="h-3.5 w-3.5" />
+                  Next departure from {formatINR(nextDeparture.price)}
+                </p>
+              ) : null}
+            </div>
+          </aside>
+        </div>
       </div>
 
       {related.length ? (
-        <section className="bg-sand-100/70 py-16">
-          <div className="container-page">
+        <section className="bg-sand-100">
+          <div className="container-page section-major">
             <SectionHeading
-              eyebrow="You might also love"
-              title="More journeys to inspire you"
+              label="You might also love"
+              title="More journeys"
+              accent="to inspire you."
               href="/tours"
-              linkLabel="All tours"
+              linkLabel="View all tours"
             />
-            <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-8">
               {related.map((item) => (
                 <TourCard key={item.slug} tour={item} />
               ))}

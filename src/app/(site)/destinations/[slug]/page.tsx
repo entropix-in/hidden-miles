@@ -2,25 +2,20 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import {
-  ArrowUpRight,
-  CalendarDays,
-  Check,
-  MapPin,
-  Sparkles,
-  Star,
-} from "lucide-react";
+import { Clock, IndianRupee, Plane, Sun } from "lucide-react";
 import { Breadcrumbs } from "@/components/site/breadcrumbs";
+import { CtaBand } from "@/components/site/cta-band";
 import { DestinationCard } from "@/components/site/destination-card";
-import { EnquiryForm } from "@/components/site/enquiry-form";
-import { SectionHeading } from "@/components/site/section-heading";
+import { Kicker, SectionHeading } from "@/components/site/section-heading";
+import { Stamp } from "@/components/site/stamp";
 import { TourCard } from "@/components/site/tour-card";
+import { coordsFor } from "@/data/coordinates";
 import {
   loadDestination,
   loadDestinations,
   loadTours,
 } from "@/lib/content";
-import { imageUrl } from "@/lib/utils";
+import { formatINR, imageUrl } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -66,162 +61,200 @@ export default async function DestinationDetailPage({
         item.slug !== destination.slug && item.region === destination.region,
     )
     .slice(0, 3);
+  const fromPrice = destinationTours.length
+    ? Math.min(...destinationTours.map((tour) => tour.price))
+    : 38900;
+
+  const facts = [
+    { icon: Sun, label: "Best time", value: destination.bestTime.split("·")[0] },
+    { icon: Clock, label: "Ideal trip", value: "6 – 8 days" },
+    { icon: Plane, label: "Fly into", value: `${destination.name}` },
+    { icon: IndianRupee, label: "Tours from", value: `${formatINR(fromPrice)} pp` },
+  ];
 
   return (
     <>
-      <section className="relative isolate flex min-h-[500px] items-end overflow-hidden bg-navy-950">
-        <Image
-          src={imageUrl(destination.image, 1800)}
-          alt={destination.name}
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-navy-950/95 via-navy-950/50 to-navy-950/20" />
-        <div className="container-page relative py-12">
-          <Breadcrumbs
-            light
-            items={[
-              { label: "Destinations", href: "/destinations" },
-              { label: destination.name },
-            ]}
+      <section className="container-page py-6">
+        <div className="relative isolate flex min-h-[560px] flex-col justify-end overflow-hidden rounded-[36px] bg-ink p-7 pb-10 sm:p-10 lg:min-h-[640px] lg:p-12">
+          <Image
+            src={imageUrl(destination.image, 2000)}
+            alt={destination.name}
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover"
           />
-          <div className="animate-rise mt-6 max-w-3xl">
-            <p className="eyebrow text-blue-300">
-              {destination.region} · Hidden Miles favourite
-            </p>
-            <h1 className="mt-3 font-display text-5xl font-medium leading-none tracking-tight text-sand-50 sm:text-6xl">
+          <div className="absolute inset-0 bg-gradient-to-t from-ink/95 via-ink/35 to-ink/30" />
+
+          <div className="relative flex items-start justify-between gap-4">
+            <Breadcrumbs
+              dark
+              items={[
+                { label: "Home", href: "/" },
+                { label: "Destinations", href: "/destinations" },
+                { label: destination.name },
+              ]}
+            />
+            <span className="coord coord-dark hidden sm:block">
+              {coordsFor(destination.slug)}
+            </span>
+          </div>
+
+          <div className="relative mt-auto max-w-[900px] pt-16">
+            <Kicker label={destination.tagline} dark />
+            <h1 className="mt-4 font-display text-[clamp(4rem,10vw,7.5rem)] leading-[0.96] tracking-[-0.045em] text-paper">
               {destination.name}
             </h1>
-            <p className="mt-3 font-display text-xl font-medium text-blue-200">
-              {destination.tagline}
+            <p className="type-lead mt-4 max-w-[620px] text-navy-200">
+              {destination.description}
             </p>
-            <div className="mt-6 flex flex-wrap gap-2">
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-bold text-sand-50 backdrop-blur">
-                <MapPin className="h-3.5 w-3.5 text-blue-300" />
-                {destination.region}
+          </div>
+
+          <span className="absolute bottom-10 right-10 hidden lg:block">
+            <Stamp size={140} />
+          </span>
+        </div>
+      </section>
+
+      <section className="container-page">
+        <div className="grid gap-0 rounded-[20px] border border-sand-300 bg-paper px-4 py-6 sm:grid-cols-2 lg:grid-cols-4">
+          {facts.map((fact, index) => (
+            <div
+              key={fact.label}
+              className={`flex items-center gap-3.5 px-5 ${
+                index ? "lg:border-l lg:border-sand-300" : ""
+              } ${index < 2 ? "border-b border-sand-300 pb-5 sm:border-b-0 sm:pb-0" : ""} ${index === 2 ? "pt-5 sm:pt-0" : ""}`}
+            >
+              <span className="grid h-12 w-12 shrink-0 place-items-center rounded-[14px] bg-sand-200 text-ink">
+                <fact.icon className="h-5 w-5" />
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-bold text-sand-50 backdrop-blur">
-                <CalendarDays className="h-3.5 w-3.5 text-blue-300" />
-                Best time · {destination.bestTime}
-              </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-bold text-sand-50 backdrop-blur">
-                <Sparkles className="h-3.5 w-3.5 text-blue-300" />
-                {destinationTours.length}{" "}
-                {destinationTours.length === 1 ? "journey" : "journeys"}
+              <span>
+                <span className="type-label block text-[10px] text-navy-500">
+                  {fact.label}
+                </span>
+                <span className="mt-0.5 block text-sm font-bold text-ink">
+                  {fact.value}
+                </span>
               </span>
             </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="container-page section-minor">
+        <div className="grid gap-12 lg:grid-cols-[1fr_500px] lg:gap-24">
+          <div>
+            <Kicker number="01" label={`About ${destination.name}`} />
+            <h2 className="type-h2 mt-5 text-ink">
+              Slow mornings,
+              <br />
+              <span className="accent-line">beautiful days.</span>
+            </h2>
+            <p className="type-lead mt-6 text-navy-700">{destination.description}</p>
+            <p className="type-body mt-5 text-navy-700">
+              Our {destination.name} journeys are paced for first-timers and
+              families: comfortable stays, short drives and a tour leader who
+              knows every trail. Pair it with another region for a longer circuit,
+              or let us build a private departure around your dates.
+            </p>
+            <Link href="/contact" className="btn btn-outline mt-7">
+              Plan a private {destination.name} trip
+              <span className="btn-dot">→</span>
+            </Link>
+          </div>
+
+          <div>
+            {destination.highlights.map((highlight, index) => (
+              <div
+                key={highlight}
+                className={`flex items-center gap-6 py-6 ${
+                  index ? "border-t border-sand-300" : ""
+                }`}
+              >
+                <span className="font-display text-3xl italic text-gold-600">
+                  0{index + 1}
+                </span>
+                <span>
+                  <span className="type-title block text-ink">{highlight}</span>
+                  <span className="type-small mt-1 block text-navy-500">
+                    Handpicked by our {destination.name} specialists
+                  </span>
+                </span>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      <div className="container-page grid gap-10 py-12 lg:grid-cols-[1.5fr_1fr] lg:items-start">
-        <div>
-          <p className="eyebrow">Why go</p>
-          <h2 className="mt-2 font-display text-3xl font-medium text-navy-950">
-            {destination.name}, in our words
-          </h2>
-          <p className="mt-5 text-[15px] leading-8 text-stone-600">
-            {destination.description}
-          </p>
-          <p className="mt-4 text-[15px] leading-8 text-stone-600">
-            Our team has travelled these routes personally, stayed in the hotels
-            we recommend and eaten at the little places you would otherwise walk
-            past. Whether you have five days or fifteen, we will shape an
-            itinerary that feels unhurried and entirely yours.
-          </p>
-
-          <h3 className="mt-8 text-sm font-extrabold uppercase tracking-[0.2em] text-blue-700">
-            Do not miss
-          </h3>
-          <div className="mt-4 grid gap-3 sm:grid-cols-2">
-            {destination.highlights.map((highlight) => (
-              <div
-                key={highlight}
-                className="flex items-start gap-3 rounded-2xl border border-stone-200 bg-white px-4 py-3.5"
-              >
-                <span className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-navy-600 text-white">
-                  <Check className="h-3 w-3" strokeWidth={3} />
-                </span>
-                <p className="text-sm font-bold leading-5 text-navy-950">
-                  {highlight}
-                </p>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-8 rounded-[28px] bg-navy-950 p-6 text-sand-50 sm:p-8">
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <div>
-                <p className="eyebrow text-blue-300">Local expertise</p>
-                <h3 className="mt-2 font-display text-2xl font-medium">
-                  Travelling to {destination.name}? Let&apos;s talk dates.
-                </h3>
-              </div>
-              <Link href="/contact" className="btn-light shrink-0">
-                Ask an expert
-                <ArrowUpRight className="h-4 w-4" />
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        <aside className="lg:sticky lg:top-28">
-          <EnquiryForm
-            compact
-            defaultDestination={destination.slug}
-            destinations={allDestinations}
-            className="border border-stone-200 shadow-xl shadow-navy-950/5"
-          />
-        </aside>
-      </div>
-
       {destinationTours.length ? (
-        <section className="bg-sand-100/70 py-16">
-          <div className="container-page">
+        <section className="bg-sand-100">
+          <div className="container-page section-major">
             <SectionHeading
-              eyebrow="Ready when you are"
-              title={`Journeys to ${destination.name}`}
-              description="Every one of these departures is led by a Hidden Miles expert and includes the details that matter."
-              href={`/tours?destination=${destination.slug}`}
-              linkLabel="Sort & filter"
+              number="02"
+              label={`${destinationTours.length} departures`}
+              title={destination.name}
+              accent="tours."
+              right={
+                <div className="flex flex-wrap gap-2">
+                  {["All", "Group", "Family", "Honeymoon"].map((filter, index) => (
+                    <span
+                      key={filter}
+                      className={`chip ${index === 0 ? "chip-active" : ""}`}
+                    >
+                      {filter}
+                    </span>
+                  ))}
+                </div>
+              }
             />
-            <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {destinationTours.map((tour, index) => (
-                <TourCard key={tour.slug} tour={tour} priority={index < 3} />
+            <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-8">
+              {destinationTours.slice(0, 3).map((tour, index) => (
+                <TourCard key={tour.slug} tour={tour} priority={index === 0} />
               ))}
+            </div>
+            <div className="mt-10 flex justify-center">
+              <Link
+                href={`/tours?destination=${destination.slug}`}
+                className="btn btn-outline"
+              >
+                View all {destinationTours.length} tours
+                <span className="btn-dot">→</span>
+              </Link>
             </div>
           </div>
         </section>
       ) : null}
 
       {related.length ? (
-        <section className="container-page py-16">
+        <section className="container-page section-major">
           <SectionHeading
-            eyebrow="Keep exploring"
-            title="More of the region"
+            number="03"
+            label="Combine it with"
+            title="Nearby"
+            accent="destinations."
             href="/destinations"
             linkLabel="All destinations"
           />
-          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
             {related.map((item) => (
               <DestinationCard
                 key={item.slug}
                 destination={item}
                 tourCount={allTours.filter((tour) => tour.destinationSlug === item.slug).length}
+                className="min-h-[360px]"
               />
             ))}
           </div>
         </section>
-      ) : (
-        <section className="container-page py-16">
-          <div className="flex items-center gap-2 text-sm font-bold text-stone-500">
-            <Star className="h-4 w-4 text-gold-500" />
-            More destinations are being added every season.
-          </div>
-        </section>
-      )}
+      ) : null}
+
+      <CtaBand
+        title={`${destination.name},`}
+        accent="your way."
+        description="Private departures, honeymoon stays or a family trip with grandparents — tailored within 24 hours."
+        image={destination.image}
+        imageAlt={destination.name}
+      />
     </>
   );
 }

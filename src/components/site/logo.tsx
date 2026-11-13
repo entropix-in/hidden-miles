@@ -1,57 +1,61 @@
-import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 export function Logo({
   light = false,
   compact = false,
+  size = 1,
   className,
 }: {
   light?: boolean;
   compact?: boolean;
+  size?: number;
   className?: string;
 }) {
+  const scale = compact ? 0.82 : size;
+  const mark = Math.round(42 * scale);
+
   return (
     <Link
       href="/"
       aria-label="Hidden Miles home"
-      className={cn("group flex items-center gap-3", className)}
+      className={cn("group inline-flex shrink-0 items-center gap-3", className)}
     >
       <span
         className={cn(
-          "relative shrink-0 transition duration-500 group-hover:scale-[1.04]",
-          compact ? "h-10 w-10" : "h-12 w-12",
+          "grid shrink-0 place-items-center rounded-[12px] transition duration-500 group-hover:rotate-[-3deg]",
+          light ? "bg-gold-400" : "bg-ink",
         )}
+        style={{ width: mark, height: mark }}
       >
-        <Image
-          src="/logo.png"
-          alt=""
-          fill
-          priority
-          sizes={compact ? "40px" : "48px"}
-          className="object-contain drop-shadow-sm"
-        />
+        <span
+          className={cn(
+            "font-display font-semibold leading-none",
+            light ? "text-ink" : "text-gold-400",
+          )}
+          style={{ fontSize: Math.round(22 * scale) }}
+        >
+          H
+        </span>
       </span>
       <span className="leading-none">
         <span
           className={cn(
-            "block font-display font-semibold tracking-tight",
-            compact ? "text-[22px]" : "text-[26px]",
-            light ? "text-sand-50" : "text-navy-950",
+            "block whitespace-nowrap font-display font-semibold leading-none tracking-[-0.02em]",
+            light ? "text-paper" : "text-ink",
           )}
+          style={{ fontSize: Math.round(22 * scale) }}
         >
           Hidden Miles
         </span>
         <span
           className={cn(
-            "block text-sm font-extrabold uppercase",
-            compact
-              ? "mt-0.5 text-[11px] tracking-[0.22em]"
-              : "mt-1 tracking-[0.28em]",
-            light ? "text-sand-200/75" : "text-blue-700",
+            "mt-1.5 block whitespace-nowrap font-extrabold uppercase leading-none tracking-[0.22em]",
+            light ? "text-gold-400" : "text-gold-600",
           )}
+          style={{ fontSize: Math.max(8, Math.round(9 * scale)) }}
         >
-          Offbeat journeys
+          Est. 1984 · Mumbai
         </span>
       </span>
     </Link>

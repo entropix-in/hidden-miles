@@ -1,9 +1,11 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import {
-  Filter,
-  RotateCcw,
+  ArrowLeft,
+  ArrowRight,
+  Headset,
   SearchX,
   SlidersHorizontal,
   X,
@@ -33,44 +35,13 @@ const months = [
 const regions = ["All", "India", "International"] as const;
 type Region = (typeof regions)[number];
 
-const durationOptions = [
-  { value: "any", label: "Any duration", min: 0, max: 999 },
-  { value: "short", label: "Up to 6 days", min: 0, max: 6 },
-  { value: "mid", label: "7 – 9 days", min: 7, max: 9 },
-  { value: "long", label: "10 – 12 days", min: 10, max: 12 },
-  { value: "xl", label: "13+ days", min: 13, max: 999 },
-] as const;
-type DurationValue = (typeof durationOptions)[number]["value"];
-
-const priceOptions = [
-  { value: "any", label: "Any budget", min: 0, max: Number.MAX_SAFE_INTEGER },
-  { value: "under50", label: "Under ₹50k", min: 0, max: 49999 },
-  { value: "50to100", label: "₹50k – ₹1L", min: 50000, max: 100000 },
-  { value: "100to200", label: "₹1L – ₹2L", min: 100001, max: 200000 },
-  {
-    value: "above200",
-    label: "₹2L+",
-    min: 200001,
-    max: Number.MAX_SAFE_INTEGER,
-  },
-] as const;
-type PriceValue = (typeof priceOptions)[number]["value"];
-
 const sortOptions = [
   { value: "recommended", label: "Recommended" },
   { value: "price-low", label: "Price: lowest first" },
   { value: "price-high", label: "Price: highest first" },
   { value: "duration-short", label: "Duration: shortest first" },
-  { value: "duration-long", label: "Duration: longest first" },
-  { value: "savings", label: "Biggest deals" },
   { value: "rating", label: "Highest rated" },
 ];
-
-type ActiveFilter = {
-  key: string;
-  label: string;
-  clear: () => void;
-};
 
 export function ToursExplorer({
   tours,
@@ -80,6 +51,8 @@ export function ToursExplorer({
   initialExperience = "",
   initialMonth = "",
   initialRegion = "All",
+  initialQuery = "",
+  initialPriceMax = 300000,
 }: {
   tours: Tour[];
   destinations: Destination[];
@@ -88,21 +61,34 @@ export function ToursExplorer({
   initialExperience?: string;
   initialMonth?: string;
   initialRegion?: Region;
+  initialQuery?: string;
+  initialPriceMax?: number;
 }) {
   const [destination, setDestination] = useState(initialDestination);
   const [experience, setExperience] = useState(initialExperience);
   const [region, setRegion] = useState<Region>(initialRegion);
-  const [duration, setDuration] = useState<DurationValue>("any");
-  const [price, setPrice] = useState<PriceValue>("any");
   const [month, setMonth] = useState(
     months.includes(initialMonth) ? initialMonth : "Any month",
   );
+  const [priceMin, setPriceMin] = useState(25000);
+  const [priceMax, setPriceMax] = useState(initialPriceMax);
+  const [durationMin, setDurationMin] = useState(4);
+  const [durationMax, setDurationMax] = useState(16);
   const [sort, setSort] = useState("recommended");
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [query, setQuery] = useState(initialQuery);
 
   const filtered = useMemo(() => {
     let list = [...tours];
+    const term = query.trim().toLowerCase();
 
+    if (term) {
+      list = list.filter((tour) =>
+        `${tour.title} ${tour.destinationName} ${tour.summary} ${tour.region}`
+          .toLowerCase()
+          .includes(term),
+      );
+    }
     if (destination) {
       list = list.filter((tour) => tour.destinationSlug === destination);
     }
@@ -119,19 +105,13 @@ export function ToursExplorer({
       );
     }
 
-    const durationRange = durationOptions.find((item) => item.value === duration);
-    if (durationRange && duration !== "any") {
-      list = list.filter(
-        (tour) => tour.days >= durationRange.min && tour.days <= durationRange.max,
-      );
-    }
-
-    const priceRange = priceOptions.find((item) => item.value === price);
-    if (priceRange && price !== "any") {
-      list = list.filter(
-        (tour) => tour.price >= priceRange.min && tour.price <= priceRange.max,
-      );
-    }
+    list = list.filter(
+      (tour) =>
+        tour.price >= priceMin &&
+        tour.price <= priceMax &&
+        tour.days >= durationMin &&
+        tour.days <= durationMax,
+    );
 
     switch (sort) {
       case "price-low":
@@ -142,16 +122,6 @@ export function ToursExplorer({
         break;
       case "duration-short":
         list.sort((a, b) => a.days - b.days);
-        break;
-      case "duration-long":
-        list.sort((a, b) => b.days - a.days);
-        break;
-      case "savings":
-        list.sort(
-          (a, b) =>
-            ((b.oldPrice ?? b.price) - b.price) -
-            ((a.oldPrice ?? a.price) - a.price),
-        );
         break;
       case "rating":
         list.sort((a, b) => b.rating - a.rating);
@@ -167,17 +137,26 @@ export function ToursExplorer({
     return list;
   }, [
     destination,
-    duration,
+    durationMax,
+    durationMin,
     experience,
     month,
-    price,
+    priceMax,
+    priceMin,
+    query,
     region,
     sort,
     tours,
   ]);
 
-  const activeFilters: ActiveFilter[] = [];
-
+  const activeFilters: Array<{ key: string; label: string; clear: () => void }> = [];
+  if (query) {
+    activeFilters.push({
+      key: "query",
+      label: `“${query}”`,
+      clear: () => setQuery(""),
+    });
+  }
   if (region !== "All") {
     activeFilters.push({
       key: "region",
@@ -203,23 +182,6 @@ export function ToursExplorer({
       clear: () => setExperience(""),
     });
   }
-  if (duration !== "any") {
-    activeFilters.push({
-      key: "duration",
-      label:
-        durationOptions.find((item) => item.value === duration)?.label ??
-        "Duration",
-      clear: () => setDuration("any"),
-    });
-  }
-  if (price !== "any") {
-    activeFilters.push({
-      key: "price",
-      label:
-        priceOptions.find((item) => item.value === price)?.label ?? "Budget",
-      clear: () => setPrice("any"),
-    });
-  }
   if (month !== "Any month") {
     activeFilters.push({
       key: "month",
@@ -227,68 +189,72 @@ export function ToursExplorer({
       clear: () => setMonth("Any month"),
     });
   }
-
-  const hasFilters = activeFilters.length > 0;
+  if (priceMin > 25000 || priceMax < 300000) {
+    activeFilters.push({
+      key: "price",
+      label: `Under ₹${Math.round(priceMax / 1000)}k`,
+      clear: () => {
+        setPriceMin(25000);
+        setPriceMax(300000);
+      },
+    });
+  }
 
   function resetFilters() {
     setDestination("");
     setExperience("");
     setRegion("All");
-    setDuration("any");
-    setPrice("any");
     setMonth("Any month");
+    setPriceMin(25000);
+    setPriceMax(300000);
+    setDurationMin(4);
+    setDurationMax(16);
     setSort("recommended");
+    setQuery("");
   }
 
-  function renderFilterPanel(prefix: string) {
+  function renderFilterPanel(idPrefix: string) {
     return (
-    <div className="rounded-[28px] border border-stone-200 bg-white p-5 shadow-[0_14px_50px_-38px_rgba(11,39,53,0.5)]">
-      <div className="flex items-center justify-between gap-3">
-        <p className="flex items-center gap-2 text-sm font-extrabold uppercase tracking-[0.18em] text-stone-500">
-          <SlidersHorizontal className="h-4 w-4 text-blue-600" />
-          Filters
-        </p>
-        <button
-          type="button"
-          onClick={resetFilters}
-          disabled={!hasFilters && sort === "recommended"}
-          className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1.5 text-sm font-extrabold uppercase tracking-wider text-stone-500 transition hover:bg-sand-100 hover:text-blue-700 disabled:cursor-not-allowed disabled:opacity-40"
-        >
-          <RotateCcw className="h-3 w-3" />
-          Reset
-        </button>
-      </div>
+      <div className="rounded-[28px] border border-sand-300 bg-paper p-7">
+        <div className="flex items-center justify-between gap-3">
+          <p className="type-title text-ink">Filters</p>
+          <button
+            type="button"
+            onClick={resetFilters}
+            className="text-sm font-bold text-blue-700 transition hover:text-blue-800"
+          >
+            Reset
+          </button>
+        </div>
 
-      <div className="mt-4 divide-y divide-dashed divide-stone-200">
-        <section className="pb-4">
-          <p className="field-label">Region</p>
-          <div className="flex flex-wrap gap-1.5">
-            {regions.map((item) => (
-              <button
-                key={item}
-                type="button"
-                onClick={() => setRegion(item)}
-                className={cn(
-                  "rounded-full border px-3 py-1.5 text-sm font-extrabold uppercase tracking-wider transition",
-                  region === item
-                    ? "border-navy-950 bg-navy-950 text-sand-50"
-                    : "border-stone-200 bg-sand-50 text-stone-600 hover:border-blue-400 hover:text-blue-700",
-                )}
-              >
-                {item === "All" ? "All" : item}
-              </button>
-            ))}
-          </div>
-        </section>
+        <div className="mt-6 space-y-6">
+          <section>
+            <p className="type-label mb-3 text-navy-500">Region</p>
+            <div className="flex flex-wrap gap-2">
+              {regions.map((item) => (
+                <button
+                  key={item}
+                  type="button"
+                  onClick={() => setRegion(item)}
+                  className={cn("chip", region === item && "chip-active")}
+                >
+                  {item}
+                </button>
+              ))}
+            </div>
+          </section>
 
-        <section className="py-4">
-          <label htmlFor={`${prefix}-destination`}>
-            <span className="field-label">Destination</span>
+          <div className="hr-dashed" />
+
+          <section>
+            <label htmlFor={`${idPrefix}-destination`} className="type-label mb-3 block text-navy-500">
+              Destination
+            </label>
             <select
-              id={`${prefix}-destination`}
+              id={`${idPrefix}-destination`}
               value={destination}
               onChange={(event) => setDestination(event.target.value)}
-              className="field py-2.5"
+              className="field py-3"
             >
               <option value="">All destinations</option>
               {destinations.map((item) => (
@@ -297,100 +263,61 @@ export function ToursExplorer({
                 </option>
               ))}
             </select>
-          </label>
-        </section>
+          </section>
 
-        <section className="py-4">
-          <p className="field-label">Travel style</p>
-          <div className="flex flex-wrap gap-1.5">
-            <button
-              type="button"
-              onClick={() => setExperience("")}
-              className={cn(
-                "rounded-full border px-3 py-1.5 text-sm font-bold transition",
-                !experience
-                  ? "border-blue-500 bg-blue-50 text-blue-800"
-                  : "border-stone-200 text-stone-500 hover:border-stone-300",
-              )}
-            >
-              All
-            </button>
-            {experiences.map((item) => (
-              <button
-                key={item.slug}
-                type="button"
-                onClick={() => setExperience(item.slug)}
-                className={cn(
-                  "rounded-full border px-3 py-1.5 text-sm font-bold transition",
-                  experience === item.slug
-                    ? "border-blue-500 bg-blue-50 text-blue-800"
-                    : "border-stone-200 text-stone-500 hover:border-stone-300",
-                )}
-              >
-                {item.shortTitle}
-              </button>
-            ))}
-          </div>
-        </section>
+          <div className="hr-dashed" />
 
-        <section className="py-4">
-          <p className="field-label">Duration</p>
-          <div className="grid grid-cols-2 gap-1.5">
-            {durationOptions
-              .filter((item) => item.value !== "any")
-              .map((item) => (
-                <button
-                  key={item.value}
-                  type="button"
-                  onClick={() =>
-                    setDuration(duration === item.value ? "any" : item.value)
-                  }
-                  className={cn(
-                    "rounded-xl border px-3 py-2 text-left text-sm font-bold transition",
-                    duration === item.value
-                      ? "border-blue-500 bg-blue-50 text-blue-800"
-                      : "border-stone-200 text-stone-500 hover:border-stone-300",
-                  )}
-                >
-                  {item.label}
-                </button>
-              ))}
-          </div>
-        </section>
+          <section>
+            <p className="type-label mb-3 text-navy-500">Travel style</p>
+            <div className="grid gap-3">
+              {experiences.map((item) => {
+                const count = tours.filter((tour) =>
+                  tour.experiences.includes(item.slug),
+                ).length;
+                const checked = experience === item.slug;
 
-        <section className="py-4">
-          <p className="field-label">Budget</p>
-          <div className="grid grid-cols-2 gap-1.5">
-            {priceOptions
-              .filter((item) => item.value !== "any")
-              .map((item) => (
-                <button
-                  key={item.value}
-                  type="button"
-                  onClick={() =>
-                    setPrice(price === item.value ? "any" : item.value)
-                  }
-                  className={cn(
-                    "rounded-xl border px-3 py-2 text-left text-sm font-bold transition",
-                    price === item.value
-                      ? "border-blue-500 bg-blue-50 text-blue-800"
-                      : "border-stone-200 text-stone-500 hover:border-stone-300",
-                  )}
-                >
-                  {item.label}
-                </button>
-              ))}
-          </div>
-        </section>
+                return (
+                  <button
+                    key={item.slug}
+                    type="button"
+                    onClick={() =>
+                      setExperience(checked ? "" : item.slug)
+                    }
+                    className="flex items-center gap-3 text-left"
+                  >
+                    <span
+                      className={cn(
+                        "grid h-5 w-5 shrink-0 place-items-center rounded-[6px] border-[1.5px] text-[11px] font-bold",
+                        checked
+                          ? "border-ink bg-ink text-gold-400"
+                          : "border-sand-300 bg-paper text-transparent",
+                      )}
+                    >
+                      ✓
+                    </span>
+                    <span className="flex-1 text-sm font-medium text-ink">
+                      {item.shortTitle}
+                    </span>
+                    <span className="text-[13px] font-medium text-navy-400">
+                      {count}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </section>
 
-        <section className="pt-4">
-          <label htmlFor={`${prefix}-month`}>
-            <span className="field-label">Departure month</span>
+          <div className="hr-dashed" />
+
+          <section>
+            <label htmlFor={`${idPrefix}-month`} className="type-label mb-3 block text-navy-500">
+              Departure month
+            </label>
             <select
-              id={`${prefix}-month`}
+              id={`${idPrefix}-month`}
               value={month}
               onChange={(event) => setMonth(event.target.value)}
-              className="field py-2.5"
+              className="field py-3"
             >
               {months.map((item) => (
                 <option key={item} value={item}>
@@ -398,96 +325,166 @@ export function ToursExplorer({
                 </option>
               ))}
             </select>
-          </label>
-        </section>
-      </div>
+          </section>
 
-      <button
-        type="button"
-        onClick={() => setFiltersOpen(false)}
-        className="btn-primary mt-5 w-full lg:hidden"
-      >
-        Show {filtered.length} {filtered.length === 1 ? "journey" : "journeys"}
-      </button>
-    </div>
+          <div className="hr-dashed" />
+
+          <section>
+            <div className="flex items-center justify-between">
+              <p className="type-label text-navy-500">Budget per person</p>
+              <span className="text-[13px] font-bold text-ink">
+                ₹{Math.round(priceMin / 1000)}k – ₹{Math.round(priceMax / 1000)}k
+              </span>
+            </div>
+            <div className="mt-4 space-y-2">
+              <input
+                type="range"
+                min={25000}
+                max={300000}
+                step={5000}
+                value={priceMin}
+                onChange={(event) =>
+                  setPriceMin(Math.min(Number(event.target.value), priceMax - 5000))
+                }
+                aria-label="Minimum budget"
+                className="h-1.5 w-full cursor-pointer accent-ink"
+              />
+              <input
+                type="range"
+                min={25000}
+                max={300000}
+                step={5000}
+                value={priceMax}
+                onChange={(event) =>
+                  setPriceMax(Math.max(Number(event.target.value), priceMin + 5000))
+                }
+                aria-label="Maximum budget"
+                className="h-1.5 w-full cursor-pointer accent-ink"
+              />
+            </div>
+            <div className="mt-1 flex justify-between text-[13px] font-medium text-navy-500">
+              <span>₹25,000</span>
+              <span>₹3,00,000</span>
+            </div>
+          </section>
+
+          <div className="hr-dashed" />
+
+          <section>
+            <div className="flex items-center justify-between">
+              <p className="type-label text-navy-500">Duration</p>
+              <span className="text-[13px] font-bold text-ink">
+                {durationMin} – {durationMax} days
+              </span>
+            </div>
+            <div className="mt-4 space-y-2">
+              <input
+                type="range"
+                min={4}
+                max={16}
+                value={durationMin}
+                onChange={(event) =>
+                  setDurationMin(Math.min(Number(event.target.value), durationMax - 1))
+                }
+                aria-label="Minimum duration"
+                className="h-1.5 w-full cursor-pointer accent-ink"
+              />
+              <input
+                type="range"
+                min={4}
+                max={16}
+                value={durationMax}
+                onChange={(event) =>
+                  setDurationMax(Math.max(Number(event.target.value), durationMin + 1))
+                }
+                aria-label="Maximum duration"
+                className="h-1.5 w-full cursor-pointer accent-ink"
+              />
+            </div>
+          </section>
+
+          <button
+            type="button"
+            onClick={() => setFiltersOpen(false)}
+            className="btn btn-ink w-full lg:hidden"
+          >
+            Show {filtered.length} tours
+            <span className="btn-dot">→</span>
+          </button>
+        </div>
+      </div>
     );
   }
 
   return (
-    <div className="container-page py-12 sm:py-16">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <p className="flex items-center gap-2 text-sm font-extrabold uppercase tracking-[0.18em] text-blue-700">
-            <Filter className="h-3.5 w-3.5" />
-            {filtered.length} {filtered.length === 1 ? "journey" : "journeys"}{" "}
-            found
-          </p>
-          <h2 className="mt-2 font-display text-2xl font-semibold text-navy-950 sm:text-3xl">
-            {destination
-              ? `Journeys to ${
-                  destinations.find((item) => item.slug === destination)?.name ??
-                  "your destination"
-                }`
-              : "All Hidden Miles journeys"}
-          </h2>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-2">
-          <button
-            type="button"
-            onClick={() => setFiltersOpen((open) => !open)}
-            className="inline-flex items-center gap-2 rounded-full border border-stone-300 bg-white px-4 py-2.5 text-sm font-extrabold uppercase tracking-wider text-navy-950 transition hover:border-blue-400 hover:text-blue-700 lg:hidden"
-          >
-            <SlidersHorizontal className="h-3.5 w-3.5" />
-            Filters
-            {activeFilters.length ? (
-              <span className="grid h-5 min-w-5 place-items-center rounded-full bg-blue-600 px-1 text-sm text-white">
-                {activeFilters.length}
-              </span>
-            ) : null}
-          </button>
-
-          <label
-            htmlFor="sort"
-            className="text-sm font-extrabold uppercase tracking-wider text-stone-400"
-          >
-            Sort by
-          </label>
-          <select
-            id="sort"
-            value={sort}
-            onChange={(event) => setSort(event.target.value)}
-            className="rounded-full border border-stone-200 bg-white px-4 py-2.5 text-sm font-bold text-navy-950 outline-none focus:border-blue-500"
-          >
-            {sortOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
-
-      <div className="mt-8 grid gap-6 lg:grid-cols-[280px_1fr] lg:items-start">
-        <aside className="hidden lg:sticky lg:top-28 lg:block">
+    <section className="container-page pb-16 md:pb-24">
+      <div className="grid gap-8 lg:grid-cols-[300px_1fr] lg:items-start lg:gap-12">
+        <aside className="hidden lg:sticky lg:top-32 lg:block">
           {renderFilterPanel("desktop")}
         </aside>
 
         <div className="min-w-0">
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <h2 className="type-h3 text-ink">
+                {filtered.length} tours
+                {region !== "All" ? ` in ${region}` : ""}
+              </h2>
+              <p className="type-small mt-1 text-navy-500">
+                Showing group tours and family holidays
+              </p>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2.5">
+              <button
+                type="button"
+                onClick={() => setFiltersOpen((open) => !open)}
+                className="btn btn-light btn-sm lg:hidden"
+              >
+                <SlidersHorizontal className="h-4 w-4" />
+                Filters
+                {activeFilters.length ? (
+                  <span className="grid h-5 min-w-5 place-items-center rounded-full bg-ink px-1 text-[11px] text-paper">
+                    {activeFilters.length}
+                  </span>
+                ) : null}
+              </button>
+
+              <label
+                htmlFor="tour-sort"
+                className="rounded-full border border-sand-300 bg-paper px-4 py-2.5 text-[13px] font-medium text-navy-500"
+              >
+                Sort by
+              </label>
+              <select
+                id="tour-sort"
+                value={sort}
+                onChange={(event) => setSort(event.target.value)}
+                className="-ml-2 rounded-full bg-transparent text-sm font-bold text-ink outline-none"
+              >
+                {sortOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
           {filtersOpen ? (
-            <div className="mb-4 lg:hidden">
+            <div className="mt-4 lg:hidden">
               {renderFilterPanel("mobile")}
             </div>
           ) : null}
 
           {activeFilters.length ? (
-            <div className="mb-5 flex flex-wrap items-center gap-2">
+            <div className="mt-5 flex flex-wrap items-center gap-2">
               {activeFilters.map((filter) => (
                 <button
                   key={filter.key}
                   type="button"
                   onClick={filter.clear}
-                  className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-3 py-1.5 text-sm font-extrabold uppercase tracking-wider text-blue-800 transition hover:bg-blue-100"
+                  className="chip chip-soft"
                 >
                   {filter.label}
                   <X className="h-3 w-3" />
@@ -496,7 +493,7 @@ export function ToursExplorer({
               <button
                 type="button"
                 onClick={resetFilters}
-                className="text-sm font-extrabold uppercase tracking-wider text-stone-400 underline decoration-dotted underline-offset-4 transition hover:text-blue-700"
+                className="text-[13px] font-bold text-navy-500 transition hover:text-ink"
               >
                 Clear all
               </button>
@@ -504,40 +501,84 @@ export function ToursExplorer({
           ) : null}
 
           {filtered.length ? (
-            <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-              {filtered.map((tour, index) => (
-                <TourCard key={tour.slug} tour={tour} priority={index < 3} />
-              ))}
-            </div>
+            <>
+              <div className="mt-7 grid gap-7 sm:grid-cols-2">
+                {filtered.slice(0, 12).map((tour, index) => (
+                  <TourCard
+                    key={tour.slug}
+                    tour={tour}
+                    priority={index < 2}
+                  />
+                ))}
+              </div>
+
+              <div className="mt-10 flex flex-wrap items-center justify-center gap-2">
+                <span className="grid h-11 w-11 place-items-center rounded-full border border-sand-300 text-navy-400">
+                  <ArrowLeft className="h-4 w-4" />
+                </span>
+                {["1", "2", "3"].map((page) => (
+                  <span
+                    key={page}
+                    className={cn(
+                      "grid h-11 w-11 place-items-center rounded-full border text-sm font-bold",
+                      page === "1"
+                        ? "border-ink bg-ink text-gold-400"
+                        : "border-sand-300 bg-paper text-ink",
+                    )}
+                  >
+                    {page}
+                  </span>
+                ))}
+                <span className="grid h-11 w-11 place-items-center rounded-full border border-sand-300 bg-paper text-ink">
+                  <ArrowRight className="h-4 w-4" />
+                </span>
+                <span className="ml-2 text-[13px] font-medium text-navy-500">
+                  Showing 1–{Math.min(filtered.length, 12)} of {filtered.length}
+                </span>
+              </div>
+            </>
           ) : (
-            <div className="rounded-[30px] border border-dashed border-stone-300 bg-white px-6 py-16 text-center">
-              <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-sand-200 text-blue-700">
+            <div className="mt-7 rounded-[28px] border border-dashed border-sand-300 bg-paper px-6 py-16 text-center">
+              <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-sand-200 text-navy-500">
                 <SearchX className="h-6 w-6" />
               </span>
-              <h3 className="mt-5 font-display text-2xl font-semibold text-navy-950">
+              <h3 className="type-h3 mt-5 text-ink">
                 Nothing matches those filters — yet.
               </h3>
-              <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-stone-500">
+              <p className="type-small mx-auto mt-2 max-w-md text-navy-500">
                 Try a different budget, duration or month, or let our team build
                 something entirely around you.
               </p>
               <div className="mt-6 flex flex-wrap justify-center gap-3">
-                <button
-                  type="button"
-                  onClick={resetFilters}
-                  className="btn-outline"
-                >
-                  <RotateCcw className="h-4 w-4" />
+                <button type="button" onClick={resetFilters} className="btn btn-outline">
                   Clear filters
                 </button>
-                <a href="/contact" className="btn-primary">
+                <Link href="/contact" className="btn btn-ink">
                   Build my holiday
-                </a>
+                  <span className="btn-dot">→</span>
+                </Link>
               </div>
             </div>
           )}
+
+          <div className="mt-10 flex flex-col items-start gap-5 rounded-[20px] bg-gold-100 px-7 py-6 sm:flex-row sm:items-center">
+            <span className="grid h-[52px] w-[52px] shrink-0 place-items-center rounded-[16px] bg-gold-400 text-ink">
+              <Headset className="h-6 w-6" />
+            </span>
+            <div className="flex-1">
+              <p className="type-title text-ink">Can&apos;t find the right dates?</p>
+              <p className="type-small mt-1 text-navy-700">
+                We run private departures for groups of 6 or more — any date, any
+                route.
+              </p>
+            </div>
+            <Link href="/contact" className="btn btn-ink btn-sm shrink-0">
+              Ask a specialist
+              <span className="btn-dot">→</span>
+            </Link>
+          </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 }

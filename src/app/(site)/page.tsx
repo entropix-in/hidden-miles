@@ -1,44 +1,34 @@
 import Image from "next/image";
 import Link from "next/link";
 import {
-  ArrowUpRight,
   BadgeCheck,
-  Check,
-  Compass,
   Headset,
   MapPin,
-  Phone,
-  Quote,
   ShieldCheck,
-  Sparkles,
-  Star,
   Wallet,
 } from "lucide-react";
-import { SearchWidget } from "@/components/site/search-widget";
-import { SectionHeading } from "@/components/site/section-heading";
-import { TourCard } from "@/components/site/tour-card";
+import { CtaBand } from "@/components/site/cta-band";
+import { Contours } from "@/components/site/contours";
 import { DestinationCard } from "@/components/site/destination-card";
-import { ExperienceIcon } from "@/components/site/experience-icon";
+import { FeatureTile } from "@/components/site/feature-tile";
+import { Kicker, SectionHeading } from "@/components/site/section-heading";
+import { Rating } from "@/components/site/rating";
+import { SearchWidget } from "@/components/site/search-widget";
+import { Stamp } from "@/components/site/stamp";
+import { TourCard } from "@/components/site/tour-card";
 import type { Destination } from "@/data/destinations";
-import { site, stats, trustPoints } from "@/data/site";
+import { stats } from "@/data/site";
 import {
   loadDestinations,
   loadExperiences,
   loadTestimonials,
   loadTours,
 } from "@/lib/content";
-import { formatINR, imageUrl } from "@/lib/utils";
-
-const heroImage =
-  "https://images.unsplash.com/photo-1593181629936-11c609b8db9b";
-const ctaImage =
-  "https://images.unsplash.com/photo-1499856871958-5b9627545d1a";
-
-const trustIcons = [Wallet, BadgeCheck, Headset, ShieldCheck];
-
-const bentoDestinations = ["kashmir", "kerala", "rajasthan", "europe", "bali"];
+import { imageUrl } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
+
+const heroCoordinates = "34.05° N · 74.38° E";
 
 export default async function HomePage() {
   const [tours, destinations, experiences, testimonials] = await Promise.all([
@@ -49,455 +39,444 @@ export default async function HomePage() {
   ]);
 
   const featuredTours = tours.filter((tour) => tour.featured);
-  const featuredSelection = (featuredTours.length ? featuredTours : tours).slice(
-    0,
-    6,
-  );
-  const preferredBento = bentoDestinations
-    .map((slug) => destinations.find((item) => item.slug === slug))
-    .filter((item): item is Destination => Boolean(item));
-  const bento = preferredBento.length
-    ? preferredBento
-    : destinations.slice(0, 5);
-  const spotlight =
-    tours.find((tour) => tour.slug === "magical-kashmir") ??
-    featuredTours[0] ??
-    tours[0];
+  const featuredSelection = (featuredTours.length ? featuredTours : tours).slice(0, 3);
+  const bySlug = (slug: string) => destinations.find((item) => item.slug === slug);
+  const heroDestination = bySlug("kashmir") ?? destinations[0];
+  const insetDestination = bySlug("kerala") ?? destinations[1];
+  const bentoDestinations = [
+    bySlug("kashmir"),
+    bySlug("kerala"),
+    bySlug("rajasthan"),
+    bySlug("japan"),
+    bySlug("bali"),
+  ].filter((item): item is Destination => Boolean(item));
+  const specialities = experiences
+    .filter((experience) =>
+      ["honeymoon", "spiritual", "adventure", "women"].includes(experience.slug),
+    )
+    .slice(0, 4);
+  const testimonial = testimonials[0];
+
+  const tourCount = (slug: string) =>
+    tours.filter((tour) => tour.destinationSlug === slug).length;
 
   return (
     <>
-      <section className="relative isolate overflow-hidden bg-navy-950">
-        <Image
-          src={imageUrl(heroImage, 1920)}
-          alt="A shikara drifting across Dal Lake in Kashmir"
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-navy-950/95 via-navy-950/70 to-navy-950/20" />
-        <div className="absolute inset-0 bg-gradient-to-t from-navy-950/80 via-transparent to-navy-950/20" />
+      {/* ---------------------------------------------------------------- hero */}
+      <section className="container-page pt-12 md:pt-16">
+        <div className="grid items-center gap-12 xl:grid-cols-[1fr_600px] xl:gap-16">
+          <div className="animate-rise">
+            <Kicker label="Group tours · Family holidays · Private escapes" />
 
-        <div className="container-page relative flex min-h-[660px] flex-col justify-center pb-40 pt-16 sm:min-h-[700px] sm:pb-44 sm:pt-20 lg:min-h-[720px]">
-          <div className="animate-rise max-w-3xl">
-            <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-extrabold uppercase tracking-[0.2em] text-sand-50 backdrop-blur">
-              <Sparkles className="h-3.5 w-3.5 text-blue-300" />
-              Crafting journeys since 1984
-            </span>
-            <h1 className="mt-6 font-display text-[44px] font-medium leading-[1.03] tracking-tight text-sand-50 sm:text-6xl lg:text-[72px]">
-              Gift yourself a journey that
-              <span className="text-blue-400"> stays with you.</span>
+            <h1 className="type-display mt-6 text-ink">
+              Journeys that
+              <br />
+              <span className="accent-line">stay with you</span>
+              <br />
+              long after.
             </h1>
-            <p className="mt-6 max-w-xl text-[15px] leading-7 text-sand-100/80 sm:text-base">
-              Thoughtfully planned group tours, family holidays and private
-              escapes across India and the world. Every detail handled, so you
-              can simply be present.
+
+            <p className="type-lead mt-7 max-w-[500px] text-navy-700">
+              Thoughtfully planned trips across India and the world — with a tour
+              leader from day one, honest all-inclusive prices and a real person
+              on call, always.
             </p>
 
             <div className="mt-8 flex flex-wrap items-center gap-3">
-              <Link href="/tours" className="btn-primary">
-                Explore tour packages
-                <ArrowUpRight className="h-4 w-4" />
+              <Link href="/tours" className="btn btn-ink btn-lg">
+                Explore tours
+                <span className="btn-dot">→</span>
               </Link>
-              <Link
-                href="/contact"
-                className="btn inline-flex border border-white/25 bg-white/10 text-sand-50 backdrop-blur transition hover:bg-white/20"
-              >
-                Talk to a travel expert
+              <Link href="/contact" className="btn btn-outline btn-lg">
+                Talk to an expert
               </Link>
             </div>
 
-            <div className="mt-10 flex flex-wrap items-center gap-5">
-              <div className="flex -space-x-2.5">
+            <div className="mt-8 flex flex-wrap items-center gap-4">
+              <div className="flex -space-x-3">
                 {[
                   ["A", "bg-blue-500"],
-                  ["R", "bg-navy-500"],
-                  ["M", "bg-rose-400"],
-                  ["S", "bg-sky-500"],
+                  ["R", "bg-gold-600"],
+                  ["M", "bg-navy-500"],
+                  ["S", "bg-danger"],
                 ].map(([initial, color]) => (
                   <span
                     key={initial}
-                    className={`grid h-9 w-9 place-items-center rounded-full border-2 border-navy-950 text-sm font-extrabold text-white ${color}`}
+                    className={`grid h-10 w-10 place-items-center rounded-full border-[3px] border-paper text-[13px] font-bold text-white ${color}`}
                   >
                     {initial}
                   </span>
                 ))}
               </div>
               <div>
-                <span className="flex items-center gap-1 text-gold-300">
-                  {Array.from({ length: 5 }).map((_, index) => (
-                    <Star
-                      key={index}
-                      className="h-3.5 w-3.5 fill-current"
-                    />
-                  ))}
-                  <span className="ml-1 text-sm font-extrabold text-sand-50">
-                    4.9 / 5
-                  </span>
-                </span>
-                <p className="mt-1 text-sm font-semibold tracking-wide text-sand-200/70">
-                  Loved by 12,400+ verified travellers
+                <Rating score="4.9" count="12,400+ reviews" />
+                <p className="mt-0.5 text-[13px] font-medium text-navy-500">
+                  Loved by 1.2 million travellers
                 </p>
               </div>
             </div>
+
+            {heroDestination ? (
+              <div className="relative mt-9 aspect-[350/300] overflow-hidden rounded-[28px] bg-ink md:aspect-[2/1] xl:hidden">
+                <Image
+                  src={imageUrl(heroDestination.image, 900)}
+                  alt={heroDestination.name}
+                  fill
+                  sizes="100vw"
+                  className="object-cover"
+                />
+                <span className="absolute bottom-4 right-4">
+                  <Stamp size={96} />
+                </span>
+              </div>
+            ) : null}
           </div>
 
-          {spotlight ? (
-            <div className="animate-float-slow absolute right-8 top-28 hidden w-64 xl:block">
-              <div className="rounded-[28px] border border-white/20 bg-white/10 p-5 text-sand-50 shadow-2xl backdrop-blur-md">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-extrabold uppercase tracking-[0.18em] text-blue-300">
-                    This week&apos;s favourite
-                  </span>
-                  <Compass className="h-4 w-4 text-sand-200/70" />
-                </div>
-                <p className="mt-3 font-display text-2xl font-semibold">
-                  {spotlight.title}
-                </p>
-                <p className="mt-1 text-sm font-semibold text-sand-200/70">
-                  {spotlight.nights} nights · {spotlight.days} days · From{" "}
-                  {formatINR(spotlight.price)}
-                </p>
-                <Link
-                  href={`/tours/${spotlight.slug}`}
-                  className="mt-4 flex items-center justify-between rounded-full bg-sand-50 px-4 py-2.5 text-sm font-extrabold uppercase tracking-wider text-navy-950"
-                >
-                  View journey
-                  <ArrowUpRight className="h-3.5 w-3.5" />
-                </Link>
+          {/* Collage */}
+          <div className="relative mx-auto hidden aspect-square w-full max-w-[600px] xl:block">
+            {heroDestination ? (
+              <div className="absolute right-0 top-0 h-[93%] w-[73%] overflow-hidden rounded-t-[220px] rounded-b-[28px] bg-ink">
+                <Image
+                  src={imageUrl(heroDestination.image, 1200)}
+                  alt={heroDestination.name}
+                  fill
+                  priority
+                  sizes="440px"
+                  className="object-cover"
+                />
               </div>
-            </div>
-          ) : null}
-        </div>
-      </section>
+            ) : null}
 
-      <div className="container-page relative z-10 -mt-24 sm:-mt-28">
-        <SearchWidget destinations={destinations} experiences={experiences} />
-        <div className="mt-4 grid gap-2 rounded-[26px] border border-stone-200/80 bg-white/85 p-3 shadow-lg shadow-navy-950/5 backdrop-blur sm:grid-cols-2 lg:grid-cols-4">
-          {trustPoints.map((point, index) => {
-            const Icon = trustIcons[index];
-            return (
-              <div
-                key={point.title}
-                className="flex items-start gap-3 rounded-2xl px-3 py-3 transition hover:bg-sand-100"
-              >
-                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-navy-950 text-blue-300">
-                  <Icon className="h-4 w-4" />
-                </span>
-                <div>
-                  <p className="text-sm font-extrabold text-navy-950">
-                    {point.title}
-                  </p>
-                  <p className="mt-0.5 text-sm leading-5 text-stone-500">
-                    {point.description}
-                  </p>
-                </div>
+            {insetDestination ? (
+              <div className="absolute bottom-0 left-0 h-[50%] w-[40%] overflow-hidden rounded-[28px] border-8 border-paper bg-ink shadow-[0_18px_40px_-30px_rgba(11,39,53,0.5)]">
+                <Image
+                  src={imageUrl(insetDestination.image, 700)}
+                  alt={insetDestination.name}
+                  fill
+                  sizes="240px"
+                  className="object-cover"
+                />
               </div>
-            );
-          })}
-        </div>
-      </div>
+            ) : null}
 
-      <section className="container-page py-16 sm:py-20">
-        <SectionHeading
-          eyebrow="Book your dream holiday"
-          title="Find your kind of escape"
-          description="Whether you are travelling with family, chasing the aurora or stealing a week away together, there is a Hidden Miles journey built for exactly that."
-          href="/experiences"
-          linkLabel="All experiences"
-        />
-        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {experiences.map((experience) => (
-            <Link
-              key={experience.slug}
-              href={`/tours?experience=${experience.slug}`}
-              className="group relative flex min-h-[230px] flex-col justify-between overflow-hidden rounded-[26px] p-5 text-sand-50 shadow-lg shadow-navy-950/10"
-            >
-              <Image
-                src={imageUrl(experience.image, 800)}
-                alt={experience.title}
-                fill
-                sizes="(max-width: 768px) 100vw, 33vw"
-                className="object-cover transition duration-700 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-navy-950/95 via-navy-950/50 to-navy-950/10" />
-              <span className="relative grid h-10 w-10 place-items-center rounded-full bg-white/15 text-blue-300 backdrop-blur">
-                <ExperienceIcon icon={experience.icon} />
+            <div className="absolute left-[8%] top-[7%] flex items-center gap-2.5 rounded-full bg-paper py-2.5 pl-2.5 pr-4 shadow-[0_12px_32px_-16px_rgba(11,39,53,0.45)]">
+              <span className="grid h-8 w-8 place-items-center rounded-full bg-gold-400 text-ink">
+                <MapPin className="h-4 w-4" />
               </span>
-              <div className="relative">
-                <h3 className="font-display text-2xl font-semibold">
-                  {experience.shortTitle}
-                </h3>
-                <p className="mt-1.5 max-w-[90%] text-sm leading-5 text-sand-100/75">
-                  {experience.description}
-                </p>
-                <span className="mt-3 inline-flex items-center gap-1.5 text-sm font-extrabold uppercase tracking-[0.16em] text-blue-300">
-                  Explore
-                  <ArrowUpRight className="h-3.5 w-3.5 transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+              <span>
+                <span className="block text-[13px] font-bold text-ink">
+                  Gulmarg, Kashmir
                 </span>
-              </div>
+                <span className="block text-xs font-medium text-navy-400">
+                  {heroCoordinates}
+                </span>
+              </span>
+            </div>
+
+            <span className="absolute bottom-[9%] right-[8%]">
+              <Stamp size={140} />
+            </span>
+          </div>
+        </div>
+
+        <div className="mt-12 md:mt-16">
+          <SearchWidget destinations={destinations} experiences={experiences} />
+        </div>
+
+        <div className="mt-4 flex flex-wrap items-center gap-2.5 pb-12 md:pb-16">
+          <span className="text-sm font-bold text-navy-500">Popular:</span>
+          {[
+            { label: "Kashmir in spring", href: "/tours?destination=kashmir" },
+            { label: "Women's Special", href: "/tours?experience=women" },
+            { label: "Honeymoons", href: "/tours?experience=honeymoon" },
+            { label: "Europe 2027", href: "/destinations/europe" },
+            { label: "Under ₹50k", href: "/tours?price=under50" },
+          ].map((link) => (
+            <Link key={link.label} href={link.href} className="chip">
+              {link.label}
             </Link>
           ))}
         </div>
       </section>
 
-      <section className="bg-sand-100/70 py-16 sm:py-20">
-        <div className="container-page">
-          <SectionHeading
-            eyebrow="Handpicked for the season"
-            title="This season's most-loved journeys"
-            description="Our travel experts' favourite departures right now — the ones guests keep writing to us about."
-            href="/tours"
-            linkLabel="View all tours"
-          />
-          <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {featuredSelection.map((tour, index) => (
-              <TourCard key={tour.slug} tour={tour} priority={index < 3} />
+      {/* --------------------------------------------------------------- stats */}
+      <section className="container-page">
+        <div className="grid grid-cols-2 gap-y-8 border-y border-sand-300 py-10 md:grid-cols-4 md:py-12">
+          {stats.map((stat, index) => (
+            <div
+              key={stat.label}
+              className={`px-0 md:px-8 ${index ? "md:border-l md:border-sand-300" : ""}`}
+            >
+              <p className="type-h3 text-ink">
+                {stat.value}
+                <span className="type-h4">
+                  {stat.suffix === "yrs" ? " years" : stat.suffix}
+                </span>
+              </p>
+              <p className="type-small mt-2 text-navy-500">{stat.label}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* --------------------------------------------------------- destinations */}
+      <section className="container-page section-major">
+        <SectionHeading
+          number="01"
+          label="Destinations"
+          title="Where will you"
+          accent="wander next?"
+          right={
+            <div className="flex flex-wrap gap-2">
+              {[
+                { label: "All", count: destinations.length },
+                {
+                  label: "India",
+                  count: destinations.filter((item) => item.region === "India")
+                    .length,
+                },
+                {
+                  label: "International",
+                  count: destinations.filter(
+                    (item) => item.region === "International",
+                  ).length,
+                },
+              ].map((filter, index) => (
+                <span
+                  key={filter.label}
+                  className={`chip ${index === 0 ? "chip-active" : ""}`}
+                >
+                  {filter.label}
+                  <span className="chip-count">{filter.count}</span>
+                </span>
+              ))}
+            </div>
+          }
+        />
+
+        <div className="mt-10 grid gap-6 lg:grid-cols-[588px_1fr]">
+          {bentoDestinations[0] ? (
+            <DestinationCard
+              destination={bentoDestinations[0]}
+              tourCount={tourCount(bentoDestinations[0].slug)}
+              big
+              priority
+            />
+          ) : null}
+
+          <div className="grid gap-6 sm:grid-cols-2">
+            {bentoDestinations.slice(1, 5).map((destination) => (
+              <DestinationCard
+                key={destination.slug}
+                destination={destination}
+                tourCount={tourCount(destination.slug)}
+              />
             ))}
           </div>
-          <div className="mt-10 flex justify-center">
-            <Link href="/tours" className="btn-outline">
-              See all {tours.length} tour packages
-              <ArrowUpRight className="h-4 w-4" />
-            </Link>
-          </div>
         </div>
-      </section>
 
-      <section className="container-page py-16 sm:py-20">
-        <div className="relative overflow-hidden rounded-[36px] bg-navy-950 px-6 py-12 text-sand-50 sm:px-10 lg:px-14">
-          <div className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-blue-500/20 blur-3xl" />
-          <div className="pointer-events-none absolute -bottom-20 left-1/3 h-72 w-72 rounded-full bg-navy-400/10 blur-3xl" />
-          <div className="relative grid gap-10 lg:grid-cols-[1.1fr_1.4fr] lg:items-center">
-            <div>
-              <p className="eyebrow text-blue-300">Our legacy</p>
-              <h2 className="mt-3 font-display text-3xl font-medium leading-tight sm:text-4xl">
-                Four decades of going the extra mile.
-              </h2>
-              <p className="mt-4 max-w-md text-sm leading-7 text-sand-200/70">
-                What started as one family&apos;s love for showing people the
-                world has become a travel company trusted by over a million
-                guests. Some things never change: we still treat every trip like
-                it is our own.
-              </p>
-              <Link href="/about" className="btn-light mt-6">
-                Our story
-                <ArrowUpRight className="h-4 w-4" />
-              </Link>
-            </div>
-            <div className="grid grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-4">
-              {stats.map((stat) => (
-                <div key={stat.label}>
-                  <p className="font-display text-4xl font-medium text-blue-300">
-                    {stat.value}
-                    <span className="text-2xl">{stat.suffix}</span>
-                  </p>
-                  <p className="mt-2 text-sm font-semibold leading-4 text-sand-200/60">
-                    {stat.label}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="container-page pb-16 sm:pb-20">
-        <SectionHeading
-          eyebrow="Where will you go next?"
-          title="Destinations our travellers adore"
-          description="From the backwaters of Kerala to the canals of Amsterdam — start with a place, and we will shape the rest."
-          href="/destinations"
-          linkLabel="All destinations"
-        />
-        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {bento.map((destination, index) => (
-            <DestinationCard
-              key={destination.slug}
-              destination={destination}
-              tourCount={tours.filter((tour) => tour.destinationSlug === destination.slug).length}
-              priority={index === 0}
-              className={
-                index === 0
-                  ? "sm:col-span-2 lg:col-span-2 lg:row-span-2 lg:min-h-full"
-                  : ""
-              }
-            />
-          ))}
-        </div>
-      </section>
-
-      <section className="bg-sand-100/70 py-16 sm:py-20">
-        <div className="container-page grid gap-10 lg:grid-cols-2 lg:items-center">
-          <div className="relative">
-            <div className="relative aspect-[4/5] overflow-hidden rounded-[36px] sm:aspect-[5/4] lg:aspect-[4/5]">
-              <Image
-                src={imageUrl(
-                  "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944",
-                  1000,
-                )}
-                alt="A houseboat drifting through the Kerala backwaters"
-                fill
-                sizes="(max-width: 1024px) 100vw, 50vw"
-                className="object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-navy-950/50 via-transparent to-transparent" />
-            </div>
-            <div className="absolute -bottom-5 -right-3 rounded-3xl border border-stone-200 bg-white p-5 shadow-2xl shadow-navy-950/15 sm:-right-6">
-              <div className="flex items-center gap-3">
-                <span className="grid h-12 w-12 place-items-center rounded-full bg-blue-100 text-blue-700">
-                  <ShieldCheck className="h-6 w-6" />
-                </span>
-                <div>
-                  <p className="font-display text-xl font-semibold text-navy-950">
-                    100% safe
-                  </p>
-                  <p className="text-sm font-semibold text-stone-500">
-                    Handpicked stays & leaders
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <p className="eyebrow">Why travel with Hidden Miles</p>
-            <h2 className="mt-3 font-display text-3xl font-medium leading-tight tracking-tight text-navy-950 sm:text-4xl">
-              The details are our favourite part.
-            </h2>
-            <p className="mt-4 max-w-lg text-[15px] leading-7 text-stone-600">
-              Anyone can book a hotel. We obsess over the small things that turn
-              a good holiday into a story you tell for years — the corner-room
-              upgrade, the local lunch nobody else knows about, the leader who
-              remembers your name on day one.
-            </p>
-
-            <div className="mt-8 grid gap-4 sm:grid-cols-2">
-              {[
-                "Tour leaders who feel like friends",
-                "Handpicked, personally vetted stays",
-                "Transparent, all-inclusive pricing",
-                "Support that answers, every time",
-              ].map((item) => (
-                <div
-                  key={item}
-                  className="flex items-start gap-3 rounded-2xl border border-stone-200 bg-white px-4 py-3.5"
-                >
-                  <span className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-navy-600 text-white">
-                    <Check className="h-3 w-3" strokeWidth={3} />
-                  </span>
-                  <p className="text-sm font-bold leading-5 text-navy-950">
-                    {item}
-                  </p>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-8 flex flex-wrap items-center gap-4">
-              <Link href="/about" className="btn-dark">
-                Meet Hidden Miles
-                <ArrowUpRight className="h-4 w-4" />
-              </Link>
-              <a
-                href={site.phoneHref}
-                className="inline-flex items-center gap-2 text-sm font-extrabold text-navy-950 transition hover:text-blue-700"
-              >
-                <span className="grid h-10 w-10 place-items-center rounded-full bg-sand-200 text-blue-700">
-                  <Phone className="h-4 w-4" />
-                </span>
-                {site.phone}
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="container-page py-16 sm:py-20">
-        <SectionHeading
-          eyebrow="My Hidden Miles story"
-          title="The best reviews come from the heart"
-          description="A few words from travellers who let us plan their holidays — and then came back for the next one."
-          href="/testimonials"
-          linkLabel="All guest stories"
-        />
-        <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {testimonials.slice(0, 3).map((testimonial) => (
-            <figure
-              key={testimonial.name}
-              className="flex h-full flex-col rounded-[28px] border border-stone-200 bg-white p-6 shadow-[0_10px_40px_-30px_rgba(6,42,38,0.4)]"
-            >
-              <div className="flex items-center justify-between">
-                <span className="flex items-center gap-0.5 text-gold-500">
-                  {Array.from({ length: testimonial.rating }).map((_, index) => (
-                    <Star key={index} className="h-3.5 w-3.5 fill-current" />
-                  ))}
-                </span>
-                <Quote className="h-8 w-8 text-sand-300" />
-              </div>
-              <blockquote className="mt-4 flex-1 text-[14px] leading-7 text-stone-600">
-                “{testimonial.quote}”
-              </blockquote>
-              <figcaption className="mt-6 flex items-center gap-3 border-t border-dashed border-stone-200 pt-5">
-                <span className="grid h-10 w-10 place-items-center rounded-full bg-navy-950 font-display text-sm font-semibold text-blue-300">
-                  {testimonial.name.charAt(0)}
-                </span>
-                <div>
-                  <p className="text-sm font-extrabold text-navy-950">
-                    {testimonial.name}
-                  </p>
-                  <p className="text-sm font-semibold text-stone-400">
-                    {testimonial.city} · {testimonial.tour}
-                  </p>
-                </div>
-              </figcaption>
-            </figure>
-          ))}
-        </div>
-        <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <Link href="/contact" className="btn-outline">
-            <MapPin className="h-4 w-4" />
-            Visit a Hidden Miles office
+        <div className="mt-10 flex justify-center">
+          <Link href="/destinations" className="btn btn-outline">
+            See all {destinations.length} destinations
+            <span className="btn-dot">→</span>
           </Link>
         </div>
       </section>
 
-      <section className="container-page pb-20">
-        <div className="relative isolate overflow-hidden rounded-[36px] px-6 py-16 text-center text-sand-50 sm:px-12 sm:py-20">
-          <Image
-            src={imageUrl(ctaImage, 1800)}
-            alt="Paris at sunset"
-            fill
-            sizes="100vw"
-            className="object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-navy-950/90 via-navy-950/75 to-blue-950/60" />
-          <div className="relative mx-auto max-w-2xl">
-            <p className="eyebrow justify-center text-blue-300">
-              Your next great story
-            </p>
-            <h2 className="mt-4 font-display text-4xl font-medium leading-[1.1] sm:text-5xl">
-              Let&apos;s plan something worth remembering.
-            </h2>
-            <p className="mx-auto mt-5 max-w-lg text-sm leading-7 text-sand-100/75">
-              Tell us where you are dreaming of. A Hidden Miles expert will call you
-              within one working day with ideas, honest advice and a plan that
-              fits.
-            </p>
-            <div className="mt-8 flex flex-wrap justify-center gap-3">
-              <Link href="/contact" className="btn-primary">
-                Plan my holiday
-                <ArrowUpRight className="h-4 w-4" />
+      {/* ------------------------------------------------------------ tours */}
+      <section className="bg-sand-100">
+        <div className="container-page section-major">
+          <SectionHeading
+            number="02"
+            label="Handpicked departures"
+            title="Tours our travellers"
+            accent="love most."
+            right={
+              <Link href="/tours" className="btn btn-outline">
+                View all {tours.length} tours
+                <span className="btn-dot">→</span>
               </Link>
-              <a
-                href={site.phoneHref}
-                className="btn border border-white/25 bg-white/10 text-sand-50 backdrop-blur transition hover:bg-white/20"
+            }
+          />
+
+          <div className="mt-8 flex flex-wrap gap-2">
+            {[
+              "Bestsellers",
+              "Departing soon",
+              "Under ₹60k",
+              "Women's Special",
+              "International",
+            ].map((tab, index) => (
+              <Link
+                key={tab}
+                href="/tours"
+                className={`chip ${index === 0 ? "chip-active" : ""}`}
               >
-                Call {site.phone}
-              </a>
-            </div>
+                {tab}
+              </Link>
+            ))}
+          </div>
+
+          <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-8">
+            {featuredSelection.map((tour, index) => (
+              <TourCard key={tour.slug} tour={tour} priority={index === 0} />
+            ))}
           </div>
         </div>
       </section>
+
+      {/* -------------------------------------------------------------- why us */}
+      <section className="on-ink relative isolate overflow-hidden bg-ink">
+        <Contours cx={0.82} cy={0.3} count={9} color="rgba(255,255,255,0.055)" />
+        <div className="container-page relative grid gap-12 py-20 md:py-32 lg:grid-cols-[1fr_440px] lg:gap-20">
+          <div>
+            <SectionHeading
+              number="03"
+              label="The Hidden Miles way"
+              title="Four decades of"
+              accent="the little things."
+              dark
+            />
+
+            <div className="mt-10 grid gap-5 sm:grid-cols-2">
+              <FeatureTile
+                dark
+                icon={<Wallet className="h-5 w-5" />}
+                title="Honest, all-inclusive prices"
+                description="Flights, stays, meals and guides — no add-ons at checkout."
+                number="01"
+              />
+              <FeatureTile
+                dark
+                icon={<BadgeCheck className="h-5 w-5" />}
+                title="A leader on every trip"
+                description="500+ trained leaders travel with you, day one to home."
+                number="02"
+              />
+              <FeatureTile
+                dark
+                icon={<Headset className="h-5 w-5" />}
+                title="24×7 real-person support"
+                description="WhatsApp a human, whatever the hour or the time zone."
+                number="03"
+              />
+              <FeatureTile
+                dark
+                icon={<ShieldCheck className="h-5 w-5" />}
+                title="Flexible, protected bookings"
+                description="Free date changes up to 30 days out. Payments protected."
+                number="04"
+              />
+            </div>
+          </div>
+
+          {testimonial ? (
+            <figure className="flex flex-col gap-6 self-center rounded-[28px] bg-paper p-8 text-ink lg:p-11">
+              <span className="type-display h-10 leading-none text-gold-400">
+                “
+              </span>
+              <blockquote className="font-display text-[24px] leading-9 text-ink">
+                {testimonial.quote}
+              </blockquote>
+              <figcaption className="flex items-center gap-3.5">
+                <span className="grid h-[52px] w-[52px] place-items-center rounded-full bg-blue-500 text-sm font-bold text-white">
+                  {testimonial.name
+                    .split(" ")
+                    .filter((word) => /[A-Za-z]/.test(word[0] ?? ""))
+                    .map((word) => word[0])
+                    .join("")
+                    .slice(0, 2)}
+                </span>
+                <span>
+                  <span className="block text-[15px] font-bold text-ink">
+                    {testimonial.name}
+                  </span>
+                  <span className="block text-sm font-medium text-navy-500">
+                    {testimonial.tour} · {testimonial.city}
+                  </span>
+                </span>
+              </figcaption>
+              <div className="route-line" />
+              <div className="flex items-center justify-between gap-4">
+                <Rating score="4.9" count="12,400+" />
+                <span className="flex gap-2">
+                  <span className="grid h-11 w-11 place-items-center rounded-full bg-sand-200 text-ink">
+                    ←
+                  </span>
+                  <span className="grid h-11 w-11 place-items-center rounded-full bg-ink text-gold-400">
+                    →
+                  </span>
+                </span>
+              </div>
+            </figure>
+          ) : null}
+        </div>
+      </section>
+
+      {/* ---------------------------------------------------------- speciality */}
+      <section className="container-page section-major">
+        <SectionHeading
+          number="04"
+          label="Speciality tours"
+          title="Travel that fits"
+          accent="the way you live."
+          right={
+            <Link href="/speciality-tours" className="btn btn-outline">
+              All speciality tours
+              <span className="btn-dot">→</span>
+            </Link>
+          }
+        />
+
+        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {specialities.map((experience) => {
+            const count = tours.filter((tour) =>
+              tour.experiences.includes(experience.slug),
+            ).length;
+
+            return (
+              <Link
+                key={experience.slug}
+                href={`/speciality-tours/${experience.slug}`}
+                className="group"
+              >
+                <div className="relative aspect-[282/360] overflow-hidden rounded-[28px] bg-ink">
+                  <Image
+                    src={imageUrl(experience.image, 900)}
+                    alt={experience.title}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 25vw"
+                    className="object-cover transition duration-700 group-hover:scale-[1.04]"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-ink/40 via-transparent to-transparent" />
+                </div>
+                <div className="mt-4">
+                  <h3 className="type-h4 text-ink transition group-hover:text-navy-700">
+                    {experience.shortTitle === "Adventure"
+                      ? "Himalayan adventures"
+                      : experience.shortTitle === "Honeymoon"
+                        ? "Honeymoons"
+                        : experience.shortTitle === "Spiritual"
+                          ? "Spiritual journeys"
+                          : experience.title}
+                  </h3>
+                  <p className="type-small mt-1 text-navy-500">
+                    {count} {count === 1 ? "trip" : "trips"}
+                  </p>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      </section>
+
+      <CtaBand
+        image={
+          bySlug("kashmir")?.image ??
+          "https://images.unsplash.com/photo-1593181629936-11c609b8db9b"
+        }
+        imageAlt="A shikara on Dal Lake, Kashmir"
+      />
     </>
   );
 }

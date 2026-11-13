@@ -1,208 +1,137 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import {
-  ArrowUpRight,
-  Check,
-  Compass,
-  HeartHandshake,
-  MessageCircle,
-  Sparkles,
-} from "lucide-react";
+import { CtaBand } from "@/components/site/cta-band";
 import { PageHero } from "@/components/site/page-hero";
-import { ExperienceIcon } from "@/components/site/experience-icon";
 import { loadExperiences } from "@/lib/content";
 import { imageUrl } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "Experiences",
   description:
-    "Honeymoons, spiritual journeys, Himalayan adventures, family holidays, luxury escapes and women-only tours — find the Hidden Miles experience that fits you.",
+    "The moments worth the whole journey — food, culture, nature and adventure experiences across India and the world.",
 };
-
-const steps = [
-  {
-    title: "Tell us your dream",
-    text: "A call, a WhatsApp message or a form. We listen for the details that matter — pace, people, budget, the things you have always wanted to see.",
-  },
-  {
-    title: "We design it around you",
-    text: "A real travel expert builds your itinerary, checks availability and sends a clear, all-inclusive quote within one working day.",
-  },
-  {
-    title: "We fine-tune together",
-    text: "Swap a hotel, add a day, change the pace. We keep refining until the plan feels exactly right — no pressure, no hidden costs.",
-  },
-  {
-    title: "You travel, we handle the rest",
-    text: "Flights, transfers, stays, guides and 24×7 support. Your tour leader takes care of the details so you can be fully present.",
-  },
-];
 
 export const dynamic = "force-dynamic";
 
+const categories: Record<string, string> = {
+  honeymoon: "Celebration",
+  spiritual: "Culture",
+  adventure: "Adventure",
+  family: "Nature",
+  luxury: "Luxury",
+  women: "Culture",
+};
+
 export default async function ExperiencesPage() {
   const experiences = await loadExperiences();
+  const featured = experiences[0];
+  const rest = experiences;
 
   return (
     <>
       <PageHero
-        eyebrow="Experiences"
-        title="Travel the way you like to travel."
-        description="The same destination can feel completely different depending on how you experience it. Tell us who you are travelling with and what you love, and we will match the journey to you."
-        breadcrumbs={[{ label: "Experiences" }]}
-      >
-        <div className="rounded-[28px] border border-stone-200 bg-white p-6">
-          <Sparkles className="h-6 w-6 text-blue-600" />
-          <p className="mt-4 font-display text-2xl font-medium leading-snug text-navy-950">
-            “The best holidays are the ones that feel like they were made for
-            you.”
-          </p>
-          <p className="mt-3 text-sm font-extrabold uppercase tracking-[0.16em] text-stone-400">
-            The Hidden Miles promise
-          </p>
-        </div>
-      </PageHero>
+        items={[{ label: "Home", href: "/" }, { label: "Experiences" }]}
+        title="Moments worth"
+        accent="the whole journey."
+        description="Cooking with a Kerala family, sunrise at Pangong, a private aarti in Varanasi — the moments our travellers remember most."
+        image={
+          experiences.find((experience) => experience.slug === "adventure")
+            ?.image ?? experiences[0]?.image ?? ""
+        }
+        imageAlt="A Himalayan adventure"
+        coords="LADAKH · 34.15° N  77.58° E"
+      />
 
-      <section className="container-page py-16">
-        <div className="grid gap-5 lg:grid-cols-2">
-          {experiences.map((experience, index) => (
-            <article
-              key={experience.slug}
-              className="group overflow-hidden rounded-[32px] border border-stone-200 bg-white shadow-[0_14px_50px_-38px_rgba(6,42,38,0.5)] transition duration-500 hover:-translate-y-1"
-            >
-              <div className="relative aspect-[16/9] overflow-hidden">
-                <Image
-                  src={imageUrl(experience.image, 1200)}
-                  alt={experience.title}
-                  fill
-                  priority={index < 2}
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                  className="object-cover transition duration-700 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-navy-950/55 via-transparent to-transparent" />
-                <span className="absolute left-5 top-5 grid h-11 w-11 place-items-center rounded-full bg-white/90 text-blue-700 backdrop-blur">
-                  <ExperienceIcon icon={experience.icon} />
-                </span>
-                <span className="absolute bottom-5 left-5 text-sm font-extrabold uppercase tracking-[0.18em] text-sand-50">
-                  0{index + 1} · Hidden Miles experience
-                </span>
-              </div>
-              <div className="p-6 sm:p-7">
-                <h2 className="font-display text-3xl font-medium text-navy-950">
+      <section className="container-page pb-16 md:pb-24">
+        {featured ? (
+          <div className="on-ink relative grid overflow-hidden rounded-[36px] bg-ink xl:grid-cols-[640px_1fr]">
+            <div className="relative min-h-[360px] lg:min-h-[480px]">
+              <Image
+                src={imageUrl(featured.image, 1400)}
+                alt={featured.title}
+                fill
+                sizes="(max-width: 1024px) 100vw, 640px"
+                className="object-cover"
+              />
+            </div>
+            <div className="flex flex-col justify-center gap-6 p-8 md:p-14">
+              <span className="badge badge-gold w-fit">Experience of the month</span>
+              <h2 className="type-h3 text-paper">
+                The moment you&apos;ll
+                <br />
+                <span className="accent-line">talk about for years.</span>
+              </h2>
+              <p className="type-body max-w-lg text-navy-200">
+                {featured.description}
+              </p>
+              <Link
+                href={`/speciality-tours/${featured.slug}`}
+                className="btn btn-primary w-fit"
+              >
+                See this experience
+                <span className="btn-dot">→</span>
+              </Link>
+            </div>
+          </div>
+        ) : null}
+
+        <div className="mt-14">
+          <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+            <h2 className="type-h3 text-ink">All experiences</h2>
+            <div className="flex flex-wrap gap-2">
+              {["All", "Culture", "Food", "Nature", "Adventure"].map(
+                (filter, index) => (
+                  <span
+                    key={filter}
+                    className={`chip ${index === 0 ? "chip-active" : ""}`}
+                  >
+                    {filter}
+                  </span>
+                ),
+              )}
+            </div>
+          </div>
+
+          <div className="mt-8 grid gap-x-8 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
+            {rest.map((experience) => (
+              <Link
+                key={experience.slug}
+                href={`/speciality-tours/${experience.slug}`}
+                className="group"
+              >
+                <div className="relative aspect-[378/300] overflow-hidden rounded-[28px] bg-ink">
+                  <Image
+                    src={imageUrl(experience.image, 900)}
+                    alt={experience.title}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                    className="object-cover transition duration-700 group-hover:scale-[1.04]"
+                  />
+                  <span className="badge badge-paper absolute left-5 top-5">
+                    {experience.highlights.length} highlights
+                  </span>
+                </div>
+                <p className="type-label mt-5 text-blue-700">
+                  {categories[experience.slug] ?? "Experience"}
+                </p>
+                <h3 className="type-h4 mt-2 text-ink transition group-hover:text-navy-700">
                   {experience.title}
-                </h2>
-                <p className="mt-2.5 text-[14px] leading-7 text-stone-600">
+                </h3>
+                <p className="type-small mt-2 line-clamp-2 text-navy-500">
                   {experience.description}
                 </p>
-                <div className="mt-5 grid gap-2 sm:grid-cols-2">
-                  {experience.highlights.map((highlight) => (
-                    <p
-                      key={highlight}
-                      className="flex items-center gap-2 text-sm font-bold text-stone-600"
-                    >
-                      <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full bg-navy-100 text-navy-700">
-                        <Check className="h-2.5 w-2.5" strokeWidth={3} />
-                      </span>
-                      {highlight}
-                    </p>
-                  ))}
-                </div>
-                <Link
-                  href={`/tours?experience=${experience.slug}`}
-                  className="mt-6 inline-flex items-center gap-2 text-sm font-extrabold uppercase tracking-[0.16em] text-blue-700 transition hover:text-blue-800"
-                >
-                  View {experience.shortTitle.toLowerCase()} journeys
-                  <ArrowUpRight className="h-4 w-4" />
-                </Link>
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="bg-navy-950 py-16 text-sand-50 sm:py-20">
-        <div className="container-page">
-          <div className="max-w-2xl">
-            <p className="eyebrow text-blue-300">How it works</p>
-            <h2 className="mt-3 font-display text-3xl font-medium leading-tight sm:text-4xl">
-              From first hello to happy memories.
-            </h2>
-            <p className="mt-4 text-sm leading-7 text-sand-200/70">
-              No call centres, no copy-paste itineraries. A real person plans
-              your holiday, start to finish.
-            </p>
-          </div>
-          <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            {steps.map((step, index) => (
-              <div
-                key={step.title}
-                className="rounded-[26px] border border-white/10 bg-white/5 p-6 backdrop-blur"
-              >
-                <span className="grid h-10 w-10 place-items-center rounded-full bg-blue-500 font-display text-sm font-semibold text-white">
-                  0{index + 1}
-                </span>
-                <h3 className="mt-4 font-display text-xl font-semibold">
-                  {step.title}
-                </h3>
-                <p className="mt-2 text-sm leading-6 text-sand-200/65">
-                  {step.text}
-                </p>
-              </div>
+              </Link>
             ))}
           </div>
-          <div className="mt-10 flex flex-wrap gap-3">
-            <Link href="/contact" className="btn-primary">
-              Start planning
-              <ArrowUpRight className="h-4 w-4" />
-            </Link>
-            <Link
-              href="/tours"
-              className="btn border border-white/25 bg-white/10 text-sand-50 backdrop-blur transition hover:bg-white/20"
-            >
-              <Compass className="h-4 w-4" />
-              Browse tour packages
-            </Link>
-          </div>
         </div>
       </section>
 
-      <section className="container-page py-16">
-        <div className="grid gap-4 sm:grid-cols-3">
-          {[
-            {
-              icon: MessageCircle,
-              title: "Real humans, always",
-              text: "Call, WhatsApp or email. The same team answers before and during your trip.",
-            },
-            {
-              icon: HeartHandshake,
-              title: "Care for every traveller",
-              text: "Elders, kids, solo travellers — we plan for the people, not just the places.",
-            },
-            {
-              icon: Sparkles,
-              title: "Little extras",
-              text: "Surprise dinners, local guides and the small touches that make a trip.",
-            },
-          ].map((item) => (
-            <div
-              key={item.title}
-              className="rounded-[26px] border border-stone-200 bg-white p-6"
-            >
-              <span className="grid h-10 w-10 place-items-center rounded-full bg-sand-200 text-blue-700">
-                <item.icon className="h-5 w-5" />
-              </span>
-              <h3 className="mt-4 font-display text-xl font-semibold text-navy-950">
-                {item.title}
-              </h3>
-              <p className="mt-2 text-sm leading-6 text-stone-500">
-                {item.text}
-              </p>
-            </div>
-          ))}
-        </div>
-      </section>
+      <CtaBand
+        title="Build a trip around"
+        accent="the moments you love."
+        description="Tell us what you want to feel, taste and remember. We'll shape the itinerary around it."
+      />
     </>
   );
 }

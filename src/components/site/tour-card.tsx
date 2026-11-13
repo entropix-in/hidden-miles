@@ -1,80 +1,125 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight, CalendarDays, MapPin, Star } from "lucide-react";
+import { Heart } from "lucide-react";
+import { Rating } from "@/components/site/rating";
+import { coordsFor } from "@/data/coordinates";
 import type { Tour } from "@/data/tours";
-import { formatINR, imageUrl } from "@/lib/utils";
+import { cn, formatINR, imageUrl } from "@/lib/utils";
 
-export function TourCard({ tour, priority = false }: { tour: Tour; priority?: boolean }) {
+function badgeClass(badge?: string) {
+  const value = badge?.toLowerCase() ?? "";
+  if (value.includes("filling")) return "badge-danger";
+  if (value.includes("new")) return "badge-ink";
+  return "badge-gold";
+}
+
+export function TourCard({
+  tour,
+  priority = false,
+  className,
+  compact = false,
+}: {
+  tour: Tour;
+  priority?: boolean;
+  className?: string;
+  compact?: boolean;
+}) {
+  const route = `${tour.destinationName} · ${tour.region}`;
+  const seatsLow = /left|filling|sold/i.test(tour.departure);
+
   return (
-    <article className="card-lift group flex h-full flex-col overflow-hidden rounded-[28px] border border-stone-200/80 bg-white shadow-[0_10px_40px_-24px_rgba(6,42,38,0.35)]">
+    <article
+      className={cn(
+        "card-lift group flex h-full flex-col rounded-[28px] border border-sand-300 bg-paper p-2 shadow-[0_12px_32px_-24px_rgba(11,39,53,0.4)]",
+        className,
+      )}
+    >
       <Link
         href={`/tours/${tour.slug}`}
-        className="relative block aspect-[4/3] overflow-hidden"
         aria-label={`View ${tour.title}`}
+        className={cn(
+          "relative block overflow-hidden rounded-[20px] bg-ink",
+          compact ? "aspect-[4/3]" : "aspect-[376/240]",
+        )}
       >
         <Image
-          src={imageUrl(tour.image, 900)}
+          src={imageUrl(tour.image, 1000)}
           alt={tour.title}
           fill
           priority={priority}
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          className="object-cover transition duration-700 group-hover:scale-105"
+          className="object-cover transition duration-700 group-hover:scale-[1.04]"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-navy-950/55 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-ink/70 via-ink/5 to-ink/20" />
+
         {tour.badge ? (
-          <span className="absolute left-4 top-4 rounded-full bg-blue-500 px-3 py-1.5 text-sm font-extrabold uppercase tracking-wider text-white shadow-lg">
+          <span className={cn("badge absolute left-4 top-4", badgeClass(tour.badge))}>
             {tour.badge}
           </span>
         ) : null}
-        <span className="absolute right-4 top-4 inline-flex items-center gap-1 rounded-full bg-white/95 px-2.5 py-1.5 text-sm font-extrabold text-navy-950 shadow-sm backdrop-blur">
-          <Star className="h-3 w-3 fill-gold-500 text-gold-500" />
-          {tour.rating.toFixed(1)}
-          <span className="font-semibold text-stone-500">({tour.reviews})</span>
+
+        <span className="absolute right-4 top-4 grid h-10 w-10 place-items-center rounded-full bg-white/90 text-ink backdrop-blur transition hover:bg-white">
+          <Heart className="h-4 w-4" />
+          <span className="sr-only">Save {tour.title}</span>
         </span>
-        <span className="absolute bottom-4 left-4 inline-flex items-center gap-1.5 rounded-full bg-navy-950/70 px-3 py-1.5 text-sm font-bold uppercase tracking-wider text-sand-50 backdrop-blur">
-          <CalendarDays className="h-3 w-3" />
-          {tour.nights}N / {tour.days}D
+
+        <span className="coord coord-dark absolute bottom-4 left-4">
+          {coordsFor(tour.destinationSlug)}
         </span>
       </Link>
 
-      <div className="flex flex-1 flex-col p-5">
-        <p className="flex items-center gap-1.5 text-sm font-extrabold uppercase tracking-[0.16em] text-blue-700">
-          <MapPin className="h-3.5 w-3.5" />
-          {tour.destinationName} · {tour.region}
-        </p>
-        <h3 className="mt-2 font-display text-[22px] font-semibold leading-snug text-navy-950">
-          <Link href={`/tours/${tour.slug}`} className="transition hover:text-blue-700">
-            {tour.title}
-          </Link>
-        </h3>
-        <p className="mt-2 line-clamp-2 text-sm leading-6 text-stone-500">
-          {tour.summary}
+      <div className="flex flex-1 flex-col gap-4 px-4 pb-4 pt-5">
+        <div className="flex flex-wrap items-center gap-3 text-[13px] font-bold text-navy-500">
+          <span>
+            {tour.days}D / {tour.nights}N
+          </span>
+          <span className="text-sand-300">·</span>
+          <Rating score={tour.rating.toFixed(1)} count={tour.reviews} />
+        </div>
+
+        <div>
+          <h3 className="type-h4 text-ink">
+            <Link
+              href={`/tours/${tour.slug}`}
+              className="transition hover:text-navy-700"
+            >
+              {tour.title}
+            </Link>
+          </h3>
+          <p className="type-small mt-1.5 text-navy-500">{route}</p>
+        </div>
+
+        <p className="inline-flex w-fit items-center gap-2 rounded-[10px] bg-sand-100 px-3 py-2 text-[13px] font-medium text-navy-700">
+          <span
+            className={cn(
+              "h-2 w-2 rounded-full",
+              seatsLow ? "bg-danger" : "bg-success",
+            )}
+          />
+          Next: {tour.departure}
         </p>
 
-        <div className="mt-auto flex flex-wrap items-end justify-between gap-x-3 gap-y-2.5 border-t border-dashed border-stone-200 pt-4">
-          <div className="min-w-0">
-            <p className="text-sm font-bold uppercase tracking-wider text-stone-400">
-              Starting from
+        <div className="route-line mt-auto" />
+
+        <div className="flex items-end justify-between gap-3">
+          <div>
+            <p className="text-[13px] font-medium text-navy-400">
+              {tour.oldPrice ? `From · was ${formatINR(tour.oldPrice)}` : "From"}
             </p>
-            <p className="mt-0.5 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-              <span className="font-display text-xl font-semibold text-navy-950">
-                {formatINR(tour.price)}
+            <p className="mt-0.5 flex items-baseline gap-1.5">
+              <span className="type-price text-ink">{formatINR(tour.price)}</span>
+              <span className="text-[13px] font-medium text-navy-400">
+                / person
               </span>
-              {tour.oldPrice ? (
-                <span className="text-sm font-semibold text-stone-400 line-through">
-                  {formatINR(tour.oldPrice)}
-                </span>
-              ) : null}
             </p>
-            <p className="text-sm font-semibold text-stone-400">per person</p>
           </div>
           <Link
             href={`/tours/${tour.slug}#book`}
+            className="btn btn-ink btn-sm"
             aria-label={`Book ${tour.title}`}
-            className="ml-auto inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full bg-blue-600 px-4 py-2.5 text-sm font-extrabold uppercase tracking-wider text-white transition duration-300 hover:bg-blue-700"
           >
-            Book now
-            <ArrowUpRight className="h-3.5 w-3.5" />
+            View
+            <span className="btn-dot">→</span>
           </Link>
         </div>
       </div>

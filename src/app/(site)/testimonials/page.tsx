@@ -1,91 +1,193 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight, MapPin, MessageSquareQuote, Star } from "lucide-react";
-import { PageHero } from "@/components/site/page-hero";
-import { TestimonialsExplorer } from "@/components/site/testimonials-explorer";
-import { loadTestimonials } from "@/lib/content";
+import { Breadcrumbs } from "@/components/site/breadcrumbs";
+import { CtaBand } from "@/components/site/cta-band";
+import { loadDestinations, loadTestimonials } from "@/lib/content";
+import { imageUrl } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "Guest Stories",
   description:
-    "Real reviews and travel stories from Hidden Miles guests — honeymoons, family holidays, spiritual journeys and Himalayan adventures.",
+    "12,400 travellers in their own words — real Hidden Miles guest stories from Kashmir, Kerala, Europe and beyond.",
 };
 
 export const dynamic = "force-dynamic";
 
+const bars = [
+  { star: 5, pct: 88, count: "10.9k" },
+  { star: 4, pct: 9, count: "1.1k" },
+  { star: 3, pct: 2, count: "248" },
+  { star: 2, pct: 1, count: "84" },
+  { star: 1, pct: 0, count: "31" },
+];
+
+const avatarColours = [
+  "bg-blue-500",
+  "bg-danger",
+  "bg-gold-600",
+  "bg-success",
+  "bg-navy-500",
+  "bg-blue-700",
+];
+
 export default async function TestimonialsPage() {
-  const testimonials = await loadTestimonials();
-  const average =
-    testimonials.length > 0
-      ? (
-          testimonials.reduce(
-            (total, testimonial) => total + testimonial.rating,
-            0,
-          ) / testimonials.length
-        ).toFixed(1)
-      : "5.0";
-  const tours = new Set(
-    testimonials.map((testimonial) => testimonial.tour).filter(Boolean),
-  ).size;
+  const [testimonials, destinations] = await Promise.all([
+    loadTestimonials(),
+    loadDestinations(),
+  ]);
+
+  const kashmir = destinations.find((destination) => destination.slug === "kashmir");
+  const japan = destinations.find((destination) => destination.slug === "japan");
+
+  const columns = [testimonials.filter((_, index) => index % 3 === 0), testimonials.filter((_, index) => index % 3 === 1), testimonials.filter((_, index) => index % 3 === 2)];
 
   return (
     <>
-      <PageHero
-        eyebrow="Guest stories"
-        title="Real journeys. Real words."
-        description="The best part of planning travel is hearing what happened next. These are the stories our travellers brought home — unedited, warm and full of the little moments that made their trip."
-        breadcrumbs={[{ label: "Guest stories" }]}
-      >
-        <div className="grid grid-cols-3 gap-3">
-          <div className="rounded-2xl border border-stone-200 bg-white p-5">
-            <Star className="h-5 w-5 fill-gold-500 text-gold-500" />
-            <p className="mt-3 font-display text-3xl font-semibold text-navy-950">
-              {average}
-            </p>
-            <p className="mt-1 text-sm font-bold uppercase tracking-wider text-stone-400">
-              Guest rating
-            </p>
+      <section className="container-page py-12 md:py-16">
+        <div className="flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between">
+          <div>
+            <Breadcrumbs
+              items={[{ label: "Home", href: "/" }, { label: "Guest stories" }]}
+            />
+            <h1 className="type-h1 mt-7 max-w-3xl text-ink">
+              12,400 travellers,
+              <br />
+              <span className="accent-line">in their own words.</span>
+            </h1>
           </div>
-          <div className="rounded-2xl border border-stone-200 bg-white p-5">
-            <MessageSquareQuote className="h-5 w-5 text-blue-600" />
-            <p className="mt-3 font-display text-3xl font-semibold text-navy-950">
-              {testimonials.length}
-            </p>
-            <p className="mt-1 text-sm font-bold uppercase tracking-wider text-stone-400">
-              Stories
-            </p>
-          </div>
-          <div className="rounded-2xl border border-stone-200 bg-white p-5">
-            <MapPin className="h-5 w-5 text-blue-600" />
-            <p className="mt-3 font-display text-3xl font-semibold text-navy-950">
-              {tours}
-            </p>
-            <p className="mt-1 text-sm font-bold uppercase tracking-wider text-stone-400">
-              Journeys
-            </p>
+
+          <div className="on-ink flex w-full shrink-0 items-center gap-8 rounded-[28px] bg-ink p-8 lg:w-auto">
+            <div>
+              <p className="font-display text-[72px] leading-none text-paper">4.9</p>
+              <p className="mt-2 text-sm font-bold tracking-[0.1em] text-gold-400">
+                ★★★★★
+              </p>
+              <p className="mt-1 text-[13px] font-medium text-navy-200">
+                12,400+ reviews
+              </p>
+            </div>
+            <div className="w-[220px] space-y-2.5">
+              {bars.map((bar) => (
+                <div key={bar.star} className="flex items-center gap-2.5">
+                  <span className="w-6 text-xs font-bold text-navy-200">
+                    {bar.star}★
+                  </span>
+                  <span className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/10">
+                    <span
+                      className="block h-full rounded-full bg-gold-400"
+                      style={{ width: `${Math.max(bar.pct, 1)}%` }}
+                    />
+                  </span>
+                  <span className="w-9 text-right text-xs font-medium text-navy-200">
+                    {bar.count}
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-      </PageHero>
 
-      <TestimonialsExplorer testimonials={testimonials} />
+        <div className="mt-10 flex flex-wrap gap-2">
+          {[
+            "All stories",
+            "Kashmir",
+            "Kerala",
+            "Europe",
+            "Honeymoon",
+            "Family",
+            "Women's Special",
+          ].map((filter, index) => (
+            <span key={filter} className={`chip ${index === 0 ? "chip-active" : ""}`}>
+              {filter}
+            </span>
+          ))}
+        </div>
+      </section>
 
       <section className="container-page pb-16">
-        <div className="flex flex-col items-start justify-between gap-5 rounded-[32px] bg-navy-950 px-6 py-9 text-sand-50 sm:flex-row sm:items-center sm:px-10">
-          <div>
-            <p className="eyebrow text-blue-300">Your turn</p>
-            <h2 className="mt-2 font-display text-2xl font-medium sm:text-3xl">
-              Ready to write your own story?
-            </h2>
-            <p className="mt-2 text-sm text-sand-200/70">
-              Tell us where you are dreaming of and we will take it from there.
-            </p>
-          </div>
-          <Link href="/contact" className="btn-primary shrink-0">
-            Plan my holiday
-            <ArrowUpRight className="h-4 w-4" />
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 lg:items-start">
+          {columns.map((column, columnIndex) => (
+            <div key={columnIndex} className="grid gap-6">
+              {column.map((testimonial, index) => {
+                const image =
+                  (columnIndex === 0 && index === 0 && kashmir?.image) ||
+                  (columnIndex === 2 && index === 1 && japan?.image) ||
+                  null;
+
+                return (
+                  <article
+                    key={`${testimonial.name}-${index}`}
+                    className="rounded-[28px] border border-sand-300 bg-paper p-7"
+                  >
+                    {image ? (
+                      <div className="relative mb-5 aspect-[320/200] overflow-hidden rounded-[20px] bg-ink">
+                        <Image
+                          src={imageUrl(image, 700)}
+                          alt={testimonial.tour}
+                          fill
+                          sizes="(max-width: 768px) 100vw, 33vw"
+                          className="object-cover"
+                        />
+                      </div>
+                    ) : null}
+
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="text-sm font-bold tracking-[0.1em] text-gold-400">
+                        {"★".repeat(testimonial.rating)}
+                      </span>
+                      <span className="badge badge-success">Verified</span>
+                    </div>
+
+                    <blockquote className="mt-4 font-display text-[22px] leading-[34px] text-ink">
+                      “{testimonial.quote}”
+                    </blockquote>
+
+                    <div className="route-line my-5" />
+
+                    <div className="flex items-center gap-3.5">
+                      <span
+                        className={`grid h-11 w-11 place-items-center rounded-full text-xs font-bold text-white ${
+                          avatarColours[
+                            (columnIndex + index) % avatarColours.length
+                          ]
+                        }`}
+                      >
+                        {testimonial.name
+                          .split(" ")
+                          .filter((word) => /[A-Za-z]/.test(word[0] ?? ""))
+                          .map((word) => word[0])
+                          .join("")
+                          .slice(0, 2)}
+                      </span>
+                      <span>
+                        <span className="block text-[15px] font-bold text-ink">
+                          {testimonial.name}
+                        </span>
+                        <span className="block text-[13px] font-medium text-navy-500">
+                          {testimonial.tour} · {testimonial.city}
+                        </span>
+                      </span>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-10 flex justify-center">
+          <Link href="/testimonials" className="btn btn-outline">
+            Load more stories
           </Link>
         </div>
       </section>
+
+      <CtaBand
+        title="Ready to write"
+        accent="your own story?"
+        description="Join the travellers who let us plan their holidays — and then came back for the next one."
+      />
     </>
   );
 }

@@ -1,12 +1,10 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { ArrowUpRight, BadgeCheck, CalendarDays, MapPin } from "lucide-react";
 import { PageHero } from "@/components/site/page-hero";
 import { ToursExplorer } from "@/components/site/tours-explorer";
 import { loadDestinations, loadExperiences, loadTours } from "@/lib/content";
 
 export const metadata: Metadata = {
-  title: "Tour Packages",
+  title: "Group Tours",
   description:
     "Browse Hidden Miles group tours, family holidays, honeymoons and adventure journeys across India and the world. Transparent pricing, expert tour leaders and thoughtfully planned itineraries.",
 };
@@ -26,6 +24,16 @@ export default async function ToursPage({
   const experience =
     typeof params.experience === "string" ? params.experience : "";
   const month = typeof params.month === "string" ? params.month : "";
+  const query = typeof params.q === "string" ? params.q : "";
+  const priceParam = typeof params.price === "string" ? params.price : "";
+  const initialPriceMax =
+    priceParam === "under50"
+      ? 49999
+      : priceParam === "50to100"
+        ? 100000
+        : priceParam === "100to200"
+          ? 200000
+          : 300000;
   const initialRegion =
     params.region === "India" || params.region === "International"
       ? params.region
@@ -37,58 +45,33 @@ export default async function ToursPage({
     loadExperiences(),
   ]);
 
+  const heroImage =
+    destinations.find((item) => item.slug === "ladakh")?.image ??
+    tours[0]?.image ??
+    "https://images.unsplash.com/photo-1581793745862-99fde7fa73d2";
+
   return (
     <>
       <PageHero
-        eyebrow="Tour packages"
-        title="Journeys worth clearing your calendar for."
-        description="Group departures, private escapes, family adventures and honeymoons — every itinerary is tried, tested and led by people who know the place by heart."
-        breadcrumbs={[{ label: "Tour packages" }]}
+        items={[{ label: "Home", href: "/" }, { label: "Group Tours" }]}
+        title="Every departure,"
+        accent="in one place."
+        description={`${tours.length} escorted group tours across India and the world. All-inclusive, small groups, a tour leader from day one.`}
+        image={heroImage}
+        imageAlt="A Himalayan road trip"
+        coords="LADAKH · 34.15° N  77.58° E"
       >
-        <div className="rounded-[28px] border border-stone-200 bg-white p-6 shadow-lg shadow-navy-950/5">
-          <p className="text-sm font-extrabold uppercase tracking-[0.18em] text-blue-700">
-            At a glance
-          </p>
-          <div className="mt-4 grid grid-cols-3 gap-3">
-            <div>
-              <p className="font-display text-3xl font-semibold text-navy-950">
-                {tours.length}
-              </p>
-              <p className="mt-1 text-sm font-bold uppercase tracking-wider text-stone-400">
-                Curated tours
-              </p>
+        <div className="flex flex-wrap gap-8 sm:gap-12">
+          {[
+            { value: String(tours.length), label: "tours" },
+            { value: String(tours.length * 4), label: "departures" },
+            { value: "4.9★", label: "average rating" },
+          ].map((stat) => (
+            <div key={stat.label}>
+              <p className="type-h3 text-ink">{stat.value}</p>
+              <p className="type-small mt-1 text-navy-500">{stat.label}</p>
             </div>
-            <div>
-              <p className="font-display text-3xl font-semibold text-navy-950">
-                {destinations.length}
-              </p>
-              <p className="mt-1 text-sm font-bold uppercase tracking-wider text-stone-400">
-                Destinations
-              </p>
-            </div>
-            <div>
-              <p className="font-display text-3xl font-semibold text-navy-950">
-                4.9
-              </p>
-              <p className="mt-1 text-sm font-bold uppercase tracking-wider text-stone-400">
-                Guest rating
-              </p>
-            </div>
-          </div>
-          <div className="mt-5 space-y-2.5 border-t border-dashed border-stone-200 pt-4">
-            <p className="flex items-center gap-2 text-sm font-semibold text-stone-500">
-              <BadgeCheck className="h-3.5 w-3.5 text-navy-600" />
-              All-inclusive pricing, no surprises
-            </p>
-            <p className="flex items-center gap-2 text-sm font-semibold text-stone-500">
-              <CalendarDays className="h-3.5 w-3.5 text-navy-600" />
-              Guaranteed departures all year
-            </p>
-            <p className="flex items-center gap-2 text-sm font-semibold text-stone-500">
-              <MapPin className="h-3.5 w-3.5 text-navy-600" />
-              Expert leaders on every journey
-            </p>
-          </div>
+          ))}
         </div>
       </PageHero>
 
@@ -100,22 +83,9 @@ export default async function ToursPage({
         initialExperience={experience}
         initialMonth={month}
         initialRegion={initialRegion}
+        initialQuery={query}
+        initialPriceMax={initialPriceMax}
       />
-
-      <section className="container-page pb-16">
-        <div className="flex flex-col items-start justify-between gap-5 rounded-[30px] bg-navy-950 px-6 py-8 text-sand-50 sm:flex-row sm:items-center sm:px-10">
-          <div>
-            <p className="eyebrow text-blue-300">Prefer something personal?</p>
-            <h2 className="mt-2 font-display text-2xl font-medium sm:text-3xl">
-              We can build a journey around your dates and people.
-            </h2>
-          </div>
-          <Link href="/contact" className="btn-primary shrink-0">
-            Design my trip
-            <ArrowUpRight className="h-4 w-4" />
-          </Link>
-        </div>
-      </section>
     </>
   );
 }

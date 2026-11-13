@@ -7,9 +7,9 @@ import {
   ChevronDown,
   Compass,
   MapPin,
-  Search,
   Users,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 import type { Destination } from "@/data/destinations";
 import type { Experience } from "@/data/experiences";
 
@@ -57,130 +57,129 @@ export function SearchWidget({
   return (
     <form
       onSubmit={handleSubmit}
-      className={
-        "rounded-[28px] border border-white/50 bg-white/95 p-3 shadow-2xl shadow-navy-950/15 backdrop-blur-xl sm:p-4 " +
-        (className ?? "")
-      }
+      className={cn(
+        "flex flex-col gap-1 rounded-[24px] border border-sand-300 bg-paper p-2.5 shadow-[0_24px_56px_-36px_rgba(11,39,53,0.35)] lg:flex-row lg:items-center lg:gap-0",
+        className,
+      )}
     >
-      <div className="grid gap-2 lg:grid-cols-[1.25fr_1.1fr_1fr_0.8fr_auto]">
-        <label className="group flex items-center gap-3 rounded-2xl px-3 py-2.5 transition hover:bg-sand-100">
-          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-blue-100 text-blue-700">
-            <MapPin className="h-4 w-4" />
+      <div className="grid flex-1 gap-1 md:grid-cols-2 lg:flex lg:items-center">
+        <label className="group flex flex-1 items-center gap-3 rounded-[16px] px-4 py-3 transition hover:bg-sand-100">
+          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-sand-200 text-ink">
+            <MapPin className="h-[18px] w-[18px]" />
           </span>
           <span className="min-w-0 flex-1">
-            <span className="block text-sm font-extrabold uppercase tracking-[0.18em] text-stone-400">
-              Destination
+            <span className="type-label block text-[10px] text-navy-500">
+              Where to
             </span>
-            <select
-              value={destination}
-              onChange={(event) => setDestination(event.target.value)}
-              aria-label="Destination"
-              className="mt-0.5 w-full cursor-pointer appearance-none bg-transparent text-sm font-bold text-navy-950 outline-none"
-            >
-              <option value="">Anywhere beautiful</option>
-              <optgroup label="Indian Group Tours">
-                {destinations
-                  .filter((item) => item.region === "India")
-                  .map((item) => (
-                    <option key={item.slug} value={item.slug}>
-                      {item.name}
-                    </option>
-                  ))}
-              </optgroup>
-              <optgroup label="International Group Tours">
-                {destinations
-                  .filter((item) => item.region === "International")
-                  .map((item) => (
-                    <option key={item.slug} value={item.slug}>
-                      {item.name}
-                    </option>
-                  ))}
-              </optgroup>
-            </select>
+            <span className="relative mt-1 block">
+              <select
+                value={destination}
+                onChange={(event) => setDestination(event.target.value)}
+                aria-label="Destination"
+                className="w-full cursor-pointer appearance-none bg-transparent pr-5 text-[15px] font-bold text-ink outline-none"
+              >
+                <option value="">Search destinations</option>
+                {destinations.map((item) => (
+                  <option key={item.slug} value={item.slug}>
+                    {item.name}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown className="pointer-events-none absolute right-0 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-navy-400" />
+            </span>
           </span>
-          <ChevronDown className="h-3.5 w-3.5 shrink-0 text-stone-400" />
         </label>
 
-        <label className="group flex items-center gap-3 rounded-2xl px-3 py-2.5 transition hover:bg-sand-100">
-          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-navy-100 text-navy-700">
-            <Compass className="h-4 w-4" />
+        <span className="route-line my-1 hidden lg:block lg:h-11 lg:w-0 lg:border-l lg:border-t-0" />
+
+        <label className="group flex flex-1 items-center gap-3 rounded-[16px] px-4 py-3 transition hover:bg-sand-100">
+          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-sand-200 text-ink">
+            <CalendarDays className="h-[18px] w-[18px]" />
           </span>
           <span className="min-w-0 flex-1">
-            <span className="block text-sm font-extrabold uppercase tracking-[0.18em] text-stone-400">
-              Travel style
+            <span className="type-label block text-[10px] text-navy-500">When</span>
+            <span className="relative mt-1 block">
+              <select
+                value={month}
+                onChange={(event) => setMonth(event.target.value)}
+                aria-label="Travel month"
+                className="w-full cursor-pointer appearance-none bg-transparent pr-5 text-[15px] font-bold text-ink outline-none"
+              >
+                {months.map((item) => (
+                  <option key={item} value={item}>
+                    {item}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown className="pointer-events-none absolute right-0 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-navy-400" />
             </span>
-            <select
-              value={experience}
-              onChange={(event) => setExperience(event.target.value)}
-              aria-label="Travel style"
-              className="mt-0.5 w-full cursor-pointer appearance-none bg-transparent text-sm font-bold text-navy-950 outline-none"
-            >
-              <option value="">All experiences</option>
-              {experiences.map((item) => (
-                <option key={item.slug} value={item.slug}>
-                  {item.shortTitle}
-                </option>
-              ))}
-            </select>
           </span>
-          <ChevronDown className="h-3.5 w-3.5 shrink-0 text-stone-400" />
         </label>
 
-        <label className="group flex items-center gap-3 rounded-2xl px-3 py-2.5 transition hover:bg-sand-100">
-          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-blue-100 text-blue-700">
-            <CalendarDays className="h-4 w-4" />
+        <span className="route-line my-1 hidden lg:block lg:h-11 lg:w-0 lg:border-l lg:border-t-0" />
+
+        <label className="group flex flex-1 items-center gap-3 rounded-[16px] px-4 py-3 transition hover:bg-sand-100">
+          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-sand-200 text-ink">
+            <Compass className="h-[18px] w-[18px]" />
           </span>
           <span className="min-w-0 flex-1">
-            <span className="block text-sm font-extrabold uppercase tracking-[0.18em] text-stone-400">
-              When
+            <span className="type-label block text-[10px] text-navy-500">
+              Trip style
             </span>
-            <select
-              value={month}
-              onChange={(event) => setMonth(event.target.value)}
-              aria-label="Travel month"
-              className="mt-0.5 w-full cursor-pointer appearance-none bg-transparent text-sm font-bold text-navy-950 outline-none"
-            >
-              {months.map((item) => (
-                <option key={item} value={item}>
-                  {item}
-                </option>
-              ))}
-            </select>
+            <span className="relative mt-1 block">
+              <select
+                value={experience}
+                onChange={(event) => setExperience(event.target.value)}
+                aria-label="Travel style"
+                className="w-full cursor-pointer appearance-none bg-transparent pr-5 text-[15px] font-bold text-ink outline-none"
+              >
+                <option value="">Group tour</option>
+                {experiences.map((item) => (
+                  <option key={item.slug} value={item.slug}>
+                    {item.shortTitle}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown className="pointer-events-none absolute right-0 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-navy-400" />
+            </span>
           </span>
-          <ChevronDown className="h-3.5 w-3.5 shrink-0 text-stone-400" />
         </label>
 
-        <label className="group flex items-center gap-3 rounded-2xl px-3 py-2.5 transition hover:bg-sand-100">
-          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-navy-100 text-navy-700">
-            <Users className="h-4 w-4" />
+        <span className="route-line my-1 hidden lg:block lg:h-11 lg:w-0 lg:border-l lg:border-t-0" />
+
+        <label className="group flex flex-1 items-center gap-3 rounded-[16px] px-4 py-3 transition hover:bg-sand-100">
+          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-sand-200 text-ink">
+            <Users className="h-[18px] w-[18px]" />
           </span>
           <span className="min-w-0 flex-1">
-            <span className="block text-sm font-extrabold uppercase tracking-[0.18em] text-stone-400">
+            <span className="type-label block text-[10px] text-navy-500">
               Travellers
             </span>
-            <select
-              value={travellers}
-              onChange={(event) => setTravellers(event.target.value)}
-              aria-label="Number of travellers"
-              className="mt-0.5 w-full cursor-pointer appearance-none bg-transparent text-sm font-bold text-navy-950 outline-none"
-            >
-              {["1", "2", "3", "4", "5", "6", "7", "8", "9", "10+"].map(
-                (item) => (
-                  <option key={item} value={item}>
-                    {item} {item === "1" ? "traveller" : "travellers"}
-                  </option>
-                ),
-              )}
-            </select>
+            <span className="relative mt-1 block">
+              <select
+                value={travellers}
+                onChange={(event) => setTravellers(event.target.value)}
+                aria-label="Number of travellers"
+                className="w-full cursor-pointer appearance-none bg-transparent pr-5 text-[15px] font-bold text-ink outline-none"
+              >
+                {["1", "2", "3", "4", "5", "6", "7", "8", "9", "10+"].map(
+                  (item) => (
+                    <option key={item} value={item}>
+                      {item} {item === "1" ? "adult" : "adults"}
+                    </option>
+                  ),
+                )}
+              </select>
+              <ChevronDown className="pointer-events-none absolute right-0 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-navy-400" />
+            </span>
           </span>
-          <ChevronDown className="h-3.5 w-3.5 shrink-0 text-stone-400" />
         </label>
-
-        <button type="submit" className="btn-primary h-full min-h-14 lg:px-7">
-          <Search className="h-4 w-4" />
-          Search
-        </button>
       </div>
+
+      <button type="submit" className="btn btn-primary btn-lg mt-1 w-full lg:ml-2 lg:mt-0 lg:w-auto">
+        Search trips
+        <span className="btn-dot">→</span>
+      </button>
     </form>
   );
 }
