@@ -106,7 +106,7 @@ export default async function AdminDashboardPage({
       <AdminPageHeader
         eyebrow="Dashboard"
         title="Welcome back."
-        description="Everything travellers see on Hidden Miles is managed from here and stored in MySQL."
+        description="Everything travellers see on Hidden Miles is managed from here."
         actionHref="/admin/tours/new"
         actionLabel="New package"
       />
@@ -152,7 +152,7 @@ export default async function AdminDashboardPage({
                   </h2>
                   <p className="mt-1 max-w-xl text-sm leading-5 text-stone-600">
                     Bring the existing packages, destinations, experiences and
-                    testimonials into MySQL. You can edit or delete anything
+                    testimonials into the site. You can edit or delete anything
                     afterwards.
                   </p>
                 </div>
@@ -164,11 +164,7 @@ export default async function AdminDashboardPage({
               </form>
             </div>
           ) : (
-            <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-[28px] border border-navy-200 bg-navy-50 px-6 py-4">
-              <p className="text-sm font-bold text-navy-800">
-                Content is live from MySQL. New changes publish to the website
-                immediately.
-              </p>
+            <div className="mt-6 flex justify-end">
               <Link
                 href="/tours"
                 className="inline-flex items-center gap-1.5 text-sm font-extrabold uppercase tracking-wider text-navy-700 hover:text-navy-900"
