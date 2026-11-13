@@ -44,12 +44,17 @@ export function SiteHeader({
   const [openGroup, setOpenGroup] = useState<string | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const [previewSlug, setPreviewSlug] = useState<string | null>(null);
 
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname.startsWith(href);
 
   const groups = destinationGroups(destinations);
   const featured = destinations.find((item) => item.slug === "kashmir") ?? destinations[0];
+  const previewDestination =
+    (previewSlug &&
+      destinations.find((destination) => destination.slug === previewSlug)) ||
+    featured;
 
   const navItems: NavLink[] = [
     { label: "Home", href: "/" },
@@ -179,7 +184,10 @@ export function SiteHeader({
                   ) : null}
 
                   {link.label === "Destinations" ? (
-                    <div className="invisible fixed left-1/2 top-[74px] w-[min(1200px,calc(100vw-40px))] -translate-x-1/2 pt-4 opacity-0 transition duration-200 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+                    <div
+                      className="invisible fixed left-1/2 top-[60px] w-[min(1200px,calc(100vw-40px))] -translate-x-1/2 pt-4 opacity-0 transition duration-200 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100"
+                      onMouseLeave={() => setPreviewSlug(null)}
+                    >
                       <div className="flex gap-12 rounded-[28px] border border-sand-300 bg-paper p-10 shadow-[0_32px_64px_-24px_rgba(11,39,53,0.25)]">
                         {groups.map((group) => (
                           <div
@@ -188,14 +196,15 @@ export function SiteHeader({
                           >
                             <p className="type-label text-gold-600">{group.label}</p>
                             <div className="mt-3 grid gap-0.5">
-                              {group.items.slice(0, 7).map((destination, index) => (
+                              {group.items.slice(0, 7).map((destination) => (
                                 <Link
                                   key={destination.slug}
                                   href={`/destinations/${destination.slug}`}
+                                  onMouseEnter={() => setPreviewSlug(destination.slug)}
+                                  onFocus={() => setPreviewSlug(destination.slug)}
                                   className={cn(
                                     "flex items-center justify-between rounded-[12px] px-3 py-2.5 text-base font-semibold text-ink transition hover:bg-sand-100",
-                                    group.label === "India" &&
-                                      index === 0 &&
+                                    previewDestination?.slug === destination.slug &&
                                       "bg-sand-100",
                                   )}
                                 >
@@ -218,11 +227,12 @@ export function SiteHeader({
                           </div>
                         ))}
 
-                        {featured ? (
+                        {previewDestination ? (
                           <div className="relative hidden min-h-[420px] w-[508px] shrink-0 overflow-hidden rounded-[20px] bg-ink xl:block">
                             <Image
-                              src={imageUrl(featured.image, 1100)}
-                              alt={featured.name}
+                              key={previewDestination.slug}
+                              src={imageUrl(previewDestination.image, 1100)}
+                              alt={previewDestination.name}
                               fill
                               sizes="508px"
                               className="object-cover"
@@ -230,24 +240,32 @@ export function SiteHeader({
                             <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-transparent" />
                             <div className="absolute inset-x-8 bottom-8">
                               <span className="badge badge-gold">
-                                Season pick · Apr – Oct
+                                {previewDestination.slug === "kashmir"
+                                  ? "Season pick · Apr – Oct"
+                                  : "Destination spotlight"}
                               </span>
                               <p className="type-h3 mt-3 text-paper">
-                                {featured.name} in bloom
+                                {previewDestination.name}
+                                {previewDestination.slug === "kashmir"
+                                  ? " in bloom"
+                                  : ""}
                               </p>
                               <p className="type-small mt-2 text-navy-200">
-                                Tulip gardens, houseboats and meadows —{" "}
-                                {tourCounts[featured.slug] ?? 12}{" "}
-                                {(tourCounts[featured.slug] ?? 12) === 1
-                                  ? "departure"
-                                  : "departures"}{" "}
-                                this season.
+                                {previewDestination.slug === "kashmir"
+                                  ? `Tulip gardens, houseboats and meadows — ${
+                                      tourCounts[previewDestination.slug] ?? 12
+                                    } ${
+                                      (tourCounts[previewDestination.slug] ?? 12) === 1
+                                        ? "departure"
+                                        : "departures"
+                                    } this season.`
+                                  : previewDestination.tagline}
                               </p>
                               <Link
-                                href={`/destinations/${featured.slug}`}
+                                href={`/destinations/${previewDestination.slug}`}
                                 className="mt-4 inline-flex items-center gap-2 text-sm font-bold text-gold-400"
                               >
-                                Explore {featured.name} →
+                                Explore {previewDestination.name} →
                               </Link>
                             </div>
                           </div>
