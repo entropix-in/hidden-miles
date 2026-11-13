@@ -32,7 +32,13 @@ const destinationGroups = (destinations: Destination[]) => [
   },
 ];
 
-export function SiteHeader({ destinations }: { destinations: Destination[] }) {
+export function SiteHeader({
+  destinations,
+  tourCounts = {},
+}: {
+  destinations: Destination[];
+  tourCounts?: Record<string, number>;
+}) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openGroup, setOpenGroup] = useState<string | null>(null);
@@ -173,30 +179,41 @@ export function SiteHeader({ destinations }: { destinations: Destination[] }) {
                   ) : null}
 
                   {link.label === "Destinations" ? (
-                    <div className="invisible absolute left-1/2 top-full w-[min(1200px,calc(100vw-40px))] -translate-x-1/2 pt-4 opacity-0 transition duration-200 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+                    <div className="invisible fixed left-1/2 top-[74px] w-[min(1200px,calc(100vw-40px))] -translate-x-1/2 pt-4 opacity-0 transition duration-200 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
                       <div className="flex gap-12 rounded-[28px] border border-sand-300 bg-paper p-10 shadow-[0_32px_64px_-24px_rgba(11,39,53,0.25)]">
                         {groups.map((group) => (
-                          <div key={group.label} className="w-[250px] shrink-0">
+                          <div
+                            key={group.label}
+                            className="flex w-[250px] shrink-0 flex-col"
+                          >
                             <p className="type-label text-gold-600">{group.label}</p>
                             <div className="mt-3 grid gap-0.5">
-                              {group.items.slice(0, 7).map((destination) => (
+                              {group.items.slice(0, 7).map((destination, index) => (
                                 <Link
                                   key={destination.slug}
                                   href={`/destinations/${destination.slug}`}
-                                  className="flex items-center justify-between rounded-[12px] px-3 py-2.5 text-[15px] font-semibold text-ink transition hover:bg-sand-100"
+                                  className={cn(
+                                    "flex items-center justify-between rounded-[12px] px-3 py-2.5 text-base font-semibold text-ink transition hover:bg-sand-100",
+                                    group.label === "India" &&
+                                      index === 0 &&
+                                      "bg-sand-100",
+                                  )}
                                 >
                                   {destination.name}
                                   <span className="text-[13px] font-medium text-navy-400">
-                                    {destination.region}
+                                    {tourCounts[destination.slug] ?? 0}{" "}
+                                    {(tourCounts[destination.slug] ?? 0) === 1
+                                      ? "tour"
+                                      : "tours"}
                                   </span>
                                 </Link>
                               ))}
                             </div>
                             <Link
                               href="/destinations"
-                              className="mt-3 inline-flex text-sm font-bold text-blue-700 hover:text-blue-800"
+                              className="mt-auto inline-flex pt-4 text-sm font-bold text-blue-700 hover:text-blue-800"
                             >
-                              All {group.label.toLowerCase()} destinations →
+                              All {group.label} destinations →
                             </Link>
                           </div>
                         ))}
@@ -212,12 +229,19 @@ export function SiteHeader({ destinations }: { destinations: Destination[] }) {
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-transparent" />
                             <div className="absolute inset-x-8 bottom-8">
-                              <span className="badge badge-gold">Season pick</span>
+                              <span className="badge badge-gold">
+                                Season pick · Apr – Oct
+                              </span>
                               <p className="type-h3 mt-3 text-paper">
                                 {featured.name} in bloom
                               </p>
                               <p className="type-small mt-2 text-navy-200">
-                                {featured.tagline}
+                                Tulip gardens, houseboats and meadows —{" "}
+                                {tourCounts[featured.slug] ?? 12}{" "}
+                                {(tourCounts[featured.slug] ?? 12) === 1
+                                  ? "departure"
+                                  : "departures"}{" "}
+                                this season.
                               </p>
                               <Link
                                 href={`/destinations/${featured.slug}`}
