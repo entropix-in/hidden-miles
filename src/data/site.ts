@@ -218,4 +218,100 @@ export const testimonials: Testimonial[] = [
     quote:
       "Frozen Pangong, snow leopards and hand-warming thukpa. The team handled altitude, weather and every little detail so we could simply soak it all in.",
   },
+  {
+    name: "Priya Nair",
+    city: "Kochi",
+    tour: "Maldives Overwater Escape",
+    rating: 5,
+    quote:
+      "Our overwater villa was exactly as promised, and the team arranged a private sandbank dinner we will never forget. It was the easiest honeymoon we could have asked for.",
+  },
+  {
+    name: "Arjun Rao",
+    city: "Hyderabad",
+    tour: "Northern Lights & Iceland",
+    rating: 4,
+    quote:
+      "We saw the aurora on our second night and the glacier walk was superb. The weather changed plans twice, but our leader handled everything without any fuss.",
+  },
+  {
+    name: "Meera Joshi",
+    city: "Mumbai",
+    tour: "Royal Rajasthan",
+    rating: 5,
+    quote:
+      "Palace hotels, a camel ride at sunset and the warmest local guides. Rajasthan felt grand without ever feeling rushed, which is exactly what we wanted.",
+  },
+  {
+    name: "Kabir Mehta",
+    city: "Ahmedabad",
+    tour: "Japan Cherry Blossom",
+    rating: 5,
+    quote:
+      "The timing was perfect for the blossoms. Our leader knew the quiet lanes, the best ramen counters and exactly where to stand for the temple photographs.",
+  },
+  {
+    name: "Ritu Bansal",
+    city: "Jaipur",
+    tour: "Shimla Manali with Kasauli",
+    rating: 4,
+    quote:
+      "A lovely, easy mountain week with our children. The hotels were comfortable, the drives were scenic, and there was enough free time to simply breathe.",
+  },
+  {
+    name: "Joanne D'Souza",
+    city: "Goa",
+    tour: "Andaman with Swaraj Dweep",
+    rating: 5,
+    quote:
+      "Crystal water, easy snorkelling and a group that felt like friends by day three. Hidden Miles took care of every transfer and every little island detail.",
+  },
+  {
+    name: "Nikhil Rao",
+    city: "Chennai",
+    tour: "Dubai with Abu Dhabi",
+    rating: 5,
+    quote:
+      "The desert evening and the mosque visit were both beautifully organised. It was a short trip, but we came home feeling we had truly seen both cities.",
+  },
+  {
+    name: "Divya Menon",
+    city: "Kochi",
+    tour: "Keralam Kanyakumari",
+    rating: 5,
+    quote:
+      "The backwaters, the temple towns and the food stops were all thoughtfully chosen. My parents especially loved the gentle pace and the caring guide.",
+  },
+  {
+    name: "Ayesha Khan",
+    city: "Lucknow",
+    tour: "Best of Europe",
+    rating: 5,
+    quote:
+      "Four countries without a single stressful transfer. The itinerary was full but never frantic, and the optional experiences were genuinely worth adding.",
+  },
+  {
+    name: "Sneha Kulkarni",
+    city: "Pune",
+    tour: "Keralam Women's Special",
+    rating: 5,
+    quote:
+      "A warm, safe group of women and a leader who made every day feel easy. I came home with new friends and a long list of places I want to revisit.",
+  },
+  {
+    name: "Rahul Verma",
+    city: "Gurugram",
+    tour: "Meghalaya & Assam Explorer",
+    rating: 4,
+    quote:
+      "Living root bridges, tea estates and that Brahmaputra sunset. A beautifully green week with just the right amount of walking and plenty of good food.",
+  },
+  {
+    name: "Karan Sethi",
+    city: "Delhi",
+    tour: "Swiss Paris & Amsterdam",
+    rating: 5,
+    quote:
+      "The trains, the lake towns and the little cafés were all planned perfectly. Our tour leader kept the group moving while making it feel completely unhurried.",
+  },
 ];

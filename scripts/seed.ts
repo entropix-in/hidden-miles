@@ -5,9 +5,12 @@ import { drizzle } from "drizzle-orm/mysql2";
 import * as schema from "@/db/schema";
 import {
   markContentSeeded,
+  seedSampleActivity,
   seedStaticContent,
   type SeedCount,
 } from "@/lib/seed";
+import { experiences } from "@/data/experiences";
+import { tours } from "@/data/tours";
 
 function loadEnv() {
   try {
@@ -83,11 +86,36 @@ async function main() {
 
     const summary = await seedStaticContent(db, { force });
     await markContentSeeded(db);
+    const activity = await seedSampleActivity(db, { force });
 
     console.log(line("Tours", summary.tours));
     console.log(line("Destinations", summary.destinations));
     console.log(line("Experiences", summary.experiences));
-    console.log(line("Testimonials", summary.testimonials));
+    console.log(line("Reviews", summary.testimonials));
+    console.log(line("Departures", activity.departures));
+    console.log(line("Bookings", activity.bookings));
+    console.log(line("Enquiries", activity.enquiries));
+
+    const specialityCoverage = experiences.map((experience) => ({
+      label: experience.shortTitle,
+      count: tours.filter((tour) =>
+        tour.experiences.includes(experience.slug),
+      ).length,
+    }));
+    console.log(
+      `\nSpeciality coverage: ${specialityCoverage
+        .map((item) => `${item.label} ${item.count}`)
+        .join(" · ")}`,
+    );
+    const sparse = specialityCoverage.filter((item) => item.count < 8);
+    if (sparse.length) {
+      console.warn(
+        `Warning: ${sparse
+          .map((item) => `${item.label} has only ${item.count}`)
+          .join(", ")}. Each speciality should have at least 8 tours.`,
+      );
+    }
+
     console.log("\nDone. Starter content is ready in the database.");
   } finally {
     await pool.end();

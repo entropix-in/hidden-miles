@@ -1,16 +1,24 @@
 import { eq } from "drizzle-orm";
 import type { AppDb } from "@/db";
 import {
+  bookings as bookingsTable,
   destinations as destinationsTable,
+  enquiries as enquiriesTable,
   experiences as experiencesTable,
   settings,
   testimonials as testimonialsTable,
+  tourDepartures as tourDeparturesTable,
   tours as toursTable,
 } from "@/db/schema";
 import { destinations as staticDestinations } from "@/data/destinations";
 import type { Destination } from "@/data/destinations";
 import { experiences as staticExperiences } from "@/data/experiences";
 import type { Experience } from "@/data/experiences";
+import {
+  seedBookings,
+  seedDepartures,
+} from "@/data/seed-bookings";
+import { seedEnquiries } from "@/data/seed-enquiries";
 import { testimonials as staticTestimonials } from "@/data/site";
 import type { Testimonial } from "@/data/site";
 import { tours as staticTours } from "@/data/tours";
@@ -27,6 +35,12 @@ export type SeedSummary = {
   destinations: SeedCount;
   experiences: SeedCount;
   testimonials: SeedCount;
+};
+
+export type SeedActivitySummary = {
+  departures: SeedCount;
+  bookings: SeedCount;
+  enquiries: SeedCount;
 };
 
 type SeedOptions = {
@@ -201,6 +215,197 @@ export async function seedStaticContent(
       await db.insert(testimonialsTable).values(testimonialValues(testimonial));
       summary.testimonials.added += 1;
     }
+  }
+
+  return summary;
+}
+
+/**
+ * Seeds sample departures, booking requests and contact enquiries.
+ *
+ * This is intentionally separate from `seedStaticContent` so a brand-new
+ * production database is not filled with demo bookings automatically. Run
+ * `pnpm db:seed` (or `pnpm db:seed:force`) to create them.
+ */
+export async function seedSampleActivity(
+  db: AppDb,
+  { force = false }: SeedOptions = {},
+): Promise<SeedActivitySummary> {
+  const summary: SeedActivitySummary = {
+    departures: emptyCount(),
+    bookings: emptyCount(),
+    enquiries: emptyCount(),
+  };
+
+  const existingDepartures = await db
+    .select({
+      id: tourDeparturesTable.id,
+      tourSlug: tourDeparturesTable.tourSlug,
+      startDate: tourDeparturesTable.startDate,
+    })
+    .from(tourDeparturesTable);
+
+  for (const departure of seedDepartures) {
+    const existing = existingDepartures.find(
+      (row) =>
+        row.tourSlug === departure.tourSlug &&
+        row.startDate === departure.startDate,
+    );
+
+    if (existing) {
+      if (force) {
+        await db
+          .update(tourDeparturesTable)
+          .set({
+            price: departure.price,
+            capacity: departure.capacity,
+            note: departure.note ?? null,
+          })
+          .where(eq(tourDeparturesTable.id, existing.id));
+        summary.departures.updated += 1;
+      } else {
+        summary.departures.skipped += 1;
+      }
+      continue;
+    }
+
+    await db.insert(tourDeparturesTable).values({
+      tourSlug: departure.tourSlug,
+      startDate: departure.startDate,
+      price: departure.price,
+      capacity: departure.capacity,
+      note: departure.note ?? null,
+    });
+    summary.departures.added += 1;
+  }
+
+  const allDepartures = await db
+    .select({
+      id: tourDeparturesTable.id,
+      tourSlug: tourDeparturesTable.tourSlug,
+      startDate: tourDeparturesTable.startDate,
+      price: tourDeparturesTable.price,
+    })
+    .from(tourDeparturesTable);
+
+  const departuresByKey = new Map(
+    allDepartures.map((departure) => [
+      `${departure.tourSlug}|${departure.startDate}`,
+      departure,
+    ]),
+  );
+
+  const existingBookings = await db
+    .select({
+      id: bookingsTable.id,
+      tourSlug: bookingsTable.tourSlug,
+      startDate: bookingsTable.startDate,
+      email: bookingsTable.email,
+    })
+    .from(bookingsTable);
+
+  const bookingByKey = new Map(
+    existingBookings.map((booking) => [
+      `${booking.tourSlug}|${booking.startDate ?? ""}|${booking.email.toLowerCase()}`,
+      booking,
+    ]),
+  );
+
+  for (const booking of seedBookings) {
+    const departure = departuresByKey.get(
+      `${booking.tourSlug}|${booking.startDate}`,
+    );
+
+    if (!departure) {
+      summary.bookings.skipped += 1;
+      continue;
+    }
+
+    const key = `${booking.tourSlug}|${booking.startDate}|${booking.email.toLowerCase()}`;
+    const existing = bookingByKey.get(key);
+    const tourTitle =
+      staticTours.find((tour) => tour.slug === booking.tourSlug)?.title ??
+      booking.tourSlug;
+
+    const values = {
+      departureId: departure.id,
+      tourSlug: booking.tourSlug,
+      tourTitle,
+      startDate: booking.startDate,
+      name: booking.name,
+      email: booking.email.toLowerCase(),
+      phone: booking.phone,
+      travellers: booking.travellers,
+      amount: departure.price * booking.travellers,
+      notes: booking.notes ?? null,
+      status: booking.status,
+    } satisfies typeof bookingsTable.$inferInsert;
+
+    if (existing) {
+      if (force) {
+        await db
+          .update(bookingsTable)
+          .set(values)
+          .where(eq(bookingsTable.id, existing.id));
+        summary.bookings.updated += 1;
+      } else {
+        summary.bookings.skipped += 1;
+      }
+      continue;
+    }
+
+    await db.insert(bookingsTable).values(values);
+    summary.bookings.added += 1;
+  }
+
+  const existingEnquiries = await db
+    .select({
+      id: enquiriesTable.id,
+      email: enquiriesTable.email,
+      source: enquiriesTable.source,
+      message: enquiriesTable.message,
+    })
+    .from(enquiriesTable);
+
+  const enquiryByKey = new Map(
+    existingEnquiries.map((enquiry) => [
+      `${enquiry.email.toLowerCase()}|${enquiry.source ?? ""}|${enquiry.message ?? ""}`,
+      enquiry,
+    ]),
+  );
+
+  for (const enquiry of seedEnquiries) {
+    const key = `${enquiry.email.toLowerCase()}|${enquiry.source}|${enquiry.message}`;
+    const existing = enquiryByKey.get(key);
+    const values = {
+      type: enquiry.type,
+      name: enquiry.name,
+      email: enquiry.email.toLowerCase(),
+      phone: enquiry.phone,
+      destination: enquiry.destination ?? null,
+      travellers: enquiry.travellers ?? null,
+      travelMonth: enquiry.travelMonth ?? null,
+      message: enquiry.message,
+      tour: null,
+      source: enquiry.source,
+      status: enquiry.status,
+    } satisfies typeof enquiriesTable.$inferInsert;
+
+    if (existing) {
+      if (force) {
+        await db
+          .update(enquiriesTable)
+          .set(values)
+          .where(eq(enquiriesTable.id, existing.id));
+        summary.enquiries.updated += 1;
+      } else {
+        summary.enquiries.skipped += 1;
+      }
+      continue;
+    }
+
+    await db.insert(enquiriesTable).values(values);
+    summary.enquiries.added += 1;
   }
 
   return summary;
