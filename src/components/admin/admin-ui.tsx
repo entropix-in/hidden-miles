@@ -5,7 +5,55 @@ import {
   Database,
   Plus,
   Settings2,
+  type LucideIcon,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+const statTones = {
+  blue: "bg-blue-50 text-blue-700",
+  gold: "bg-gold-100 text-gold-700",
+  navy: "bg-navy-50 text-navy-700",
+  emerald: "bg-emerald-50 text-emerald-700",
+} as const;
+
+export function AdminStatCard({
+  label,
+  value,
+  detail,
+  icon: Icon,
+  tone,
+}: {
+  label: string;
+  value: React.ReactNode;
+  detail: React.ReactNode;
+  icon: LucideIcon;
+  tone: keyof typeof statTones;
+}) {
+  return (
+    <div className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm shadow-navy-950/[0.03]">
+      <div className="flex items-start justify-between gap-3">
+        <p className="text-[11px] font-extrabold uppercase tracking-[0.16em] text-stone-500">
+          {label}
+        </p>
+        <span
+          className={cn(
+            "grid h-9 w-9 shrink-0 place-items-center rounded-xl",
+            statTones[tone],
+          )}
+        >
+          <Icon className="h-4 w-4" />
+        </span>
+      </div>
+      <p className="mt-3 font-display text-[30px] font-semibold leading-none tracking-tight text-navy-950">
+        {value}
+      </p>
+      <p className="mt-2 text-xs font-semibold leading-4 text-stone-500">
+        {detail}
+      </p>
+    </div>
+  );
+}
+
 
 export function AdminNotice({
   notice,
