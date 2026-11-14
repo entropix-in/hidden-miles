@@ -6,6 +6,7 @@ import {
   AdminPageHeader,
   DatabaseSetupNotice,
 } from "@/components/admin/admin-ui";
+import { AdminSelect } from "@/components/admin/admin-select";
 import { updateEnquiryStatusAction } from "@/app/admin/actions";
 import { loadAdminEnquiries } from "@/lib/content";
 import type { EnquiryStatus } from "@/lib/types";
@@ -122,15 +123,16 @@ export default async function AdminEnquiriesPage({
                     className="flex items-center gap-2"
                   >
                     <input type="hidden" name="id" value={enquiry._id} />
-                    <select
+                    <AdminSelect
                       name="status"
                       defaultValue={status}
-                      className="rounded-full border border-stone-200 bg-sand-50 px-3 py-2 text-sm font-bold text-navy-950 outline-none focus:border-blue-500"
+                      className="w-auto rounded-full bg-sand-50 py-2 pl-3 text-sm font-bold"
+                      wrapperClassName="shrink-0"
                     >
                       <option value="new">New</option>
                       <option value="contacted">Contacted</option>
                       <option value="closed">Closed</option>
-                    </select>
+                    </AdminSelect>
                     <button
                       type="submit"
                       className="rounded-full bg-navy-950 px-3.5 py-2 text-sm font-extrabold uppercase tracking-wider text-sand-50 transition hover:bg-navy-900"

@@ -6,6 +6,7 @@ import {
   IndianRupee,
 } from "lucide-react";
 import { AdminDeleteButton } from "@/components/admin/admin-delete-button";
+import { AdminSelect } from "@/components/admin/admin-select";
 import { BookingsTabs } from "@/components/admin/bookings-tabs";
 import {
   AdminNotice,
@@ -227,10 +228,10 @@ export default async function AdminBookingRequestsPage({
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_auto] lg:items-end">
           <label>
             <span className="field-label">Package</span>
-            <select
+            <AdminSelect
               name="tour"
               defaultValue={selectedTour?.slug ?? ""}
-              className="field py-2.5"
+              className="py-2.5"
             >
               <option value="">All tours</option>
               {tours.map((tour) => (
@@ -238,21 +239,21 @@ export default async function AdminBookingRequestsPage({
                   {tour.title}
                 </option>
               ))}
-            </select>
+            </AdminSelect>
           </label>
           <label>
             <span className="field-label">Status</span>
-            <select
+            <AdminSelect
               name="status"
               defaultValue={statusFilter}
-              className="field py-2.5"
+              className="py-2.5"
             >
               {statusOptions.map((option) => (
                 <option key={option.value} value={option.value}>
                   {option.label}
                 </option>
               ))}
-            </select>
+            </AdminSelect>
           </label>
           <div className="flex flex-wrap items-center gap-2">
             <button type="submit" className="btn-outline px-4 py-2.5 text-sm">
@@ -419,16 +420,17 @@ export default async function AdminBookingRequestsPage({
                             name="returnTo"
                             value={returnTo}
                           />
-                          <select
+                          <AdminSelect
                             name="status"
                             defaultValue={booking.status}
                             aria-label={`Booking status for ${booking.name}`}
-                            className="field w-auto py-1.5 text-xs"
+                            className="w-auto py-1.5 text-xs"
+                            wrapperClassName="shrink-0"
                           >
                             <option value="pending">Pending</option>
                             <option value="confirmed">Confirmed</option>
                             <option value="cancelled">Cancelled</option>
-                          </select>
+                          </AdminSelect>
                           <button
                             type="submit"
                             className="btn-outline px-2.5 py-1.5 text-xs"

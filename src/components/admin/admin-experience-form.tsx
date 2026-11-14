@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Save } from "lucide-react";
 import { saveExperienceAction } from "@/app/admin/actions";
+import { AdminSelect } from "@/components/admin/admin-select";
 import type { AdminExperience } from "@/lib/types";
 
 const icons = [
@@ -69,18 +70,17 @@ export function AdminExperienceForm({
             <label htmlFor="icon" className="field-label">
               Icon
             </label>
-            <select
+            <AdminSelect
               id="icon"
               name="icon"
               defaultValue={experience?.icon ?? "sparkles"}
-              className="field"
             >
               {icons.map(([value, label]) => (
                 <option key={value} value={value}>
                   {label}
                 </option>
               ))}
-            </select>
+            </AdminSelect>
           </div>
           <div className="sm:col-span-2">
             <label htmlFor="image" className="field-label">

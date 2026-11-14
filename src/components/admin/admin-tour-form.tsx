@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Plus, Save, Trash2, X } from "lucide-react";
 import { saveTourAction } from "@/app/admin/actions";
+import { AdminSelect } from "@/components/admin/admin-select";
 import type { AdminTour } from "@/lib/types";
 import type { ItineraryBadge, ItineraryBadgeKind } from "@/data/tours";
 import {
@@ -126,18 +127,17 @@ function DayBadges({
       )}
 
       <div className="mt-3 flex flex-wrap gap-2">
-        <select
+        <AdminSelect
           value=""
-          onChange={(event) => {
+          onValueChange={(next) => {
             const preset = badgePresets.find(
-              (item) =>
-                `${item.kind}:${item.label}` === event.target.value,
+              (item) => `${item.kind}:${item.label}` === next,
             );
             if (preset) addBadge(preset);
-            event.target.value = "";
           }}
           aria-label="Add a preset badge"
-          className="field h-10 w-full py-0 text-sm sm:w-48"
+          className="h-10 w-full py-0 text-sm"
+          wrapperClassName="w-full sm:w-48"
         >
           <option value="">Add a badge…</option>
           {(Object.keys(itineraryBadgeKindLabels) as ItineraryBadgeKind[]).map(
@@ -156,7 +156,7 @@ function DayBadges({
               </optgroup>
             ),
           )}
-        </select>
+        </AdminSelect>
 
         <input
           value={customLabel}
@@ -166,13 +166,14 @@ function DayBadges({
           maxLength={40}
           className="field h-10 min-w-36 flex-1 py-0 text-sm"
         />
-        <select
+        <AdminSelect
           value={customKind}
-          onChange={(event) =>
-            setCustomKind(event.target.value as ItineraryBadgeKind)
+          onValueChange={(next) =>
+            setCustomKind(next as ItineraryBadgeKind)
           }
           aria-label="Custom badge type"
-          className="field h-10 w-full py-0 text-sm sm:w-40"
+          className="h-10 w-full py-0 text-sm"
+          wrapperClassName="w-full sm:w-40"
         >
           {(Object.keys(itineraryBadgeKindLabels) as ItineraryBadgeKind[]).map(
             (kind) => (
@@ -181,7 +182,7 @@ function DayBadges({
               </option>
             ),
           )}
-        </select>
+        </AdminSelect>
         <button
           type="button"
           onClick={() => {
@@ -343,15 +344,14 @@ export function AdminTourForm({
             <label htmlFor="region" className="field-label">
               Region
             </label>
-            <select
+            <AdminSelect
               id="region"
               name="region"
               defaultValue={tour?.region ?? "India"}
-              className="field"
             >
               <option value="India">India</option>
               <option value="International">International</option>
-            </select>
+            </AdminSelect>
           </div>
 
           <div>

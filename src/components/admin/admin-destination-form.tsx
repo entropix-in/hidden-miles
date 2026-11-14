@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Save } from "lucide-react";
 import { saveDestinationAction } from "@/app/admin/actions";
+import { AdminSelect } from "@/components/admin/admin-select";
 import type { AdminDestination } from "@/lib/types";
 
 export function AdminDestinationForm({
@@ -48,15 +49,14 @@ export function AdminDestinationForm({
             <label htmlFor="region" className="field-label">
               Region
             </label>
-            <select
+            <AdminSelect
               id="region"
               name="region"
               defaultValue={destination?.region ?? "India"}
-              className="field"
             >
               <option value="India">India</option>
               <option value="International">International</option>
-            </select>
+            </AdminSelect>
           </div>
           <div>
             <label htmlFor="bestTime" className="field-label">
