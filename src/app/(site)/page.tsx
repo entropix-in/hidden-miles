@@ -15,6 +15,7 @@ import { Kicker, SectionHeading } from "@/components/site/section-heading";
 import { Rating } from "@/components/site/rating";
 import { SearchWidget } from "@/components/site/search-widget";
 import { Stamp } from "@/components/site/stamp";
+import { TestimonialCarousel } from "@/components/site/testimonial-carousel";
 import { TourCard } from "@/components/site/tour-card";
 import type { Destination } from "@/data/destinations";
 import { stats } from "@/data/site";
@@ -55,7 +56,9 @@ export default async function HomePage() {
       ["honeymoon", "spiritual", "adventure", "women"].includes(experience.slug),
     )
     .slice(0, 4);
-  const testimonial = testimonials[0];
+  const homeTestimonials = [...testimonials].sort(
+    (a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0),
+  );
 
   const tourCount = (slug: string) =>
     tours.filter((tour) => tour.destinationSlug === slug).length;
@@ -372,45 +375,8 @@ export default async function HomePage() {
             </div>
           </div>
 
-          {testimonial ? (
-            <figure className="flex flex-col gap-6 self-center rounded-[28px] bg-paper p-8 text-ink lg:p-11">
-              <span className="type-display h-10 leading-none text-gold-400">
-                “
-              </span>
-              <blockquote className="font-display text-[24px] leading-9 text-ink">
-                {testimonial.quote}
-              </blockquote>
-              <figcaption className="flex items-center gap-3.5">
-                <span className="grid h-[52px] w-[52px] place-items-center rounded-full bg-blue-500 text-sm font-bold text-white">
-                  {testimonial.name
-                    .split(" ")
-                    .filter((word) => /[A-Za-z]/.test(word[0] ?? ""))
-                    .map((word) => word[0])
-                    .join("")
-                    .slice(0, 2)}
-                </span>
-                <span>
-                  <span className="block text-[15px] font-bold text-ink">
-                    {testimonial.name}
-                  </span>
-                  <span className="block text-sm font-medium text-navy-500">
-                    {testimonial.tour} · {testimonial.city}
-                  </span>
-                </span>
-              </figcaption>
-              <div className="route-line" />
-              <div className="flex items-center justify-between gap-4">
-                <Rating score="4.9" count="12,400+" />
-                <span className="flex gap-2">
-                  <span className="grid h-11 w-11 place-items-center rounded-full bg-sand-200 text-ink">
-                    ←
-                  </span>
-                  <span className="grid h-11 w-11 place-items-center rounded-full bg-ink text-gold-400">
-                    →
-                  </span>
-                </span>
-              </div>
-            </figure>
+          {homeTestimonials.length ? (
+            <TestimonialCarousel testimonials={homeTestimonials} />
           ) : null}
         </div>
       </section>

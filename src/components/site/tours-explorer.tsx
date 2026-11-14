@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -37,6 +37,8 @@ const months = [
 
 const regions = ["All", "India", "International"] as const;
 type Region = (typeof regions)[number];
+
+const PAGE_SIZE = 6;
 
 const sortOptions = [
   { value: "recommended", label: "Recommended" },
@@ -146,6 +148,11 @@ export function ToursExplorer({
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [query, setQuery] = useState(initialQuery);
   const [view, setView] = useState<"grid" | "list">("grid");
+  const [pagination, setPagination] = useState<{
+    key: string;
+    page: number;
+  } | null>(null);
+  const resultsRef = useRef<HTMLDivElement>(null);
 
   const filtered = useMemo(() => {
     let list = [...tours];
@@ -217,6 +224,40 @@ export function ToursExplorer({
     sort,
     tours,
   ]);
+
+  const filterKey = [
+    destination,
+    experience,
+    region,
+    month,
+    priceMin,
+    priceMax,
+    durationMin,
+    durationMax,
+    sort,
+    query,
+    view,
+  ].join("|");
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const currentPage = Math.min(
+    pagination?.key === filterKey ? pagination.page : 1,
+    totalPages,
+  );
+  const pageStart = (currentPage - 1) * PAGE_SIZE;
+  const pageTours = filtered.slice(pageStart, pageStart + PAGE_SIZE);
+
+  function goToPage(next: number) {
+    setPagination({
+      key: filterKey,
+      page: Math.min(totalPages, Math.max(1, next)),
+    });
+    requestAnimationFrame(() => {
+      resultsRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    });
+  }
 
   const activeFilters: Array<{ key: string; label: string; clear: () => void }> = [];
   if (query) {
@@ -463,7 +504,7 @@ export function ToursExplorer({
           {renderFilterPanel("desktop")}
         </aside>
 
-        <div className="min-w-0">
+        <div ref={resultsRef} className="min-w-0 scroll-mt-28">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
               <h2 className="type-h3 text-ink">
@@ -582,7 +623,7 @@ export function ToursExplorer({
                   view === "grid" ? "grid sm:grid-cols-2" : "grid grid-cols-1",
                 )}
               >
-                {filtered.slice(0, 6).map((tour, index) =>
+                {pageTours.map((tour, index) =>
                   view === "grid" ? (
                     <TourCard
                       key={tour.slug}
@@ -625,47 +666,82 @@ export function ToursExplorer({
 
           {filtered.length ? (
             <>
-          <div className="mt-10 flex flex-col items-start gap-5 rounded-[20px] bg-gold-100 px-7 py-6 sm:flex-row sm:items-center">
-            <span className="grid h-[52px] w-[52px] shrink-0 place-items-center rounded-[16px] bg-gold-400 text-ink">
-              <Headset className="h-6 w-6" />
-            </span>
-            <div className="flex-1">
-              <p className="type-title text-ink">Can&apos;t find the right dates?</p>
-              <p className="type-small mt-1 text-navy-700">
-                We run private departures for groups of 6 or more — any date, any
-                route.
-              </p>
-            </div>
-            <Link href="/contact" className="btn btn-ink btn-sm shrink-0">
-              Ask a specialist
-              <span className="btn-dot">→</span>
-            </Link>
-          </div>
+              <div className="mt-10 flex flex-col items-start gap-5 rounded-[20px] bg-gold-100 px-7 py-6 sm:flex-row sm:items-center">
+                <span className="grid h-[52px] w-[52px] shrink-0 place-items-center rounded-[16px] bg-gold-400 text-ink">
+                  <Headset className="h-6 w-6" />
+                </span>
+                <div className="flex-1">
+                  <p className="type-title text-ink">Can&apos;t find the right dates?</p>
+                  <p className="type-small mt-1 text-navy-700">
+                    We run private departures for groups of 6 or more — any date, any
+                    route.
+                  </p>
+                </div>
+                <Link href="/contact" className="btn btn-ink btn-sm shrink-0">
+                  Ask a specialist
+                  <span className="btn-dot">→</span>
+                </Link>
+              </div>
 
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-2">
-            <span className="grid h-11 w-11 place-items-center rounded-full border border-sand-300 text-navy-400">
-              <ArrowLeft className="h-4 w-4" />
-            </span>
-            {["1", "2", "3"].map((page) => (
-              <span
-                key={page}
-                className={cn(
-                  "grid h-11 w-11 place-items-center rounded-full border text-sm font-bold",
-                  page === "1"
-                    ? "border-ink bg-ink text-gold-400"
-                    : "border-sand-300 bg-paper text-ink",
-                )}
+              <nav
+                aria-label="Tours pagination"
+                className="mt-8 flex flex-wrap items-center justify-center gap-2"
               >
-                {page}
-              </span>
-            ))}
-            <span className="grid h-11 w-11 place-items-center rounded-full border border-sand-300 bg-paper text-ink">
-              <ArrowRight className="h-4 w-4" />
-            </span>
-            <span className="ml-2 text-[13px] font-medium text-navy-500">
-              Showing 1–{Math.min(filtered.length, 6)} of {filtered.length}
-            </span>
-          </div>
+                {totalPages > 1 ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => goToPage(currentPage - 1)}
+                      disabled={currentPage === 1}
+                      aria-label="Previous page"
+                      className="grid h-11 w-11 cursor-pointer place-items-center rounded-full border border-sand-300 bg-paper text-ink transition hover:border-ink disabled:cursor-not-allowed disabled:text-navy-300 disabled:hover:border-sand-300"
+                    >
+                      <ArrowLeft className="h-4 w-4" />
+                    </button>
+                    {Array.from({ length: totalPages }, (_, index) => index + 1).map(
+                      (pageNumber) => (
+                        <button
+                          key={pageNumber}
+                          type="button"
+                          onClick={() => goToPage(pageNumber)}
+                          aria-label={`Page ${pageNumber}`}
+                          aria-current={
+                            pageNumber === currentPage ? "page" : undefined
+                          }
+                          className={cn(
+                            "grid h-11 w-11 cursor-pointer place-items-center rounded-full border text-sm font-bold transition",
+                            pageNumber === currentPage
+                              ? "border-ink bg-ink text-gold-400"
+                              : "border-sand-300 bg-paper text-ink hover:border-ink",
+                          )}
+                        >
+                          {pageNumber}
+                        </button>
+                      ),
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => goToPage(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                      aria-label="Next page"
+                      className="grid h-11 w-11 cursor-pointer place-items-center rounded-full border border-sand-300 bg-paper text-ink transition hover:border-ink disabled:cursor-not-allowed disabled:text-navy-300 disabled:hover:border-sand-300"
+                    >
+                      <ArrowRight className="h-4 w-4" />
+                    </button>
+                  </>
+                ) : null}
+                <span
+                  className="ml-2 text-[13px] font-medium text-navy-500"
+                  aria-live="polite"
+                >
+                  Showing {filtered.length ? pageStart + 1 : 0}–
+                  {Math.min(pageStart + PAGE_SIZE, filtered.length)} of{" "}
+                  {filtered.length}
+                  {totalPages > 1
+                    ? ` · Page ${currentPage} of ${totalPages}`
+                    : ""}
+                </span>
+              </nav>
             </>
           ) : null}
         </div>

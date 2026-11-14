@@ -42,7 +42,7 @@ export default async function AdminTestimonialsPage({
       <AdminPageHeader
         eyebrow="Testimonials"
         title="Testimonials"
-        description="Real guest stories build trust. The first three appear on the home page."
+        description="Real guest stories build trust. Every testimonial appears in the home page review carousel, newest first."
         actionHref="/admin/testimonials/new"
         actionLabel="New testimonial"
       />
