@@ -108,15 +108,35 @@ export const navLinks: NavLink[] = [
   },
   { label: "Destinations", href: "/destinations" },
   { label: "Personalised", href: "/personalised" },
-  { label: "Corporate", href: "/corporate" },
   {
     label: "More",
     href: "/about",
     children: [
-      { label: "Experiences", href: "/experiences" },
-      { label: "About Us", href: "/about" },
-      { label: "Guest Stories", href: "/testimonials" },
-      { label: "Contact Us", href: "/contact" },
+      {
+        label: "Experiences",
+        href: "/experiences",
+        description: "Photography, food, wildlife and culture",
+      },
+      {
+        label: "Corporate",
+        href: "/corporate",
+        description: "Offsites, incentives and team retreats",
+      },
+      {
+        label: "About Us",
+        href: "/about",
+        description: "Four decades of hidden miles",
+      },
+      {
+        label: "Guest Stories",
+        href: "/testimonials",
+        description: "Travellers in their own words",
+      },
+      {
+        label: "Contact Us",
+        href: "/contact",
+        description: "Talk to a real person",
+      },
     ],
   },
 ];

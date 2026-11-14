@@ -58,10 +58,9 @@ export function SiteHeader({
 
   const navItems: NavLink[] = [
     { label: "Home", href: "/" },
-    ...["Group Tours", "Destinations", "Speciality Tours", "Personalised"]
+    ...["Group Tours", "Destinations", "Speciality Tours", "Personalised", "More"]
       .map((label) => navLinks.find((link) => link.label === label))
       .filter((link): link is NavLink => Boolean(link)),
-    { label: "About", href: "/about" },
   ].map((link) =>
       link.label === "Destinations"
         ? {
@@ -141,12 +140,18 @@ export function SiteHeader({
           <nav className="hidden items-center gap-0.5 min-[1360px]:flex" aria-label="Main">
             {navItems.map((link) => {
               const hasChildren = Boolean(link.children?.length);
+              const active =
+                link.label === "More"
+                  ? Boolean(
+                      link.children?.some((child) => isActive(child.href)),
+                    )
+                  : isActive(link.href);
 
               return (
                 <div key={link.label} className="group relative">
                   <Link
                     href={link.href}
-                    className={cn("nav-link", isActive(link.href) && "nav-link-active")}
+                    className={cn("nav-link", active && "nav-link-active")}
                   >
                     <span className="flex items-center gap-1.5 whitespace-nowrap">
                       {link.label}
@@ -388,6 +393,8 @@ export function SiteHeader({
               { label: "Destinations", href: "/destinations" },
               { label: "Speciality Tours", href: "/speciality-tours" },
               { label: "Personalised", href: "/personalised" },
+              { label: "Corporate", href: "/corporate" },
+              { label: "Experiences", href: "/experiences" },
               { label: "About", href: "/about" },
               { label: "Guest stories", href: "/testimonials" },
               { label: "Contact", href: "/contact" },
