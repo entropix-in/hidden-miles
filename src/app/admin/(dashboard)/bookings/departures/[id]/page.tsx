@@ -425,7 +425,9 @@ export default async function AdminDepartureDetailPage({
                 </p>
               </div>
               <Link
-                href={`/admin/bookings?tour=${encodeURIComponent(departure.tourSlug)}`}
+                href={`/admin/bookings/requests?tour=${encodeURIComponent(
+                  departure.tourSlug,
+                )}&departure=${departure._id}`}
                 className="inline-flex items-center gap-1 text-xs font-extrabold uppercase tracking-wider text-blue-700 hover:text-blue-800"
               >
                 Manage bookings
