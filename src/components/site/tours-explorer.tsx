@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -39,6 +39,9 @@ const regions = ["All", "India", "International"] as const;
 type Region = (typeof regions)[number];
 
 const PAGE_SIZE = 6;
+
+const useIsomorphicLayoutEffect =
+  typeof window === "undefined" ? useEffect : useLayoutEffect;
 
 const sortOptions = [
   { value: "recommended", label: "Recommended" },
@@ -152,7 +155,9 @@ export function ToursExplorer({
     key: string;
     page: number;
   } | null>(null);
-  const resultsRef = useRef<HTMLDivElement>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
+  const gridFilterKeyRef = useRef("");
+  const fullGridHeightRef = useRef(0);
 
   const filtered = useMemo(() => {
     let list = [...tours];
@@ -247,17 +252,28 @@ export function ToursExplorer({
   const pageTours = filtered.slice(pageStart, pageStart + PAGE_SIZE);
 
   function goToPage(next: number) {
-    setPagination({
-      key: filterKey,
-      page: Math.min(totalPages, Math.max(1, next)),
-    });
-    requestAnimationFrame(() => {
-      resultsRef.current?.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    });
+    const target = Math.min(totalPages, Math.max(1, next));
+    if (target === currentPage) return;
+    setPagination({ key: filterKey, page: target });
   }
+
+  useIsomorphicLayoutEffect(() => {
+    const grid = gridRef.current;
+    if (!grid) return;
+
+    if (gridFilterKeyRef.current !== filterKey) {
+      gridFilterKeyRef.current = filterKey;
+      fullGridHeightRef.current = 0;
+      grid.style.minHeight = "";
+    }
+
+    if (pageTours.length >= PAGE_SIZE) {
+      fullGridHeightRef.current = grid.getBoundingClientRect().height;
+      grid.style.minHeight = "";
+    } else if (fullGridHeightRef.current > 0) {
+      grid.style.minHeight = `${fullGridHeightRef.current}px`;
+    }
+  }, [filterKey, pageTours.length]);
 
   const activeFilters: Array<{ key: string; label: string; clear: () => void }> = [];
   if (query) {
@@ -504,7 +520,7 @@ export function ToursExplorer({
           {renderFilterPanel("desktop")}
         </aside>
 
-        <div ref={resultsRef} className="min-w-0 scroll-mt-28">
+        <div className="min-w-0">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
               <h2 className="type-h3 text-ink">
@@ -618,8 +634,9 @@ export function ToursExplorer({
           {filtered.length ? (
             <>
               <div
+                ref={gridRef}
                 className={cn(
-                  "mt-7 gap-7",
+                  "mt-7 gap-7 content-start",
                   view === "grid" ? "grid sm:grid-cols-2" : "grid grid-cols-1",
                 )}
               >
