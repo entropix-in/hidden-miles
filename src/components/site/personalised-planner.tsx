@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CheckCircle2, Loader2 } from "lucide-react";
+import { CheckCircle2, ChevronDown, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const styles = [
@@ -13,12 +13,37 @@ const styles = [
   "Spiritual",
 ];
 
+const monthOptions = [
+  "Flexible",
+  "December 2026",
+  "January 2027",
+  "February 2027",
+  "March 2027",
+  "April 2027",
+  "May 2027",
+  "June 2027",
+  "July 2027",
+  "August 2027",
+  "September 2027",
+  "October 2027",
+  "November 2027",
+  "December 2027",
+];
+
+const durationOptions = [
+  "3–5 days",
+  "6–8 days",
+  "7–9 days",
+  "10–14 days",
+  "15+ days",
+];
+
 export function PersonalisedPlanner() {
   const [step, setStep] = useState(0);
   const [trip, setTrip] = useState({
     destination: "",
-    when: "",
-    duration: "",
+    when: "December 2026",
+    duration: "7–9 days",
     style: "Family",
   });
   const [contact, setContact] = useState({
@@ -68,7 +93,7 @@ export function PersonalisedPlanner() {
         ) : null}
       </div>
 
-      <div className="mt-5 flex gap-2">
+      <div className="mt-6 flex gap-2">
         {[0, 1, 2].map((bar) => (
           <span
             key={bar}
@@ -93,7 +118,7 @@ export function PersonalisedPlanner() {
         </div>
       ) : step === 0 ? (
         <form
-          className="mt-6 space-y-5"
+          className="mt-6 space-y-6"
           onSubmit={(event) => {
             event.preventDefault();
             setStep(1);
@@ -110,7 +135,7 @@ export function PersonalisedPlanner() {
                 setTrip((current) => ({ ...current, destination: event.target.value }))
               }
               placeholder="Kerala, Bali, Japan…"
-              className="field"
+              className="field h-[60px] py-[15px] leading-[27px]"
             />
             <p className="field-hint">
               Not sure yet? Leave it blank — we&apos;ll suggest a few.
@@ -122,41 +147,66 @@ export function PersonalisedPlanner() {
               <label htmlFor="planner-when" className="field-label">
                 When
               </label>
-              <input
-                id="planner-when"
-                value={trip.when}
-                onChange={(event) =>
-                  setTrip((current) => ({ ...current, when: event.target.value }))
-                }
-                placeholder="December 2026"
-                className="field"
-              />
+              <div className="relative">
+                <select
+                  id="planner-when"
+                  value={trip.when}
+                  onChange={(event) =>
+                    setTrip((current) => ({
+                      ...current,
+                      when: event.target.value,
+                    }))
+                  }
+                  className="field h-[60px] appearance-none py-[15px] pr-12 leading-[27px]"
+                >
+                  {monthOptions.map((month) => (
+                    <option key={month} value={month}>
+                      {month}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown className="pointer-events-none absolute right-5 top-1/2 h-4 w-4 -translate-y-1/2 text-navy-500" />
+              </div>
             </div>
             <div>
               <label htmlFor="planner-duration" className="field-label">
                 How long
               </label>
-              <input
-                id="planner-duration"
-                value={trip.duration}
-                onChange={(event) =>
-                  setTrip((current) => ({ ...current, duration: event.target.value }))
-                }
-                placeholder="7–9 days"
-                className="field"
-              />
+              <div className="relative">
+                <select
+                  id="planner-duration"
+                  value={trip.duration}
+                  onChange={(event) =>
+                    setTrip((current) => ({
+                      ...current,
+                      duration: event.target.value,
+                    }))
+                  }
+                  className="field h-[60px] appearance-none py-[15px] pr-12 leading-[27px]"
+                >
+                  {durationOptions.map((duration) => (
+                    <option key={duration} value={duration}>
+                      {duration}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown className="pointer-events-none absolute right-5 top-1/2 h-4 w-4 -translate-y-1/2 text-navy-500" />
+              </div>
             </div>
           </div>
 
           <div>
-            <p className="field-label">Trip style</p>
-            <div className="flex flex-wrap gap-2">
+            <p className="field-label mb-0">Trip style</p>
+            <div className="mt-6 flex flex-wrap gap-2">
               {styles.map((style) => (
                 <button
                   key={style}
                   type="button"
                   onClick={() => setTrip((current) => ({ ...current, style }))}
-                  className={cn("chip", trip.style === style && "chip-active")}
+                  className={cn(
+                    "chip px-[18px] py-2.5",
+                    trip.style === style && "chip-active",
+                  )}
                 >
                   {style}
                 </button>

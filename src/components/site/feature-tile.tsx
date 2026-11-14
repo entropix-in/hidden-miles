@@ -6,6 +6,7 @@ export function FeatureTile({
   description,
   number,
   dark = false,
+  roomy = false,
   className,
 }: {
   icon: React.ReactNode;
@@ -13,12 +14,14 @@ export function FeatureTile({
   description: string;
   number?: string;
   dark?: boolean;
+  roomy?: boolean;
   className?: string;
 }) {
   return (
     <div
       className={cn(
-        "flex flex-col gap-4 rounded-[20px] border p-7",
+        "flex flex-col gap-4 rounded-[20px] border",
+        roomy ? "p-8" : "p-7",
         dark
           ? "border-white/10 bg-white/[0.04]"
           : "border-sand-300 bg-paper",
@@ -56,7 +59,8 @@ export function FeatureTile({
         </h3>
         <p
           className={cn(
-            "type-small mt-1.5",
+            "type-small",
+            roomy ? "mt-4" : "mt-1.5",
             dark ? "text-navy-200" : "text-navy-500",
           )}
         >
