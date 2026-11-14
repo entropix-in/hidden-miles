@@ -127,7 +127,7 @@ export default async function AboutPage() {
             title="Four decades,"
             accent="a few milestones."
           />
-          <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-5 lg:gap-0">
+          <div className="mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-5 lg:gap-0">
             {[
               ["1984", "First group tour to Kashmir — one bus, 32 travellers"],
               ["1996", "Our first international departure, to Europe"],
@@ -135,10 +135,7 @@ export default async function AboutPage() {
               ["2018", "Welcomed our millionth traveller"],
               ["2026", "Opened the Personalised Holidays studio"],
             ].map(([year, title], index) => (
-              <div
-                key={year}
-                className={`lg:pr-6 ${index ? "lg:border-l lg:border-sand-300 lg:pl-6" : ""}`}
-              >
+              <div key={year} className="lg:pr-6">
                 <div className="flex items-center gap-0">
                   <span
                     className={`h-5 w-5 shrink-0 rounded-full border-4 border-sand-100 ${
@@ -152,13 +149,13 @@ export default async function AboutPage() {
                   />
                 </div>
                 <p
-                  className={`mt-5 font-display text-3xl italic ${
+                  className={`mt-5 font-display text-[32px] italic leading-[40px] tracking-[-0.5px] ${
                     index === 4 ? "text-gold-600" : "text-ink"
                   }`}
                 >
                   {year}
                 </p>
-                <p className="type-small mt-2 text-navy-700">{title}</p>
+                <p className="type-small mt-5 text-navy-700">{title}</p>
               </div>
             ))}
           </div>
