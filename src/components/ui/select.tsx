@@ -24,6 +24,25 @@ type ParsedOption = {
   disabled?: boolean;
 };
 
+/**
+ * Flattens option children (strings, numbers, arrays, and nested elements)
+ * into plain text so composite labels like `{city} · {note}` keep their
+ * spacing instead of being stringified with commas.
+ */
+function childrenToText(children: ReactNode): string {
+  if (children === null || children === undefined) return "";
+  if (typeof children === "string") return children;
+  if (typeof children === "number") return String(children);
+  if (typeof children === "boolean") return "";
+  if (Array.isArray(children)) return children.map(childrenToText).join("");
+  if (isValidElement(children)) {
+    return childrenToText(
+      (children.props as { children?: ReactNode }).children,
+    );
+  }
+  return "";
+}
+
 function parseOptions(children: ReactNode): ParsedOption[] {
   const options: ParsedOption[] = [];
 
@@ -47,7 +66,7 @@ function parseOptions(children: ReactNode): ParsedOption[] {
         };
         options.push({
           value: String(optionProps.value ?? ""),
-          label: String(optionProps.children ?? ""),
+          label: childrenToText(optionProps.children),
           group: props.label,
           disabled: optionProps.disabled,
         });
@@ -58,7 +77,7 @@ function parseOptions(children: ReactNode): ParsedOption[] {
     if (child.type === "option") {
       options.push({
         value: String(props.value ?? ""),
-        label: String(props.children ?? ""),
+        label: childrenToText(props.children),
         disabled: props.disabled,
       });
     }
