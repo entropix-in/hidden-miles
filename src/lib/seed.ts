@@ -23,6 +23,7 @@ import { testimonials as staticTestimonials } from "@/data/site";
 import type { Testimonial } from "@/data/site";
 import { tours as staticTours } from "@/data/tours";
 import type { Tour } from "@/data/tours";
+import { defaultTourCities } from "@/lib/tour-cities";
 
 export type SeedCount = {
   added: number;
@@ -75,6 +76,7 @@ export function tourValues(tour: Tour) {
     inclusions: tour.inclusions,
     exclusions: tour.exclusions,
     itinerary: tour.itinerary,
+    departureCities: tour.departureCities ?? defaultTourCities,
     featured: tour.featured ? 1 : 0,
   } satisfies typeof toursTable.$inferInsert;
 }

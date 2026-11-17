@@ -7,6 +7,8 @@ import { saveTourAction } from "@/app/admin/actions";
 import { AdminSelect } from "@/components/admin/admin-select";
 import type { AdminTour } from "@/lib/types";
 import type { ItineraryBadge, ItineraryBadgeKind } from "@/data/tours";
+import type { TourCity } from "@/lib/tour-cities";
+import { defaultTourCities } from "@/lib/tour-cities";
 import {
   getItineraryBadges,
   itineraryBadgeKindLabels,
@@ -200,6 +202,133 @@ function DayBadges({
   );
 }
 
+
+function DepartureCitiesEditor({ initial }: { initial: TourCity[] }) {
+  const [cities, setCities] = useState<TourCity[]>(
+    initial.length ? initial : defaultTourCities,
+  );
+
+  function update(index: number, field: keyof TourCity, value: string) {
+    setCities((current) =>
+      current.map((city, cityIndex) =>
+        cityIndex === index
+          ? {
+              ...city,
+              [field]: field === "priceDelta" ? Number(value) || 0 : value,
+            }
+          : city,
+      ),
+    );
+  }
+
+  function addCity() {
+    if (cities.length >= 12) return;
+    setCities((current) => [
+      ...current,
+      { name: "", note: "Flight included", priceDelta: 0 },
+    ]);
+  }
+
+  function removeCity(index: number) {
+    if (cities.length <= 1) return;
+    setCities((current) =>
+      current.filter((_, cityIndex) => cityIndex !== index),
+    );
+  }
+
+  return (
+    <div>
+      <input
+        type="hidden"
+        name="departureCities"
+        value={JSON.stringify(cities)}
+      />
+
+      <div className="mt-5 space-y-3">
+        {cities.map((city, index) => (
+          <div
+            key={index}
+            className="rounded-2xl border border-stone-200 bg-sand-50 p-4"
+          >
+            <div className="grid gap-3 sm:grid-cols-[1.1fr_1.5fr_0.7fr_auto] sm:items-end">
+              <div>
+                <label htmlFor={`city-name-${index}`} className="field-label">
+                  City
+                </label>
+                <input
+                  id={`city-name-${index}`}
+                  value={city.name}
+                  onChange={(event) =>
+                    update(index, "name", event.target.value)
+                  }
+                  placeholder="Mumbai"
+                  maxLength={120}
+                  className="field h-10"
+                />
+              </div>
+              <div>
+                <label htmlFor={`city-note-${index}`} className="field-label">
+                  Note shown to travellers
+                </label>
+                <input
+                  id={`city-note-${index}`}
+                  value={city.note}
+                  onChange={(event) =>
+                    update(index, "note", event.target.value)
+                  }
+                  placeholder="Flight included"
+                  maxLength={190}
+                  className="field h-10"
+                />
+              </div>
+              <div>
+                <label htmlFor={`city-delta-${index}`} className="field-label">
+                  Fare adjustment (₹)
+                </label>
+                <input
+                  id={`city-delta-${index}`}
+                  type="number"
+                  step="100"
+                  value={city.priceDelta}
+                  onChange={(event) =>
+                    update(index, "priceDelta", event.target.value)
+                  }
+                  className="field h-10"
+                />
+              </div>
+              <button
+                type="button"
+                onClick={() => removeCity(index)}
+                disabled={cities.length <= 1}
+                aria-label={`Remove ${city.name || "departure city"}`}
+                className="grid h-10 w-10 place-items-center rounded-xl border border-stone-200 bg-white text-stone-400 transition hover:border-red-200 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+        <p className="max-w-xl text-sm text-stone-400">
+          The adjustment is added to the per-person package price. Use a
+          negative number for land-only or join-at-destination options. Leave 0
+          to include flights at the base fare.
+        </p>
+        <button
+          type="button"
+          onClick={addCity}
+          disabled={cities.length >= 12}
+          className="inline-flex items-center gap-2 rounded-full border border-stone-200 bg-sand-50 px-4 py-2 text-sm font-extrabold uppercase tracking-wider text-navy-950 transition hover:border-blue-400 disabled:cursor-not-allowed disabled:opacity-40"
+        >
+          <Plus className="h-3.5 w-3.5" />
+          Add city
+        </button>
+      </div>
+    </div>
+  );
+}
 
 export function AdminTourForm({
   tour,
@@ -506,6 +635,20 @@ export function AdminTourForm({
           />
           Feature this package on the home page
         </label>
+      </section>
+
+      <section className="rounded-[28px] border border-stone-200 bg-white p-6">
+        <p className="eyebrow">Departure cities</p>
+        <h2 className="mt-2 font-display text-2xl font-semibold text-navy-950">
+          Where travellers can join
+        </h2>
+        <p className="mt-1 text-sm text-stone-400">
+          These cities appear in the departure-city dropdown on the package
+          page and on the booking form for this package.
+        </p>
+        <DepartureCitiesEditor
+          initial={tour?.departureCities ?? defaultTourCities}
+        />
       </section>
 
       <section className="rounded-[28px] border border-stone-200 bg-white p-6">

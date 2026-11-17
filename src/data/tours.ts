@@ -1,3 +1,5 @@
+import type { TourCity } from "@/lib/tour-cities";
+
 export type ItineraryBadgeKind =
   | "meal"
   | "stay"
@@ -39,6 +41,8 @@ export type Tour = {
   inclusions: string[];
   exclusions: string[];
   itinerary: ItineraryDay[];
+  /** Per-package departure cities. Falls back to defaultTourCities when unset. */
+  departureCities?: TourCity[];
   featured?: boolean;
 };
 

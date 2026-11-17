@@ -28,6 +28,7 @@ import {
   loadTour,
   loadTours,
 } from "@/lib/content";
+import { resolveTourCities } from "@/lib/tour-cities";
 import { formatINR, imageUrl } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -387,6 +388,7 @@ export default async function TourDetailPage({
               oldPrice={tour.oldPrice}
               departures={departures}
               tourTitle={tour.title}
+              cities={resolveTourCities(tour.departureCities)}
             />
             <div className="mt-4 rounded-[20px] border border-sand-300 bg-sand-100 p-5">
               <p className="type-label text-navy-500">Prefer to talk?</p>

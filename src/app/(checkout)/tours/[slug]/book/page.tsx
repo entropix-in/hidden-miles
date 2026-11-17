@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { BookingFlow } from "@/components/site/booking-flow";
 import { loadDepartures, loadTour } from "@/lib/content";
+import { resolveTourCities } from "@/lib/tour-cities";
 
 export const dynamic = "force-dynamic";
 
@@ -20,14 +21,27 @@ export async function generateMetadata({
 
 export default async function BookTourPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const { slug } = await params;
+  const [{ slug }, query] = await Promise.all([params, searchParams]);
   const tour = await loadTour(slug);
   if (!tour) notFound();
 
   const departures = await loadDepartures(tour.slug);
+
+  const readParam = (key: string) => {
+    const value = query[key];
+    return typeof value === "string" ? value : undefined;
+  };
+  const readNumber = (key: string) => {
+    const value = readParam(key);
+    if (!value) return undefined;
+    const number = Number(value);
+    return Number.isFinite(number) ? number : undefined;
+  };
 
   return (
     <BookingFlow
@@ -44,6 +58,11 @@ export default async function BookTourPage({
         destinationName: tour.destinationName,
       }}
       departures={departures}
+      cities={resolveTourCities(tour.departureCities)}
+      initialDate={readParam("date")}
+      initialCity={readParam("city")}
+      initialAdults={readNumber("adults")}
+      initialChildren={readNumber("children")}
     />
   );
 }

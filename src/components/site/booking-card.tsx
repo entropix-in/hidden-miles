@@ -6,6 +6,7 @@ import { Check, ChevronDown, Minus, Phone, Plus, ShieldCheck } from "lucide-reac
 import type { TourDeparture } from "@/lib/types";
 import { site } from "@/data/site";
 import { cn, formatINR } from "@/lib/utils";
+import type { TourCity } from "@/lib/tour-cities";
 import { Select } from "@/components/ui/select";
 
 const dateFormatter = new Intl.DateTimeFormat("en-IN", {
@@ -15,14 +16,6 @@ const dateFormatter = new Intl.DateTimeFormat("en-IN", {
   timeZone: "UTC",
 });
 
-const cities = [
-  { name: "Mumbai", note: "Flight included", delta: 0 },
-  { name: "Delhi", note: "Flight included", delta: -2400 },
-  { name: "Bengaluru", note: "Flight included", delta: 3800 },
-  { name: "Pune", note: "Flight via Mumbai", delta: 1900 },
-  { name: "Join in Srinagar", note: "Tour only", delta: -9500 },
-];
-
 const VISIBLE_DATES = 4;
 
 export function BookingCard({
@@ -31,12 +24,14 @@ export function BookingCard({
   oldPrice,
   departures,
   tourTitle,
+  cities,
 }: {
   tourSlug: string;
   basePrice: number;
   oldPrice?: number;
   departures: TourDeparture[];
   tourTitle: string;
+  cities: TourCity[];
 }) {
   const fallback = useMemo(
     () =>
@@ -62,7 +57,7 @@ export function BookingCard({
   const allDates = departures.length ? departures : fallback;
   const [selectedId, setSelectedId] = useState(allDates[0]?._id ?? "");
   const [showAllDates, setShowAllDates] = useState(false);
-  const [city, setCity] = useState(cities[0].name);
+  const [city, setCity] = useState(cities[0]?.name ?? "");
   const [adults, setAdults] = useState(2);
   const [children, setChildren] = useState(1);
 
@@ -72,18 +67,27 @@ export function BookingCard({
   const hasMoreDates = allDates.length > VISIBLE_DATES;
 
   const selected = allDates.find((date) => date._id === selectedId) ?? allDates[0];
-  const cityOption = cities.find((item) => item.name === city) ?? cities[0];
-  const adultPrice = (selected?.price ?? basePrice) + cityOption.delta;
+  const cityOption =
+    cities.find((item) => item.name === city) ??
+    cities[0] ?? { name: "", note: "", priceDelta: 0 };
+  const adultPrice = (selected?.price ?? basePrice) + cityOption.priceDelta;
   const childPrice = Math.round(adultPrice * 0.75);
   const total = adultPrice * adults + childPrice * children;
   const due = Math.round(total * 0.25);
 
-  const cityHint =
-    cityOption.note === "Flight included"
-      ? cityOption.delta === 0
-        ? "Base fare · return flights included"
-        : `${cityOption.delta > 0 ? "Add" : "Less"} ${formatINR(Math.abs(cityOption.delta))} · return flights included`
-      : "Land-only package · no flights included";
+  const landOnly = /tour only|no flight|land-only/i.test(cityOption.note);
+  const cityHint = landOnly
+    ? "Land-only package · no flights included"
+    : cityOption.priceDelta === 0
+      ? "Base fare · return flights included"
+      : `${cityOption.priceDelta > 0 ? "Add" : "Less"} ${formatINR(Math.abs(cityOption.priceDelta))} · return flights included`;
+
+  const bookingParams = new URLSearchParams();
+  if (selected) bookingParams.set("date", selected.startDate);
+  if (cityOption.name) bookingParams.set("city", cityOption.name);
+  bookingParams.set("adults", String(adults));
+  bookingParams.set("children", String(children));
+  const bookingHref = `/tours/${tourSlug}/book?${bookingParams.toString()}`;
 
   return (
     <div className="rounded-[28px] border border-sand-300 bg-paper p-7 shadow-[0_24px_56px_-36px_rgba(11,39,53,0.28)] sm:p-8">
@@ -337,7 +341,7 @@ export function BookingCard({
       </div>
 
       <Link
-        href={`/tours/${tourSlug}/book`}
+        href={bookingHref}
         className="btn btn-primary btn-lg mt-5 w-full"
       >
         Reserve my seats

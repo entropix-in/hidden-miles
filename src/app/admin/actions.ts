@@ -26,6 +26,7 @@ import type { Experience } from "@/data/experiences";
 import type { Testimonial } from "@/data/site";
 import type { ItineraryBadge, ItineraryBadgeKind, Tour } from "@/data/tours";
 import type { EnquiryStatus } from "@/lib/types";
+import { parseTourCities } from "@/lib/tour-cities";
 import {
   ensureContentSeeded,
   markContentSeeded,
@@ -214,6 +215,13 @@ export async function saveTourAction(formData: FormData) {
     const oldPriceRaw = getString(formData, "oldPrice");
     const oldPrice = oldPriceRaw ? Number(oldPriceRaw) : undefined;
     const badge = getString(formData, "badge");
+    const departureCities = parseTourCities(
+      getString(formData, "departureCities"),
+    );
+
+    if (!departureCities.length) {
+      throw new Error("Add at least one departure city.");
+    }
 
     const data: Tour = {
       slug: getString(formData, "slug") || slugify(title),
@@ -240,6 +248,7 @@ export async function saveTourAction(formData: FormData) {
       inclusions: getLines(formData, "inclusions"),
       exclusions: getLines(formData, "exclusions"),
       itinerary,
+      departureCities,
       featured: getBoolean(formData, "featured"),
     };
 

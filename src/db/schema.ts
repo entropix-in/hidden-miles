@@ -55,6 +55,9 @@ export const tours = mysqlTable(
         }>;
       }>
     >().notNull(),
+    departureCities: json("departure_cities").$type<
+      Array<{ name: string; note: string; priceDelta: number }>
+    >(),
     featured: tinyint("featured").notNull().default(0),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at")

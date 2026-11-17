@@ -17,17 +17,10 @@ import { Rating } from "@/components/site/rating";
 import { Stamp } from "@/components/site/stamp";
 import { site } from "@/data/site";
 import type { TourDeparture } from "@/lib/types";
+import type { TourCity } from "@/lib/tour-cities";
 import { cn, formatINR, imageUrl } from "@/lib/utils";
 
 const STEPS = ["Trip details", "Lead traveller", "Add-ons", "Payment"];
-
-const CITIES = [
-  { name: "Mumbai", note: "Flight + tour · meet at the airport", delta: 0 },
-  { name: "Delhi", note: "Flight + tour · meet at the airport", delta: -2400 },
-  { name: "Bengaluru", note: "Flight + tour · meet at the airport", delta: 3800 },
-  { name: "Pune", note: "Flight via Mumbai", delta: 1900 },
-  { name: "Join at destination", note: "Tour only · book your own flights", delta: -9500 },
-];
 
 const ADDONS = [
   {
@@ -78,6 +71,11 @@ const longDateFormatter = new Intl.DateTimeFormat("en-IN", {
 export function BookingFlow({
   tour,
   departures,
+  cities,
+  initialDate,
+  initialCity,
+  initialAdults,
+  initialChildren,
 }: {
   tour: {
     slug: string;
@@ -92,6 +90,11 @@ export function BookingFlow({
     destinationName: string;
   };
   departures: TourDeparture[];
+  cities: TourCity[];
+  initialDate?: string;
+  initialCity?: string;
+  initialAdults?: number;
+  initialChildren?: number;
 }) {
   const fallback = useMemo(
     () =>
@@ -116,12 +119,32 @@ export function BookingFlow({
 
   const dates = departures.length ? departures : fallback;
   const [step, setStep] = useState(0);
+  const initialSelectedDate = initialDate
+    ? dates.find(
+        (date) => date.startDate === initialDate && date.seatsLeft > 0,
+      )
+    : undefined;
   const [dateId, setDateId] = useState(
-    dates.find((date) => date.seatsLeft > 0)?._id ?? dates[0]?._id ?? "",
+    initialSelectedDate?._id ??
+      dates.find((date) => date.seatsLeft > 0)?._id ??
+      dates[0]?._id ??
+      "",
   );
-  const [city, setCity] = useState(CITIES[0].name);
-  const [adults, setAdults] = useState(2);
-  const [children, setChildren] = useState(1);
+  const [city, setCity] = useState(
+    cities.find((item) => item.name === initialCity)?.name ??
+      cities[0]?.name ??
+      "",
+  );
+  const [adults, setAdults] = useState(
+    initialAdults !== undefined
+      ? Math.min(10, Math.max(1, Math.round(initialAdults)))
+      : 2,
+  );
+  const [children, setChildren] = useState(
+    initialChildren !== undefined
+      ? Math.min(10, Math.max(0, Math.round(initialChildren)))
+      : 1,
+  );
   const [lead, setLead] = useState({
     name: "",
     email: "",
@@ -140,9 +163,12 @@ export function BookingFlow({
   const [bookingRef, setBookingRef] = useState("");
 
   const selectedDate = dates.find((date) => date._id === dateId) ?? dates[0];
-  const cityOption = CITIES.find((item) => item.name === city) ?? CITIES[0];
+  const cityOption =
+    cities.find((item) => item.name === city) ??
+    cities[0] ?? { name: "", note: "", priceDelta: 0 };
   const travellers = adults + children;
-  const adultPrice = (selectedDate?.price ?? tour.price) + cityOption.delta;
+  const adultPrice =
+    (selectedDate?.price ?? tour.price) + cityOption.priceDelta;
   const childPrice = Math.round(adultPrice * 0.75);
   const addonTotal =
     ADDONS.filter((addon) => addons.includes(addon.id)).reduce(
@@ -403,10 +429,10 @@ export function BookingFlow({
 
                 <SectionCard
                   title="2. Departure city"
-                  subtitle="Where will you start? Flights from your city are included in the price."
+                  subtitle="Where will you start? Fares adjust for flights or land-only options."
                 >
                   <div className="grid gap-2.5">
-                    {CITIES.map((option) => (
+                    {cities.map((option) => (
                       <button
                         key={option.name}
                         type="button"
@@ -441,12 +467,12 @@ export function BookingFlow({
                         <span
                           className={cn(
                             "text-sm font-bold",
-                            option.delta < 0 ? "text-success" : "text-ink",
+                            option.priceDelta < 0 ? "text-success" : "text-ink",
                           )}
                         >
-                          {option.delta === 0
+                          {option.priceDelta === 0
                             ? "Included"
-                            : `${option.delta > 0 ? "+" : "–"} ${formatINR(Math.abs(option.delta))}`}
+                            : `${option.priceDelta > 0 ? "+" : "–"} ${formatINR(Math.abs(option.priceDelta))}`}
                         </span>
                       </button>
                     ))}

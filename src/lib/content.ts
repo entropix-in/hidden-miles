@@ -68,6 +68,7 @@ function mapTour(row: TourRow): AdminTour {
     inclusions: row.inclusions,
     exclusions: row.exclusions,
     itinerary: row.itinerary,
+    departureCities: row.departureCities ?? undefined,
     featured: Boolean(row.featured),
   };
 }
