@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { CheckCircle2, ChevronDown, Loader2 } from "lucide-react";
+import { CheckCircle2, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Select } from "@/components/ui/select";
 
 const styles = [
   "Honeymoon",
@@ -147,51 +148,45 @@ export function PersonalisedPlanner() {
               <label htmlFor="planner-when" className="field-label">
                 When
               </label>
-              <div className="relative">
-                <select
-                  id="planner-when"
-                  value={trip.when}
-                  onChange={(event) =>
-                    setTrip((current) => ({
-                      ...current,
-                      when: event.target.value,
-                    }))
-                  }
-                  className="field h-[60px] appearance-none py-[15px] pr-12 leading-[27px]"
-                >
-                  {monthOptions.map((month) => (
-                    <option key={month} value={month}>
-                      {month}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown className="pointer-events-none absolute right-5 top-1/2 h-4 w-4 -translate-y-1/2 text-navy-500" />
-              </div>
+              <Select
+                id="planner-when"
+                value={trip.when}
+                onValueChange={(next) =>
+                  setTrip((current) => ({
+                    ...current,
+                    when: next,
+                  }))
+                }
+                className="h-[60px] py-[15px] pr-12 leading-[27px]"
+              >
+                {monthOptions.map((month) => (
+                  <option key={month} value={month}>
+                    {month}
+                  </option>
+                ))}
+              </Select>
             </div>
             <div>
               <label htmlFor="planner-duration" className="field-label">
                 How long
               </label>
-              <div className="relative">
-                <select
-                  id="planner-duration"
-                  value={trip.duration}
-                  onChange={(event) =>
-                    setTrip((current) => ({
-                      ...current,
-                      duration: event.target.value,
-                    }))
-                  }
-                  className="field h-[60px] appearance-none py-[15px] pr-12 leading-[27px]"
-                >
-                  {durationOptions.map((duration) => (
-                    <option key={duration} value={duration}>
-                      {duration}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown className="pointer-events-none absolute right-5 top-1/2 h-4 w-4 -translate-y-1/2 text-navy-500" />
-              </div>
+              <Select
+                id="planner-duration"
+                value={trip.duration}
+                onValueChange={(next) =>
+                  setTrip((current) => ({
+                    ...current,
+                    duration: next,
+                  }))
+                }
+                className="h-[60px] py-[15px] pr-12 leading-[27px]"
+              >
+                {durationOptions.map((duration) => (
+                  <option key={duration} value={duration}>
+                    {duration}
+                  </option>
+                ))}
+              </Select>
             </div>
           </div>
 

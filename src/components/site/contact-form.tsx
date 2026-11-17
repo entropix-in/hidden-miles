@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { CheckCircle2, Loader2 } from "lucide-react";
+import { Select } from "@/components/ui/select";
 
 const interests = [
   "Group tour",
@@ -135,18 +136,17 @@ export function ContactForm() {
           <label htmlFor="contact-interest" className="field-label">
             I&apos;m interested in
           </label>
-          <select
+          <Select
             id="contact-interest"
             value={form.interest}
-            onChange={(event) => update("interest", event.target.value)}
-            className="field"
+            onValueChange={(next) => update("interest", next)}
           >
             {interests.map((interest) => (
               <option key={interest} value={interest}>
                 {interest}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
       </div>
 

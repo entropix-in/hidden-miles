@@ -8,6 +8,7 @@ import {
   type Destination,
 } from "@/data/destinations";
 import { cn } from "@/lib/utils";
+import { Select } from "@/components/ui/select";
 
 const months = [
   "Not decided",
@@ -183,11 +184,10 @@ export function EnquiryForm({
           <label htmlFor="enquiry-destination" className="field-label">
             Destination
           </label>
-          <select
+          <Select
             id="enquiry-destination"
             value={form.destination}
-            onChange={(event) => update("destination", event.target.value)}
-            className="field"
+            onValueChange={(next) => update("destination", next)}
           >
             <option value="">Help me choose</option>
             {destinations.map((destination) => (
@@ -195,18 +195,17 @@ export function EnquiryForm({
                 {destination.name}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
 
         <div>
           <label htmlFor="enquiry-travellers" className="field-label">
             Travellers
           </label>
-          <select
+          <Select
             id="enquiry-travellers"
             value={form.travellers}
-            onChange={(event) => update("travellers", event.target.value)}
-            className="field"
+            onValueChange={(next) => update("travellers", next)}
           >
             {["1", "2", "3", "4", "5", "6", "7", "8", "9", "10+"].map(
               (item) => (
@@ -215,25 +214,24 @@ export function EnquiryForm({
                 </option>
               ),
             )}
-          </select>
+          </Select>
         </div>
 
         <div className="sm:col-span-2">
           <label htmlFor="enquiry-month" className="field-label">
             When are you thinking of travelling?
           </label>
-          <select
+          <Select
             id="enquiry-month"
             value={form.month}
-            onChange={(event) => update("month", event.target.value)}
-            className="field"
+            onValueChange={(next) => update("month", next)}
           >
             {months.map((month) => (
               <option key={month} value={month}>
                 {month}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
 
         <div className="sm:col-span-2">

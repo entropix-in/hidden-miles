@@ -5,7 +5,6 @@ import Link from "next/link";
 import {
   ArrowLeft,
   ArrowRight,
-  ChevronDown,
   Headset,
   LayoutGrid,
   List,
@@ -14,6 +13,7 @@ import {
   X,
 } from "lucide-react";
 import { TourCard, TourListCard } from "@/components/site/tour-card";
+import { Select } from "@/components/ui/select";
 import type { Destination } from "@/data/destinations";
 import type { Experience } from "@/data/experiences";
 import type { Tour } from "@/data/tours";
@@ -418,22 +418,19 @@ export function ToursExplorer({
             <label htmlFor={`${idPrefix}-destination`} className="type-label mb-3 block text-navy-500">
               Destination
             </label>
-            <div className="relative">
-              <select
-                id={`${idPrefix}-destination`}
-                value={destination}
-                onChange={(event) => setDestination(event.target.value)}
-                className="field appearance-none border-transparent bg-sand-100 py-3 pr-10"
-              >
-                <option value="">All destinations</option>
-                {destinations.map((item) => (
-                  <option key={item.slug} value={item.slug}>
-                    {item.name}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-navy-500" />
-            </div>
+            <Select
+              id={`${idPrefix}-destination`}
+              value={destination}
+              onValueChange={setDestination}
+              className="border-transparent bg-sand-100 py-3 pr-10"
+            >
+              <option value="">All destinations</option>
+              {destinations.map((item) => (
+                <option key={item.slug} value={item.slug}>
+                  {item.name}
+                </option>
+              ))}
+            </Select>
           </section>
 
           <div className="hr-dashed" />
@@ -442,21 +439,18 @@ export function ToursExplorer({
             <label htmlFor={`${idPrefix}-month`} className="type-label mb-3 block text-navy-500">
               Departure month
             </label>
-            <div className="relative">
-              <select
-                id={`${idPrefix}-month`}
-                value={month}
-                onChange={(event) => setMonth(event.target.value)}
-                className="field appearance-none border-transparent bg-sand-100 py-3 pr-10"
-              >
-                {months.map((item) => (
-                  <option key={item} value={item}>
-                    {item}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-navy-500" />
-            </div>
+            <Select
+              id={`${idPrefix}-month`}
+              value={month}
+              onValueChange={setMonth}
+              className="border-transparent bg-sand-100 py-3 pr-10"
+            >
+              {months.map((item) => (
+                <option key={item} value={item}>
+                  {item}
+                </option>
+              ))}
+            </Select>
           </section>
 
           <div className="hr-dashed" />
@@ -554,19 +548,19 @@ export function ToursExplorer({
                 >
                   Sort by
                 </label>
-                <select
+                <Select
                   id="tour-sort"
                   value={sort}
-                  onChange={(event) => setSort(event.target.value)}
-                  className="appearance-none bg-transparent pr-5 text-sm font-bold text-ink outline-none"
+                  onValueChange={setSort}
+                  triggerClassName="flex cursor-pointer items-center gap-1.5 bg-transparent text-sm font-bold text-ink outline-none"
+                  menuMinWidth={190}
                 >
                   {sortOptions.map((option) => (
                     <option key={option.value} value={option.value}>
                       {option.label}
                     </option>
                   ))}
-                </select>
-                <ChevronDown className="pointer-events-none absolute right-3 h-3.5 w-3.5 text-navy-500" />
+                </Select>
               </div>
 
               <div className="flex items-center gap-1 rounded-full bg-sand-200 p-1">

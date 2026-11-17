@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Minus, Plus, Phone, ShieldCheck } from "lucide-react";
 import type { TourDeparture } from "@/lib/types";
 import { cn, formatINR } from "@/lib/utils";
+import { Select } from "@/components/ui/select";
 
 const dateFormatter = new Intl.DateTimeFormat("en-IN", {
   weekday: "short",
@@ -163,18 +164,18 @@ export function BookingCard({
         <label htmlFor="departure-city" className="type-label block text-navy-500">
           Departure city
         </label>
-        <select
+        <Select
           id="departure-city"
           value={city}
-          onChange={(event) => setCity(event.target.value)}
-          className="field mt-2 py-3 font-bold"
+          onValueChange={setCity}
+          className="mt-2 py-3 font-bold"
         >
           {cities.map((item) => (
             <option key={item.name} value={item.name}>
               {item.name} · {item.note}
             </option>
           ))}
-        </select>
+        </Select>
       </div>
 
       <div className="mt-5">

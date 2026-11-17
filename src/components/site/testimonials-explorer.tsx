@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { Quote, Star } from "lucide-react";
 import type { Testimonial } from "@/data/site";
 import { cn } from "@/lib/utils";
+import { Select } from "@/components/ui/select";
 
 const PAGE_SIZE = 9;
 
@@ -102,19 +103,20 @@ export function TestimonialsExplorer({
           >
             Sort by
           </label>
-          <select
+          <Select
             id="testimonial-sort"
             value={sort}
-            onChange={(event) => {
-              setSort(event.target.value);
+            onValueChange={(next) => {
+              setSort(next);
               setVisible(PAGE_SIZE);
             }}
-            className="rounded-full border border-stone-200 bg-white px-4 py-2.5 text-sm font-bold text-navy-950 outline-none focus:border-blue-500"
+            triggerClassName="flex cursor-pointer items-center gap-2 rounded-full border border-stone-200 bg-white px-4 py-2.5 text-sm font-bold text-navy-950 outline-none focus:border-blue-500"
+            menuMinWidth={190}
           >
             <option value="newest">Newest first</option>
             <option value="oldest">Oldest first</option>
             <option value="rating">Highest rated</option>
-          </select>
+          </Select>
         </div>
       </div>
 

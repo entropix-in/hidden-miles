@@ -2,14 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-  CalendarDays,
-  ChevronDown,
-  Compass,
-  MapPin,
-  Users,
-} from "lucide-react";
+import { CalendarDays, Compass, MapPin, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Select } from "@/components/ui/select";
 import type { Destination } from "@/data/destinations";
 import type { Experience } from "@/data/experiences";
 
@@ -28,6 +23,9 @@ const months = [
   "November",
   "December",
 ];
+
+const inlineTriggerClassName =
+  "flex w-full cursor-pointer items-center justify-between gap-2 bg-transparent text-left text-[15px] font-bold text-ink outline-none";
 
 export function SearchWidget({
   destinations,
@@ -72,11 +70,11 @@ export function SearchWidget({
               Where to
             </span>
             <span className="relative mt-1 block">
-              <select
+              <Select
                 value={destination}
-                onChange={(event) => setDestination(event.target.value)}
+                onValueChange={setDestination}
                 aria-label="Destination"
-                className="w-full cursor-pointer appearance-none bg-transparent pr-5 text-[15px] font-bold text-ink outline-none"
+                triggerClassName={inlineTriggerClassName}
               >
                 <option value="">Search destinations</option>
                 {destinations.map((item) => (
@@ -84,8 +82,7 @@ export function SearchWidget({
                     {item.name}
                   </option>
                 ))}
-              </select>
-              <ChevronDown className="pointer-events-none absolute right-0 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-navy-400" />
+              </Select>
             </span>
           </span>
         </label>
@@ -99,19 +96,18 @@ export function SearchWidget({
           <span className="min-w-0 flex-1">
             <span className="type-label block text-[11px] text-navy-500">When</span>
             <span className="relative mt-1 block">
-              <select
+              <Select
                 value={month}
-                onChange={(event) => setMonth(event.target.value)}
+                onValueChange={setMonth}
                 aria-label="Travel month"
-                className="w-full cursor-pointer appearance-none bg-transparent pr-5 text-[15px] font-bold text-ink outline-none"
+                triggerClassName={inlineTriggerClassName}
               >
                 {months.map((item) => (
                   <option key={item} value={item}>
                     {item}
                   </option>
                 ))}
-              </select>
-              <ChevronDown className="pointer-events-none absolute right-0 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-navy-400" />
+              </Select>
             </span>
           </span>
         </label>
@@ -127,11 +123,11 @@ export function SearchWidget({
               Trip style
             </span>
             <span className="relative mt-1 block">
-              <select
+              <Select
                 value={experience}
-                onChange={(event) => setExperience(event.target.value)}
+                onValueChange={setExperience}
                 aria-label="Travel style"
-                className="w-full cursor-pointer appearance-none bg-transparent pr-5 text-[15px] font-bold text-ink outline-none"
+                triggerClassName={inlineTriggerClassName}
               >
                 <option value="">Group tour</option>
                 {experiences.map((item) => (
@@ -139,8 +135,7 @@ export function SearchWidget({
                     {item.shortTitle}
                   </option>
                 ))}
-              </select>
-              <ChevronDown className="pointer-events-none absolute right-0 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-navy-400" />
+              </Select>
             </span>
           </span>
         </label>
@@ -156,11 +151,11 @@ export function SearchWidget({
               Travellers
             </span>
             <span className="relative mt-1 block">
-              <select
+              <Select
                 value={travellers}
-                onChange={(event) => setTravellers(event.target.value)}
+                onValueChange={setTravellers}
                 aria-label="Number of travellers"
-                className="w-full cursor-pointer appearance-none bg-transparent pr-5 text-[15px] font-bold text-ink outline-none"
+                triggerClassName={inlineTriggerClassName}
               >
                 {["1", "2", "3", "4", "5", "6", "7", "8", "9", "10+"].map(
                   (item) => (
@@ -169,8 +164,7 @@ export function SearchWidget({
                     </option>
                   ),
                 )}
-              </select>
-              <ChevronDown className="pointer-events-none absolute right-0 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-navy-400" />
+              </Select>
             </span>
           </span>
         </label>
