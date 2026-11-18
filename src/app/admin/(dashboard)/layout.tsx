@@ -1,6 +1,8 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { ExternalLink, LogOut, Sparkles } from "lucide-react";
 import { AdminNav } from "@/components/admin/admin-nav";
+import { AdminSnackbar } from "@/components/admin/admin-snackbar";
 import { Logo } from "@/components/site/logo";
 import { logoutAction } from "@/app/admin/actions";
 import { requireAdmin } from "@/lib/admin-auth";
@@ -67,6 +69,10 @@ export default async function AdminDashboardLayout({
 
         <main className="px-4 py-6 sm:px-8 sm:py-8">{children}</main>
       </div>
+
+      <Suspense fallback={null}>
+        <AdminSnackbar />
+      </Suspense>
     </div>
   );
 }

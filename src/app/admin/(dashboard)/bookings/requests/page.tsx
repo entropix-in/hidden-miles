@@ -70,8 +70,6 @@ export default async function AdminBookingRequestsPage({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const params = await searchParams;
-  const notice = typeof params.notice === "string" ? params.notice : "";
-  const error = typeof params.error === "string" ? params.error : "";
   const tourParam = typeof params.tour === "string" ? params.tour : "";
   const departureParam =
     typeof params.departure === "string" ? params.departure : "";
@@ -166,7 +164,6 @@ export default async function AdminBookingRequestsPage({
 
   return (
     <div>
-      <AdminNotice notice={notice} error={error} />
       <AdminPageHeader
         eyebrow="Bookings"
         title="Booking requests"

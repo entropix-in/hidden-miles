@@ -13,14 +13,7 @@ import { ExperienceIcon } from "@/components/site/experience-icon";
 import { loadAdminExperiences } from "@/lib/content";
 import { imageUrl } from "@/lib/utils";
 
-export default async function AdminExperiencesPage({
-  searchParams,
-}: {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
-}) {
-  const params = await searchParams;
-  const notice = typeof params.notice === "string" ? params.notice : "";
-  const error = typeof params.error === "string" ? params.error : "";
+export default async function AdminExperiencesPage() {
   const result = await loadAdminExperiences();
 
   if (!result.status.configured) {
@@ -41,7 +34,6 @@ export default async function AdminExperiencesPage({
 
   return (
     <div>
-      <AdminNotice notice={notice} error={error} />
       <AdminPageHeader
         eyebrow="Experiences"
         title="Experiences"

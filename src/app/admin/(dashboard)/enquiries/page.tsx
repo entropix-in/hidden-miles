@@ -17,14 +17,7 @@ const statusStyles: Record<EnquiryStatus, string> = {
   closed: "bg-stone-200 text-stone-600",
 };
 
-export default async function AdminEnquiriesPage({
-  searchParams,
-}: {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
-}) {
-  const params = await searchParams;
-  const notice = typeof params.notice === "string" ? params.notice : "";
-  const error = typeof params.error === "string" ? params.error : "";
+export default async function AdminEnquiriesPage() {
   const result = await loadAdminEnquiries();
 
   if (!result.status.configured) {
@@ -51,7 +44,6 @@ export default async function AdminEnquiriesPage({
 
   return (
     <div>
-      <AdminNotice notice={notice} error={error} />
       <AdminPageHeader
         eyebrow="Enquiries"
         title="Enquiries"

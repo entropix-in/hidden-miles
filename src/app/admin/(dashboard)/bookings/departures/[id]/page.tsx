@@ -71,14 +71,10 @@ const bookingStatusStyles: Record<BookingStatus, string> = {
 
 export default async function AdminDepartureDetailPage({
   params,
-  searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  const [{ id }, query] = await Promise.all([params, searchParams]);
-  const notice = typeof query.notice === "string" ? query.notice : "";
-  const error = typeof query.error === "string" ? query.error : "";
+  const { id } = await params;
 
   const [toursResult, departuresResult, bookingsResult] = await Promise.all([
     loadAdminTours(),
@@ -175,8 +171,6 @@ export default async function AdminDepartureDetailPage({
 
   return (
     <div className="space-y-6">
-      <AdminNotice notice={notice} error={error} />
-
       <nav
         aria-label="Breadcrumb"
         className="flex flex-wrap items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-[0.14em] text-stone-400"

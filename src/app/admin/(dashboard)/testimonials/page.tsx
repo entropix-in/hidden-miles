@@ -10,14 +10,7 @@ import { AdminDeleteButton } from "@/components/admin/admin-delete-button";
 import { deleteTestimonialAction } from "@/app/admin/actions";
 import { loadAdminTestimonials } from "@/lib/content";
 
-export default async function AdminTestimonialsPage({
-  searchParams,
-}: {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
-}) {
-  const params = await searchParams;
-  const notice = typeof params.notice === "string" ? params.notice : "";
-  const error = typeof params.error === "string" ? params.error : "";
+export default async function AdminTestimonialsPage() {
   const result = await loadAdminTestimonials();
 
   if (!result.status.configured) {
@@ -38,7 +31,6 @@ export default async function AdminTestimonialsPage({
 
   return (
     <div>
-      <AdminNotice notice={notice} error={error} />
       <AdminPageHeader
         eyebrow="Testimonials"
         title="Testimonials"

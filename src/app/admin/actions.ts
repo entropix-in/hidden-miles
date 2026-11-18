@@ -130,12 +130,24 @@ function withParam(path: string, key: string, value: string) {
   return `${path}${separator}${key}=${encodeURIComponent(value)}`;
 }
 
+function flashId() {
+  return `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`;
+}
+
 function fail(path: string, error: unknown): never {
-  redirect(withParam(path, "error", messageFor(error)));
+  redirect(
+    withParam(
+      withParam(path, "error", messageFor(error)),
+      "flash",
+      flashId(),
+    ),
+  );
 }
 
 function succeed(path: string, notice: string): never {
-  redirect(withParam(path, "notice", notice));
+  redirect(
+    withParam(withParam(path, "notice", notice), "flash", flashId()),
+  );
 }
 
 function requireDb(): AppDb {
@@ -275,7 +287,7 @@ export async function saveTourAction(formData: FormData) {
   }
 
   revalidateContent();
-  succeed("/admin/tours", id ? "Package updated." : "Package created.");
+  succeed("/admin/tours", id ? "Package updated." : "Package added.");
 }
 
 export async function deleteTourAction(formData: FormData) {
@@ -347,7 +359,7 @@ export async function saveDestinationAction(formData: FormData) {
   revalidateContent();
   succeed(
     "/admin/destinations",
-    id ? "Destination updated." : "Destination created.",
+    id ? "Destination updated." : "Destination added.",
   );
 }
 
@@ -444,7 +456,7 @@ export async function saveExperienceAction(formData: FormData) {
   revalidateContent();
   succeed(
     "/admin/experiences",
-    id ? "Experience updated." : "Experience created.",
+    id ? "Experience updated." : "Experience added.",
   );
 }
 
@@ -509,7 +521,7 @@ export async function saveTestimonialAction(formData: FormData) {
   revalidateContent();
   succeed(
     "/admin/testimonials",
-    id ? "Testimonial updated." : "Testimonial created.",
+    id ? "Testimonial updated." : "Testimonial added.",
   );
 }
 
@@ -594,7 +606,7 @@ export async function saveDepartureAction(formData: FormData) {
   const tourSlug = getString(formData, "tourSlug");
   const backPath = bookingsBackPath(formData);
 
-  let message = "Departure saved.";
+  let message = "Departure updated.";
 
   try {
     const db = requireDb();
@@ -668,9 +680,11 @@ export async function saveDepartureAction(formData: FormData) {
       );
 
       const skipped = dates.length - datesToAdd.length;
-      message = `${datesToAdd.length} ${
-        datesToAdd.length === 1 ? "date" : "dates"
-      } added.${
+      message = `${
+        datesToAdd.length === 1
+          ? "Departure added"
+          : `${datesToAdd.length} departures added`
+      }.${
         skipped
           ? ` ${skipped} already existed and ${
               skipped === 1 ? "was" : "were"

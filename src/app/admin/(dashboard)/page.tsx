@@ -213,15 +213,7 @@ function StatCard({
   );
 }
 
-export default async function AdminDashboardPage({
-  searchParams,
-}: {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
-}) {
-  const params = await searchParams;
-  const notice = typeof params.notice === "string" ? params.notice : "";
-  const error = typeof params.error === "string" ? params.error : "";
-
+export default async function AdminDashboardPage() {
   const [
     tours,
     destinations,
@@ -425,8 +417,6 @@ export default async function AdminDashboardPage({
 
   return (
     <div className="space-y-6">
-      <AdminNotice notice={notice} error={error} />
-
       <header className="flex flex-col gap-5 border-b border-stone-200 pb-6 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <p className="eyebrow">

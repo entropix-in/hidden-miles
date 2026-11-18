@@ -12,14 +12,7 @@ import { deleteTourAction } from "@/app/admin/actions";
 import { loadAdminTours } from "@/lib/content";
 import { formatINR, imageUrl } from "@/lib/utils";
 
-export default async function AdminToursPage({
-  searchParams,
-}: {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
-}) {
-  const params = await searchParams;
-  const notice = typeof params.notice === "string" ? params.notice : "";
-  const error = typeof params.error === "string" ? params.error : "";
+export default async function AdminToursPage() {
   const result = await loadAdminTours();
   const tours = result.data;
 
@@ -41,7 +34,6 @@ export default async function AdminToursPage({
 
   return (
     <div>
-      <AdminNotice notice={notice} error={error} />
       <AdminPageHeader
         eyebrow="Packages"
         title="Tour packages"
