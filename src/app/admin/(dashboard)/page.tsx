@@ -423,7 +423,7 @@ export default async function AdminDashboardPage() {
             <CalendarDays className="h-3.5 w-3.5" />
             {todayLabel}
           </p>
-          <h1 className="mt-2 font-display text-3xl font-semibold text-navy-950 sm:text-4xl">
+          <h1 className="mt-1 font-display text-2xl font-semibold text-navy-950 sm:text-[1.875rem]">
             Dashboard overview
           </h1>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-stone-500">
@@ -547,7 +547,7 @@ export default async function AdminDashboardPage() {
                 <ArrowRight className="h-3.5 w-3.5" />
               </Link>
             </div>
-            <div className="grid grid-cols-2 gap-px bg-stone-100 sm:grid-cols-3 xl:grid-cols-6">
+            <div className="grid grid-cols-2 gap-px bg-stone-100 sm:grid-cols-3 2xl:grid-cols-6">
               {catalog.map((item) => (
                 <Link
                   key={item.label}
@@ -561,7 +561,7 @@ export default async function AdminDashboardPage() {
                     <p className="font-display text-xl font-semibold leading-none text-navy-950">
                       {item.value}
                     </p>
-                    <p className="mt-1 truncate text-[10px] font-extrabold uppercase tracking-[0.1em] text-stone-500">
+                    <p className="mt-1 text-xs font-semibold text-stone-600">
                       {item.label}
                     </p>
                   </div>
@@ -733,7 +733,7 @@ export default async function AdminDashboardPage() {
                 </div>
 
                 {bookings.data.length ? (
-                  <div className="overflow-x-auto">
+                  <div className="admin-table-scroll" tabIndex={0} role="region" aria-label="Recent booking requests">
                     <table className="w-full min-w-[680px] text-left text-sm">
                       <thead>
                         <tr className="border-y border-stone-100 bg-sand-50/60 text-[10px] font-extrabold uppercase tracking-[0.12em] text-stone-500">

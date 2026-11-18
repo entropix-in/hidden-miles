@@ -1,5 +1,7 @@
+import { AdminAuthoringForm } from "./admin-authoring-form";
+import { AdminContentEditor } from "./admin-content-editor";
+import { CoverPhotoField } from "./admin-photo-upload";
 import Link from "next/link";
-import { Save } from "lucide-react";
 import { saveDestinationAction } from "@/app/admin/actions";
 import { AdminSelect } from "@/components/admin/admin-select";
 import type { AdminDestination } from "@/lib/types";
@@ -10,7 +12,9 @@ export function AdminDestinationForm({
   destination?: AdminDestination;
 }) {
   return (
-    <form action={saveDestinationAction} className="space-y-5">
+    <AdminAuthoringForm action={saveDestinationAction} cancel={
+      <Link href="/admin/destinations" className="btn-outline">Cancel</Link>
+    }>
       <input type="hidden" name="id" value={destination?._id ?? ""} />
 
       <section className="rounded-[28px] border border-stone-200 bg-white p-6">
@@ -29,7 +33,6 @@ export function AdminDestinationForm({
               name="name"
               required
               defaultValue={destination?.name ?? ""}
-              placeholder="Kashmir"
               className="field"
             />
           </div>
@@ -41,7 +44,6 @@ export function AdminDestinationForm({
               id="slug"
               name="slug"
               defaultValue={destination?.slug ?? ""}
-              placeholder="kashmir"
               className="field"
             />
           </div>
@@ -71,16 +73,7 @@ export function AdminDestinationForm({
             />
           </div>
           <div className="sm:col-span-2">
-            <label htmlFor="image" className="field-label">
-              Cover image URL
-            </label>
-            <input
-              id="image"
-              name="image"
-              defaultValue={destination?.image ?? ""}
-              placeholder="https://images.unsplash.com/..."
-              className="field"
-            />
+            <CoverPhotoField initialValue={destination?.image} />
           </div>
           <div className="sm:col-span-2">
             <label htmlFor="tagline" className="field-label">
@@ -96,7 +89,7 @@ export function AdminDestinationForm({
           </div>
           <div className="sm:col-span-2">
             <label htmlFor="description" className="field-label">
-              Description
+              Short description
             </label>
             <textarea
               id="description"
@@ -121,15 +114,8 @@ export function AdminDestinationForm({
         </div>
       </section>
 
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-[28px] border border-stone-200 bg-white px-6 py-4">
-        <Link href="/admin/destinations" className="btn-outline">
-          Cancel
-        </Link>
-        <button type="submit" className="btn-primary">
-          <Save className="h-4 w-4" />
-          {destination ? "Save changes" : "Create destination"}
-        </button>
-      </div>
-    </form>
+      <AdminContentEditor initialBlocks={destination?.contentBlocks} />
+
+    </AdminAuthoringForm>
   );
 }

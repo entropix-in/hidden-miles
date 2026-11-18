@@ -54,6 +54,7 @@ function mapTour(row: TourRow): AdminTour {
     region: row.region,
     experiences: row.experiences,
     image: row.image,
+    contentBlocks: row.contentBlocks ?? undefined,
     nights: Number(row.nights),
     days: Number(row.days),
     price: Number(row.price),
@@ -83,6 +84,7 @@ function mapDestination(row: DestinationRow): AdminDestination {
     tagline: row.tagline,
     description: row.description,
     image: row.image,
+    contentBlocks: row.contentBlocks ?? undefined,
     bestTime: row.bestTime,
     highlights: row.highlights,
   };
@@ -97,6 +99,7 @@ function mapExperience(row: ExperienceRow): AdminExperience {
     shortTitle: row.shortTitle,
     description: row.description,
     image: row.image,
+    contentBlocks: row.contentBlocks ?? undefined,
     icon: row.icon as Experience["icon"],
     highlights: row.highlights,
   };

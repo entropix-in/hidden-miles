@@ -1,4 +1,7 @@
+import type { ContentBlock } from "@/lib/content-blocks";
+
 export type Experience = {
+  contentBlocks?: ContentBlock[];
   slug: string;
   title: string;
   shortTitle: string;

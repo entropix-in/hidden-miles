@@ -62,6 +62,7 @@ export function tourValues(tour: Tour) {
     region: tour.region,
     experiences: tour.experiences,
     image: tour.image,
+    contentBlocks: tour.contentBlocks ?? null,
     nights: tour.nights,
     days: tour.days,
     price: tour.price,
@@ -89,6 +90,7 @@ export function destinationValues(destination: Destination) {
     tagline: destination.tagline,
     description: destination.description,
     image: destination.image,
+    contentBlocks: destination.contentBlocks ?? null,
     bestTime: destination.bestTime,
     highlights: destination.highlights,
   } satisfies typeof destinationsTable.$inferInsert;
@@ -101,6 +103,7 @@ export function experienceValues(experience: Experience) {
     shortTitle: experience.shortTitle,
     description: experience.description,
     image: experience.image,
+    contentBlocks: experience.contentBlocks ?? null,
     icon: experience.icon,
     highlights: experience.highlights,
   } satisfies typeof experiencesTable.$inferInsert;

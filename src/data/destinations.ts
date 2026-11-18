@@ -1,4 +1,7 @@
+import type { ContentBlock } from "@/lib/content-blocks";
+
 export type Destination = {
+  contentBlocks?: ContentBlock[];
   slug: string;
   name: string;
   region: "India" | "International";

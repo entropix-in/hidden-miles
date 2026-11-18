@@ -192,7 +192,7 @@ export default async function AdminDepartureDetailPage({
       <header className="flex flex-col gap-5 border-b border-stone-200 pb-6 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <p className="eyebrow">Departure details</p>
-          <h1 className="mt-2 font-display text-3xl font-semibold text-navy-950 sm:text-4xl">
+          <h1 className="mt-1 font-display text-2xl font-semibold text-navy-950 sm:text-[1.875rem]">
             {tour?.title ?? departure.tourSlug}
           </h1>
           <p className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-sm font-semibold text-stone-600">
@@ -430,7 +430,7 @@ export default async function AdminDepartureDetailPage({
             </div>
 
             {departureBookings.length ? (
-              <div className="overflow-x-auto">
+              <div className="admin-table-scroll" tabIndex={0} role="region" aria-label="Travellers on this departure">
                 <table className="w-full min-w-[640px] text-left text-sm">
                   <thead>
                     <tr className="border-b border-stone-100 bg-sand-50/60 text-[10px] font-extrabold uppercase tracking-[0.12em] text-stone-500">
@@ -623,7 +623,7 @@ export default async function AdminDepartureDetailPage({
           </span>
         </div>
 
-        <div className="overflow-x-auto">
+        <div className="admin-table-scroll" tabIndex={0} role="region" aria-label="Departure calendar">
           <table className="w-full min-w-[900px] text-left text-sm">
             <thead>
               <tr className="border-b border-stone-100 bg-sand-50/60 text-[10px] font-extrabold uppercase tracking-[0.12em] text-stone-500">

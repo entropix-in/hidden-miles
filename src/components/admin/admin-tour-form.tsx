@@ -1,8 +1,11 @@
 "use client";
 
+import { AdminAuthoringForm } from "./admin-authoring-form";
+import { AdminContentEditor } from "./admin-content-editor";
+import { CoverPhotoField } from "./admin-photo-upload";
 import { useState } from "react";
 import Link from "next/link";
-import { Plus, Save, Trash2, X } from "lucide-react";
+import { Plus, Trash2, X } from "lucide-react";
 import { saveTourAction } from "@/app/admin/actions";
 import { AdminSelect } from "@/components/admin/admin-select";
 import type { AdminTour } from "@/lib/types";
@@ -99,7 +102,7 @@ function DayBadges({
         value={JSON.stringify(badges)}
       />
 
-      <p className="text-[11px] font-extrabold uppercase tracking-[0.16em] text-stone-400">
+      <p className="text-[11px] font-extrabold uppercase tracking-[0.16em] text-stone-600">
         Day badges
       </p>
 
@@ -123,7 +126,7 @@ function DayBadges({
           ))}
         </div>
       ) : (
-        <p className="mt-1.5 text-sm text-stone-400">
+        <p className="mt-1.5 text-sm text-stone-600">
           No badges yet. Leave empty to auto-detect from the description.
         </p>
       )}
@@ -301,7 +304,7 @@ function DepartureCitiesEditor({ initial }: { initial: TourCity[] }) {
                 onClick={() => removeCity(index)}
                 disabled={cities.length <= 1}
                 aria-label={`Remove ${city.name || "departure city"}`}
-                className="grid h-10 w-10 place-items-center rounded-xl border border-stone-200 bg-white text-stone-400 transition hover:border-red-200 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-40"
+                className="grid h-10 w-10 place-items-center rounded-xl border border-stone-200 bg-white text-stone-600 transition hover:border-red-200 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-40"
               >
                 <Trash2 className="h-4 w-4" />
               </button>
@@ -311,7 +314,7 @@ function DepartureCitiesEditor({ initial }: { initial: TourCity[] }) {
       </div>
 
       <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-        <p className="max-w-xl text-sm text-stone-400">
+        <p className="max-w-xl text-sm text-stone-600">
           The adjustment is added to the per-person package price. Use a
           negative number for land-only or join-at-destination options. Leave 0
           to include flights at the base fare.
@@ -389,7 +392,9 @@ export function AdminTourForm({
   }
 
   return (
-    <form action={saveTourAction} className="space-y-5">
+    <AdminAuthoringForm action={saveTourAction} cancel={
+      <Link href="/admin/tours" className="btn-outline">Cancel</Link>
+    }>
       <input type="hidden" name="id" value={tour?._id ?? ""} />
 
       <section className="rounded-[28px] border border-stone-200 bg-white p-6">
@@ -408,7 +413,6 @@ export function AdminTourForm({
               name="title"
               required
               defaultValue={tour?.title ?? ""}
-              placeholder="Magical Kashmir"
               className="field"
             />
           </div>
@@ -421,25 +425,15 @@ export function AdminTourForm({
               id="slug"
               name="slug"
               defaultValue={tour?.slug ?? ""}
-              placeholder="magical-kashmir"
               className="field"
             />
-            <p className="mt-1.5 text-sm text-stone-400">
+            <p className="mt-1.5 text-sm text-stone-600">
               Leave blank to generate from the title.
             </p>
           </div>
 
           <div>
-            <label htmlFor="image" className="field-label">
-              Cover image URL
-            </label>
-            <input
-              id="image"
-              name="image"
-              defaultValue={tour?.image ?? ""}
-              placeholder="https://images.unsplash.com/..."
-              className="field"
-            />
+            <CoverPhotoField initialValue={tour?.image} />
           </div>
 
           <div>
@@ -451,7 +445,6 @@ export function AdminTourForm({
               name="destinationSlug"
               required
               defaultValue={tour?.destinationSlug ?? ""}
-              placeholder="kashmir"
               className="field"
             />
           </div>
@@ -464,7 +457,6 @@ export function AdminTourForm({
               id="destinationName"
               name="destinationName"
               defaultValue={tour?.destinationName ?? ""}
-              placeholder="Kashmir"
               className="field"
             />
           </div>
@@ -511,6 +503,8 @@ export function AdminTourForm({
           </div>
         </div>
       </section>
+
+      <AdminContentEditor initialBlocks={tour?.contentBlocks} />
 
       <section className="rounded-[28px] border border-stone-200 bg-white p-6">
         <p className="eyebrow">Pricing & departures</p>
@@ -642,7 +636,7 @@ export function AdminTourForm({
         <h2 className="mt-2 font-display text-2xl font-semibold text-navy-950">
           Where travellers can join
         </h2>
-        <p className="mt-1 text-sm text-stone-400">
+        <p className="mt-1 text-sm text-stone-600">
           These cities appear in the departure-city dropdown on the package
           page and on the booking form for this package.
         </p>
@@ -720,7 +714,7 @@ export function AdminTourForm({
             </label>
           ))}
           {!experienceOptions.length ? (
-            <p className="text-sm text-stone-400">
+            <p className="text-sm text-stone-600">
               Add experiences first to tag them on packages.
             </p>
           ) : null}
@@ -734,7 +728,7 @@ export function AdminTourForm({
             <h2 className="mt-2 font-display text-2xl font-semibold text-navy-950">
               Itinerary
             </h2>
-            <p className="mt-1 text-sm text-stone-400">
+            <p className="mt-1 text-sm text-stone-600">
               Add badges for meals, stay, travel and activities. These appear
               on the public day-by-day timeline.
             </p>
@@ -781,7 +775,7 @@ export function AdminTourForm({
                   type="button"
                   onClick={() => removeDay(index)}
                   aria-label="Remove day"
-                  className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-stone-200 bg-white text-stone-400 transition hover:border-red-200 hover:text-red-600"
+                  className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-stone-200 bg-white text-stone-600 transition hover:border-red-200 hover:text-red-600"
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>
@@ -806,15 +800,6 @@ export function AdminTourForm({
         </div>
       </section>
 
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-[28px] border border-stone-200 bg-white px-6 py-4">
-        <Link href="/admin/tours" className="btn-outline">
-          Cancel
-        </Link>
-        <button type="submit" className="btn-primary">
-          <Save className="h-4 w-4" />
-          {tour ? "Save changes" : "Create package"}
-        </button>
-      </div>
-    </form>
+    </AdminAuthoringForm>
   );
 }

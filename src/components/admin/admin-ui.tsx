@@ -30,7 +30,7 @@ export function AdminStatCard({
   tone: keyof typeof statTones;
 }) {
   return (
-    <div className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm shadow-navy-950/[0.03]">
+    <div className="rounded-2xl border border-stone-200 bg-white p-4 shadow-sm shadow-navy-950/[0.03]">
       <div className="flex items-start justify-between gap-3">
         <p className="text-[11px] font-extrabold uppercase tracking-[0.16em] text-stone-500">
           {label}
@@ -44,7 +44,7 @@ export function AdminStatCard({
           <Icon className="h-4 w-4" />
         </span>
       </div>
-      <p className="mt-3 font-display text-[30px] font-semibold leading-none tracking-tight text-navy-950">
+      <p className="mt-3 font-display text-[26px] font-semibold leading-none tracking-tight text-navy-950">
         {value}
       </p>
       <p className="mt-2 text-xs font-semibold leading-4 text-stone-500">
@@ -96,14 +96,14 @@ export function AdminPageHeader({
   actionLabel?: string;
 }) {
   return (
-    <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
       <div>
         <p className="eyebrow">{eyebrow}</p>
-        <h1 className="mt-2 font-display text-3xl font-semibold text-navy-950 sm:text-4xl">
+        <h1 className="mt-1 font-display text-2xl font-semibold text-navy-950 sm:text-[1.875rem]">
           {title}
         </h1>
         {description ? (
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-stone-500">
+          <p className="mt-1 max-w-2xl text-[13px] leading-5 text-stone-500">
             {description}
           </p>
         ) : null}
@@ -135,7 +135,7 @@ export function DatabaseSetupNotice({
       <h2 className="mt-4 font-display text-2xl font-semibold text-navy-950">
         Connect your MySQL database
       </h2>
-      <p className="mt-2 max-w-2xl text-sm leading-6 text-stone-600">
+      <p className="mt-1 max-w-2xl text-[13px] leading-5 text-stone-600">
         The admin panel is ready, but it needs MySQL before content can be
         saved. Start MySQL with Docker Compose, then run the migrations.
       </p>

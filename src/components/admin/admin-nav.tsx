@@ -27,11 +27,11 @@ const links = [
   { href: "/admin/enquiries", label: "Enquiries", icon: Inbox },
 ];
 
-export function AdminNav() {
+export function AdminNav({ onNavigate }: { onNavigate: () => void }) {
   const pathname = usePathname();
 
   return (
-    <nav className="flex gap-1 overflow-x-auto lg:flex-col lg:overflow-visible">
+    <nav aria-label="Admin navigation" className="flex flex-wrap gap-1 lg:flex-col">
       {links.map((link) => {
         const active = link.exact
           ? pathname === link.href
@@ -41,11 +41,13 @@ export function AdminNav() {
           <Link
             key={link.href}
             href={link.href}
+            onNavigate={onNavigate}
+            aria-current={active ? (pathname === link.href ? "page" : "location") : undefined}
             className={cn(
-              "flex shrink-0 items-center gap-2.5 rounded-2xl px-3.5 py-2.5 text-sm font-bold transition",
+              "flex shrink-0 items-center gap-2.5 rounded-lg px-2.5 py-2 text-[13px] font-semibold transition",
               active
-                ? "bg-blue-500 text-white shadow-lg shadow-blue-950/20"
-                : "text-sand-200/70 hover:bg-white/10 hover:text-sand-50",
+                ? "bg-white/15 text-white ring-1 ring-inset ring-white/25"
+                : "text-sand-200/85 hover:bg-white/10 hover:text-sand-50",
             )}
           >
             <link.icon className="h-4 w-4" />

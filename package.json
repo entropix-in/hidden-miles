@@ -17,12 +17,19 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
+    "@lexical/link": "^0.53.0",
+    "@lexical/list": "^0.53.0",
+    "@lexical/react": "^0.53.0",
+    "@lexical/rich-text": "^0.53.0",
+    "@lexical/selection": "^0.53.0",
     "drizzle-orm": "^0.45.4",
+    "lexical": "^0.53.0",
     "lucide-react": "^1.70.0",
     "mysql2": "^3.24.6",
     "next": "16.4.5",
     "react": "19.3.1",
-    "react-dom": "19.3.1"
+    "react-dom": "19.3.1",
+    "sharp": "^0.35.5"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.5",

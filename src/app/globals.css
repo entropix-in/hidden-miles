@@ -807,3 +807,339 @@
     animation: none !important;
   }
 }
+
+/* Admin authoring controls */
+.admin-studio {
+  font-size: 0.875rem;
+}
+
+.admin-studio .field-label {
+  margin-bottom: 0.375rem;
+  font-size: 0.8125rem;
+}
+
+.admin-studio .field {
+  border-radius: 0.625rem;
+  padding: 0.5625rem 0.75rem;
+  font-size: 1rem;
+  line-height: 1.375;
+}
+
+.admin-studio :is(.btn-primary, .btn-outline) {
+  border-radius: 0.625rem;
+  padding-inline: 0.875rem;
+  font-size: 0.8125rem;
+}
+
+@media (min-width: 640px) {
+  .admin-studio .field {
+    font-size: 0.875rem;
+  }
+}
+
+.admin-content-editor {
+  display: grid;
+  gap: 0.625rem;
+  padding: clamp(1rem, 3vw, 1.5rem);
+  border: 1px solid var(--color-stone-200);
+  border-radius: 1rem;
+  background: white;
+}
+
+.admin-content-editor h3 {
+  font-size: 1rem;
+}
+
+.admin-editor-help {
+  color: var(--color-stone-600);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+
+.admin-editor-help:empty,
+.admin-blocks:empty {
+  display: none;
+}
+
+.admin-blocks,
+.admin-gallery-editor {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.admin-block {
+  min-width: 0;
+  border: 1px solid var(--color-stone-200);
+  border-radius: 0.75rem;
+  background: white;
+}
+
+.admin-block-header,
+.admin-editor-toolbar,
+.admin-editor-add,
+.admin-block-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.admin-block-header {
+  justify-content: space-between;
+  border-radius: 0.75rem 0.75rem 0 0;
+  padding: 0.375rem 0.75rem;
+  color: var(--color-navy-950);
+  background: var(--color-sand-100);
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+
+.admin-editor-toolbar {
+  padding: 0.375rem 0.75rem;
+  border-bottom: 1px solid var(--color-stone-200);
+}
+
+.admin-gallery-editor button,
+.admin-block-actions button,
+.admin-editor-toolbar button,
+.admin-editor-add button {
+  display: inline-flex;
+  min-width: 2.125rem;
+  min-height: 2.125rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  border: 1px solid transparent;
+  border-radius: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  color: var(--color-navy-950);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.admin-editor-add button {
+  min-height: 2.5rem;
+  border-color: var(--color-stone-200);
+  padding-inline: 0.75rem;
+}
+
+.admin-content-editor button:hover:enabled {
+  background: var(--color-sand-100);
+  border-color: var(--color-stone-200);
+}
+
+.admin-content-editor button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.admin-studio :where(a, button, input, select, textarea, [contenteditable]):focus-visible {
+  outline: 2px solid var(--color-blue-600);
+  outline-offset: 2px;
+}
+
+.admin-editor-input,
+.page-rich-text {
+  color: var(--color-navy-950);
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+
+.admin-editor-input {
+  min-height: 6rem;
+  padding: 0.75rem;
+  border-radius: 0 0 0.75rem 0.75rem;
+  font-size: 1rem;
+}
+
+:is(.admin-editor-input, .page-rich-text) > * + * {
+  margin-top: 0.65em;
+}
+
+:is(.admin-editor-input, .page-rich-text) :is(h3, h4) {
+  font-weight: 700;
+  font-size: 1.2em;
+}
+
+:is(.admin-editor-input, .page-rich-text) blockquote {
+  border-inline-start: 3px solid var(--color-gold-400);
+  padding-inline-start: 0.875rem;
+  font-style: italic;
+}
+
+:is(.admin-editor-input, .page-rich-text) ul {
+  padding-inline-start: 1.5em;
+  list-style: disc;
+}
+
+:is(.admin-editor-input, .page-rich-text) ol {
+  padding-inline-start: 1.5em;
+  list-style: decimal;
+}
+
+:is(.admin-editor-input, .page-rich-text) a {
+  color: var(--color-blue-700);
+  text-decoration: underline;
+}
+
+.admin-check-checked,
+.admin-check-unchecked {
+  position: relative;
+  list-style: none;
+}
+
+.admin-check-checked::before,
+.admin-check-unchecked::before {
+  position: absolute;
+  inset-inline-start: -1.5em;
+  content: "☐";
+  cursor: pointer;
+}
+
+.admin-check-checked::before {
+  content: "☑";
+}
+
+.admin-photo,
+.admin-gallery-photo {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  min-width: 0;
+}
+
+.admin-photo {
+  flex-wrap: wrap;
+}
+
+.admin-photo-control {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+  color: var(--color-navy-950);
+}
+
+.admin-photo-control input {
+  min-width: 0;
+  max-width: 100%;
+  font-size: 0.8125rem;
+}
+
+.admin-photo-control input::file-selector-button {
+  margin-inline-end: 0.5rem;
+  border: 1px solid var(--color-stone-200);
+  border-radius: 0.5rem;
+  padding: 0.375rem 0.625rem;
+  background: var(--color-sand-100);
+  color: var(--color-navy-950);
+  cursor: pointer;
+}
+
+.admin-photo-preview {
+  border-radius: 0.5rem;
+  object-fit: cover;
+  aspect-ratio: 3 / 2;
+}
+
+.admin-gallery-editor {
+  padding: 0.75rem;
+}
+
+.admin-gallery-photo label {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+}
+
+.page-content-blocks {
+  display: grid;
+  gap: 1.25rem;
+  margin-block: 1.25rem;
+}
+
+.page-content-gallery {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+}
+
+.page-content-gallery img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  border-radius: 0.875rem;
+  object-fit: cover;
+}
+
+.page-rich-text .content-checklist {
+  padding-inline-start: 0;
+  list-style: none;
+}
+
+.content-checklist li > [aria-hidden] {
+  color: var(--color-navy-700);
+  margin-inline-end: 0.5em;
+}
+
+.admin-authoring-form > section {
+  border-radius: 1rem;
+  padding: clamp(1rem, 3vw, 1.5rem);
+}
+
+.admin-authoring-form section > h2 {
+  font-size: 1.25rem;
+}
+
+.admin-studio .field::placeholder {
+  color: var(--color-stone-500);
+  opacity: 0.85;
+  font-style: italic;
+}
+
+.admin-requests-table :is(td, th) {
+  padding-inline: 0.625rem;
+}
+
+.admin-requests-table td {
+  padding-block: 0.625rem;
+}
+
+@media (pointer: coarse) {
+  .admin-content-editor button {
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+  }
+}
+
+.admin-block-picker {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.admin-block-picker .field {
+  width: auto;
+  min-height: 2.5rem;
+}
+
+.admin-block-picker button {
+  white-space: nowrap;
+}
+
+.admin-table-scroll {
+  contain: inline-size paint;
+  max-inline-size: 100%;
+  min-inline-size: 0;
+  overflow: auto;
+}
+
+.admin-table-scroll:focus-visible {
+  outline-offset: -3px;
+}
+
+html:has(.admin-dashboard),
+body:has(.admin-dashboard) {
+  overflow-x: clip;
+}

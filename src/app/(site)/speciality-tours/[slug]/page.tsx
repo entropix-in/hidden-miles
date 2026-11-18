@@ -1,3 +1,4 @@
+import { PageContentBlocks } from "@/components/site/page-content-blocks";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -91,6 +92,11 @@ export default async function SpecialityTourPage({
           ))}
         </div>
       </PageHero>
+      {!!experience.contentBlocks?.length && (
+        <div className="container-page">
+          <PageContentBlocks blocks={experience.contentBlocks} />
+        </div>
+      )}
 
       <section className="container-page pb-16 md:pb-24">
         <SectionHeading

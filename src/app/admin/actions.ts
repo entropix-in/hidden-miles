@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { count, eq, and, ne } from "drizzle-orm";
+import { count, eq, and, ne, inArray } from "drizzle-orm";
 import {
   adminConfigured,
   createAdminSession,
@@ -15,11 +15,14 @@ import {
   bookings as bookingsTable,
   destinations as destinationsTable,
   enquiries as enquiriesTable,
+  photos,
   experiences as experiencesTable,
   testimonials as testimonialsTable,
   tourDepartures as tourDeparturesTable,
   tours as toursTable,
 } from "@/db/schema";
+import { parseContentBlocks, type ContentBlock } from "@/lib/content-blocks";
+import { mediaPathPattern } from "@/lib/media-path";
 import { slugify } from "@/lib/utils";
 import type { Destination } from "@/data/destinations";
 import type { Experience } from "@/data/experiences";
@@ -41,6 +44,22 @@ const enquiryStatuses: EnquiryStatus[] = ["new", "contacted", "closed"];
 
 function getString(formData: FormData, key: string) {
   return String(formData.get(key) ?? "").trim();
+}
+
+function coverPhoto(formData: FormData, existing?: string) {
+  const image = getString(formData, "image");
+  if (mediaPathPattern.test(image) || (image && image === existing)) return image;
+  throw new Error("Upload a cover photo.");
+}
+
+async function requireSavedPhotos(db: AppDb, cover: string, blocks: ContentBlock[] = []) {
+  const urls = [cover, ...blocks.flatMap((block) =>
+    block.type === "gallery" ? block.photos.map((photo) => photo.url) : [])];
+  const ids = [...new Set(urls.filter((url) => mediaPathPattern.test(url)).map((url) => url.split("/").at(-1)!))];
+  if (!ids.length) return;
+
+  const found = await db.select({ id: photos.id }).from(photos).where(inArray(photos.id, ids));
+  if (found.length !== ids.length) throw new Error("A photo is missing. Upload it again before saving.");
 }
 
 function getNumber(formData: FormData, key: string, fallback = 0) {
@@ -197,7 +216,6 @@ export async function saveTourAction(formData: FormData) {
   await requireAdmin();
 
   const id = getString(formData, "id");
-  const backPath = id ? `/admin/tours/${id}` : "/admin/tours/new";
 
   try {
     const db = requireDb();
@@ -235,6 +253,9 @@ export async function saveTourAction(formData: FormData) {
       throw new Error("Add at least one departure city.");
     }
 
+    const [existingPhoto] = id ? await db.select({ image: toursTable.image })
+      .from(toursTable).where(eq(toursTable.id, parseId(id))).limit(1) : [];
+    if (id && !existingPhoto) throw new Error("Package not found.");
     const data: Tour = {
       slug: getString(formData, "slug") || slugify(title),
       title,
@@ -245,7 +266,8 @@ export async function saveTourAction(formData: FormData) {
           ? "International"
           : "India",
       experiences: getList(formData, "experiences"),
-      image: getString(formData, "image"),
+      image: coverPhoto(formData, existingPhoto?.image),
+      contentBlocks: parseContentBlocks(getString(formData, "contentBlocks")),
       nights: getNumber(formData, "nights"),
       days: getNumber(formData, "days"),
       price: getNumber(formData, "price"),
@@ -264,17 +286,11 @@ export async function saveTourAction(formData: FormData) {
       featured: getBoolean(formData, "featured"),
     };
 
+    await requireSavedPhotos(db, data.image, data.contentBlocks);
     await ensureContentSeeded(db);
 
     if (id) {
       const numericId = parseId(id);
-      const existing = await db
-        .select({ id: toursTable.id })
-        .from(toursTable)
-        .where(eq(toursTable.id, numericId))
-        .limit(1);
-      if (!existing.length) throw new Error("Package not found.");
-
       await db
         .update(toursTable)
         .set(tourValues(data))
@@ -283,7 +299,7 @@ export async function saveTourAction(formData: FormData) {
       await db.insert(toursTable).values(tourValues(data));
     }
   } catch (error) {
-    fail(backPath, error);
+    return { error: messageFor(error) };
   }
 
   revalidateContent();
@@ -311,15 +327,15 @@ export async function saveDestinationAction(formData: FormData) {
   await requireAdmin();
 
   const id = getString(formData, "id");
-  const backPath = id
-    ? `/admin/destinations/${id}`
-    : "/admin/destinations/new";
 
   try {
     const db = requireDb();
     const name = getString(formData, "name");
     if (!name) throw new Error("Destination name is required.");
 
+    const [existingPhoto] = id ? await db.select({ image: destinationsTable.image })
+      .from(destinationsTable).where(eq(destinationsTable.id, parseId(id))).limit(1) : [];
+    if (id && !existingPhoto) throw new Error("Destination not found.");
     const data: Destination = {
       slug: getString(formData, "slug") || slugify(name),
       name,
@@ -329,22 +345,17 @@ export async function saveDestinationAction(formData: FormData) {
           : "India",
       tagline: getString(formData, "tagline"),
       description: getString(formData, "description"),
-      image: getString(formData, "image"),
+      image: coverPhoto(formData, existingPhoto?.image),
+      contentBlocks: parseContentBlocks(getString(formData, "contentBlocks")),
       bestTime: getString(formData, "bestTime"),
       highlights: getLines(formData, "highlights"),
     };
 
+    await requireSavedPhotos(db, data.image, data.contentBlocks);
     await ensureContentSeeded(db);
 
     if (id) {
       const numericId = parseId(id);
-      const existing = await db
-        .select({ id: destinationsTable.id })
-        .from(destinationsTable)
-        .where(eq(destinationsTable.id, numericId))
-        .limit(1);
-      if (!existing.length) throw new Error("Destination not found.");
-
       await db
         .update(destinationsTable)
         .set(destinationValues(data))
@@ -353,7 +364,7 @@ export async function saveDestinationAction(formData: FormData) {
       await db.insert(destinationsTable).values(destinationValues(data));
     }
   } catch (error) {
-    fail(backPath, error);
+    return { error: messageFor(error) };
   }
 
   revalidateContent();
@@ -403,7 +414,6 @@ export async function saveExperienceAction(formData: FormData) {
   await requireAdmin();
 
   const id = getString(formData, "id");
-  const backPath = id ? `/admin/experiences/${id}` : "/admin/experiences/new";
 
   try {
     const db = requireDb();
@@ -421,27 +431,25 @@ export async function saveExperienceAction(formData: FormData) {
     ];
     if (!validIcons.includes(icon)) throw new Error("Choose a valid icon.");
 
+    const [existingPhoto] = id ? await db.select({ image: experiencesTable.image })
+      .from(experiencesTable).where(eq(experiencesTable.id, parseId(id))).limit(1) : [];
+    if (id && !existingPhoto) throw new Error("Experience not found.");
     const data: Experience = {
       slug: getString(formData, "slug") || slugify(title),
       title,
       shortTitle: getString(formData, "shortTitle") || title,
       description: getString(formData, "description"),
-      image: getString(formData, "image"),
+      image: coverPhoto(formData, existingPhoto?.image),
+      contentBlocks: parseContentBlocks(getString(formData, "contentBlocks")),
       icon: icon as Experience["icon"],
       highlights: getLines(formData, "highlights"),
     };
 
+    await requireSavedPhotos(db, data.image, data.contentBlocks);
     await ensureContentSeeded(db);
 
     if (id) {
       const numericId = parseId(id);
-      const existing = await db
-        .select({ id: experiencesTable.id })
-        .from(experiencesTable)
-        .where(eq(experiencesTable.id, numericId))
-        .limit(1);
-      if (!existing.length) throw new Error("Experience not found.");
-
       await db
         .update(experiencesTable)
         .set(experienceValues(data))
@@ -450,7 +458,7 @@ export async function saveExperienceAction(formData: FormData) {
       await db.insert(experiencesTable).values(experienceValues(data));
     }
   } catch (error) {
-    fail(backPath, error);
+    return { error: messageFor(error) };
   }
 
   revalidateContent();

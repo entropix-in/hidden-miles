@@ -1,3 +1,4 @@
+import { PageContentBlocks } from "@/components/site/page-content-blocks";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -146,6 +147,7 @@ export default async function DestinationDetailPage({
           <div>
             <h2 className="type-h2 text-ink">About {destination.name}</h2>
             <p className="type-lead mt-4 text-navy-700">{destination.description}</p>
+            <PageContentBlocks blocks={destination.contentBlocks} />
             <Link href="/contact" className="btn btn-outline mt-7">
               Plan a private {destination.name} trip
               <span className="btn-dot">→</span>

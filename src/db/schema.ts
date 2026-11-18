@@ -1,6 +1,7 @@
 import {
   bigint,
   date,
+  customType,
   decimal,
   index,
   int,
@@ -13,6 +14,17 @@ import {
   uniqueIndex,
   varchar,
 } from "drizzle-orm/mysql-core";
+
+import type { ContentBlock } from "@/lib/content-blocks";
+
+const photoData = customType<{ data: Buffer; driverData: Buffer }>({
+  dataType: () => "mediumblob",
+});
+
+export const photos = mysqlTable("photos", {
+  id: varchar("id", { length: 64 }).primaryKey(),
+  data: photoData("data").notNull(),
+});
 
 export const tours = mysqlTable(
   "tours",
@@ -29,6 +41,7 @@ export const tours = mysqlTable(
       .default("India"),
     experiences: json("experiences").$type<string[]>().notNull(),
     image: varchar("image", { length: 1000 }).notNull(),
+    contentBlocks: json("content_blocks").$type<ContentBlock[]>(),
     nights: int("nights", { unsigned: true }).notNull().default(0),
     days: int("days", { unsigned: true }).notNull().default(1),
     price: int("price", { unsigned: true }).notNull().default(0),
@@ -86,6 +99,7 @@ export const destinations = mysqlTable(
     tagline: varchar("tagline", { length: 255 }).notNull().default(""),
     description: text("description").notNull(),
     image: varchar("image", { length: 1000 }).notNull(),
+    contentBlocks: json("content_blocks").$type<ContentBlock[]>(),
     bestTime: varchar("best_time", { length: 190 }).notNull().default(""),
     highlights: json("highlights").$type<string[]>().notNull(),
     createdAt: timestamp("created_at").notNull().defaultNow(),
@@ -108,6 +122,7 @@ export const experiences = mysqlTable(
     shortTitle: varchar("short_title", { length: 120 }).notNull(),
     description: text("description").notNull(),
     image: varchar("image", { length: 1000 }).notNull(),
+    contentBlocks: json("content_blocks").$type<ContentBlock[]>(),
     icon: varchar("icon", { length: 32 }).notNull().default("sparkles"),
     highlights: json("highlights").$type<string[]>().notNull(),
     createdAt: timestamp("created_at").notNull().defaultNow(),

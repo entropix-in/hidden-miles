@@ -1,3 +1,4 @@
+import { PageContentBlocks } from "@/components/site/page-content-blocks";
 import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
@@ -280,6 +281,7 @@ export default async function TourDetailPage({
             <section id="overview" className="scroll-mt-32 pt-14">
               <h2 className="type-h3 text-ink">Why you&apos;ll love it</h2>
               <p className="type-body mt-3 text-navy-700">{tour.summary}</p>
+              <PageContentBlocks blocks={tour.contentBlocks} />
 
               <div className="mt-7 grid gap-x-6 gap-y-4 sm:grid-cols-2">
                 {tour.highlights.map((highlight) => (

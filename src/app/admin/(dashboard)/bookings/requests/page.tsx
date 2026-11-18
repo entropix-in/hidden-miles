@@ -313,13 +313,13 @@ export default async function AdminBookingRequestsPage({
 
         <div className="mt-3 overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm shadow-navy-950/[0.03]">
           {filteredBookings.length ? (
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[1120px] text-left text-sm">
+            <div className="admin-table-scroll" tabIndex={0} role="region" aria-label="Booking requests table">
+              <table className="admin-requests-table w-full min-w-[920px] text-left text-[13px] leading-[1.45]">
                 <thead>
                   <tr className="border-b border-stone-100 bg-sand-50/60 text-[10px] font-extrabold uppercase tracking-[0.12em] text-stone-500">
                     <th className="px-5 py-3 font-extrabold">Traveller</th>
                     <th className="px-3 py-3 font-extrabold">Package & date</th>
-                    <th className="px-3 py-3 font-extrabold">Contact</th>
+                    <th className="min-w-32 px-3 py-3 font-extrabold">Contact</th>
                     <th className="px-3 py-3 text-center font-extrabold">
                       Guests
                     </th>
@@ -378,7 +378,7 @@ export default async function AdminBookingRequestsPage({
                         )}
                       </td>
                       <td className="px-3 py-4">
-                        <p className="max-w-[180px] truncate text-xs font-semibold text-stone-600">
+                        <p className="max-w-[180px] [overflow-wrap:anywhere] text-xs font-semibold text-stone-600">
                           {booking.email}
                         </p>
                         <p className="mt-0.5 text-xs text-stone-500">

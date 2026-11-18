@@ -1,3 +1,5 @@
+import type { ContentBlock } from "@/lib/content-blocks";
+
 import type { TourCity } from "@/lib/tour-cities";
 
 export type ItineraryBadgeKind =
@@ -20,6 +22,7 @@ export type ItineraryDay = {
 };
 
 export type Tour = {
+  contentBlocks?: ContentBlock[];
   slug: string;
   title: string;
   destinationSlug: string;
