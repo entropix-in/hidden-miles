@@ -529,6 +529,47 @@ export default async function AdminDashboardPage() {
             />
           </div>
 
+          <Panel className="overflow-hidden">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-stone-100 px-5 py-4 sm:px-6">
+              <div>
+                <h2 className="font-display text-xl font-semibold text-navy-950">
+                  Content library
+                </h2>
+                <p className="mt-0.5 text-xs font-semibold text-stone-500">
+                  Everything published across the website
+                </p>
+              </div>
+              <Link
+                href="/admin/tours"
+                className="inline-flex items-center gap-1 text-xs font-extrabold uppercase tracking-wider text-blue-700 hover:text-blue-800"
+              >
+                Manage packages
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+            </div>
+            <div className="grid grid-cols-2 gap-px bg-stone-100 sm:grid-cols-3 xl:grid-cols-6">
+              {catalog.map((item) => (
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  className="group flex items-center gap-3 bg-white px-4 py-4 transition hover:bg-sand-50"
+                >
+                  <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-sand-100 text-navy-700 transition group-hover:bg-blue-50 group-hover:text-blue-700">
+                    <item.icon className="h-4 w-4" />
+                  </span>
+                  <div className="min-w-0">
+                    <p className="font-display text-xl font-semibold leading-none text-navy-950">
+                      {item.value}
+                    </p>
+                    <p className="mt-1 truncate text-[10px] font-extrabold uppercase tracking-[0.1em] text-stone-500">
+                      {item.label}
+                    </p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </Panel>
+
           <div className="grid gap-5 xl:grid-cols-[minmax(0,1.65fr)_minmax(0,1fr)]">
             <div className="min-w-0 space-y-5">
               <Panel className="p-5 sm:p-6">
@@ -980,47 +1021,6 @@ export default async function AdminDashboardPage() {
               </Panel>
             </div>
           </div>
-
-          <Panel className="overflow-hidden">
-            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-stone-100 px-5 py-4 sm:px-6">
-              <div>
-                <h2 className="font-display text-xl font-semibold text-navy-950">
-                  Content library
-                </h2>
-                <p className="mt-0.5 text-xs font-semibold text-stone-500">
-                  Everything published across the website
-                </p>
-              </div>
-              <Link
-                href="/admin/tours"
-                className="inline-flex items-center gap-1 text-xs font-extrabold uppercase tracking-wider text-blue-700 hover:text-blue-800"
-              >
-                Manage packages
-                <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
-            </div>
-            <div className="grid grid-cols-2 gap-px bg-stone-100 sm:grid-cols-3 xl:grid-cols-6">
-              {catalog.map((item) => (
-                <Link
-                  key={item.label}
-                  href={item.href}
-                  className="group flex items-center gap-3 bg-white px-4 py-4 transition hover:bg-sand-50"
-                >
-                  <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-sand-100 text-navy-700 transition group-hover:bg-blue-50 group-hover:text-blue-700">
-                    <item.icon className="h-4 w-4" />
-                  </span>
-                  <div className="min-w-0">
-                    <p className="font-display text-xl font-semibold leading-none text-navy-950">
-                      {item.value}
-                    </p>
-                    <p className="mt-1 truncate text-[10px] font-extrabold uppercase tracking-[0.1em] text-stone-500">
-                      {item.label}
-                    </p>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </Panel>
         </>
       )}
     </div>
