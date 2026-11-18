@@ -17,6 +17,28 @@ type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 
 export const dynamic = "force-dynamic";
 
+// Pick a grid that always ends on a full row: three columns when the count
+// divides by three; otherwise four columns with a double-width lead card when
+// that fills the rows exactly (e.g. 7 = 2 + 1 + 1, then 4); else widen the
+// first (and if needed last) card in three columns.
+function gridLayout(total: number) {
+  if (total % 3 === 0 || total < 3) {
+    return { grid: "lg:grid-cols-3", span: () => "" };
+  }
+  if ((total + 1) % 4 === 0) {
+    return {
+      grid: "lg:grid-cols-4",
+      span: (index: number) => (index === 0 ? " lg:col-span-2" : ""),
+    };
+  }
+  const remainder = total % 3;
+  return {
+    grid: "lg:grid-cols-3",
+    span: (index: number) =>
+      index === 0 || (remainder === 1 && index === total - 1) ? " lg:col-span-2" : "",
+  };
+}
+
 export default async function DestinationsPage({
   searchParams,
 }: {
@@ -43,6 +65,9 @@ export default async function DestinationsPage({
   const international = matches.filter(
     (destination) => destination.region === "International",
   );
+
+  const indiaGrid = gridLayout(india.length);
+  const internationalGrid = gridLayout(international.length);
 
   const countTours = (slug: string) =>
     tours.filter((tour) => tour.destinationSlug === slug).length;
@@ -83,10 +108,9 @@ export default async function DestinationsPage({
         items={[{ label: "Home", href: "/" }, { label: "Destinations" }]}
         title={`${destinationCount} places`}
         accent="we know by heart."
-        description="From houseboats in Srinagar to overwater villas in the Maldives — pick a place, and we'll handle everything else."
+
         image={heroImage ?? ""}
         imageAlt="A Himalayan landscape"
-        coords="LADAKH · 34.15° N  77.58° E"
       >
         <form
           action="/destinations"
@@ -98,7 +122,7 @@ export default async function DestinationsPage({
             defaultValue={query}
             placeholder="Search a destination…"
             aria-label="Search a destination"
-            className="min-w-0 flex-1 bg-transparent text-[15px] font-medium text-ink outline-none placeholder:text-navy-400"
+            className="min-w-0 flex-1 bg-transparent text-[15px] font-medium text-ink outline-none placeholder:text-navy-500"
           />
           <button type="submit" className="text-sm font-bold text-blue-700">
             Search
@@ -110,21 +134,15 @@ export default async function DestinationsPage({
         <SectionHeading
           number="01"
           label="India"
-          title="Across"
-          accent="India."
-          right={
-            <span className="text-sm font-bold text-blue-700">
-              Showing {india.length} of {destinations.filter((item) => item.region === "India").length} · View all →
-            </span>
-          }
+          title="India"
         />
-        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
-          {india.map((destination) => (
+        <div className={`mt-10 grid gap-6 sm:grid-cols-2 ${indiaGrid.grid}`}>
+          {india.map((destination, index) => (
             <DestinationCard
               key={destination.slug}
               destination={destination}
               tourCount={countTours(destination.slug)}
-              className="min-h-[440px]"
+              className={`min-h-[380px]${indiaGrid.span(index)}`}
             />
           ))}
         </div>
@@ -140,22 +158,15 @@ export default async function DestinationsPage({
           <SectionHeading
             number="02"
             label="International"
-            title="Around"
-            accent="the world."
-            right={
-              <span className="text-sm font-bold text-blue-700">
-                Showing {international.length} of{" "}
-                {destinations.filter((item) => item.region === "International").length} · View all →
-              </span>
-            }
+            title="International"
           />
-          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
-            {international.map((destination) => (
+          <div className={`mt-10 grid gap-6 sm:grid-cols-2 ${internationalGrid.grid}`}>
+            {international.map((destination, index) => (
               <DestinationCard
                 key={destination.slug}
                 destination={destination}
                 tourCount={countTours(destination.slug)}
-                className="min-h-[440px]"
+                className={`min-h-[380px]${internationalGrid.span(index)}`}
               />
             ))}
           </div>
@@ -174,9 +185,10 @@ export default async function DestinationsPage({
       </section>
 
       <CtaBand
+        className="pt-14 md:pt-20"
         title="Two places,"
         accent="one seamless trip."
-        description="Combine destinations into a single itinerary — we'll plan the flights, transfers and pacing so it feels effortless."
+        description="Combine destinations into one itinerary."
       />
     </>
   );

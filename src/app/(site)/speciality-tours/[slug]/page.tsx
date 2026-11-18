@@ -5,7 +5,7 @@ import { Check, Compass } from "lucide-react";
 import { CtaBand } from "@/components/site/cta-band";
 import { PageHero } from "@/components/site/page-hero";
 import { SectionHeading } from "@/components/site/section-heading";
-import { TourCard } from "@/components/site/tour-card";
+import { TourCard, TourListCard } from "@/components/site/tour-card";
 import { loadExperiences, loadTours } from "@/lib/content";
 import { imageUrl } from "@/lib/utils";
 
@@ -54,6 +54,13 @@ export default async function SpecialityTourPage({
         b.rating - a.rating,
     );
 
+  // One rule for every speciality page: full rows of three, with any remainder
+  // leading as featured wide cards (top-rated first), so no row is ragged.
+  const gridCount = matchingTours.length - (matchingTours.length % 3);
+  const extraCount = matchingTours.length - gridCount;
+  const extraTours = matchingTours.slice(0, extraCount);
+  const gridTours = matchingTours.slice(extraCount);
+
   const others = experiences
     .filter((item) => item.slug !== experience.slug)
     .slice(0, 5);
@@ -70,9 +77,9 @@ export default async function SpecialityTourPage({
         description={experience.description}
         image={experience.image}
         imageAlt={experience.title}
-        coords="A HIDDEN MILES COLLECTION"
+        showImageOnMobile
       >
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 sm:grid sm:max-w-md sm:grid-cols-2">
           {experience.highlights.map((highlight) => (
             <span
               key={highlight}
@@ -88,24 +95,21 @@ export default async function SpecialityTourPage({
       <section className="container-page pb-16 md:pb-24">
         <SectionHeading
           label="Handpicked departures"
-          title={`${experience.shortTitle} journeys`}
-          accent="worth taking."
-          description={
-            matchingTours.length
-              ? `${matchingTours.length} ${
-                  matchingTours.length === 1 ? "journey" : "journeys"
-                } designed around this style of travel.`
-              : "We are curating new departures for this style — tell us what you have in mind."
-          }
-          href="/tours"
-          linkLabel="All group tours"
+          title={`${experience.shortTitle} tours`}
         />
 
         {matchingTours.length ? (
-          <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-8">
-            {matchingTours.map((tour, index) => (
-              <TourCard key={tour.slug} tour={tour} priority={index < 3} />
+          <div className="mt-10 grid gap-6">
+            {extraTours.map((tour, index) => (
+              <TourListCard key={tour.slug} tour={tour} priority={index === 0} />
             ))}
+            {gridTours.length ? (
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {gridTours.map((tour, index) => (
+                  <TourCard key={tour.slug} tour={tour} priority={!extraTours.length && index < 3} />
+                ))}
+              </div>
+            ) : null}
           </div>
         ) : (
           <div className="mt-10 rounded-[28px] border border-dashed border-sand-300 px-6 py-16 text-center">
@@ -124,12 +128,9 @@ export default async function SpecialityTourPage({
           </div>
         )}
 
-        <div className="mt-14 rounded-[28px] border border-sand-300 bg-sand-100 p-7 md:p-10">
+        <div className="mt-12 rounded-[24px] border border-sand-300 bg-sand-100 p-6 md:p-8">
           <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <p className="type-label text-gold-600">Looking for a different style?</p>
-              <h2 className="type-h3 mt-2 text-ink">Explore more speciality tours.</h2>
-            </div>
+            <h2 className="type-h4 text-ink">Explore other styles</h2>
             <Link href="/speciality-tours" className="btn btn-outline shrink-0">
               All speciality tours
               <span className="btn-dot">→</span>
@@ -150,10 +151,10 @@ export default async function SpecialityTourPage({
       </section>
 
       <CtaBand
-        title={`Dreaming of ${experience.shortTitle.toLowerCase()}?`}
+        title="Want it tailored?"
         accent="Let's design it."
-        description="Tell us who is travelling and what matters most. A specialist will send a draft itinerary within 24 hours."
-        image={experience.image}
+        description="A specialist will send a draft itinerary within 24 hours."
+        image={null}
         imageAlt={experience.title}
       />
     </>

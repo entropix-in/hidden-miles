@@ -11,7 +11,7 @@ import { CtaBand } from "@/components/site/cta-band";
 import { Contours } from "@/components/site/contours";
 import { DestinationCard } from "@/components/site/destination-card";
 import { FeatureTile } from "@/components/site/feature-tile";
-import { Kicker, SectionHeading } from "@/components/site/section-heading";
+import { SectionHeading } from "@/components/site/section-heading";
 import { Rating } from "@/components/site/rating";
 import { SearchWidget } from "@/components/site/search-widget";
 import { Stamp } from "@/components/site/stamp";
@@ -29,7 +29,7 @@ import { imageUrl } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
-const heroCoordinates = "34.05° N · 74.38° E";
+const heroCoordinates = "34.30° N · 75.29° E";
 
 export default async function HomePage() {
   const [tours, destinations, experiences, testimonials] = await Promise.all([
@@ -66,12 +66,10 @@ export default async function HomePage() {
   return (
     <>
       {/* ---------------------------------------------------------------- hero */}
-      <section className="container-page pt-12 md:pt-16">
+      <section className="container-page pt-10 md:pt-12">
         <div className="grid items-center gap-12 xl:grid-cols-[1fr_600px] xl:gap-16">
           <div className="animate-rise">
-            <Kicker label="Group tours · Family holidays · Private escapes" />
-
-            <h1 className="type-display mt-8 text-ink">
+            <h1 className="type-display text-ink">
               Journeys that
               <br />
               <span className="accent-line">stay with you</span>
@@ -79,13 +77,12 @@ export default async function HomePage() {
               long after.
             </h1>
 
-            <p className="type-lead mt-8 max-w-[500px] text-navy-700">
-              Thoughtfully planned trips across India and the world — with a tour
-              leader from day one, honest all-inclusive prices and a real person
-              on call, always.
+            <p className="type-lead mt-6 max-w-[460px] text-navy-700">
+              Thoughtfully planned trips across India and the world, with a
+              tour leader from day one.
             </p>
 
-            <div className="mt-8 flex flex-wrap items-center gap-3">
+            <div className="mt-8 grid gap-3 sm:flex sm:flex-wrap sm:items-center">
               <Link href="/tours" className="btn btn-ink btn-lg">
                 Explore tours
                 <span className="btn-dot">→</span>
@@ -98,8 +95,8 @@ export default async function HomePage() {
             <div className="mt-8 flex flex-wrap items-center gap-4">
               <div className="flex -space-x-3">
                 {[
-                  ["A", "bg-blue-500"],
-                  ["R", "bg-gold-600"],
+                  ["A", "bg-blue-600"],
+                  ["R", "bg-gold-700"],
                   ["M", "bg-navy-500"],
                   ["S", "bg-danger"],
                 ].map(([initial, color]) => (
@@ -168,9 +165,9 @@ export default async function HomePage() {
               </span>
               <span>
                 <span className="block text-[13px] font-bold text-ink">
-                  Gulmarg, Kashmir
+                  Sonamarg, Kashmir
                 </span>
-                <span className="block text-xs font-medium text-navy-400">
+                <span className="block text-xs font-medium text-navy-500">
                   {heroCoordinates}
                 </span>
               </span>
@@ -182,20 +179,25 @@ export default async function HomePage() {
           </div>
         </div>
 
-        <div className="mt-14">
+        <div className="mt-12">
           <SearchWidget destinations={destinations} experiences={experiences} />
         </div>
 
-        <div className="mt-14 flex flex-wrap items-center gap-2.5">
-          <span className="text-sm font-bold text-navy-500">Popular:</span>
+        <div className="mt-6 flex flex-wrap items-center gap-2">
+          <span className="w-full text-sm font-bold text-navy-500 sm:w-auto">Popular:</span>
           {[
             { label: "Kashmir in spring", href: "/tours?destination=kashmir" },
             { label: "Women's Special", href: "/tours?experience=women" },
             { label: "Honeymoons", href: "/tours?experience=honeymoon" },
             { label: "Europe 2027", href: "/destinations/europe" },
             { label: "Under ₹50k", href: "/tours?price=under50" },
-          ].map((link) => (
-            <Link key={link.label} href={link.href} className="chip">
+          ].map((link, index) => (
+            // Four chips fit two even rows on phones; the fifth shows from tablet up.
+            <Link
+              key={link.label}
+              href={link.href}
+              className={`chip ${index === 4 ? "hidden sm:inline-flex" : ""}`}
+            >
               {link.label}
             </Link>
           ))}
@@ -203,8 +205,8 @@ export default async function HomePage() {
       </section>
 
       {/* --------------------------------------------------------------- stats */}
-      <section className="container-page pt-20 md:pt-24">
-        <div className="grid grid-cols-2 gap-y-8 md:grid-cols-4">
+      <section className="container-page pt-16 md:pt-20">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-8 md:grid-cols-4 md:gap-x-0">
           {stats.map((stat, index) => (
             <div
               key={stat.label}
@@ -232,30 +234,13 @@ export default async function HomePage() {
           title="Where will you"
           accent="wander next?"
           right={
-            <div className="flex flex-wrap gap-2">
-              {[
-                { label: "All", count: destinations.length },
-                {
-                  label: "India",
-                  count: destinations.filter((item) => item.region === "India")
-                    .length,
-                },
-                {
-                  label: "International",
-                  count: destinations.filter(
-                    (item) => item.region === "International",
-                  ).length,
-                },
-              ].map((filter, index) => (
-                <span
-                  key={filter.label}
-                  className={`chip ${index === 0 ? "chip-active" : ""}`}
-                >
-                  {filter.label}
-                  <span className="chip-count">{filter.count}</span>
-                </span>
-              ))}
-            </div>
+            <Link
+              href="/destinations"
+              className="btn btn-outline"
+            >
+              All {destinations.length} destinations
+              <span className="btn-dot">→</span>
+            </Link>
           }
         />
 
@@ -280,12 +265,6 @@ export default async function HomePage() {
           </div>
         </div>
 
-        <div className="mt-10 flex justify-center">
-          <Link href="/destinations" className="btn btn-outline">
-            See all {destinations.length} destinations
-            <span className="btn-dot">→</span>
-          </Link>
-        </div>
       </section>
 
       {/* ------------------------------------------------------------ tours */}
@@ -294,8 +273,7 @@ export default async function HomePage() {
           <SectionHeading
             number="02"
             label="Handpicked departures"
-            title="Tours our travellers"
-            accent="love most."
+            title="Most-loved tours"
             right={
               <Link href="/tours" className="btn btn-outline">
                 View all {tours.length} tours
@@ -304,25 +282,7 @@ export default async function HomePage() {
             }
           />
 
-          <div className="mt-8 flex flex-wrap gap-2">
-            {[
-              "Bestsellers",
-              "Departing soon",
-              "Under ₹60k",
-              "Women's Special",
-              "International",
-            ].map((tab, index) => (
-              <Link
-                key={tab}
-                href="/tours"
-                className={`chip ${index === 0 ? "chip-active" : ""}`}
-              >
-                {tab}
-              </Link>
-            ))}
-          </div>
-
-          <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-8">
+          <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {featuredSelection.map((tour, index) => (
               <TourCard key={tour.slug} tour={tour} priority={index === 0} />
             ))}
@@ -408,7 +368,7 @@ export default async function HomePage() {
                 href={`/speciality-tours/${experience.slug}`}
                 className="group"
               >
-                <div className="relative aspect-[282/360] overflow-hidden rounded-[28px] bg-ink">
+                <div className="relative aspect-[4/3] overflow-hidden rounded-[24px] bg-ink sm:aspect-[282/360]">
                   <Image
                     src={imageUrl(experience.image, 900)}
                     alt={experience.title}
@@ -420,13 +380,7 @@ export default async function HomePage() {
                 </div>
                 <div className="mt-4">
                   <h3 className="type-h4 text-ink transition group-hover:text-navy-700">
-                    {experience.shortTitle === "Adventure"
-                      ? "Himalayan adventures"
-                      : experience.shortTitle === "Honeymoon"
-                        ? "Honeymoons"
-                        : experience.shortTitle === "Spiritual"
-                          ? "Spiritual journeys"
-                          : experience.title}
+                    {`${experience.shortTitle} tours`}
                   </h3>
                   <p className="type-small mt-1 text-navy-500">
                     {count} {count === 1 ? "trip" : "trips"}
@@ -440,10 +394,10 @@ export default async function HomePage() {
 
       <CtaBand
         image={
-          bySlug("kashmir")?.image ??
-          "https://images.unsplash.com/photo-1593181629936-11c609b8db9b"
+          bySlug("europe")?.image ??
+          "https://images.unsplash.com/photo-1499856871958-5b9627545d1a"
         }
-        imageAlt="A shikara on Dal Lake, Kashmir"
+        imageAlt="Paris at dusk"
       />
     </>
   );

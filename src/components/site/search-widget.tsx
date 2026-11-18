@@ -66,7 +66,7 @@ export function SearchWidget({
             <MapPin className="h-[18px] w-[18px]" />
           </span>
           <span className="min-w-0 flex-1">
-            <span className="type-label block text-[11px] text-navy-500">
+            <span className="type-label block text-navy-500">
               Where to
             </span>
             <span className="relative mt-1 block">
@@ -94,7 +94,7 @@ export function SearchWidget({
             <CalendarDays className="h-[18px] w-[18px]" />
           </span>
           <span className="min-w-0 flex-1">
-            <span className="type-label block text-[11px] text-navy-500">When</span>
+            <span className="type-label block text-navy-500">When</span>
             <span className="relative mt-1 block">
               <Select
                 value={month}
@@ -119,7 +119,7 @@ export function SearchWidget({
             <Compass className="h-[18px] w-[18px]" />
           </span>
           <span className="min-w-0 flex-1">
-            <span className="type-label block text-[11px] text-navy-500">
+            <span className="type-label block text-navy-500">
               Trip style
             </span>
             <span className="relative mt-1 block">
@@ -147,7 +147,7 @@ export function SearchWidget({
             <Users className="h-[18px] w-[18px]" />
           </span>
           <span className="min-w-0 flex-1">
-            <span className="type-label block text-[11px] text-navy-500">
+            <span className="type-label block text-navy-500">
               Travellers
             </span>
             <span className="relative mt-1 block">

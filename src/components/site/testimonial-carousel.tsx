@@ -6,7 +6,7 @@ import { Rating } from "@/components/site/rating";
 import type { Testimonial } from "@/data/site";
 import { cn } from "@/lib/utils";
 
-const avatarColours = ["bg-blue-500", "bg-gold-600", "bg-navy-500", "bg-danger"];
+const avatarColours = ["bg-blue-600", "bg-gold-700", "bg-navy-500", "bg-danger"];
 
 function initials(name: string) {
   return name
@@ -35,14 +35,14 @@ export function TestimonialCarousel({
 
   return (
     <figure
-      className="flex flex-col gap-6 self-center rounded-[28px] bg-paper p-8 text-ink lg:p-11"
+      className="flex flex-col gap-6 self-center rounded-[28px] bg-paper p-8 text-ink lg:p-10"
       aria-roledescription="carousel"
       aria-label="Guest reviews"
     >
       <span className="type-display h-10 leading-none text-gold-400">“</span>
 
       <div aria-live="polite" aria-atomic="true">
-        <blockquote className="font-display text-[24px] leading-9 text-ink">
+        <blockquote className="font-display text-[20px] leading-[1.5] text-ink">
           {active.quote}
         </blockquote>
 

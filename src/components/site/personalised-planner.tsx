@@ -139,7 +139,7 @@ export function PersonalisedPlanner() {
               className="field h-[60px] py-[15px] leading-[27px]"
             />
             <p className="field-hint">
-              Not sure yet? Leave it blank — we&apos;ll suggest a few.
+              Not sure yet? Leave it blank.
             </p>
           </div>
 
@@ -161,7 +161,8 @@ export function PersonalisedPlanner() {
               >
                 {monthOptions.map((month) => (
                   <option key={month} value={month}>
-                    {month}
+                    {/* Short month keeps "Dec 2026" from truncating in the half-width field. */}
+                    {month.replace(/^(\w{3})\w*/, "$1")}
                   </option>
                 ))}
               </Select>

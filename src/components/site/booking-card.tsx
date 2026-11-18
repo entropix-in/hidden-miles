@@ -23,7 +23,6 @@ export function BookingCard({
   basePrice,
   oldPrice,
   departures,
-  tourTitle,
   cities,
 }: {
   tourSlug: string;
@@ -73,7 +72,6 @@ export function BookingCard({
   const adultPrice = (selected?.price ?? basePrice) + cityOption.priceDelta;
   const childPrice = Math.round(adultPrice * 0.75);
   const total = adultPrice * adults + childPrice * children;
-  const due = Math.round(total * 0.25);
 
   const landOnly = /tour only|no flight|land-only/i.test(cityOption.note);
   const cityHint = landOnly
@@ -93,7 +91,7 @@ export function BookingCard({
     <div className="rounded-[28px] border border-sand-300 bg-paper p-7 shadow-[0_24px_56px_-36px_rgba(11,39,53,0.28)] sm:p-8">
       <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
         {oldPrice ? (
-          <span className="text-sm font-medium text-navy-400 line-through">
+          <span className="text-sm font-medium text-navy-500 line-through">
             {formatINR(oldPrice)}
           </span>
         ) : null}
@@ -109,15 +107,15 @@ export function BookingCard({
         </span>
         <span className="type-small text-navy-500">per person</span>
       </p>
-      <p className="mt-2 text-[13px] font-medium text-navy-400">
-        Twin sharing · taxes included
+      <p className="mt-2 text-[13px] font-medium text-navy-500">
+        Twin sharing · plus 5% GST
       </p>
 
       <div className="route-line my-6" />
 
       <div className="flex items-baseline justify-between gap-3">
         <p className="type-label text-navy-500">Departure date</p>
-        <span className="text-[12px] font-semibold text-navy-400">
+        <span className="text-[12px] font-semibold text-navy-500">
           {allDates.length} {allDates.length === 1 ? "date" : "dates"}
         </span>
       </div>
@@ -145,7 +143,7 @@ export function BookingCard({
                 active
                   ? "border-ink bg-ink text-paper shadow-[0_12px_28px_-18px_rgba(11,39,53,0.7)]"
                   : sold
-                    ? "cursor-not-allowed border-sand-300 bg-sand-100 text-navy-400"
+                    ? "cursor-not-allowed border-sand-300 bg-sand-100 text-navy-500"
                     : "border-sand-300 bg-paper text-ink hover:border-navy-300 hover:bg-sand-100",
               )}
             >
@@ -172,11 +170,11 @@ export function BookingCard({
                 </span>
                 <span
                   className={cn(
-                    "mt-1 inline-flex rounded-full px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-[0.08em]",
+                    "mt-1 inline-flex rounded-full px-2 py-0.5 text-[11px] font-bold",
                     active
-                      ? "bg-white/10 text-gold-200"
+                      ? "bg-gold-400 text-ink"
                       : sold
-                        ? "bg-sand-200 text-navy-400"
+                        ? "bg-sand-200 text-navy-500"
                         : low
                           ? "bg-gold-100 text-gold-700"
                           : "bg-success-soft text-success",
@@ -193,14 +191,14 @@ export function BookingCard({
               <span
                 className={cn(
                   "shrink-0 text-right text-sm font-bold",
-                  active ? "text-paper" : sold ? "text-navy-400" : "text-ink",
+                  active ? "text-paper" : sold ? "text-navy-500" : "text-ink",
                 )}
               >
                 {formatINR(date.price)}
                 <span
                   className={cn(
                     "mt-0.5 block text-[10px] font-medium normal-case tracking-normal",
-                    active ? "text-navy-200" : "text-navy-400",
+                    active ? "text-navy-200" : "text-navy-500",
                   )}
                 >
                   per person
@@ -328,7 +326,7 @@ export function BookingCard({
 
         <div className="flex items-baseline justify-between gap-3">
           <span className="text-sm font-bold text-ink">
-            Total for {adults + children}{" "}
+            Tour price, {adults + children}{" "}
             {adults + children === 1 ? "traveller" : "travellers"}
           </span>
           <span className="type-title tabular-nums text-ink">
@@ -336,7 +334,7 @@ export function BookingCard({
           </span>
         </div>
         <p className="mt-1.5 text-xs font-medium text-navy-500">
-          Pay {formatINR(due)} now to reserve · balance due 30 days before travel
+          Plus 5% GST and any add-ons you pick at checkout.
         </p>
       </div>
 
@@ -376,10 +374,10 @@ export function BookingCard({
         </span>
         <span className="min-w-0 flex-1">
           <span className="block text-[13px] font-bold text-ink">
-            Talk to Nisha, {tourTitle.split(" ")[0]} expert
+            Talk to Nisha, our expert
           </span>
           <span className="block text-xs font-medium text-navy-500">
-            {site.phone} · usually replies in 5 min
+            {site.phone}
           </span>
         </span>
         <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-ink text-gold-400">

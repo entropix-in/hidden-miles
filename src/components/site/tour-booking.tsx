@@ -194,7 +194,7 @@ export function TourBooking({
                       </span>
                       <span
                         className={cn(
-                          "mt-1 inline-flex rounded-full px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-[0.08em]",
+                          "mt-1 inline-flex rounded-full px-2 py-0.5 text-[11px] font-bold",
                           soldOut
                             ? "bg-danger-soft text-danger"
                             : low
@@ -343,11 +343,11 @@ export function TourBooking({
 
           <div className="mt-5 flex items-end justify-between gap-3 border-t border-dashed border-sand-300 pt-4">
             <div>
-              <p className="text-[13px] font-medium text-navy-400">Total</p>
+              <p className="text-[13px] font-medium text-navy-500">Total</p>
               <p className="type-title text-ink">
                 {selected ? formatINR(total) : `From ${formatINR(basePrice)}`}
               </p>
-              <p className="text-xs font-medium text-navy-400">
+              <p className="text-xs font-medium text-navy-500">
                 {selected
                   ? `${formatINR(selected.price)} × ${effectiveTravellers}`
                   : "per person · final quote on request"}
@@ -372,7 +372,7 @@ export function TourBooking({
             </p>
           ) : null}
 
-          <p className="mt-3 text-xs leading-5 text-navy-400">
+          <p className="mt-3 text-xs leading-5 text-navy-500">
             No payment now. Our team confirms availability within one working day.
           </p>
         </form>

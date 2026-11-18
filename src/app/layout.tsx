@@ -44,7 +44,7 @@ export const metadata: Metadata = {
     locale: "en_IN",
     type: "website",
     images: [
-      "https://images.unsplash.com/photo-1593181629936-11c609b8db9b?auto=format&fit=crop&w=1200&q=78",
+      "https://images.unsplash.com/photo-1598091383021-15ddea10925d?auto=format&fit=crop&w=1200&q=78",
     ],
   },
   twitter: {
@@ -52,7 +52,7 @@ export const metadata: Metadata = {
     title: `${site.name} — ${site.tagline}`,
     description: site.description,
     images: [
-      "https://images.unsplash.com/photo-1593181629936-11c609b8db9b?auto=format&fit=crop&w=1200&q=78",
+      "https://images.unsplash.com/photo-1598091383021-15ddea10925d?auto=format&fit=crop&w=1200&q=78",
     ],
   },
 };

@@ -41,7 +41,6 @@ export default async function CorporatePage() {
         description="Offsites, incentives and events people actually remember — planned by one team, end to end."
         image={heroImage ?? ""}
         imageAlt="A corporate offsite"
-        coords="SPITI · 32.24° N  78.03° E"
       >
         <div className="flex flex-wrap gap-3">
           <Link href="#proposal" className="btn btn-ink btn-lg">
@@ -49,28 +48,10 @@ export default async function CorporatePage() {
             <span className="btn-dot">→</span>
           </Link>
           <a href="/contact" className="btn btn-outline btn-lg">
-            Download deck
+            Talk to our team
           </a>
         </div>
       </PageHero>
-
-      <section className="container-page pb-16">
-        <p className="type-label text-center text-navy-500">
-          Trusted by 300+ teams across India
-        </p>
-        <div className="mt-6 flex flex-wrap items-center justify-between gap-x-8 gap-y-4 border-y border-sand-300 py-6">
-          {["NORTHWIND", "Acme Labs", "BLUEPEAK", "Finch & Co", "ORBITAL", "Kestrel"].map(
-            (name) => (
-              <span
-                key={name}
-                className="text-lg font-extrabold tracking-[0.04em] text-navy-300"
-              >
-                {name}
-              </span>
-            ),
-          )}
-        </div>
-      </section>
 
       <section className="bg-sand-100">
         <div className="container-page section-major">
@@ -121,7 +102,7 @@ export default async function CorporatePage() {
       >
         <Contours cx={0.2} cy={0.6} count={8} color="rgba(255,255,255,0.05)" />
         <div className="container-page relative section-major">
-          <div className="grid gap-12 xl:grid-cols-[1fr_520px] xl:gap-24">
+          <div className="grid gap-12 xl:grid-cols-[1fr_520px] xl:items-start xl:gap-24">
             <div>
               <SectionHeading
                 number="02"

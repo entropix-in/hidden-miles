@@ -2,7 +2,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { Heart } from "lucide-react";
 import { Rating } from "@/components/site/rating";
-import { coordsFor } from "@/data/coordinates";
 import type { Tour } from "@/data/tours";
 import { cn, formatINR, imageUrl } from "@/lib/utils";
 
@@ -75,10 +74,6 @@ function TourCardContent({
           <Heart className="h-4 w-4" />
           <span className="sr-only">Save {tour.title}</span>
         </span>
-
-        <span className="coord coord-dark absolute bottom-4 left-4">
-          {coordsFor(tour.destinationSlug)}
-        </span>
       </Link>
 
       <div className="flex flex-1 flex-col gap-4 px-4 pb-4 pt-5">
@@ -116,12 +111,12 @@ function TourCardContent({
 
         <div className="flex items-end justify-between gap-3">
           <div>
-            <p className="text-[13px] font-medium text-navy-400">
+            <p className="text-[13px] font-medium text-navy-500">
               {tour.oldPrice ? `From · was ${formatINR(tour.oldPrice)}` : "From"}
             </p>
             <p className="mt-0.5 flex items-baseline gap-1.5">
               <span className="type-price text-ink">{formatINR(tour.price)}</span>
-              <span className="text-[13px] font-medium text-navy-400">
+              <span className="text-[13px] font-medium text-navy-500">
                 / person
               </span>
             </p>
@@ -171,12 +166,14 @@ export function TourListCard({
             {tour.badge}
           </span>
         ) : null}
-        <span className="coord coord-dark absolute bottom-4 left-4">
-          {coordsFor(tour.destinationSlug)}
+        {/* Same save control as the grid card, so both card types match. */}
+        <span className="absolute right-4 top-4 grid h-10 w-10 place-items-center rounded-full bg-white/90 text-ink backdrop-blur transition hover:bg-white">
+          <Heart className="h-4 w-4" />
+          <span className="sr-only">Save {tour.title}</span>
         </span>
       </Link>
 
-      <div className="flex flex-1 flex-col gap-3 p-5">
+      <div className="flex flex-1 flex-col gap-3 px-4 pb-4 pt-5 sm:p-5">
         <div className="flex flex-wrap items-center gap-3 text-[13px] font-bold text-navy-500">
           <span>
             {tour.days}D / {tour.nights}N
@@ -200,12 +197,12 @@ export function TourListCard({
         </p>
         <div className="mt-auto flex flex-wrap items-end justify-between gap-3 border-t border-dashed border-sand-300 pt-3">
           <div>
-            <p className="text-[13px] font-medium text-navy-400">
+            <p className="text-[13px] font-medium text-navy-500">
               {tour.oldPrice ? `From · was ${formatINR(tour.oldPrice)}` : "From"}
             </p>
             <p className="mt-0.5 flex items-baseline gap-1.5">
               <span className="type-price text-ink">{formatINR(tour.price)}</span>
-              <span className="text-[13px] font-medium text-navy-400">/ person</span>
+              <span className="text-[13px] font-medium text-navy-500">/ person</span>
             </p>
           </div>
           <Link

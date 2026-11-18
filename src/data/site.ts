@@ -13,7 +13,7 @@ export const site = {
   email: "hello@hiddenmiles.in",
   emailHref: "mailto:hello@hiddenmiles.in",
   address: "302, Meridian House, Andheri East, Mumbai 400069",
-  hours: "Mon – Sat · 9:30 am to 7:00 pm",
+  hours: "Mon–Sat, 9:30 am – 7:00 pm",
   socials: [
     { label: "Instagram", href: "https://instagram.com" },
     { label: "Facebook", href: "https://facebook.com" },
@@ -22,7 +22,7 @@ export const site = {
 };
 
 export const stats = [
-  { value: "42", suffix: "yrs", label: "Of crafting happy holidays" },
+  { value: "42", suffix: "yrs", label: "Crafting holidays" },
   { value: "1.2", suffix: "M+", label: "Travellers hosted" },
   { value: "500", suffix: "+", label: "Expert tour leaders" },
   { value: "60", suffix: "+", label: "Destinations worldwide" },

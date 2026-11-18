@@ -78,7 +78,7 @@ export function CorporateProposalForm() {
             required
             value={form.name}
             onChange={(event) => update("name", event.target.value)}
-            placeholder="Priya Nair"
+            placeholder="Full name"
             autoComplete="name"
             className="field"
           />
@@ -91,7 +91,7 @@ export function CorporateProposalForm() {
             id="corp-company"
             value={form.company}
             onChange={(event) => update("company", event.target.value)}
-            placeholder="Acme Labs"
+            placeholder="Company name"
             autoComplete="organization"
             className="field"
           />
@@ -106,7 +106,7 @@ export function CorporateProposalForm() {
             required
             value={form.email}
             onChange={(event) => update("email", event.target.value)}
-            placeholder="priya@acme.com"
+            placeholder="you@company.com"
             autoComplete="email"
             className="field"
           />
@@ -119,7 +119,7 @@ export function CorporateProposalForm() {
             id="corp-size"
             value={form.groupSize}
             onChange={(event) => update("groupSize", event.target.value)}
-            placeholder="80–120"
+            placeholder="Number of people"
             className="field"
           />
         </div>

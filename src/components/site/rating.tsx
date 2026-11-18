@@ -32,7 +32,7 @@ export function Rating({
         <span
           className={cn(
             "text-sm font-medium",
-            dark ? "text-navy-200" : "text-navy-400",
+            dark ? "text-navy-200" : "text-navy-500",
           )}
         >
           ({count})

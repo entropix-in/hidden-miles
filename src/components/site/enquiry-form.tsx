@@ -121,8 +121,7 @@ export function EnquiryForm({
     >
       {!compact ? (
         <div className="mb-6">
-          <p className="eyebrow">Talk to a real traveller</p>
-          <h3 className="mt-2 font-display text-2xl font-semibold text-navy-950">
+          <h3 className="font-display text-2xl font-semibold text-navy-950">
             Tell us about your dream trip
           </h3>
           <p className="mt-2 text-sm leading-6 text-stone-500">

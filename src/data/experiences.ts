@@ -25,7 +25,7 @@ export const experiences: Experience[] = [
     shortTitle: "Spiritual",
     description:
       "Temple towns, riverside aartis and guided yatras planned with care for elders and families. Travel that leaves you a little lighter.",
-    image: "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a",
+    image: "https://images.unsplash.com/photo-1537996194471-e657df975ab4",
     icon: "flower",
     highlights: ["Temple darshan", "Comfortable stays", "Local guides", "Elder-friendly pace"],
   },

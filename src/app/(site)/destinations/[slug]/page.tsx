@@ -6,10 +6,8 @@ import { Clock, IndianRupee, Plane, Sun } from "lucide-react";
 import { Breadcrumbs } from "@/components/site/breadcrumbs";
 import { CtaBand } from "@/components/site/cta-band";
 import { DestinationCard } from "@/components/site/destination-card";
-import { Kicker, SectionHeading } from "@/components/site/section-heading";
-import { Stamp } from "@/components/site/stamp";
-import { TourCard } from "@/components/site/tour-card";
-import { coordsFor } from "@/data/coordinates";
+import { SectionHeading } from "@/components/site/section-heading";
+import { TourCard, TourListCard } from "@/components/site/tour-card";
 import {
   loadDestination,
   loadDestinations,
@@ -66,16 +64,25 @@ export default async function DestinationDetailPage({
     : 38900;
 
   const facts = [
-    { icon: Sun, label: "Best time", value: destination.bestTime.split("·")[0] },
+    {
+      icon: Sun,
+      label: "Best time",
+      // Short month names ("Oct – Apr") keep the fact strip on one line.
+      value: destination.bestTime
+        .split("·")[0]
+        .trim()
+        .replace(/\b([A-Z][a-z]{2})[a-z]+\b/g, "$1")
+        .replace(" to ", " – "),
+    },
     { icon: Clock, label: "Ideal trip", value: "6 – 8 days" },
-    { icon: Plane, label: "Fly into", value: `${destination.name}` },
-    { icon: IndianRupee, label: "Tours from", value: `${formatINR(fromPrice)} pp` },
+    { icon: Plane, label: "Region", value: destination.region },
+    { icon: IndianRupee, label: "Price from", value: formatINR(fromPrice) },
   ];
 
   return (
     <>
       <section className="container-page py-6">
-        <div className="relative isolate flex min-h-[560px] flex-col justify-end overflow-hidden rounded-[36px] bg-ink p-7 pb-10 sm:p-10 lg:min-h-[640px] lg:p-12">
+        <div className="relative isolate flex min-h-[420px] flex-col justify-end overflow-hidden rounded-[28px] bg-ink p-7 pb-9 sm:p-10 lg:min-h-[480px]">
           <Image
             src={imageUrl(destination.image, 2000)}
             alt={destination.name}
@@ -84,7 +91,7 @@ export default async function DestinationDetailPage({
             sizes="100vw"
             className="object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-ink/95 via-ink/35 to-ink/30" />
+          <div className="absolute inset-0 bg-gradient-to-t from-ink/95 via-ink/30 to-ink/60" />
 
           <div className="relative flex items-start justify-between gap-4">
             <Breadcrumbs
@@ -95,41 +102,34 @@ export default async function DestinationDetailPage({
                 { label: destination.name },
               ]}
             />
-            <span className="coord coord-dark hidden sm:block">
-              {coordsFor(destination.slug)}
-            </span>
           </div>
 
           <div className="relative mt-auto max-w-[900px] pt-16">
-            <Kicker label={destination.tagline} dark />
-            <h1 className="mt-4 font-display text-[clamp(4rem,10vw,7.5rem)] leading-[0.96] tracking-[-0.045em] text-paper">
+            <h1 className="font-display text-[clamp(3rem,7vw,5.5rem)] leading-[0.96] tracking-[-0.045em] text-paper">
               {destination.name}
             </h1>
-            <p className="type-lead mt-4 max-w-[620px] text-navy-200">
-              {destination.description}
+            <p className="type-lead mt-3 max-w-[620px] text-navy-200">
+              {destination.tagline}
             </p>
           </div>
 
-          <span className="absolute bottom-10 right-10 hidden lg:block">
-            <Stamp size={140} />
-          </span>
         </div>
       </section>
 
       <section className="container-page">
-        <div className="grid gap-0 rounded-[20px] border border-sand-300 bg-paper px-4 py-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-x-4 gap-y-5 rounded-[20px] border border-sand-300 bg-paper p-5 lg:grid-cols-4 lg:gap-0 lg:px-4 lg:py-6">
           {facts.map((fact, index) => (
             <div
               key={fact.label}
-              className={`flex items-center gap-3.5 px-5 ${
+              className={`flex min-w-0 items-center gap-3 lg:px-5 ${
                 index ? "lg:border-l lg:border-sand-300" : ""
-              } ${index < 2 ? "border-b border-sand-300 pb-5 sm:border-b-0 sm:pb-0" : ""} ${index === 2 ? "pt-5 sm:pt-0" : ""}`}
+              }`}
             >
-              <span className="grid h-12 w-12 shrink-0 place-items-center rounded-[14px] bg-sand-200 text-ink">
+              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-[12px] bg-sand-200 text-ink lg:h-12 lg:w-12 lg:rounded-[14px]">
                 <fact.icon className="h-5 w-5" />
               </span>
               <span>
-                <span className="type-label block text-[10px] text-navy-500">
+                <span className="block text-xs font-medium text-navy-500">
                   {fact.label}
                 </span>
                 <span className="mt-0.5 block text-sm font-bold text-ink">
@@ -142,21 +142,10 @@ export default async function DestinationDetailPage({
       </section>
 
       <section className="container-page section-minor">
-        <div className="grid gap-12 lg:grid-cols-[1fr_500px] lg:gap-24">
+        <div className="grid gap-12 lg:grid-cols-[1fr_440px] lg:gap-20">
           <div>
-            <Kicker number="01" label={`About ${destination.name}`} />
-            <h2 className="type-h2 mt-5 text-ink">
-              Slow mornings,
-              <br />
-              <span className="accent-line">beautiful days.</span>
-            </h2>
-            <p className="type-lead mt-6 text-navy-700">{destination.description}</p>
-            <p className="type-body mt-5 text-navy-700">
-              Our {destination.name} journeys are paced for first-timers and
-              families: comfortable stays, short drives and a tour leader who
-              knows every trail. Pair it with another region for a longer circuit,
-              or let us build a private departure around your dates.
-            </p>
+            <h2 className="type-h2 text-ink">About {destination.name}</h2>
+            <p className="type-lead mt-4 text-navy-700">{destination.description}</p>
             <Link href="/contact" className="btn btn-outline mt-7">
               Plan a private {destination.name} trip
               <span className="btn-dot">→</span>
@@ -167,19 +156,14 @@ export default async function DestinationDetailPage({
             {destination.highlights.map((highlight, index) => (
               <div
                 key={highlight}
-                className={`flex items-center gap-6 py-6 ${
+                className={`flex items-center gap-5 py-5 ${
                   index ? "border-t border-sand-300" : ""
                 }`}
               >
-                <span className="font-display text-3xl italic text-gold-600">
-                  0{index + 1}
+                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-sand-200 text-sm font-bold text-ink">
+                  {index + 1}
                 </span>
-                <span>
-                  <span className="type-title block text-ink">{highlight}</span>
-                  <span className="type-small mt-1 block text-navy-500">
-                    Handpicked by our {destination.name} specialists
-                  </span>
-                </span>
+                <span className="type-title text-ink">{highlight}</span>
               </div>
             ))}
           </div>
@@ -192,26 +176,23 @@ export default async function DestinationDetailPage({
             <SectionHeading
               number="02"
               label={`${destinationTours.length} departures`}
-              title={destination.name}
-              accent="tours."
-              right={
-                <div className="flex flex-wrap gap-2">
-                  {["All", "Group", "Family", "Honeymoon"].map((filter, index) => (
-                    <span
-                      key={filter}
-                      className={`chip ${index === 0 ? "chip-active" : ""}`}
-                    >
-                      {filter}
-                    </span>
-                  ))}
-                </div>
-              }
+              title={`${destination.name} tours`}
             />
-            <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-8">
-              {destinationTours.slice(0, 3).map((tour, index) => (
-                <TourCard key={tour.slug} tour={tour} priority={index === 0} />
-              ))}
-            </div>
+            {destinationTours.length < 3 ? (
+              // One or two tours read better as wide cards than a half-empty grid.
+              <div className="mt-10 grid gap-6">
+                {destinationTours.map((tour, index) => (
+                  <TourListCard key={tour.slug} tour={tour} priority={index === 0} />
+                ))}
+              </div>
+            ) : (
+              <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {destinationTours.slice(0, 3).map((tour, index) => (
+                  <TourCard key={tour.slug} tour={tour} priority={index === 0} />
+                ))}
+              </div>
+            )}
+            {destinationTours.length > 3 ? (
             <div className="mt-10 flex justify-center">
               <Link
                 href={`/tours?destination=${destination.slug}`}
@@ -221,6 +202,7 @@ export default async function DestinationDetailPage({
                 <span className="btn-dot">→</span>
               </Link>
             </div>
+            ) : null}
           </div>
         </section>
       ) : null}
@@ -230,12 +212,11 @@ export default async function DestinationDetailPage({
           <SectionHeading
             number="03"
             label="Combine it with"
-            title="Nearby"
-            accent="destinations."
+            title="More destinations"
             href="/destinations"
             linkLabel="All destinations"
           />
-          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
+          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {related.map((item) => (
               <DestinationCard
                 key={item.slug}

@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-import { coordsFor } from "@/data/coordinates";
 import type { Destination } from "@/data/destinations";
 import { cn, imageUrl } from "@/lib/utils";
 
@@ -34,12 +33,9 @@ export function DestinationCard({
         sizes={big ? "(max-width: 768px) 100vw, 588px" : "(max-width: 768px) 100vw, 33vw"}
         className="object-cover transition duration-700 group-hover:scale-[1.04]"
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-ink/95 via-ink/10 to-ink/25" />
+      <div className="absolute inset-0 bg-gradient-to-t from-ink/95 via-ink/30 to-ink/20" />
 
       <div className="absolute inset-x-6 top-6 flex items-center justify-between gap-3">
-        <span className="coord rounded-full bg-ink/45 px-3 py-1.5 text-paper backdrop-blur">
-          {coordsFor(destination.slug)}
-        </span>
         <span className="badge badge-glass">
           {tourCount} {tourCount === 1 ? "tour" : "tours"}
         </span>
@@ -52,8 +48,8 @@ export function DestinationCard({
         <p className="type-small mt-2 text-navy-200">{destination.tagline}</p>
       </div>
 
-      <span className="absolute bottom-6 right-6 grid h-[52px] w-[52px] place-items-center rounded-full bg-gold-400 text-ink transition duration-300 group-hover:scale-105 group-hover:bg-gold-300">
-        <span className="text-xl leading-none">↗</span>
+      <span className="absolute bottom-6 right-6 grid h-10 w-10 place-items-center rounded-full bg-gold-400 text-ink transition duration-300 group-hover:scale-105 group-hover:bg-gold-300">
+        <span className="text-base leading-none">↗</span>
       </span>
     </Link>
   );

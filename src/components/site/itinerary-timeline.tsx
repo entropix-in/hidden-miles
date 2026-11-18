@@ -1,4 +1,4 @@
-import { Plus } from "lucide-react";
+import { Minus, Plus } from "lucide-react";
 import type { ItineraryDay } from "@/data/tours";
 import { getItineraryBadges } from "@/lib/itinerary";
 import { cn } from "@/lib/utils";
@@ -36,16 +36,12 @@ export function ItineraryTimeline({ days }: { days: ItineraryDay[] }) {
               className="group pb-7 [&::-webkit-details-marker]:hidden"
             >
               <summary className="flex cursor-pointer list-none items-start justify-between gap-4">
-                <span>
-                  <span className="type-label block text-gold-600">
-                    Day {day.day}
-                  </span>
-                  <span className="type-title mt-1.5 block text-ink">
-                    {day.title}
-                  </span>
+                <span className="type-title mt-1 block text-ink">
+                  {day.title}
                 </span>
-                <span className="mt-1 grid h-8 w-8 shrink-0 place-items-center rounded-full bg-sand-100 text-ink transition group-open:rotate-45 group-open:bg-ink group-open:text-gold-400">
-                  <Plus className="h-4 w-4" />
+                <span className="mt-1 grid h-8 w-8 shrink-0 place-items-center rounded-full bg-sand-100 text-ink transition group-open:bg-ink group-open:text-gold-400">
+                  <Plus className="h-4 w-4 group-open:hidden" />
+                      <Minus className="hidden h-4 w-4 group-open:block" />
                 </span>
               </summary>
 
@@ -56,7 +52,7 @@ export function ItineraryTimeline({ days }: { days: ItineraryDay[] }) {
                     {badges.map((badge) => (
                       <span
                         key={badge.label}
-                        className="rounded-full border border-sand-300 bg-paper px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.1em] text-navy-700"
+                        className="rounded-full border border-sand-300 bg-paper px-3 py-1 text-xs font-semibold text-navy-700"
                       >
                         {badge.label}
                       </span>

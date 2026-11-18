@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { Mail, MapPin, MessageCircle, Phone } from "lucide-react";
+import { Mail, MapPin, MessageCircle, Minus, Phone, Plus } from "lucide-react";
+import { Breadcrumbs } from "@/components/site/breadcrumbs";
 import { ContactForm } from "@/components/site/contact-form";
 import { Contours } from "@/components/site/contours";
-import { Kicker } from "@/components/site/section-heading";
 import { site } from "@/data/site";
 
 export const metadata: Metadata = {
@@ -42,16 +42,15 @@ const faqs = [
 export default function ContactPage() {
   return (
     <>
-      <section className="container-page py-12 text-center md:py-20">
-        <Kicker label="Contact us" className="justify-center" />
-        <h1 className="type-h1 mx-auto mt-5 max-w-3xl text-ink">
+      <section className="container-page pt-8 pb-10 md:pt-12 md:pb-12">
+        <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Contact" }]} />
+        <h1 className="type-h1 mt-5 max-w-3xl text-ink">
           Let&apos;s plan something
           <br />
           <span className="accent-line">wonderful.</span>
         </h1>
-        <p className="type-lead mx-auto mt-5 max-w-2xl text-navy-700">
-          Real people, Monday to Saturday, 9:30 am – 7:00 pm. We usually reply
-          within the hour.
+        <p className="type-lead mt-4 max-w-2xl text-navy-700">
+          Mon–Sat, 9:30 am – 7:00 pm. We usually reply within the hour.
         </p>
       </section>
 
@@ -95,7 +94,7 @@ export default function ContactPage() {
               >
                 <channel.icon className="h-6 w-6" />
               </span>
-              <p className="type-label mt-5 text-navy-500">{channel.label}</p>
+              <p className="type-small mt-4 text-navy-500">{channel.label}</p>
               <p className="type-title mt-1 text-ink">{channel.value}</p>
               <p className="mt-4 text-sm font-bold text-blue-700 group-hover:text-blue-800">
                 {channel.cta} →
@@ -109,8 +108,8 @@ export default function ContactPage() {
         <div className="grid gap-8 xl:grid-cols-[1fr_420px]">
           <ContactForm />
 
-          <div className="space-y-6">
-            <div className="relative aspect-[420/300] overflow-hidden rounded-[28px] bg-navy-100">
+          <div className="flex flex-col gap-6">
+            <div className="relative aspect-[420/300] overflow-hidden rounded-[28px] bg-navy-100 xl:aspect-auto xl:min-h-[260px] xl:flex-1">
               <Contours
                 color="rgba(25,103,133,0.28)"
                 count={8}
@@ -127,11 +126,10 @@ export default function ContactPage() {
             </div>
 
             <div className="rounded-[28px] bg-ink p-8 text-paper">
-              <p className="type-label text-gold-400">Mumbai · Head office</p>
-              <p className="type-h4 mt-3 text-paper">302, Meridian House</p>
+              <p className="type-h4 text-paper">302, Meridian House</p>
               <p className="type-small mt-2 whitespace-pre-line text-navy-200">
                 Andheri East, Mumbai 400069{"\n"}
-                Mon – Sat · 9:30 am to 7:00 pm
+                Mon–Sat, 9:30 am – 7:00 pm
               </p>
               <a
                 href="https://maps.google.com/?q=Meridian+House+Andheri+East+Mumbai"
@@ -148,15 +146,12 @@ export default function ContactPage() {
 
       <section className="bg-sand-100">
         <div className="container-page section-major">
-          <div className="grid gap-12 lg:grid-cols-[380px_1fr] lg:gap-24">
+          <div className="grid max-w-3xl gap-8">
             <div>
-              <Kicker label="Good to know" />
-              <h2 className="type-h2 mt-5 text-ink">
-                Questions,
-                <br />
-                <span className="accent-line">answered.</span>
+              <h2 className="type-h2 text-ink">
+                Questions, <span className="accent-line">answered.</span>
               </h2>
-              <p className="type-body mt-5 text-navy-700">
+              <p className="type-body mt-3 text-navy-700">
                 Can&apos;t find yours? Call us — it&apos;s what we&apos;re here
                 for.
               </p>
@@ -170,8 +165,9 @@ export default function ContactPage() {
                 >
                   <summary className="flex cursor-pointer list-none items-center justify-between gap-6 [&::-webkit-details-marker]:hidden">
                     <span className="type-title text-ink">{faq.question}</span>
-                    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-sand-200 text-ink transition group-open:rotate-45 group-open:bg-ink group-open:text-gold-400">
-                      +
+                    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-sand-200 text-ink transition group-open:bg-ink group-open:text-gold-400">
+                      <Plus className="h-4 w-4 group-open:hidden" />
+                      <Minus className="hidden h-4 w-4 group-open:block" />
                     </span>
                   </summary>
                   <p className="type-small mt-4 max-w-2xl text-navy-700">

@@ -50,10 +50,10 @@ export function Logo({
         </span>
         <span
           className={cn(
-            "mt-1.5 block whitespace-nowrap font-extrabold uppercase leading-none tracking-[0.22em]",
+            "mt-1 block whitespace-nowrap font-semibold leading-none tracking-[0.02em]",
             light ? "text-gold-400" : "text-gold-600",
           )}
-          style={{ fontSize: Math.max(8, Math.round(9 * scale)) }}
+          style={{ fontSize: Math.max(10, Math.round(11 * scale)) }}
         >
           Est. 1984 · Mumbai
         </span>

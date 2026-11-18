@@ -6,9 +6,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   ChevronDown,
-  Clock,
-  Heart,
-  Mail,
   MapPin,
   Menu,
   Phone,
@@ -16,7 +13,6 @@ import {
   X,
 } from "lucide-react";
 import { Logo } from "@/components/site/logo";
-import { Rating } from "@/components/site/rating";
 import { navLinks, site, type NavLink } from "@/data/site";
 import type { Destination } from "@/data/destinations";
 import { cn, imageUrl } from "@/lib/utils";
@@ -57,7 +53,6 @@ export function SiteHeader({
     featured;
 
   const navItems: NavLink[] = [
-    { label: "Home", href: "/" },
     ...["Group Tours", "Destinations", "Speciality Tours", "Personalised", "More"]
       .map((label) => navLinks.find((link) => link.label === label))
       .filter((link): link is NavLink => Boolean(link)),
@@ -92,20 +87,10 @@ export function SiteHeader({
   return (
     <header className="sticky top-0 z-50">
       {/* Utility bar */}
-      <div className="hidden bg-ink text-paper xl:block">
-        <div className="container-page flex h-10 items-center justify-between text-[13px]">
-          <div className="flex items-center gap-6">
-            <Rating score="4.9" count="12,400+ verified reviews" dark />
-            <span className="text-white/25">·</span>
-            <span className="font-medium text-navy-200">
-              Hosting travellers since 1984
-            </span>
-          </div>
-          <div className="flex items-center gap-7 font-medium text-navy-100">
-            <span className="flex items-center gap-1.5">
-              <Clock className="h-3.5 w-3.5 text-navy-300" />
-              {site.hours}
-            </span>
+      <div className="hidden bg-ink text-paper lg:block">
+        <div className="container-page flex h-9 items-center justify-between text-[13px]">
+          <span className="font-medium text-navy-200">Hosting travellers since 1984</span>
+          <div className="flex items-center gap-6 font-medium text-navy-100">
             <a
               href={site.phoneHref}
               className="flex items-center gap-1.5 transition hover:text-paper"
@@ -114,30 +99,23 @@ export function SiteHeader({
               {site.phone}
             </a>
             <a
-              href={site.emailHref}
-              className="flex items-center gap-1.5 transition hover:text-paper"
-            >
-              <Mail className="h-3.5 w-3.5 text-navy-300" />
-              {site.email}
-            </a>
-            <a
               href={site.whatsappHref}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 font-bold text-gold-400 transition hover:text-gold-300"
+              className="font-semibold text-gold-400 transition hover:text-gold-300"
             >
-              WhatsApp us ↗
+              WhatsApp us
             </a>
           </div>
         </div>
       </div>
 
       {/* Main nav */}
-      <div className="relative border-b border-sand-300 bg-paper/95 backdrop-blur-xl">
-        <div className="container-page flex h-[74px] items-center justify-between gap-4 py-3">
+      <div className="relative border-b border-sand-300/80 bg-paper/90 backdrop-blur-xl">
+        <div className="container-page flex h-16 items-center justify-between gap-6">
           <Logo compact />
 
-          <nav className="hidden items-center gap-0.5 min-[1360px]:flex" aria-label="Main">
+          <nav className="hidden flex-1 items-center justify-center gap-1 lg:flex" aria-label="Main">
             {navItems.map((link) => {
               const hasChildren = Boolean(link.children?.length);
               const active =
@@ -156,32 +134,21 @@ export function SiteHeader({
                     <span className="flex items-center gap-1.5 whitespace-nowrap">
                       {link.label}
                       {hasChildren ? (
-                        <ChevronDown className="h-3.5 w-3.5 text-navy-400 transition duration-300 group-hover:rotate-180" />
+                        <ChevronDown className="h-3.5 w-3.5 text-navy-500 transition duration-300 group-hover:rotate-180" />
                       ) : null}
                     </span>
-                    <span className="nav-dot" aria-hidden="true" />
                   </Link>
 
                   {hasChildren && link.label !== "Destinations" ? (
-                    <div className="invisible absolute left-1/2 top-full w-[300px] -translate-x-1/2 pt-4 opacity-0 transition duration-200 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+                    <div className="invisible absolute left-1/2 top-full w-[260px] -translate-x-1/2 pt-3 opacity-0 transition duration-200 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
                       <div className="rounded-[20px] border border-sand-300 bg-paper p-2 shadow-[0_24px_64px_-28px_rgba(11,39,53,0.3)]">
                         {link.children?.map((child) => (
                           <Link
                             key={child.label}
                             href={child.href}
-                            className="flex items-center justify-between gap-3 rounded-[14px] px-4 py-3 transition hover:bg-sand-100"
+                            className="block rounded-[12px] px-3.5 py-2.5 text-sm font-semibold text-ink transition hover:bg-sand-100"
                           >
-                            <span>
-                              <span className="block text-sm font-bold text-ink">
-                                {child.label}
-                              </span>
-                              {child.description ? (
-                                <span className="mt-0.5 block text-xs font-medium leading-5 text-navy-500">
-                                  {child.description}
-                                </span>
-                              ) : null}
-                            </span>
-                            <span className="text-navy-400">↗</span>
+                            {child.label}
                           </Link>
                         ))}
                       </div>
@@ -190,14 +157,14 @@ export function SiteHeader({
 
                   {link.label === "Destinations" ? (
                     <div
-                      className="invisible fixed left-1/2 top-[60px] w-[min(1200px,calc(100vw-40px))] -translate-x-1/2 pt-4 opacity-0 transition duration-200 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100"
+                      className="invisible fixed left-1/2 top-[80px] w-[min(1040px,calc(100vw-40px))] -translate-x-1/2 pt-5 opacity-0 transition duration-200 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100"
                       onMouseLeave={() => setPreviewSlug(null)}
                     >
-                      <div className="flex gap-12 rounded-[28px] border border-sand-300 bg-paper p-10 shadow-[0_32px_64px_-24px_rgba(11,39,53,0.25)]">
+                      <div className="flex gap-8 rounded-[24px] border border-sand-300 bg-paper p-6 shadow-[0_32px_64px_-24px_rgba(11,39,53,0.25)]">
                         {groups.map((group) => (
                           <div
                             key={group.label}
-                            className="flex w-[250px] shrink-0 flex-col"
+                            className="flex w-[220px] shrink-0 flex-col"
                           >
                             <p className="type-label text-gold-600">{group.label}</p>
                             <div className="mt-3 grid gap-0.5">
@@ -208,13 +175,13 @@ export function SiteHeader({
                                   onMouseEnter={() => setPreviewSlug(destination.slug)}
                                   onFocus={() => setPreviewSlug(destination.slug)}
                                   className={cn(
-                                    "flex items-center justify-between rounded-[12px] px-3 py-2.5 text-base font-semibold text-ink transition hover:bg-sand-100",
+                                    "flex items-center justify-between rounded-[12px] px-3 py-2 text-[15px] font-semibold text-ink transition hover:bg-sand-100",
                                     previewDestination?.slug === destination.slug &&
                                       "bg-sand-100",
                                   )}
                                 >
                                   {destination.name}
-                                  <span className="text-[13px] font-medium text-navy-400">
+                                  <span className="text-[13px] font-medium text-navy-500">
                                     {tourCounts[destination.slug] ?? 0}{" "}
                                     {(tourCounts[destination.slug] ?? 0) === 1
                                       ? "tour"
@@ -233,38 +200,22 @@ export function SiteHeader({
                         ))}
 
                         {previewDestination ? (
-                          <div className="relative hidden min-h-[420px] w-[508px] shrink-0 overflow-hidden rounded-[20px] bg-ink xl:block">
+                          <div className="relative hidden min-h-[360px] flex-1 overflow-hidden rounded-[20px] bg-ink xl:block">
                             <Image
                               key={previewDestination.slug}
                               src={imageUrl(previewDestination.image, 1100)}
                               alt={previewDestination.name}
                               fill
-                              sizes="508px"
+                              sizes="520px"
                               className="object-cover"
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-transparent" />
                             <div className="absolute inset-x-8 bottom-8">
-                              <span className="badge badge-gold">
-                                {previewDestination.slug === "kashmir"
-                                  ? "Season pick · Apr – Oct"
-                                  : "Destination spotlight"}
-                              </span>
-                              <p className="type-h3 mt-3 text-paper">
+                              <p className="type-h3 text-paper">
                                 {previewDestination.name}
-                                {previewDestination.slug === "kashmir"
-                                  ? " in bloom"
-                                  : ""}
                               </p>
-                              <p className="type-small mt-2 text-navy-200">
-                                {previewDestination.slug === "kashmir"
-                                  ? `Tulip gardens, houseboats and meadows — ${
-                                      tourCounts[previewDestination.slug] ?? 12
-                                    } ${
-                                      (tourCounts[previewDestination.slug] ?? 12) === 1
-                                        ? "departure"
-                                        : "departures"
-                                    } this season.`
-                                  : previewDestination.tagline}
+                              <p className="type-small mt-1 text-navy-200">
+                                {previewDestination.tagline}
                               </p>
                               <Link
                                 href={`/destinations/${previewDestination.slug}`}
@@ -283,48 +234,26 @@ export function SiteHeader({
             })}
           </nav>
 
-          <div className="flex items-center gap-2.5">
-            <button
-              type="button"
-              onClick={() => setSearchOpen((open) => !open)}
-              className="hidden items-center gap-2 rounded-full border border-sand-300 bg-paper px-4 py-2.5 text-sm font-medium text-navy-500 transition hover:border-navy-300 xl:flex"
-              aria-label="Search tours and destinations"
-              aria-expanded={searchOpen}
-            >
-              <Search className="h-4 w-4 text-ink" />
-              Search
-              <span className="type-label ml-2 text-[10px] text-navy-500">⌘K</span>
-            </button>
-            <Link
-              href="/testimonials"
-              className="relative hidden h-[46px] w-[46px] place-items-center rounded-full border border-sand-300 bg-paper text-ink transition hover:border-navy-300 sm:grid"
-              aria-label="Saved journeys"
-            >
-              <Heart className="h-[18px] w-[18px]" />
-              <span className="absolute -right-0.5 -top-0.5 grid h-[18px] w-[18px] place-items-center rounded-full bg-gold-400 text-[10px] font-extrabold text-ink">
-                3
-              </span>
-            </Link>
-            <Link href="/contact" className="btn btn-ink hidden sm:inline-flex">
-              Plan my trip
-              <span className="btn-dot">→</span>
-            </Link>
+          <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={() => {
                 setSearchOpen((open) => !open);
                 setMobileOpen(false);
               }}
-              className="grid h-[46px] w-[46px] place-items-center rounded-full border border-sand-300 bg-paper text-ink min-[1280px]:hidden"
+              className="grid h-10 w-10 place-items-center rounded-full text-ink transition hover:bg-sand-100"
               aria-label="Search tours and destinations"
               aria-expanded={searchOpen}
             >
               <Search className="h-[18px] w-[18px]" />
             </button>
+            <Link href="/contact" className="btn btn-ink btn-sm hidden sm:inline-flex">
+              Plan my trip
+            </Link>
             <button
               type="button"
               onClick={() => setMobileOpen((open) => !open)}
-              className="grid h-[46px] w-[46px] place-items-center rounded-full bg-ink text-gold-400 min-[1360px]:hidden"
+              className="grid h-10 w-10 place-items-center rounded-full bg-ink text-gold-400 lg:hidden"
               aria-label={mobileOpen ? "Close menu" : "Open menu"}
               aria-expanded={mobileOpen}
             >
@@ -339,13 +268,13 @@ export function SiteHeader({
               onSubmit={submitSearch}
               className="container-page flex items-center gap-3 py-4"
             >
-              <Search className="h-5 w-5 text-navy-400" />
+              <Search className="h-5 w-5 text-navy-500" />
               <input
                 autoFocus
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder="Search tours, destinations or a feeling…"
-                className="min-w-0 flex-1 bg-transparent text-base font-medium text-ink outline-none placeholder:text-navy-400"
+                className="min-w-0 flex-1 bg-transparent text-base font-medium text-ink outline-none placeholder:text-navy-500"
               />
               <button type="submit" className="btn btn-primary btn-sm">
                 Search
@@ -358,7 +287,7 @@ export function SiteHeader({
 
       {/* Mobile drawer */}
       {mobileOpen ? (
-        <div className="fixed inset-x-0 bottom-0 top-0 z-50 overflow-y-auto bg-paper min-[1360px]:hidden">
+        <div className="fixed inset-x-0 bottom-0 top-0 z-50 overflow-y-auto bg-paper lg:hidden">
           <div className="flex items-center justify-between border-b border-sand-300 px-5 py-3.5">
             <Logo compact />
             <button
@@ -381,7 +310,7 @@ export function SiteHeader({
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder="Search tours & destinations"
-                className="min-w-0 flex-1 bg-transparent text-sm font-medium outline-none placeholder:text-navy-400"
+                className="min-w-0 flex-1 bg-transparent text-sm font-medium outline-none placeholder:text-navy-500"
               />
             </form>
           </div>

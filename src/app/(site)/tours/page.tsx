@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { PageHero } from "@/components/site/page-hero";
+import { Breadcrumbs } from "@/components/site/breadcrumbs";
 import { ToursExplorer } from "@/components/site/tours-explorer";
 import { loadDestinations, loadExperiences, loadTours } from "@/lib/content";
 
@@ -45,35 +45,12 @@ export default async function ToursPage({
     loadExperiences(),
   ]);
 
-  const heroImage =
-    destinations.find((item) => item.slug === "ladakh")?.image ??
-    tours[0]?.image ??
-    "https://images.unsplash.com/photo-1581793745862-99fde7fa73d2";
-
   return (
     <>
-      <PageHero
-        items={[{ label: "Home", href: "/" }, { label: "Group Tours" }]}
-        title="Every departure,"
-        accent="in one place."
-        description={`${tours.length} escorted group tours across India and the world. All-inclusive, small groups, a tour leader from day one.`}
-        image={heroImage}
-        imageAlt="A Himalayan road trip"
-        coords="LADAKH · 34.15° N  77.58° E"
-      >
-        <div className="flex flex-wrap gap-8 sm:gap-12">
-          {[
-            { value: String(tours.length), label: "tours" },
-            { value: String(tours.length * 4), label: "departures" },
-            { value: "4.9★", label: "average rating" },
-          ].map((stat) => (
-            <div key={stat.label}>
-              <p className="type-h3 text-ink">{stat.value}</p>
-              <p className="type-small mt-1 text-navy-500">{stat.label}</p>
-            </div>
-          ))}
-        </div>
-      </PageHero>
+      <section className="container-page pt-8 md:pt-12">
+        <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Group Tours" }]} />
+        <h1 className="type-h1 mt-4 text-ink">Group Tours</h1>
+      </section>
 
       <ToursExplorer
         tours={tours}

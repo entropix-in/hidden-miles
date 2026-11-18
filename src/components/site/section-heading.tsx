@@ -27,8 +27,6 @@ export function Kicker({
 }
 
 export function SectionHeading({
-  number,
-  label,
   title,
   accent,
   description,
@@ -54,7 +52,7 @@ export function SectionHeading({
   return (
     <div
       className={cn(
-        "flex flex-col gap-8 md:flex-row md:items-end md:justify-between",
+        "flex flex-col gap-6 md:flex-row md:items-end md:justify-between",
         align === "center" && "md:flex-col md:items-center",
         className,
       )}
@@ -65,10 +63,9 @@ export function SectionHeading({
           align === "center" && "flex flex-col items-center text-center",
         )}
       >
-        <Kicker number={number} label={label} dark={dark} />
         <h2
           className={cn(
-            "type-h2 mt-5",
+            "type-h2",
             dark ? "text-paper" : "text-ink",
           )}
         >
@@ -83,7 +80,7 @@ export function SectionHeading({
         {description ? (
           <p
             className={cn(
-              "type-lead mt-5 max-w-xl",
+              "type-body mt-3 max-w-xl",
               dark ? "text-navy-200" : "text-navy-700",
             )}
           >

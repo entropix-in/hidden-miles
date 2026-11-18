@@ -188,10 +188,11 @@ export function ToursExplorer({
 
     list = list.filter(
       (tour) =>
-        tour.price >= priceMin &&
-        tour.price <= priceMax &&
-        tour.days >= durationMin &&
-        tour.days <= durationMax,
+        // Slider ends mean "no limit", so tours outside the slider scale still show.
+        (priceMin <= 25000 || tour.price >= priceMin) &&
+        (priceMax >= 300000 || tour.price <= priceMax) &&
+        (durationMin <= 5 || tour.days >= durationMin) &&
+        (durationMax >= 16 || tour.days <= durationMax),
     );
 
     switch (sort) {
@@ -341,7 +342,7 @@ export function ToursExplorer({
 
   function renderFilterPanel(idPrefix: string) {
     return (
-      <div className="rounded-[28px] border border-sand-300 bg-paper p-7">
+      <div className="rounded-[24px] border border-sand-300 bg-paper p-6">
         <div className="flex items-center justify-between gap-3">
           <p className="type-title text-ink">Filters</p>
           <button
@@ -403,7 +404,7 @@ export function ToursExplorer({
                     <span className="flex-1 text-sm font-medium text-ink">
                       {item.shortTitle}
                     </span>
-                    <span className="text-[13px] font-medium text-navy-400">
+                    <span className="text-[13px] font-medium text-navy-500">
                       {count}
                     </span>
                   </button>
@@ -508,23 +509,18 @@ export function ToursExplorer({
   }
 
   return (
-    <section className="container-page pb-16 md:pb-24">
-      <div className="grid gap-8 lg:grid-cols-[300px_1fr] lg:items-start lg:gap-12">
+    <section className="container-page pt-8 pb-16 md:pt-10 md:pb-24">
+      <div className="grid gap-8 lg:grid-cols-[280px_1fr] lg:items-start lg:gap-10">
         <aside className="hidden lg:sticky lg:top-32 lg:block">
           {renderFilterPanel("desktop")}
         </aside>
 
         <div className="min-w-0">
-          <div className="flex flex-wrap items-end justify-between gap-4">
-            <div>
-              <h2 className="type-h3 text-ink">
-                {filtered.length} tours
-                {region !== "All" ? ` in ${region}` : ""}
-              </h2>
-              <p className="type-small mt-1 text-navy-500">
-                Showing group tours and family holidays
-              </p>
-            </div>
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <h2 className="type-title text-ink">
+              {filtered.length} tours
+              {region !== "All" ? ` in ${region}` : ""}
+            </h2>
 
             <div className="flex flex-wrap items-center gap-2.5">
               <button
@@ -741,17 +737,6 @@ export function ToursExplorer({
                     </button>
                   </>
                 ) : null}
-                <span
-                  className="ml-2 text-[13px] font-medium text-navy-500"
-                  aria-live="polite"
-                >
-                  Showing {filtered.length ? pageStart + 1 : 0}–
-                  {Math.min(pageStart + PAGE_SIZE, filtered.length)} of{" "}
-                  {filtered.length}
-                  {totalPages > 1
-                    ? ` · Page ${currentPage} of ${totalPages}`
-                    : ""}
-                </span>
               </nav>
             </>
           ) : null}

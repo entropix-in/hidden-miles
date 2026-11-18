@@ -14,10 +14,10 @@ export const destinations: Destination[] = [
     slug: "kashmir",
     name: "Kashmir",
     region: "India",
-    tagline: "Shikaras, snow and blue valleys",
+    tagline: "Shikaras, snow and saffron valleys",
     description:
       "Dal Lake at dawn, the meadows of Gulmarg and a cup of kahwa by a crackling fire. Kashmir is poetry in every season, and our houseboat stays make it personal.",
-    image: "https://images.unsplash.com/photo-1593181629936-11c609b8db9b",
+    image: "https://images.unsplash.com/photo-1598091383021-15ddea10925d",
     bestTime: "March to October · December for snow",
     highlights: ["Dal Lake houseboat", "Gulmarg gondola", "Pahalgam valleys", "Mughal gardens"],
   },
@@ -58,7 +58,7 @@ export const destinations: Destination[] = [
     slug: "himachal",
     name: "Himachal",
     region: "India",
-    tagline: "Pine navys and Himalayan air",
+    tagline: "Pine forests and Himalayan air",
     description:
       "Colonial Shimla, the cafés of Manali and hidden trails around Kasuali. Perfect for families, first-time mountain travellers and slow summer escapes.",
     image: "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23",
@@ -72,7 +72,7 @@ export const destinations: Destination[] = [
     tagline: "Living root bridges and rolling tea hills",
     description:
       "Meghalaya's waterfalls, Assam's tea estates and the warm welcome of the hills. A quieter India that rewards the curious traveller.",
-    image: "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957",
+    image: "https://images.unsplash.com/photo-1698429358246-807d8972da9a",
     bestTime: "October to April",
     highlights: ["Living root bridges", "Kaziranga safari", "Shillong peaks", "Brahmaputra cruise"],
   },
@@ -149,7 +149,7 @@ export const destinations: Destination[] = [
     tagline: "Tea country and temple trails",
     description:
       "Misty hill railways, ancient cities and beaches on the doorstep. Sri Lanka is compact, warm and rich with stories.",
-    image: "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a",
+    image: "https://images.unsplash.com/photo-1588598198321-9735fd52455b",
     bestTime: "December to April",
     highlights: ["Ella train ride", "Sigiriya rock", "Kandy temple", "Galle fort"],
   },

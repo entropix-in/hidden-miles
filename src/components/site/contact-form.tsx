@@ -80,12 +80,9 @@ export function ContactForm() {
   return (
     <form
       onSubmit={submit}
-      className="rounded-[28px] border border-sand-300 bg-paper p-7 md:p-10"
+      className="rounded-[24px] border border-sand-300 bg-paper p-6 md:p-8"
     >
       <h2 className="type-h3 text-ink">Send us a message</h2>
-      <p className="type-small mt-2 text-navy-500">
-        We usually reply within the hour, Monday to Saturday.
-      </p>
 
       <div className="mt-6 grid gap-4 sm:grid-cols-2">
         <div>

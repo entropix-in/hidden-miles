@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
+  ArrowLeft,
   Check,
   Clock,
   Loader2,
@@ -12,7 +13,6 @@ import {
   Plus,
   ShieldCheck,
 } from "lucide-react";
-import { Logo } from "@/components/site/logo";
 import { Rating } from "@/components/site/rating";
 import { Stamp } from "@/components/site/stamp";
 import { site } from "@/data/site";
@@ -305,7 +305,7 @@ export function BookingFlow({
                 ["Booking ref", bookingRef],
                 ["Departure", selectedDate ? longDateFormatter.format(new Date(`${selectedDate.startDate}T00:00:00Z`)) : "—"],
                 ["From", city],
-                ["Travellers", `${adults} adults · ${children} children`],
+                ["Travellers", `${adults} ${adults === 1 ? "adult" : "adults"}${children ? ` · ${children} ${children === 1 ? "child" : "children"}` : ""}`],
                 ["Paid", `${formatINR(payNow)} of ${formatINR(total)}`],
               ].map(([key, value]) => (
                 <div key={key} className="flex items-center justify-between gap-4">
@@ -328,10 +328,9 @@ export function BookingFlow({
     <div className="bg-sand-100">
       <CheckoutHeader step={step} />
 
-      <div className="container-page grid gap-10 py-10 md:py-16 xl:grid-cols-[1fr_420px] xl:items-start">
+      <div className="container-page grid gap-10 py-8 md:py-12 xl:grid-cols-[1fr_400px] xl:items-start">
         <div>
-          <p className="type-label text-gold-600">Step {step + 1} of 4</p>
-          <h1 className="type-h2 mt-3 text-ink">
+          <h1 className="type-h2 text-ink">
             {step === 0
               ? "Plan your group departure."
               : step === 1
@@ -342,7 +341,7 @@ export function BookingFlow({
           </h1>
           <p className="type-body mt-3 max-w-xl text-navy-700">
             {step === 0
-              ? "Pick a start date, where you'll join from and who's coming. Prices update as you go."
+              ? "Pick a date, a starting city and who's coming."
               : step === 1
                 ? "We only need the lead traveller's details now. We'll collect ID details for everyone 30 days before departure."
                 : step === 2
@@ -369,19 +368,7 @@ export function BookingFlow({
                   title="1. Choose a departure date"
                   subtitle="Every departure is an escorted group of up to 26 travellers."
                 >
-                  <div className="flex flex-wrap gap-2">
-                    {["Dec – Jan", "Feb – Mar", "Apr – May", "Jun – Aug"].map(
-                      (month, index) => (
-                        <span
-                          key={month}
-                          className={`chip ${index === 0 ? "chip-active" : ""}`}
-                        >
-                          {month}
-                        </span>
-                      ),
-                    )}
-                  </div>
-                  <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
+                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
                     {dates.slice(0, 18).map((date) => {
                       const sold = date.seatsLeft <= 0;
                       const low = !sold && date.seatsLeft <= 5;
@@ -397,7 +384,7 @@ export function BookingFlow({
                             active
                               ? "border-ink bg-ink text-paper"
                               : sold
-                                ? "border-sand-300 bg-sand-100 text-navy-400"
+                                ? "border-sand-300 bg-sand-100 text-navy-500"
                                 : "border-sand-300 bg-paper text-ink hover:border-navy-300",
                           )}
                         >
@@ -409,11 +396,11 @@ export function BookingFlow({
                           </span>
                           <span
                             className={cn(
-                              "mt-0.5 block text-[11px] font-bold",
+                              "mt-1 block text-xs font-bold",
                               active
                                 ? "text-gold-400"
                                 : sold
-                                  ? "text-navy-400"
+                                  ? "text-navy-500"
                                   : low
                                     ? "text-danger"
                                     : "text-success",
@@ -460,7 +447,7 @@ export function BookingFlow({
                           <span className="block text-sm font-bold text-ink">
                             {option.name}
                           </span>
-                          <span className="block text-[13px] font-medium text-navy-500">
+                          <span className="block text-[13px] font-medium leading-5 text-navy-500">
                             {option.note}
                           </span>
                         </span>
@@ -486,14 +473,14 @@ export function BookingFlow({
                   <div className="grid gap-3">
                     <Counter
                       label="Adults"
-                      sub={`12 years and above · ${formatINR(adultPrice)} each`}
+                      sub={`12+ yrs · ${formatINR(adultPrice)}`}
                       value={adults}
                       min={1}
                       onChange={setAdults}
                     />
                     <Counter
                       label="Children"
-                      sub={`5 – 11 years · ${formatINR(childPrice)} each`}
+                      sub={`5–11 yrs · ${formatINR(childPrice)}`}
                       value={children}
                       min={0}
                       onChange={setChildren}
@@ -514,7 +501,7 @@ export function BookingFlow({
 
                 <StepActions
                   backHref={`/tours/${tour.slug}`}
-                  backLabel="← Back to tour"
+                  backLabel="Back to tour"
                   next={() => setStep(1)}
                 />
               </>
@@ -645,7 +632,7 @@ export function BookingFlow({
 
                 <StepActions
                   back={() => setStep(0)}
-                  backLabel="← Back to trip details"
+                  backLabel="Back to trip details"
                   next={() => {
                     if (!lead.name || !lead.email || !lead.phone) return;
                     setStep(2);
@@ -700,7 +687,7 @@ export function BookingFlow({
                             <span className="block text-sm font-bold text-ink">
                               {formatINR(addon.price)}
                             </span>
-                            <span className="block text-xs font-medium text-navy-400">
+                            <span className="block text-xs font-medium text-navy-500">
                               per person
                             </span>
                           </span>
@@ -754,7 +741,7 @@ export function BookingFlow({
 
                 <StepActions
                   back={() => setStep(1)}
-                  backLabel="← Back to lead traveller"
+                  backLabel="Back to lead traveller"
                   next={() => setStep(3)}
                   nextLabel="Continue to payment"
                 />
@@ -945,7 +932,7 @@ export function BookingFlow({
           </div>
         </div>
 
-        <aside className="lg:sticky lg:top-28">
+        <aside className="lg:sticky lg:top-32">
           <div className="rounded-[28px] border border-sand-300 bg-paper p-7 shadow-[0_16px_40px_-32px_rgba(11,39,53,0.3)]">
             <div className="flex items-center gap-4">
               <div className="relative h-[88px] w-[88px] shrink-0 overflow-hidden rounded-[16px] bg-ink">
@@ -972,7 +959,7 @@ export function BookingFlow({
               {[
                 ["Departure", selectedDate ? longDateFormatter.format(new Date(`${selectedDate.startDate}T00:00:00Z`)) : "—"],
                 ["From", city],
-                ["Travellers", `${adults} adults · ${children} children`],
+                ["Travellers", `${adults} ${adults === 1 ? "adult" : "adults"}${children ? ` · ${children} ${children === 1 ? "child" : "children"}` : ""}`],
               ].map(([key, value]) => (
                 <div key={key} className="flex items-center justify-between gap-4">
                   <dt className="text-[13px] font-medium text-navy-500">{key}</dt>
@@ -1061,8 +1048,7 @@ export function BookingFlow({
 function CheckoutHeader({ step }: { step: number }) {
   return (
     <div className="border-b border-sand-300 bg-paper">
-      <div className="container-page flex flex-col gap-4 py-5 lg:flex-row lg:items-center lg:justify-between">
-        <Logo compact />
+      <div className="container-page flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-wrap items-center gap-2.5">
           {STEPS.map((label, index) => {
             const done = index < step;
@@ -1091,7 +1077,8 @@ function CheckoutHeader({ step }: { step: number }) {
                 </span>
                 <span
                   className={cn(
-                    "hidden text-[13px] font-bold sm:block",
+                    "text-[13px] font-bold sm:block",
+                    !current && "hidden",
                     done || current ? "text-ink" : "text-navy-500",
                   )}
                 >
@@ -1101,14 +1088,9 @@ function CheckoutHeader({ step }: { step: number }) {
             );
           })}
         </div>
-        <div className="text-right">
-          <p className="flex items-center gap-1.5 text-[13px] font-bold text-success">
-            <Lock className="h-3.5 w-3.5" /> Secure checkout
-          </p>
-          <p className="text-[13px] font-medium text-navy-700">
-            Help: {site.phone}
-          </p>
-        </div>
+        <p className="flex items-center gap-1.5 text-[13px] font-bold text-success">
+          <Lock className="h-3.5 w-3.5" /> Secure checkout
+        </p>
       </div>
     </div>
   );
@@ -1148,12 +1130,12 @@ function Counter({
   onChange: (value: number) => void;
 }) {
   return (
-    <div className="flex items-center justify-between gap-4 rounded-[16px] border border-sand-300 bg-paper px-5 py-4">
+    <div className="flex items-center justify-between gap-3 rounded-[16px] border border-sand-300 bg-paper px-4 py-3.5 sm:px-5 sm:py-4">
       <div>
         <p className="text-sm font-bold text-ink">{label}</p>
-        <p className="text-[13px] font-medium text-navy-500">{sub}</p>
+        <p className="mt-0.5 text-[13px] font-medium leading-5 text-navy-500">{sub}</p>
       </div>
-      <div className="flex items-center gap-4">
+      <div className="flex shrink-0 items-center gap-3">
         <button
           type="button"
           onClick={() => onChange(Math.max(min, value - 1))}
@@ -1192,15 +1174,17 @@ function StepActions({
   return (
     <div className="flex flex-wrap items-center justify-between gap-4">
       {backHref ? (
-        <Link href={backHref} className="text-sm font-bold text-navy-700">
+        <Link href={backHref} className="inline-flex items-center gap-2 text-sm font-bold text-navy-700">
+          <ArrowLeft className="h-4 w-4" />
           {backLabel}
         </Link>
       ) : (
         <button
           type="button"
           onClick={back}
-          className="text-sm font-bold text-navy-700"
+          className="inline-flex items-center gap-2 text-sm font-bold text-navy-700"
         >
+          <ArrowLeft className="h-4 w-4" />
           {backLabel}
         </button>
       )}

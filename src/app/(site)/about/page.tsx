@@ -9,7 +9,7 @@ import {
 import { Breadcrumbs } from "@/components/site/breadcrumbs";
 import { CtaBand } from "@/components/site/cta-band";
 import { FeatureTile } from "@/components/site/feature-tile";
-import { Kicker, SectionHeading } from "@/components/site/section-heading";
+import { SectionHeading } from "@/components/site/section-heading";
 import { Stamp } from "@/components/site/stamp";
 import { loadDestinations } from "@/lib/content";
 import { imageUrl } from "@/lib/utils";
@@ -30,33 +30,30 @@ export default async function AboutPage() {
 
   return (
     <>
-      <section className="container-page py-12 text-center md:py-20">
-        <Breadcrumbs
-          items={[{ label: "Home", href: "/" }, { label: "About us" }]}
-          className="justify-center"
-        />
-        <h1 className="type-display mx-auto mt-8 max-w-4xl text-ink">
+      <section className="container-page pt-8 pb-12 md:pt-12 md:pb-16">
+        <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "About us" }]} />
+        <h1 className="type-h1 mt-5 max-w-3xl text-ink">
           Since 1984, in the
           <br />
           <span className="accent-line">business of memories.</span>
         </h1>
-        <p className="type-lead mx-auto mt-6 max-w-xl text-navy-700">
+        <p className="type-lead mt-4 max-w-xl text-navy-700">
           One family, one idea: travel should feel effortless, honest and
           personal.
         </p>
       </section>
 
       <section className="container-page">
-        <div className="relative grid gap-4 pb-10 md:grid-cols-3">
+        <div className="relative grid gap-4 pb-10 md:grid-cols-3 md:items-end">
           {[
-            { image: ladakh?.image, alt: "Ladakh", className: "md:mt-10" },
+            { image: ladakh?.image, alt: "Ladakh", className: "" },
             { image: kashmir?.image, alt: "Kashmir", className: "" },
-            { image: kerala?.image, alt: "Kerala", className: "md:mt-14" },
-          ].map((photo, index) => (
+            { image: kerala?.image, alt: "Kerala", className: "" },
+          ].map((photo) => (
             <div
               key={photo.alt}
               className={`relative overflow-hidden rounded-[28px] bg-ink ${
-                index === 1 ? "aspect-[504/520]" : "aspect-[420/440]"
+                "aspect-[420/440]"
               } ${photo.className}`}
             >
               {photo.image ? (
@@ -77,10 +74,9 @@ export default async function AboutPage() {
       </section>
 
       <section className="container-page section-major">
-        <div className="grid gap-12 lg:grid-cols-[460px_1fr] lg:gap-24">
+        <div className="grid gap-12 lg:grid-cols-[460px_1fr] lg:items-center lg:gap-24">
           <div>
-            <Kicker number="01" label="The Hidden Miles way" />
-            <h2 className="type-h2 mt-5 text-ink">
+            <h2 className="type-h2 text-ink">
               A family business,
               <br />
               <span className="accent-line">grown one trip at a time.</span>
@@ -92,18 +88,12 @@ export default async function AboutPage() {
               decades later we&apos;ve hosted 1.2 million guests — and we still
               answer the phone like it&apos;s our very first trip.
             </p>
-            <p className="type-body mt-5 text-navy-700">
-              Our tour leaders are trained in-house, our prices are all-inclusive,
-              and every itinerary is walked by our own team before a single seat
-              is sold. We are still family-run, still based in Mumbai, and still
-              slightly obsessed with the small details.
-            </p>
             <div className="mt-8 grid grid-cols-2 gap-6 border-t border-sand-300 pt-7 sm:grid-cols-4">
               {[
                 { value: "1.2M+", label: "travellers" },
                 { value: "500+", label: "tour leaders" },
                 { value: "60+", label: "destinations" },
-                { value: "4.9★", label: "rating" },
+                { value: "4.9", label: "rating" },
               ].map((stat) => (
                 <div key={stat.label}>
                   <p className="type-h3 text-ink">{stat.value}</p>
@@ -127,7 +117,7 @@ export default async function AboutPage() {
             title="Four decades,"
             accent="a few milestones."
           />
-          <div className="mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-5 lg:gap-0">
+          <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-5 lg:gap-0">
             {[
               ["1984", "First group tour to Kashmir — one bus, 32 travellers"],
               ["1996", "Our first international departure, to Europe"],
@@ -138,7 +128,7 @@ export default async function AboutPage() {
               <div key={year} className="lg:pr-6">
                 <div className="flex items-center gap-0">
                   <span
-                    className={`h-5 w-5 shrink-0 rounded-full border-4 border-sand-100 ${
+                    className={`h-3 w-3 shrink-0 rounded-full ${
                       index === 4 ? "bg-gold-400" : "bg-ink"
                     }`}
                   />
@@ -149,13 +139,13 @@ export default async function AboutPage() {
                   />
                 </div>
                 <p
-                  className={`mt-5 font-display text-[32px] italic leading-[40px] tracking-[-0.5px] ${
-                    index === 4 ? "text-gold-600" : "text-ink"
+                  className={`mt-4 font-display text-[26px] italic leading-8 ${
+                    index === 4 ? "text-gold-700" : "text-ink"
                   }`}
                 >
                   {year}
                 </p>
-                <p className="type-small mt-5 text-navy-700">{title}</p>
+                <p className="type-small mt-2 text-navy-700">{title}</p>
               </div>
             ))}
           </div>

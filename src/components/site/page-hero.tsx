@@ -10,26 +10,32 @@ export function PageHero({
   description,
   image,
   imageAlt,
-  coords,
   children,
+  showImageOnMobile = false,
   className,
 }: {
   items: Array<{ label: string; href?: string }>;
   title: string;
   accent?: string;
-  description: string;
+  description?: string;
   image: string;
   imageAlt?: string;
-  coords?: string;
   children?: React.ReactNode;
+  /** Listing pages hide the photo on phones so content starts sooner. */
+  showImageOnMobile?: boolean;
   className?: string;
 }) {
   return (
-    <section className={cn("container-page pt-10 pb-16 md:pt-14 md:pb-24", className)}>
-      <div className="grid items-center gap-10 xl:grid-cols-[1fr_560px] xl:gap-16">
+    <section className={cn("container-page pt-8 pb-14 md:pt-12 md:pb-20", className)}>
+      <div
+        className={cn(
+          "grid gap-10 xl:grid-cols-[1fr_500px] xl:gap-16",
+          description ? "items-start" : "items-center",
+        )}
+      >
         <div className="max-w-[600px]">
           <Breadcrumbs items={items} />
-          <h1 className="type-h1 mt-7 text-ink">
+          <h1 className="type-h1 mt-5 text-ink">
             {title}
             {accent ? (
               <>
@@ -38,27 +44,30 @@ export function PageHero({
               </>
             ) : null}
           </h1>
-          <p className="type-lead mt-6 max-w-[520px] text-navy-700">
-            {description}
-          </p>
-          {children ? <div className="mt-8">{children}</div> : null}
+          {description ? (
+            <p className="type-lead mt-4 max-w-[480px] text-navy-700">
+              {description}
+            </p>
+          ) : null}
+          {children ? <div className="mt-7">{children}</div> : null}
         </div>
 
-        <div className="relative aspect-[14/11] w-full overflow-hidden rounded-[28px] bg-ink xl:aspect-[560/440]">
+        <div
+          className={cn(
+            "relative aspect-[16/10] w-full overflow-hidden rounded-[24px] bg-ink sm:block",
+            // A heading-only hero gets a shorter photo so the text column isn't left with dead space.
+            description ? "xl:aspect-[16/11]" : children ? "xl:aspect-[2/1]" : "xl:aspect-[21/9]",
+            !showImageOnMobile && "hidden",
+          )}
+        >
           <Image
             src={imageUrl(image, 1200)}
             alt={imageAlt ?? title}
             fill
             priority
-            sizes="(max-width: 1024px) 100vw, 560px"
+            sizes="(max-width: 1024px) 100vw, 500px"
             className="object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-ink/60 via-transparent to-transparent" />
-          {coords ? (
-            <span className="coord coord-dark absolute bottom-6 left-6">
-              {coords}
-            </span>
-          ) : null}
         </div>
       </div>
     </section>
