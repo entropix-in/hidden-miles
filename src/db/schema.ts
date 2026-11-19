@@ -173,6 +173,40 @@ export const enquiries = mysqlTable(
   ],
 );
 
+export const users = mysqlTable(
+  "users",
+  {
+    id: bigint("id", { mode: "number", unsigned: true })
+      .autoincrement()
+      .primaryKey(),
+    name: varchar("name", { length: 120 }).notNull(),
+    email: varchar("email", { length: 190 }).notNull(),
+    phone: varchar("phone", { length: 40 }).notNull().default(""),
+    passwordHash: varchar("password_hash", { length: 255 }).notNull(),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at")
+      .notNull()
+      .defaultNow()
+      .onUpdateNow(),
+  },
+  (table) => [uniqueIndex("uniq_users_email").on(table.email)],
+);
+
+export const userSessions = mysqlTable(
+  "user_sessions",
+  {
+    // SHA-256 of the cookie token — the raw token is never stored.
+    id: varchar("id", { length: 64 }).primaryKey(),
+    userId: bigint("user_id", { mode: "number", unsigned: true }).notNull(),
+    expiresAt: timestamp("expires_at").notNull(),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+  },
+  (table) => [
+    index("idx_user_sessions_user").on(table.userId),
+    index("idx_user_sessions_expiry").on(table.expiresAt),
+  ],
+);
+
 export const settings = mysqlTable("settings", {
   settingKey: varchar("setting_key", { length: 64 }).primaryKey(),
   seeded: tinyint("seeded").notNull().default(0),
@@ -212,6 +246,7 @@ export const bookings = mysqlTable(
       .autoincrement()
       .primaryKey(),
     departureId: bigint("departure_id", { mode: "number", unsigned: true }),
+    userId: bigint("user_id", { mode: "number", unsigned: true }),
     tourSlug: varchar("tour_slug", { length: 190 }).notNull(),
     tourTitle: varchar("tour_title", { length: 190 }).notNull().default(""),
     startDate: date("start_date", { mode: "string" }),
@@ -229,6 +264,7 @@ export const bookings = mysqlTable(
   (table) => [
     index("idx_bookings_tour").on(table.tourSlug),
     index("idx_bookings_departure").on(table.departureId),
+    index("idx_bookings_user").on(table.userId),
     index("idx_bookings_status").on(table.status),
   ],
 );
@@ -240,3 +276,5 @@ export type TestimonialRow = typeof testimonials.$inferSelect;
 export type EnquiryRow = typeof enquiries.$inferSelect;
 export type DepartureRow = typeof tourDepartures.$inferSelect;
 export type BookingRow = typeof bookings.$inferSelect;
+export type UserRow = typeof users.$inferSelect;
+export type UserSessionRow = typeof userSessions.$inferSelect;

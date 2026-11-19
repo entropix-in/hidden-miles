@@ -34,7 +34,15 @@ export function getDb(): AppDb | null {
 }
 
 export function dbErrorMessage(error: unknown) {
-  const candidate = error as { code?: string; message?: string };
+  const original = error as {
+    code?: string;
+    message?: string;
+    cause?: { code?: string; message?: string };
+  };
+  const candidate = {
+    code: original.code ?? original.cause?.code,
+    message: original.message || original.cause?.message,
+  };
 
   if (candidate.code === "ER_DUP_ENTRY") {
     return "That URL slug is already in use. Choose another one.";

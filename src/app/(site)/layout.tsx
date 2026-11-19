@@ -1,6 +1,7 @@
 import { SiteHeader } from "@/components/site/site-header";
 import { SiteFooter } from "@/components/site/site-footer";
 import { loadDestinations, loadTours } from "@/lib/content";
+import { getSessionUser } from "@/lib/user-auth";
 
 export const dynamic = "force-dynamic";
 
@@ -9,9 +10,10 @@ export default async function SiteLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [destinations, tours] = await Promise.all([
+  const [destinations, tours, user] = await Promise.all([
     loadDestinations(),
     loadTours(),
+    getSessionUser(),
   ]);
   const tourCounts = tours.reduce<Record<string, number>>((counts, tour) => {
     counts[tour.destinationSlug] = (counts[tour.destinationSlug] ?? 0) + 1;
@@ -20,7 +22,11 @@ export default async function SiteLayout({
 
   return (
     <>
-      <SiteHeader destinations={destinations} tourCounts={tourCounts} />
+      <SiteHeader
+        destinations={destinations}
+        tourCounts={tourCounts}
+        user={user}
+      />
       <main>{children}</main>
       <SiteFooter />
     </>

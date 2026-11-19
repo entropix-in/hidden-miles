@@ -10,9 +10,11 @@ import {
   Menu,
   Phone,
   Search,
+  UserRound,
   X,
 } from "lucide-react";
 import { Logo } from "@/components/site/logo";
+import { logoutAction } from "@/lib/user-actions";
 import { navLinks, site, type NavLink } from "@/data/site";
 import type { Destination } from "@/data/destinations";
 import { cn, imageUrl } from "@/lib/utils";
@@ -31,9 +33,11 @@ const destinationGroups = (destinations: Destination[]) => [
 export function SiteHeader({
   destinations,
   tourCounts = {},
+  user = null,
 }: {
   destinations: Destination[];
   tourCounts?: Record<string, number>;
+  user?: { name: string; email: string } | null;
 }) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -41,6 +45,7 @@ export function SiteHeader({
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [previewSlug, setPreviewSlug] = useState<string | null>(null);
+  const firstName = user?.name.split(" ")[0] || "Account";
 
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname.startsWith(href);
@@ -250,6 +255,28 @@ export function SiteHeader({
             <Link href="/contact" className="btn btn-ink btn-sm hidden sm:inline-flex">
               Plan my trip
             </Link>
+            {user ? (
+              <Link
+                href="/account"
+                className="hidden items-center gap-2 rounded-full border border-sand-300 bg-paper py-1 pl-1 pr-3 transition hover:border-navy-300 hover:bg-sand-100 sm:flex"
+                aria-label="My account"
+              >
+                <span className="grid h-7 w-7 place-items-center rounded-full bg-ink text-[12px] font-extrabold uppercase text-gold-400">
+                  {user.name.slice(0, 1) || "H"}
+                </span>
+                <span className="max-w-[92px] truncate text-[13px] font-bold text-ink">
+                  {firstName}
+                </span>
+              </Link>
+            ) : (
+              <Link
+                href="/login"
+                className="hidden items-center gap-1.5 rounded-full px-3 py-2 text-[13px] font-bold text-ink transition hover:bg-sand-100 sm:inline-flex"
+              >
+                <UserRound className="h-4 w-4" />
+                Sign in
+              </Link>
+            )}
             <button
               type="button"
               onClick={() => setMobileOpen((open) => !open)}
@@ -384,6 +411,56 @@ export function SiteHeader({
               );
             })}
           </nav>
+
+          <div className="border-t border-sand-300 px-5 py-5">
+            {user ? (
+              <div className="space-y-3">
+                <Link
+                  href="/account"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center gap-3 rounded-[16px] border border-sand-300 bg-paper p-3 transition hover:border-navy-300"
+                >
+                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-ink text-sm font-extrabold uppercase text-gold-400">
+                    {user.name.slice(0, 1) || "H"}
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-sm font-bold text-ink">
+                      {user.name}
+                    </span>
+                    <span className="block truncate text-[12px] font-medium text-navy-500">
+                      {user.email}
+                    </span>
+                  </span>
+                  <span className="text-lg text-navy-300" aria-hidden="true">
+                    ›
+                  </span>
+                </Link>
+                <form action={logoutAction}>
+                  <button type="submit" className="btn btn-outline w-full">
+                    Sign out
+                  </button>
+                </form>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-3">
+                <Link
+                  href="/login"
+                  onClick={() => setMobileOpen(false)}
+                  className="btn btn-ink"
+                >
+                  <UserRound className="h-4 w-4" />
+                  Sign in
+                </Link>
+                <Link
+                  href="/signup"
+                  onClick={() => setMobileOpen(false)}
+                  className="btn btn-outline"
+                >
+                  Create account
+                </Link>
+              </div>
+            )}
+          </div>
 
           <div className="px-5 pb-10">
             <Link

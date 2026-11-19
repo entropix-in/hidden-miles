@@ -382,6 +382,24 @@ export async function loadAdminBookings(
   }
 }
 
+export async function loadUserBookings(userId: number): Promise<TourBooking[]> {
+  const db = getDb();
+  if (!db) return [];
+
+  try {
+    const rows = await db
+      .select()
+      .from(bookingsTable)
+      .where(eq(bookingsTable.userId, userId))
+      .orderBy(desc(bookingsTable.createdAt));
+
+    return rows.map(mapBooking);
+  } catch (error) {
+    console.error("[hidden-miles] failed to load traveller bookings", error);
+    return [];
+  }
+}
+
 export async function loadTestimonials(): Promise<Testimonial[]> {
   const status = await getContentStatus();
   if (!status.configured || !status.seeded) return staticTestimonials;

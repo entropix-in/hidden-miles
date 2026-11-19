@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { BookingFlow } from "@/components/site/booking-flow";
 import { loadDepartures, loadTour } from "@/lib/content";
 import { resolveTourCities } from "@/lib/tour-cities";
+import { requireUser } from "@/lib/user-auth";
 
 export const dynamic = "force-dynamic";
 
@@ -29,6 +30,14 @@ export default async function BookTourPage({
   const [{ slug }, query] = await Promise.all([params, searchParams]);
   const tour = await loadTour(slug);
   if (!tour) notFound();
+
+  const nextParams = new URLSearchParams();
+  for (const [key, value] of Object.entries(query)) {
+    if (typeof value === "string") nextParams.set(key, value);
+    else if (Array.isArray(value)) value.forEach((item) => nextParams.append(key, item));
+  }
+  const nextPath = `/tours/${slug}/book${nextParams.size ? `?${nextParams}` : ""}`;
+  const user = await requireUser(nextPath);
 
   const departures = await loadDepartures(tour.slug);
 
@@ -63,6 +72,11 @@ export default async function BookTourPage({
       initialCity={readParam("city")}
       initialAdults={readNumber("adults")}
       initialChildren={readNumber("children")}
+      account={{
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+      }}
     />
   );
 }

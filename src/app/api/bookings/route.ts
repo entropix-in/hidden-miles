@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { and, eq, ne, sum } from "drizzle-orm";
 import { dbErrorMessage, getDb } from "@/db";
 import { bookings, tourDepartures } from "@/db/schema";
+import { getSessionUser } from "@/lib/user-auth";
 
 export const runtime = "nodejs";
 
@@ -49,6 +50,22 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true });
   }
 
+  const user = await getSessionUser();
+  if (!user) {
+    return NextResponse.json(
+      {
+        ok: false,
+        requiresAuth: true,
+        error: "Please sign in to book your tour.",
+      },
+      { status: 401 },
+    );
+  }
+
+  const leadName = name || user.name;
+  const leadEmail = email || user.email;
+  const leadPhone = phone || user.phone;
+
   if (!tourSlug) {
     return NextResponse.json(
       { ok: false, error: "Tour package is missing." },
@@ -56,14 +73,14 @@ export async function POST(request: Request) {
     );
   }
 
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(leadEmail)) {
     return NextResponse.json(
       { ok: false, error: "Please enter a valid email address." },
       { status: 400 },
     );
   }
 
-  if (!name || phone.replace(/\D/g, "").length < 8) {
+  if (!leadName || leadPhone.replace(/\D/g, "").length < 8) {
     return NextResponse.json(
       { ok: false, error: "Please share your name and a valid phone number." },
       { status: 400 },
@@ -74,9 +91,9 @@ export async function POST(request: Request) {
   if (!db) {
     console.info("[hidden-miles] booking request received (database not configured)", {
       tourSlug,
-      name,
-      email,
-      phone,
+      name: leadName,
+      email: leadEmail,
+      phone: leadPhone,
       travellers,
     });
     return NextResponse.json(
@@ -147,12 +164,13 @@ export async function POST(request: Request) {
 
     await db.insert(bookings).values({
       departureId,
+      userId: user.id,
       tourSlug,
       tourTitle,
       startDate,
-      name,
-      email,
-      phone,
+      name: leadName,
+      email: leadEmail,
+      phone: leadPhone,
       travellers,
       amount,
       notes: notes || null,

@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
   Check,
@@ -12,6 +13,7 @@ import {
   Minus,
   Plus,
   ShieldCheck,
+  UserRound,
 } from "lucide-react";
 import { Rating } from "@/components/site/rating";
 import { Stamp } from "@/components/site/stamp";
@@ -76,6 +78,7 @@ export function BookingFlow({
   initialCity,
   initialAdults,
   initialChildren,
+  account,
 }: {
   tour: {
     slug: string;
@@ -95,7 +98,9 @@ export function BookingFlow({
   initialCity?: string;
   initialAdults?: number;
   initialChildren?: number;
+  account: { name: string; email: string; phone: string };
 }) {
+  const router = useRouter();
   const fallback = useMemo(
     () =>
       Array.from({ length: 18 }).map((_, index) => {
@@ -146,9 +151,9 @@ export function BookingFlow({
       : 1,
   );
   const [lead, setLead] = useState({
-    name: "",
-    email: "",
-    phone: "",
+    name: account.name,
+    email: account.email,
+    phone: account.phone,
     nationality: "Indian",
     requests: "",
     updates: true,
@@ -160,6 +165,8 @@ export function BookingFlow({
   const [method, setMethod] = useState("UPI");
   const [agree, setAgree] = useState(false);
   const [status, setStatus] = useState<"idle" | "sending" | "error">("idle");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [leadError, setLeadError] = useState("");
   const [bookingRef, setBookingRef] = useState("");
 
   const selectedDate = dates.find((date) => date._id === dateId) ?? dates[0];
@@ -197,6 +204,7 @@ export function BookingFlow({
 
   async function submitBooking() {
     setStatus("sending");
+    setErrorMessage("");
     try {
       const response = await fetch("/api/bookings", {
         method: "POST",
@@ -214,13 +222,34 @@ export function BookingFlow({
           travellers,
         }),
       });
-      if (!response.ok) throw new Error("Request failed");
-      setBookingRef(
-        `HM-26-${Math.floor(10000 + Math.random() * 89999)}`,
-      );
+      const data = (await response.json().catch(() => ({}))) as {
+        ok?: boolean;
+        error?: string;
+        requiresAuth?: boolean;
+      };
+
+      if (response.status === 401 || data.requiresAuth) {
+        router.push(
+          `/login?next=${encodeURIComponent(
+            window.location.pathname + window.location.search,
+          )}`,
+        );
+        return;
+      }
+
+      if (!response.ok || !data.ok) {
+        throw new Error(data.error || "We could not complete that booking.");
+      }
+
+      setBookingRef(`HM-26-${Math.floor(10000 + Math.random() * 89999)}`);
       setStep(4);
       setStatus("idle");
-    } catch {
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error && error.message
+          ? error.message
+          : "We could not complete that payment. Please try again or call us.",
+      );
       setStatus("error");
     }
   }
@@ -326,7 +355,7 @@ export function BookingFlow({
 
   return (
     <div className="bg-sand-100">
-      <CheckoutHeader step={step} />
+      <CheckoutHeader step={step} email={account.email} />
 
       <div className="container-page grid gap-10 py-8 md:py-12 xl:grid-cols-[1fr_400px] xl:items-start">
         <div>
@@ -511,7 +540,7 @@ export function BookingFlow({
               <>
                 <SectionCard
                   title="Lead traveller"
-                  subtitle="Tickets, invoices and trip updates go to this person."
+                  subtitle={`Signed in as ${account.email}. Tickets, invoices and trip updates go to this person.`}
                 >
                   <div className="grid gap-4">
                     <div>
@@ -630,11 +659,27 @@ export function BookingFlow({
                   Send me trip updates on WhatsApp.
                 </label>
 
+                {leadError ? (
+                  <p className="rounded-[12px] bg-danger-soft px-4 py-3 text-sm font-bold text-danger">
+                    {leadError}
+                  </p>
+                ) : null}
+
                 <StepActions
                   back={() => setStep(0)}
                   backLabel="Back to trip details"
                   next={() => {
-                    if (!lead.name || !lead.email || !lead.phone) return;
+                    if (
+                      !lead.name.trim() ||
+                      !lead.email.trim() ||
+                      !lead.phone.trim()
+                    ) {
+                      setLeadError(
+                        "Add your name, email and phone so we can confirm your seats.",
+                      );
+                      return;
+                    }
+                    setLeadError("");
                     setStep(2);
                   }}
                   nextLabel="Continue to add-ons"
@@ -894,8 +939,8 @@ export function BookingFlow({
 
                 {status === "error" ? (
                   <p className="rounded-[12px] bg-danger-soft px-4 py-3 text-sm font-bold text-danger">
-                    We could not complete that payment. Please try again or call{" "}
-                    {site.phone}.
+                    {errorMessage ||
+                      `We could not complete that payment. Please try again or call ${site.phone}.`}
                   </p>
                 ) : null}
 
@@ -1045,7 +1090,7 @@ export function BookingFlow({
   );
 }
 
-function CheckoutHeader({ step }: { step: number }) {
+function CheckoutHeader({ step, email }: { step: number; email: string }) {
   return (
     <div className="border-b border-sand-300 bg-paper">
       <div className="container-page flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
@@ -1088,9 +1133,18 @@ function CheckoutHeader({ step }: { step: number }) {
             );
           })}
         </div>
-        <p className="flex items-center gap-1.5 text-[13px] font-bold text-success">
-          <Lock className="h-3.5 w-3.5" /> Secure checkout
-        </p>
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5">
+          <Link
+            href="/account"
+            className="flex items-center gap-1.5 text-[13px] font-bold text-navy-600 transition hover:text-ink"
+          >
+            <UserRound className="h-3.5 w-3.5" />
+            <span className="max-w-[210px] truncate">{email}</span>
+          </Link>
+          <p className="flex items-center gap-1.5 text-[13px] font-bold text-success">
+            <Lock className="h-3.5 w-3.5" /> Secure checkout
+          </p>
+        </div>
       </div>
     </div>
   );
