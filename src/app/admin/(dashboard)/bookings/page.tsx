@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight, Inbox, Search } from "lucide-react";
+import { ArrowUpRight, Inbox, Search } from "lucide-react";
 import { AdminBookingSortButton } from "@/components/admin/admin-booking-sort-button";
 import { AdminDeparturePackage, departurePackage } from "@/components/admin/admin-departure-package";
 import { AdminBookingStatus } from "@/components/admin/admin-booking-status";
@@ -140,7 +140,7 @@ export default async function AdminBookingRequestsPage({ searchParams }: {
                   <thead role="rowgroup"><tr role="row">
                     {columns.map(([key, label]) => (
                       <th key={key} role="columnheader" scope="col"
-                        className={key === "amount" || key === "guests" ? "admin-cell-number" : undefined}
+                        className={key === "status" ? "admin-booking-status-cell" : key === "amount" || key === "guests" ? "admin-cell-number" : undefined}
                         aria-sort={sortColumn === key ? order === "asc" ? "ascending" : "descending" : undefined}>
                         <AdminBookingSortButton label={label} direction={sortColumn === key ? order : undefined}
                           href={filterHref({ sort: `${key}-${sortColumn === key && order === "asc" ? "desc" : "asc"}` })} />
@@ -157,10 +157,10 @@ export default async function AdminBookingRequestsPage({ searchParams }: {
                       return (
                         <tr role="row" key={booking._id}>
                           <td role="cell" className="admin-booking-traveller">
-                            <Link className="admin-booking-detail-link" href={detailHref}>
-                              {booking.name}<ArrowRight size={14} aria-hidden />
-                            </Link>
-                            <p className="admin-booking-email" title={booking.email}>{booking.email}</p>
+                            <div className="admin-request-lines">
+                              <Link className="admin-booking-detail-link" href={detailHref}>{booking.name}</Link>
+                              <p title={booking.email}>{booking.email}</p>
+                            </div>
                           </td>
                           <td role="cell" className="admin-booking-package">
                             {tour ? <AdminDeparturePackage tour={{ ...tour, title: booking.tourTitle || tour.title }} />
@@ -174,7 +174,7 @@ export default async function AdminBookingRequestsPage({ searchParams }: {
                           <td role="cell" data-mobile-label="Guests" className="admin-cell-number">{booking.travellers}</td>
                           <td role="cell" data-mobile-label="Amount" className="admin-cell-number whitespace-nowrap"><strong>{booking.amount ? formatINR(booking.amount) : "On request"}</strong></td>
                           <td role="cell" data-mobile-label="Received" className="whitespace-nowrap">{dateFormatter.format(new Date(booking.createdAt))}</td>
-                          <td role="cell">
+                          <td role="cell" className="admin-booking-status-cell">
                             <AdminBookingStatus key={booking.status} id={booking._id} name={booking.name} status={booking.status} returnTo={returnTo} />
                           </td>
                           <td role="cell" className="admin-request-details-cell">

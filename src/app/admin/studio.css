@@ -730,7 +730,6 @@
 .admin-data-table thead th {
   background: var(--studio-inset);
   color: var(--studio-secondary);
-  font-size: 0.75rem;
   font-weight: 600;
   white-space: nowrap;
 }
@@ -809,6 +808,7 @@ a.admin-page-number:hover { background: var(--studio-inset); border-color: var(-
   .admin-page-arrow-label { display: none; }
 }
 
+.admin-data-table .admin-departure-meta { font-size: inherit; }
 .admin-departure-context {
   padding: 0.625rem 0.75rem;
   border-radius: 0.5rem;
@@ -850,7 +850,7 @@ a.admin-page-number:hover { background: var(--studio-inset); border-color: var(-
   :is(.admin-bookings-table, .admin-departures-table) td[data-mobile-label]::before {
     display: block;
     color: var(--studio-muted);
-    font-size: 0.75rem;
+    font-size: inherit;
     content: attr(data-mobile-label);
   }
   .admin-bookings-table :is(.admin-booking-traveller, .admin-booking-package, .admin-booking-departure),
@@ -893,7 +893,6 @@ a.admin-page-number:hover { background: var(--studio-inset); border-color: var(-
   --departure-title-size: 1.5rem;
   --departure-section-size: 1rem;
   --departure-body-size: 0.875rem;
-  --departure-meta-size: 0.75rem;
   display: grid;
   gap: 1.25rem;
   min-width: 0;
@@ -912,7 +911,6 @@ a.admin-page-number:hover { background: var(--studio-inset); border-color: var(-
 th[aria-sort] .admin-sort-link svg { color: var(--studio-pine); }
 .admin-departures-table td { padding-block: 0.875rem; }
 .admin-departures-table td strong { font-weight: 500; }
-.admin-departures-table td p { font-size: var(--departure-meta-size); }
 .admin-departure-list-controls { gap: 0.75rem; }
 .admin-view-switch { gap: 0.25rem; padding: 0.25rem; border: 1px solid var(--studio-rule); border-radius: 0.625rem; }
 .admin-view-switch a {
@@ -950,6 +948,8 @@ th[aria-sort] .admin-sort-link svg { color: var(--studio-pine); }
   display: flex;
   align-items: center;
   gap: 0.25rem;
+}
+.admin-departure-package-title, .admin-enquiry-topic {
   color: var(--studio-text);
   font-size: 0.875rem;
   font-weight: 500;
@@ -958,7 +958,10 @@ th[aria-sort] .admin-sort-link svg { color: var(--studio-pine); }
 }
 .admin-departure-package-title svg { flex: none; color: var(--studio-pine); }
 .admin-departure-package-link:hover .admin-departure-package-title { color: var(--studio-pine); text-decoration: underline; }
-.admin-departure-meta { display: block; color: var(--studio-muted); font-size: 0.75rem; line-height: 1.5; }
+.admin-departure-meta {
+  display: block; color: var(--studio-muted); font-size: 0.75rem; font-weight: 400; line-height: 1.5;
+}
+.admin-data-table .admin-departure-meta { font-size: inherit; }
 .admin-departure-context { padding: 0.75rem; }
 .admin-date-trigger {
   display: flex;
@@ -1068,7 +1071,7 @@ th[aria-sort] .admin-sort-link svg { color: var(--studio-pine); }
 .admin-departure-summary dd { margin-top: 0.25rem; color: var(--studio-text); font-size: 1rem; font-weight: 500; font-variant-numeric: tabular-nums; }
 .admin-departure-note { display: grid; grid-column: 1 / -1; gap: 0.25rem; border-top: 1px solid var(--studio-rule); padding-top: 0.75rem; }
 .admin-departure-guest > span { font-weight: 500; }
-.admin-departure-status { display: inline-block; border-radius: 0.375rem; background: var(--studio-inset); padding: 0.25rem 0.5rem; font-size: 0.75rem; }
+.admin-departure-status { display: inline-block; border-radius: 0.375rem; background: var(--studio-inset); padding: 0.25rem 0.5rem; font-size: inherit; }
 .admin-departure-status[data-status="pending"] { background: var(--color-gold-50); color: var(--color-gold-800); }
 .admin-departure-status[data-status="confirmed"] { background: var(--studio-pine-wash); color: var(--studio-pine-dark); }
 .admin-departure-status[data-status="cancelled"] { background: var(--color-red-50); color: var(--color-red-700); }
@@ -1114,7 +1117,7 @@ th[aria-sort] .admin-sort-link svg { color: var(--studio-pine); }
   .admin-departure-bookings td[data-mobile-label]::before {
     display: block;
     color: var(--studio-muted);
-    font-size: 0.75rem;
+    font-size: inherit;
     content: attr(data-mobile-label);
   }
   .admin-departure-guest { grid-column: 1 / -1; }
@@ -1123,14 +1126,10 @@ th[aria-sort] .admin-sort-link svg { color: var(--studio-pine); }
 .admin-bookings-table td { padding-block: 0.75rem; }
 .admin-bookings-table td strong { font-weight: 500; }
 .admin-booking-detail-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.375rem;
   color: var(--studio-pine-dark);
   font-weight: 500;
   overflow-wrap: anywhere;
 }
-.admin-booking-detail-link svg { flex: none; }
 .admin-booking-detail-link:hover { text-decoration: underline; }
 .admin-booking-detail-panels { display: grid; gap: var(--space-4); min-width: 0; }
 .admin-booking-detail-panel { display: grid; align-content: start; gap: 0.875rem; padding: var(--space-4); }
@@ -1150,12 +1149,6 @@ th[aria-sort] .admin-sort-link svg { color: var(--studio-pine); }
   .admin-bookings-table td { padding: 0; }
   .admin-bookings-table td[data-mobile-label="Guests"] { text-align: start; }
 }
-.admin-bookings-table td .admin-booking-email {
-  max-inline-size: 100%;
-  overflow-wrap: anywhere;
-  white-space: normal;
-}
-
 .admin-enquiry-metrics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.75rem; }
 .admin-enquiry-metric {
   display: grid;
@@ -1180,18 +1173,21 @@ th[aria-sort] .admin-sort-link svg { color: var(--studio-pine); }
 .admin-enquiry-table-wrap { container-type: inline-size; overflow: auto; }
 .admin-enquiry-table-wrap:focus-visible { outline: 2px solid var(--studio-pine); outline-offset: -2px; }
 .admin-enquiry-table th[scope="row"] { background: transparent; font-weight: 600; }
-.admin-enquiry-table :is(th, td) { vertical-align: top; }
-.admin-enquiry-table thead th { font-weight: 600; }
+.admin-enquiry-table :is(.admin-enquiry-traveller, .admin-enquiry-message) { vertical-align: top; }
+.admin-enquiry-table :is(.admin-enquiry-message, .admin-enquiry-received) p {
+  font-size: 0.875rem; font-weight: 400; line-height: 1.5;
+}
+.admin-request-lines {
+  display: grid; justify-items: start; gap: 0.25rem; font-size: 0.875rem; line-height: 1.5;
+}
+.admin-data-table .admin-request-lines p { margin: 0; line-height: inherit; }
 .admin-enquiry-contact {
-  display: flex; align-items: center; gap: 0.25rem; margin-top: 0.25rem; overflow-wrap: anywhere;
-  color: var(--studio-muted); font-size: 0.875rem; font-weight: 400;
+  overflow-wrap: anywhere;
+  color: var(--studio-muted); font-weight: 400;
 }
 .admin-enquiry-contact:hover { color: var(--studio-pine); text-decoration: underline; }
-.admin-enquiry-contact svg { flex: none; }
-.admin-enquiry-topic { font-weight: 500; }
 .admin-enquiry-message { max-inline-size: 24rem; }
 .admin-enquiry-received { white-space: nowrap; }
-.admin-enquiry-table .admin-enquiry-received p { font-size: 0.75rem; }
 .admin-booking-status[data-status="new"] { color: var(--studio-pine-dark); background: var(--studio-pine-wash); }
 .admin-booking-status[data-status="contacted"], .admin-booking-status[data-status="closed"] { color: var(--studio-secondary); border-color: var(--studio-field); }
 @media (max-width: 32rem) {
@@ -1203,21 +1199,31 @@ th[aria-sort] .admin-sort-link svg { color: var(--studio-pine); }
   .admin-enquiry-table, .admin-enquiry-table tbody { display: block; }
   .admin-enquiry-table thead { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); }
   .admin-enquiry-table tbody tr {
-    display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0.625rem;
+    display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 0.625rem;
     border-top: 1px solid var(--studio-rule); padding: var(--space-4);
   }
   .admin-enquiry-table :is(td, th[scope="row"]) { border: 0; padding: 0; min-width: 0; }
-  .admin-enquiry-table :is(.admin-enquiry-traveller, .admin-enquiry-message) { grid-column: 1 / -1; }
+  .admin-enquiry-table :is(.admin-enquiry-traveller, .admin-enquiry-message, .admin-enquiry-received) { grid-column: 1 / -1; }
   .admin-enquiry-status { grid-column: 1; }
-  .admin-enquiry-received::before { display: block; color: var(--studio-muted); font-size: 0.75rem; content: attr(data-label); }
+  .admin-enquiry-received::before { display: block; color: var(--studio-muted); content: attr(data-label); }
 }
 
 .admin-data-table .admin-request-details-cell { width: 1%; text-align: end; white-space: nowrap; }
+@container (width >= 40rem) {
+  .admin-enquiry-table .admin-enquiry-status { width: 1%; padding-inline-end: 0; white-space: nowrap; }
+  .admin-enquiry-table .admin-request-details-cell { padding-inline-start: 0.75rem; }
+}
+@media (width > 42rem) {
+  .admin-bookings-table .admin-booking-status-cell { width: 1%; padding-inline-end: 0; white-space: nowrap; }
+  .admin-bookings-table .admin-request-details-cell { padding-inline-start: 0.75rem; }
+}
 @media (max-width: 42rem) {
-  .admin-bookings-table .admin-request-details-cell { grid-column: 2; width: auto; }
+  .admin-bookings-table tbody tr { grid-template-columns: auto minmax(0, 1fr); }
+  .admin-bookings-table td[data-mobile-label="Received"] { grid-column: 1 / -1; }
+  .admin-bookings-table .admin-request-details-cell { grid-column: 2; justify-self: start; width: auto; }
 }
 @container (width < 40rem) {
-  .admin-enquiry-table .admin-request-details-cell { grid-column: 2; justify-self: end; width: auto; }
+  .admin-enquiry-table .admin-request-details-cell { grid-column: 2; justify-self: start; width: auto; }
 }
 
 /* Type scale: 12 meta · 14 body/controls · 16 section · 24 page & stat.
@@ -1271,5 +1277,5 @@ th[aria-sort] .admin-sort-link svg { color: var(--studio-pine); }
 .admin-studio :is(th, td) { padding-block: 0.75rem; padding-inline: 1rem; }
 .admin-studio :is(th, td):first-child { padding-inline-start: 1.25rem; }
 .admin-studio :is(th, td):last-child { padding-inline-end: 1.25rem; }
-.admin-studio th { font-size: 0.75rem; font-weight: 600; }
+.admin-studio th { font-size: 0.875rem; font-weight: 600; }
 .admin-studio td { font-size: 0.875rem; }

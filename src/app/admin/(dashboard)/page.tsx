@@ -116,7 +116,7 @@ function StatusPill({
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ring-1 ring-inset",
+        "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs in-[table]:text-sm font-medium ring-1 ring-inset",
         className,
       )}
     >
@@ -668,7 +668,7 @@ export default async function AdminDashboardPage() {
                   <div className="admin-table-scroll" tabIndex={0} role="region" aria-label="Recent booking requests">
                     <table className="w-full min-w-[680px] text-left text-sm">
                       <thead>
-                        <tr className="border-y border-stone-200 bg-sand-50/60 text-xs font-medium text-stone-500">
+                        <tr className="border-y border-stone-200 bg-sand-50/60 text-sm font-medium text-stone-500">
                           <th className="px-5 py-2 font-medium">Traveller</th>
                           <th className="px-3 py-2 font-medium">Package</th>
                           <th className="px-3 py-2 font-medium">Travel date</th>
@@ -688,14 +688,14 @@ export default async function AdminDashboardPage() {
                           >
                             <td className="px-5 py-3">
                               <div className="flex items-center gap-3">
-                                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-(--studio-pine-wash) text-xs font-medium text-(--studio-secondary)">
+                                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-(--studio-pine-wash) text-sm font-medium text-(--studio-secondary)">
                                   {initials(booking.name) || "?"}
                                 </span>
                                 <div className="min-w-0">
                                   <p className="truncate text-sm font-medium text-(--studio-text)">
                                     {booking.name}
                                   </p>
-                                  <p className="truncate text-xs text-stone-500">
+                                  <p className="truncate text-sm text-stone-500">
                                     {booking.email}
                                   </p>
                                 </div>
@@ -705,7 +705,7 @@ export default async function AdminDashboardPage() {
                               <p className="max-w-[180px] truncate text-sm font-medium text-stone-600">
                                 {booking.tourTitle || booking.tourSlug}
                               </p>
-                              <p className="text-xs text-stone-500">
+                              <p className="text-sm text-stone-500">
                                 {booking.travellers}{" "}
                                 {booking.travellers === 1 ? "traveller" : "travellers"}
                               </p>

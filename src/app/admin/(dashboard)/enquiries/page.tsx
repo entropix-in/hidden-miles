@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight, CheckCircle2, Inbox, MessageCircle, Search } from "lucide-react";
+import { CheckCircle2, Inbox, MessageCircle, Search } from "lucide-react";
 import { AdminNotice, DatabaseSetupNotice } from "@/components/admin/admin-ui";
 import { AdminListPagination, adminPageNumber } from "@/components/admin/admin-list-pagination";
 import { AdminBookingSortButton as AdminSortButton } from "@/components/admin/admin-booking-sort-button";
@@ -120,7 +120,7 @@ export default async function AdminEnquiriesPage({ searchParams }: {
                 <table className="admin-data-table admin-enquiry-table" role="table">
                   <thead role="rowgroup"><tr role="row">
                     {columns.map(([name, label]) => (
-                      <th key={name} scope="col" role="columnheader"
+                      <th key={name} scope="col" role="columnheader" className={name === "status" ? "admin-enquiry-status" : undefined}
                         aria-sort={sortColumn === name ? order === "asc" ? "ascending" : "descending" : undefined}>
                         <AdminSortButton label={label} direction={sortColumn === name ? order : undefined}
                           href={href(active, 1, `${name}-${sortColumn === name && order === "asc" ? "desc" : "asc"}`)} />
@@ -139,16 +139,18 @@ export default async function AdminEnquiriesPage({ searchParams }: {
                       return (
                         <tr key={item._id} role="row">
                           <th scope="row" role="rowheader" className="admin-enquiry-traveller">
-                            <Link className="admin-booking-detail-link" href={detailHref}>
-                              {item.name || item.email}<ArrowRight size={14} aria-hidden />
-                            </Link>
-                            {item.email && <a href={`mailto:${item.email}`} className="admin-enquiry-contact">{item.email}<ArrowUpRight size={12} aria-hidden /></a>}
-                            {item.phone && <a href={`tel:${item.phone.replace(/\s/g, "")}`} className="admin-enquiry-contact">{item.phone}</a>}
+                            <div className="admin-request-lines">
+                              <Link className="admin-booking-detail-link" href={detailHref}>{item.name || item.email}</Link>
+                              {item.email && <a href={`mailto:${item.email}`} className="admin-enquiry-contact">{item.email}</a>}
+                              {item.phone && <a href={`tel:${item.phone.replace(/\s/g, "")}`} className="admin-enquiry-contact">{item.phone}</a>}
+                            </div>
                           </th>
                           <td role="cell" className="admin-enquiry-message">
-                            <span className="admin-enquiry-topic">{topic}</span>
-                            {trip && <p>{trip}</p>}
-                            {interest && <p>Interested in: {interest}</p>}
+                            <div className="admin-request-lines">
+                              <span className="admin-enquiry-topic">{topic}</span>
+                              {trip && <p>{trip}</p>}
+                              {interest && <p>Interested in: {interest}</p>}
+                            </div>
                           </td>
                           <td role="cell" data-label="Received" className="admin-enquiry-received">
                             <time dateTime={new Date(item.createdAt).toISOString()}>{dateFormatter.format(new Date(item.createdAt))}</time>
