@@ -29,6 +29,13 @@
       "when": 1795042043185,
       "tag": "0003_handy_whistler",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1795046021798,
+      "tag": "0004_rich_admin_content",
+      "breakpoints": true
     }
   ]
 }

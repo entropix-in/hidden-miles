@@ -1,122 +1,94 @@
+"use client";
+
+import { AdminHighlightsField } from "./admin-highlights-field";
+import { AdminRichField } from "./admin-rich-fields";
+import { useId, useState, type RefObject } from "react";
 import { AdminAuthoringForm } from "./admin-authoring-form";
 import { AdminContentEditor } from "./admin-content-editor";
+import { AdminPageUrl } from "./admin-page-url";
 import { CoverPhotoField } from "./admin-photo-upload";
 import Link from "next/link";
-import { saveExperienceAction } from "@/app/admin/actions";
-import { AdminSelect } from "@/components/admin/admin-select";
+import { Dialog } from "@base-ui/react/dialog";
+import { persistExperienceAction, saveExperienceAction } from "@/app/admin/actions";
+import { AdminExperienceIconPicker } from "./admin-experience-icon-picker";
+import type { ExperienceOption } from "./admin-tour-experiences";
 import type { AdminExperience } from "@/lib/types";
 
-const icons = [
-  ["heart", "Heart"],
-  ["sparkles", "Sparkles"],
-  ["mountain", "Mountain"],
-  ["users", "Users"],
-  ["crown", "Crown"],
-  ["flower", "Flower"],
-] as const;
-
 export function AdminExperienceForm({
-  experience,
+  experience, onCreate, titleRef,
 }: {
   experience?: AdminExperience;
+  onCreate?: (experience: ExperienceOption) => void;
+  titleRef?: RefObject<HTMLInputElement | null>;
 }) {
+  const id = useId();
+  const [pageTitle, setPageTitle] = useState(experience?.title ?? "");
   return (
-    <AdminAuthoringForm action={saveExperienceAction} cancel={
-      <Link href="/admin/experiences" className="btn-outline">Cancel</Link>
-    }>
+    <AdminAuthoringForm label={onCreate ? "New experience" : undefined}
+      submitLabel={experience ? "Save changes" : "Create experience"}
+      action={onCreate ? async (formData) => {
+        const result = await persistExperienceAction(formData);
+        if (result.experience) onCreate(result.experience);
+        return { error: result.error ?? "" };
+      } : saveExperienceAction}
+      cancel={onCreate ? <Dialog.Close className="btn-outline">Cancel</Dialog.Close>
+        : <Link href="/admin/experiences" className="btn-outline">Cancel</Link>}>
       <input type="hidden" name="id" value={experience?._id ?? ""} />
 
-      <section className="rounded-[28px] border border-stone-200 bg-white p-6">
-        <p className="eyebrow">The basics</p>
-        <h2 className="mt-2 font-display text-2xl font-semibold text-navy-950">
-          Experience details
-        </h2>
+      <section className={onCreate ? "admin-inline-experience" : "admin-form-panel"}>
+        {!onCreate && <h2 className="text-base font-semibold text-navy-950">Experience details</h2>}
 
-        <div className="mt-5 grid gap-4 sm:grid-cols-2">
-          <div>
-            <label htmlFor="title" className="field-label">
-              Title
-            </label>
-            <input
-              id="title"
-              name="title"
-              required
-              defaultValue={experience?.title ?? ""}
-              placeholder="Honeymoons & Celebrations"
-              className="field"
-            />
+        <div className="admin-details-layout">
+          <div className="grid min-w-0 gap-4 sm:grid-cols-2">
+            <div>
+              <label htmlFor={id + "-title"} className="field-label">
+                Title
+              </label>
+              <input
+                ref={titleRef}
+                id={id + "-title"}
+                name="title"
+                required
+                value={pageTitle}
+                maxLength={190}
+                onChange={(event) => setPageTitle(event.target.value)}
+                placeholder="Honeymoons & Celebrations"
+                className="field"
+              />
+            </div>
+            <div>
+              <label htmlFor={id + "-shortTitle"} className="field-label">
+                Short title
+              </label>
+              <input
+                id={id + "-shortTitle"}
+                name="shortTitle"
+                defaultValue={experience?.shortTitle ?? ""}
+                placeholder="Honeymoon"
+                className="field"
+              />
+            </div>
+            <div className="sm:col-span-2">
+              <AdminPageUrl prefix="/speciality-tours/" title={pageTitle} savedSlug={experience?.slug} />
+            </div>
+            <div className="sm:col-span-2">
+              <AdminExperienceIconPicker initialIcon={experience?.icon} />
+            </div>
+            <div className="sm:col-span-2">
+              <AdminRichField name="description" label="Short description"
+                initial={experience?.description} editor={experience?.richFields?.description} />
+            </div>
+            {!onCreate && <div className="sm:col-span-2">
+              <AdminHighlightsField initial={experience?.highlights} />
+            </div>}
           </div>
-          <div>
-            <label htmlFor="shortTitle" className="field-label">
-              Short title
-            </label>
-            <input
-              id="shortTitle"
-              name="shortTitle"
-              defaultValue={experience?.shortTitle ?? ""}
-              placeholder="Honeymoon"
-              className="field"
-            />
-          </div>
-          <div>
-            <label htmlFor="slug" className="field-label">
-              URL slug
-            </label>
-            <input
-              id="slug"
-              name="slug"
-              defaultValue={experience?.slug ?? ""}
-              placeholder="honeymoon"
-              className="field"
-            />
-          </div>
-          <div>
-            <label htmlFor="icon" className="field-label">
-              Icon
-            </label>
-            <AdminSelect
-              id="icon"
-              name="icon"
-              defaultValue={experience?.icon ?? "sparkles"}
-            >
-              {icons.map(([value, label]) => (
-                <option key={value} value={value}>
-                  {label}
-                </option>
-              ))}
-            </AdminSelect>
-          </div>
-          <div className="sm:col-span-2">
+          <div className="min-w-0">
             <CoverPhotoField initialValue={experience?.image} />
-          </div>
-          <div className="sm:col-span-2">
-            <label htmlFor="description" className="field-label">
-              Short description
-            </label>
-            <textarea
-              id="description"
-              name="description"
-              rows={4}
-              defaultValue={experience?.description ?? ""}
-              className="field resize-none"
-            />
-          </div>
-          <div className="sm:col-span-2">
-            <label htmlFor="highlights" className="field-label">
-              Highlights (one per line)
-            </label>
-            <textarea
-              id="highlights"
-              name="highlights"
-              rows={5}
-              defaultValue={experience?.highlights.join("\n") ?? ""}
-              className="field resize-none"
-            />
           </div>
         </div>
       </section>
 
-      <AdminContentEditor initialBlocks={experience?.contentBlocks} />
+      {!onCreate && <AdminContentEditor initialBlocks={experience?.contentBlocks} />}
 
     </AdminAuthoringForm>
   );

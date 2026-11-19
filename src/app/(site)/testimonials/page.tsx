@@ -1,3 +1,4 @@
+import { RichFieldText } from "@/components/site/page-content-blocks";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -144,7 +145,7 @@ export default async function TestimonialsPage() {
                     </div>
 
                     <blockquote className="mt-3 font-display text-[18px] leading-[1.55] text-ink">
-                      “{testimonial.quote}”
+                      “<RichFieldText editor={testimonial.richFields?.quote} fallback={testimonial.quote} />”
                     </blockquote>
 
                     <div className="flex-1" aria-hidden="true" />

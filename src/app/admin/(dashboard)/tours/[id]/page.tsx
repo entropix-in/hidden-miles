@@ -3,7 +3,8 @@ import { AdminPageHeader } from "@/components/admin/admin-ui";
 import { AdminTourForm } from "@/components/admin/admin-tour-form";
 import { AdminDeleteButton } from "@/components/admin/admin-delete-button";
 import { deleteTourAction } from "@/app/admin/actions";
-import { loadAdminExperiences, loadAdminTour } from "@/lib/content";
+import { loadAdminDestinations, loadAdminExperiences, loadAdminTour } from "@/lib/content";
+import { destinations as staticDestinations } from "@/data/destinations";
 import { experiences as staticExperiences } from "@/data/experiences";
 
 export default async function EditTourPage({
@@ -12,9 +13,10 @@ export default async function EditTourPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const [tour, experiences] = await Promise.all([
+  const [tour, experiences, destinations] = await Promise.all([
     loadAdminTour(id),
     loadAdminExperiences(),
+    loadAdminDestinations(),
   ]);
 
   if (!tour) notFound();
@@ -27,9 +29,7 @@ export default async function EditTourPage({
     <div>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <AdminPageHeader
-          eyebrow="Packages"
           title={tour.title}
-          description={`Editing /tours/${tour.slug}`}
         />
         <div className="mb-6 shrink-0">
           <AdminDeleteButton
@@ -42,6 +42,8 @@ export default async function EditTourPage({
 
       <AdminTourForm
         tour={tour}
+        destinationOptions={(destinations.status.seeded ? destinations.data : staticDestinations)
+          .map(({ slug, name, region }) => ({ slug, name, region }))}
         experienceOptions={options.map((experience) => ({
           slug: experience.slug,
           title: experience.title,

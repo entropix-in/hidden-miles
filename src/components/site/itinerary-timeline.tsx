@@ -1,13 +1,14 @@
 import { Minus, Plus } from "lucide-react";
 import type { ItineraryDay } from "@/data/tours";
 import { getItineraryBadges } from "@/lib/itinerary";
+import { PageContentBlocks } from "./page-content-blocks";
 import { cn } from "@/lib/utils";
 
 export function ItineraryTimeline({ days }: { days: ItineraryDay[] }) {
   return (
     <ol className="mt-8">
       {days.map((day, index) => {
-        const badges = getItineraryBadges(day).slice(0, 6);
+        const badges = getItineraryBadges(day);
         const last = index === days.length - 1;
 
         return (
@@ -33,7 +34,7 @@ export function ItineraryTimeline({ days }: { days: ItineraryDay[] }) {
 
             <details
               open={index === 0}
-              className="group pb-7 [&::-webkit-details-marker]:hidden"
+              className="group min-w-0 pb-7 [&::-webkit-details-marker]:hidden"
             >
               <summary className="flex cursor-pointer list-none items-start justify-between gap-4">
                 <span className="type-title mt-1 block text-ink">
@@ -46,12 +47,15 @@ export function ItineraryTimeline({ days }: { days: ItineraryDay[] }) {
               </summary>
 
               <div className="mt-3">
-                <p className="type-body text-navy-700">{day.description}</p>
+                {!day.contentBlocks?.some((block) => block.type === "text") && day.description && (
+                  <p className="type-body text-navy-700">{day.description}</p>
+                )}
+                <PageContentBlocks blocks={day.contentBlocks} />
                 {badges.length ? (
                   <div className="mt-4 flex flex-wrap gap-2">
                     {badges.map((badge) => (
                       <span
-                        key={badge.label}
+                        key={`${badge.kind}-${badge.label}`}
                         className="rounded-full border border-sand-300 bg-paper px-3 py-1 text-xs font-semibold text-navy-700"
                       >
                         {badge.label}

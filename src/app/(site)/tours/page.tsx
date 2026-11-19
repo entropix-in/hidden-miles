@@ -45,6 +45,11 @@ export default async function ToursPage({
     loadExperiences(),
   ]);
 
+  function resolveFilter(options: { slug: string; urlAliases?: string[] }[], value: string) {
+    if (options.some((item) => item.slug === value)) return value;
+    return options.find((item) => item.urlAliases?.includes(value))?.slug ?? value;
+  }
+
   return (
     <>
       <section className="container-page pt-8 md:pt-12">
@@ -56,8 +61,8 @@ export default async function ToursPage({
         tours={tours}
         destinations={destinations}
         experiences={experiences}
-        initialDestination={destination}
-        initialExperience={experience}
+        initialDestination={resolveFilter(destinations, destination)}
+        initialExperience={resolveFilter(experiences, experience)}
         initialMonth={month}
         initialRegion={initialRegion}
         initialQuery={query}

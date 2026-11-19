@@ -1,7 +1,7 @@
-import { PageContentBlocks } from "@/components/site/page-content-blocks";
+import { PageContentBlocks, RichFieldText } from "@/components/site/page-content-blocks";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { Check, Compass } from "lucide-react";
 import { CtaBand } from "@/components/site/cta-band";
 import { PageHero } from "@/components/site/page-hero";
@@ -19,7 +19,8 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const experiences = await loadExperiences();
-  const experience = experiences.find((item) => item.slug === slug);
+  const experience = experiences.find((item) => item.slug === slug)
+    ?? experiences.find((item) => item.urlAliases?.includes(slug));
   if (!experience) return { title: "Speciality tour not found" };
 
   return {
@@ -44,8 +45,10 @@ export default async function SpecialityTourPage({
     loadTours(),
   ]);
 
-  const experience = experiences.find((item) => item.slug === slug);
+  const experience = experiences.find((item) => item.slug === slug)
+    ?? experiences.find((item) => item.urlAliases?.includes(slug));
   if (!experience) notFound();
+  if (experience.slug !== slug) redirect(`/speciality-tours/${experience.slug}`);
 
   const matchingTours = tours
     .filter((tour) => tour.experiences.includes(experience.slug))
@@ -75,19 +78,19 @@ export default async function SpecialityTourPage({
           { label: experience.shortTitle },
         ]}
         title={experience.title}
-        description={experience.description}
+        description={experience.description ? <RichFieldText editor={experience.richFields?.description} fallback={experience.description} /> : undefined}
         image={experience.image}
         imageAlt={experience.title}
         showImageOnMobile
       >
         <div className="flex flex-wrap gap-2 sm:grid sm:max-w-md sm:grid-cols-2">
-          {experience.highlights.map((highlight) => (
+          {experience.highlights.map((highlight, index) => (
             <span
-              key={highlight}
+              key={index}
               className="inline-flex items-center gap-2 rounded-full border border-sand-300 px-3.5 py-2 text-[13px] font-semibold text-navy-700"
             >
               <Check className="h-3.5 w-3.5 text-success" />
-              {highlight}
+              <RichFieldText editor={experience.richFields?.highlights?.[index]} fallback={highlight} />
             </span>
           ))}
         </div>

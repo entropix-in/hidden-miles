@@ -1,465 +1,150 @@
-import Image from "next/image";
 import Link from "next/link";
-import {
-  ArrowRight,
-  CalendarDays,
-  Clock3,
-  IndianRupee,
-  Ticket,
-  Users,
-} from "lucide-react";
+import { ArrowUpRight, Inbox, Search } from "lucide-react";
+import { deleteBookingAction } from "@/app/admin/actions";
 import { AdminDeleteButton } from "@/components/admin/admin-delete-button";
-import { BookingsTabs } from "@/components/admin/bookings-tabs";
-import { DepartureCalendar } from "@/components/admin/departure-calendar";
-import {
-  AdminEmptyState,
-  AdminNotice,
-  AdminPageHeader,
-  AdminStatCard,
-  DatabaseSetupNotice,
-} from "@/components/admin/admin-ui";
-import {
-  deleteDepartureAction,
-  saveDepartureAction,
-} from "@/app/admin/actions";
-import {
-  loadAdminBookings,
-  loadAdminDepartures,
-  loadAdminTours,
-} from "@/lib/content";
-import { formatINR, imageUrl } from "@/lib/utils";
+import { AdminBookingStatus } from "@/components/admin/admin-booking-status";
+import { AdminListPagination, adminPageNumber } from "@/components/admin/admin-list-pagination";
+import { AdminPackagePicker } from "@/components/admin/admin-package-picker";
+import { AdminNotice, DatabaseSetupNotice } from "@/components/admin/admin-ui";
+import { bookingStatusLabels } from "@/lib/booking-status";
+import { loadAdminBookings, loadAdminDepartures, loadAdminTours } from "@/lib/content";
+import { formatINR } from "@/lib/utils";
 
-const dateFormatter = new Intl.DateTimeFormat("en-IN", {
-  day: "numeric",
-  month: "short",
-  year: "numeric",
-  timeZone: "UTC",
-});
+const dateFormatter = new Intl.DateTimeFormat("en-IN", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
+const pageSize = 20;
 
-function formatDate(value?: string) {
-  if (!value) return "Date requested";
-  return dateFormatter.format(new Date(`${value}T00:00:00Z`));
-}
-
-export default async function AdminBookingsPage({
-  searchParams,
-}: {
+export default async function AdminBookingRequestsPage({ searchParams }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  const params = await searchParams;
-  const requestedTour =
-    typeof params.tour === "string" ? params.tour : "";
-
-  const toursResult = await loadAdminTours();
-  const tours = toursResult.data;
-  const selectedTour =
-    tours.find((tour) => tour.slug === requestedTour) ?? tours[0];
-
-  const [departuresResult, bookingsResult] = await Promise.all([
-    loadAdminDepartures(selectedTour?.slug),
-    loadAdminBookings(),
+  const [params, toursResult, bookingsResult, departuresResult] = await Promise.all([
+    searchParams, loadAdminTours(), loadAdminBookings(), loadAdminDepartures(),
   ]);
+  const packages = toursResult.data.map(({ slug, title, image, price, destinationName }) => ({ slug, title, image, price, destinationName }));
+  const selected = packages.find((tour) => tour.slug === params.tour);
+  const departure = departuresResult.data.find((item) =>
+    item._id === params.departure && (!selected || selected.slug === item.tourSlug));
+  const query = typeof params.q === "string" ? params.q.trim() : "";
+  const status = typeof params.status === "string" && Object.hasOwn(bookingStatusLabels, params.status) ? params.status : "";
+  const search = query.toLowerCase();
+  const matched = bookingsResult.data.filter((booking) =>
+    (!selected || booking.tourSlug === selected.slug) &&
+    (!departure || booking.departureId === departure._id) &&
+    (!search || `${booking.name} ${booking.email} ${booking.phone} ${booking.tourTitle}`.toLowerCase().includes(search)));
+  const filtered = matched.filter((booking) => !status || booking.status === status).sort((a, b) => b.createdAt - a.createdAt);
+  const page = adminPageNumber(params.page, Math.max(1, Math.ceil(filtered.length / pageSize)));
+  const filters = new URLSearchParams();
+  if (selected) filters.set("tour", selected.slug);
+  if (departure) filters.set("departure", departure._id);
+  if (query) filters.set("q", query);
+  if (status) filters.set("status", status);
 
-  const departures = departuresResult.data;
-  const bookings = bookingsResult.data;
-  const today = new Date().toISOString().slice(0, 10);
-  const returnTo = selectedTour
-    ? `/admin/bookings?tour=${encodeURIComponent(selectedTour.slug)}`
-    : "/admin/bookings";
-
-  const pendingCount = bookings.filter(
-    (booking) => booking.status === "pending",
-  ).length;
-  const tourBookings = selectedTour
-    ? bookings.filter((booking) => booking.tourSlug === selectedTour.slug)
-    : [];
-  const pendingTourBookings = tourBookings.filter(
-    (booking) => booking.status === "pending",
-  );
-  const confirmedTourBookings = tourBookings.filter(
-    (booking) => booking.status === "confirmed",
-  );
-  const confirmedRevenue = confirmedTourBookings.reduce(
-    (total, booking) => total + booking.amount,
-    0,
-  );
-  const tourTravellers = tourBookings.reduce(
-    (total, booking) => total + booking.travellers,
-    0,
-  );
-  const totalCapacity = departures.reduce(
-    (total, departure) => total + departure.capacity,
-    0,
-  );
-  const totalSeatsBooked = departures.reduce(
-    (total, departure) => total + departure.booked,
-    0,
-  );
-
-  if (!toursResult.status.configured) {
-    return (
-      <div>
-        <AdminPageHeader
-          eyebrow="Bookings"
-          title="Departures & dates"
-          description="Add travel dates, prices and seat capacity for each package."
-        />
-        <DatabaseSetupNotice
-          configured={toursResult.status.configured}
-          error={toursResult.status.error}
-        />
-      </div>
-    );
+  function filterHref(change: { status?: string; departure?: string; page?: string } = {}) {
+    const next = new URLSearchParams(filters);
+    for (const [key, value] of Object.entries(change)) {
+      if (value) next.set(key, value);
+      else next.delete(key);
+    }
+    return next.size ? `/admin/bookings?${next}` : "/admin/bookings";
   }
 
   return (
-    <div>
-      <AdminPageHeader
-        eyebrow="Bookings"
-        title="Departures & dates"
-        description="Choose a package, then create dates with their own price and seat capacity. Booking requests are managed on their own page."
-      />
-
-      <BookingsTabs pendingCount={pendingCount} />
-
-      {toursResult.status.error ? (
-        <AdminNotice error={toursResult.status.error} />
-      ) : null}
-
-      {selectedTour ? (
-        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-          <AdminStatCard
-            label="Departure dates"
-            value={departures.length}
-            detail={`${totalSeatsBooked} of ${totalCapacity} seats sold`}
-            icon={CalendarDays}
-            tone="blue"
-          />
-          <AdminStatCard
-            label="Booking requests"
-            value={tourBookings.length}
-            detail={`${tourTravellers} ${
-              tourTravellers === 1 ? "traveller" : "travellers"
-            } across this package`}
-            icon={Ticket}
-            tone="navy"
-          />
-          <AdminStatCard
-            label="Awaiting confirmation"
-            value={pendingTourBookings.length}
-            detail="Pending requests to review"
-            icon={Clock3}
-            tone="gold"
-          />
-          <AdminStatCard
-            label="Confirmed revenue"
-            value={formatINR(confirmedRevenue)}
-            detail={`${confirmedTourBookings.length} confirmed ${
-              confirmedTourBookings.length === 1 ? "booking" : "bookings"
-            }`}
-            icon={IndianRupee}
-            tone="emerald"
-          />
+    <div className="space-y-4">
+      <header className="admin-workspace-header">
+        <div>
+          <h1 className="admin-page-title">Booking requests</h1>
+          <p className="admin-editor-help mt-1">Review traveller details and confirm or cancel requests.</p>
         </div>
-      ) : null}
-
-      {!tours.length ? (
-        <AdminEmptyState
-          title="No packages yet"
-          description="Create a tour package first, then add departure dates and prices here."
-          actionHref="/admin/tours/new"
-          actionLabel="Create package"
-        />
+      </header>
+      {!toursResult.status.configured ? (
+        <DatabaseSetupNotice configured={false} error={toursResult.status.error} />
       ) : (
         <>
-          <section className="mt-8">
-            <h2 className="text-sm font-extrabold uppercase tracking-[0.16em] text-stone-500">
-              1. Select a tour package
-            </h2>
-            <div className="mt-3 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-              {tours.map((tour) => {
-                const active = selectedTour?.slug === tour.slug;
-                const pendingForTour = bookings.filter(
-                  (booking) =>
-                    booking.tourSlug === tour.slug &&
-                    booking.status === "pending",
-                ).length;
-
-                return (
-                  <Link
-                    key={tour._id}
-                    href={`/admin/bookings?tour=${encodeURIComponent(tour.slug)}`}
-                    aria-current={active ? "page" : undefined}
-                    className={
-                      active
-                        ? "flex items-center gap-3 rounded-2xl border-2 border-blue-500 bg-white p-3 shadow-md shadow-blue-900/5"
-                        : "flex items-center gap-3 rounded-2xl border border-stone-200 bg-white p-3 transition hover:border-blue-300"
-                    }
-                  >
-                    <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl">
-                      <Image
-                        src={imageUrl(tour.image, 160)}
-                        alt={tour.title}
-                        fill
-                        sizes="56px"
-                        className="object-cover"
-                      />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate font-display text-lg font-semibold text-navy-950">
-                        {tour.title}
-                      </p>
-                      <p className="truncate text-sm font-semibold text-stone-500">
-                        {tour.destinationName} · {formatINR(tour.price)}
-                      </p>
-                    </div>
-                    {pendingForTour ? (
-                      <span className="shrink-0 rounded-full bg-gold-100 px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-[0.08em] text-gold-800">
-                        {pendingForTour} pending
-                      </span>
-                    ) : null}
-                  </Link>
-                );
-              })}
-            </div>
-          </section>
-
-          {selectedTour ? (
-            <>
-              <section className="mt-8 rounded-[28px] border border-stone-200 bg-white p-5 sm:p-6">
-                <div className="flex flex-wrap items-end justify-between gap-3">
-                  <div>
-                    <p className="eyebrow">2. Add dates</p>
-                    <h2 className="mt-1 font-display text-2xl font-semibold text-navy-950">
-                      {selectedTour.title}
-                    </h2>
-                  </div>
-                  <span className="rounded-full bg-sand-100 px-3 py-1.5 text-sm font-extrabold uppercase tracking-wider text-stone-600">
-                    {selectedTour.nights}N / {selectedTour.days}D
+          {(bookingsResult.status.error || departuresResult.status.error) && <AdminNotice error={bookingsResult.status.error ?? departuresResult.status.error} />}
+          <search className="admin-filter-panel">
+            <form method="get" action="/admin/bookings" key={filters.toString()}>
+              {status && <input type="hidden" name="status" value={status} />}
+              <div className="admin-list-filters admin-booking-filters">
+                <label><span className="field-label">Search requests</span>
+                  <span className="admin-search-field"><Search size={16} aria-hidden />
+                    <input className="field" type="search" name="q" defaultValue={query} placeholder="Name, email or phone" />
                   </span>
+                </label>
+                <AdminPackagePicker packages={packages} name="tour" selected={selected?.slug} placeholder="All packages" />
+                <div className="flex flex-wrap items-center gap-2">
+                  <button className="btn-outline" type="submit">Apply filters</button>
+                  {!!filters.size && <Link className="admin-text-action" href="/admin/bookings">Clear</Link>}
                 </div>
-
-                <form
-                  action={saveDepartureAction}
-                  className="mt-4 grid gap-4 lg:grid-cols-[1.1fr_1fr]"
-                >
-                  <input type="hidden" name="tourSlug" value={selectedTour.slug} />
-                  <input type="hidden" name="returnTo" value={returnTo} />
-
-                  <DepartureCalendar minDate={today} />
-
-                  <div className="grid content-start gap-3">
-                    <div className="grid gap-3 sm:grid-cols-2">
-                      <label>
-                        <span className="field-label">Price per person</span>
-                        <input
-                          type="number"
-                          name="price"
-                          required
-                          min="1"
-                          defaultValue={selectedTour.price}
-                          className="field py-2.5"
-                        />
-                      </label>
-                      <label>
-                        <span className="field-label">Travellers allowed</span>
-                        <input
-                          type="number"
-                          name="capacity"
-                          required
-                          min="1"
-                          defaultValue={20}
-                          className="field py-2.5"
-                        />
-                        <span className="mt-1 block text-sm text-stone-400">
-                          Maximum seats on each selected date.
-                        </span>
-                      </label>
-                    </div>
-                    <label>
-                      <span className="field-label">Note (optional)</span>
-                      <input
-                        name="note"
-                        placeholder="Diwali special"
-                        className="field py-2.5"
-                      />
-                    </label>
-                    <div className="rounded-2xl bg-sand-100 p-3 text-sm leading-5 text-stone-500">
-                      Every selected date gets the same price and traveller
-                      limit. You can edit each date afterwards.
-                    </div>
-                    <button type="submit" className="btn-primary w-full">
-                      <Ticket className="h-4 w-4" />
-                      Add selected dates
-                    </button>
-                  </div>
-                </form>
-              </section>
-
-              <section className="mt-6">
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <h2 className="text-sm font-extrabold uppercase tracking-[0.16em] text-stone-500">
-                    3. Departures for {selectedTour.title}
-                  </h2>
-                  <span className="rounded-full bg-sand-200 px-3 py-1 text-sm font-extrabold uppercase tracking-wider text-navy-800">
-                    {departures.length} dates
-                  </span>
+              </div>
+              {departure && (
+                <div className="mt-3 flex flex-wrap items-center gap-2">
+                  <input type="hidden" name="departure" value={departure._id} />
+                  <span>Departure on {dateFormatter.format(new Date(`${departure.startDate}T00:00:00Z`))}</span>
+                  <Link className="admin-text-action" href={filterHref({ departure: "" })}>Clear date</Link>
                 </div>
-                <p className="mt-1 text-sm text-stone-400">
-                  Only today and future dates appear on the website. Past dates
-                  stay here for your records.
-                </p>
+              )}
+            </form>
+          </search>
 
-                {departures.length ? (
-                  <div className="mt-3 space-y-2">
-                    {departures.map((departure) => {
-                      const isPast = departure.startDate < today;
-                      const departureRequests = bookings.filter(
-                        (booking) => booking.departureId === departure._id,
-                      );
-                      const departureRequestsHref = `/admin/bookings/requests?tour=${encodeURIComponent(
-                        selectedTour.slug,
-                      )}&departure=${departure._id}`;
-
+          <section className="admin-data-panel" aria-labelledby="booking-list-title">
+            <header className="admin-data-header">
+              <h2 id="booking-list-title">Requests <span className="admin-count">{filtered.length}</span></h2>
+              <nav aria-label="Request status" className="admin-view-options">
+                <Link href={filterHref({ status: "" })} aria-current={!status ? "page" : undefined}>All <span>{matched.length}</span></Link>
+                {Object.entries(bookingStatusLabels).map(([value, label]) =>
+                  <Link key={value} href={filterHref({ status: value })} aria-current={status === value ? "page" : undefined}>
+                    {label} <span>{matched.filter((item) => item.status === value).length}</span>
+                  </Link>)}
+              </nav>
+            </header>
+            {filtered.length ? (
+              <div className="admin-table-scroll" tabIndex={0} role="region" aria-label="Booking requests table">
+                <table role="table" className="admin-data-table admin-bookings-table">
+                  <thead role="rowgroup"><tr role="row">
+                    <th role="columnheader" scope="col">Traveller</th>
+                    <th role="columnheader" scope="col">Package & date</th>
+                    <th role="columnheader" scope="col" className="admin-cell-number">Guests</th>
+                    <th role="columnheader" scope="col" className="admin-cell-number">Amount</th>
+                    <th role="columnheader" scope="col">Status</th>
+                    <th role="columnheader" scope="col"><span className="sr-only">Delete</span></th>
+                  </tr></thead>
+                  <tbody role="rowgroup">
+                    {filtered.slice((page - 1) * pageSize, page * pageSize).map((booking) => {
+                      const date = booking.startDate ? dateFormatter.format(new Date(`${booking.startDate}T00:00:00Z`)) : "Date on request";
+                      const returnTo = filterHref({ page: page > 1 ? String(page) : "" });
                       return (
-                        <article
-                          key={departure._id}
-                          className="rounded-2xl border border-stone-200 bg-white p-3 sm:p-4"
-                        >
-                          <div className="flex flex-col gap-3">
-                            <form
-                              action={saveDepartureAction}
-                              className="grid gap-3 sm:grid-cols-2 lg:grid-cols-[1.1fr_1fr_1fr_1.4fr_auto]"
-                            >
-                              <input
-                                type="hidden"
-                                name="id"
-                                value={departure._id}
-                              />
-                              <input
-                                type="hidden"
-                                name="tourSlug"
-                                value={selectedTour.slug}
-                              />
-                              <input
-                                type="hidden"
-                                name="returnTo"
-                                value={returnTo}
-                              />
-
-                              <label>
-                                <span className="field-label">Date</span>
-                                <input
-                                  type="date"
-                                  name="startDate"
-                                  required
-                                  defaultValue={departure.startDate}
-                                  className="field py-2"
-                                />
-                              </label>
-                              <label>
-                                <span className="field-label">Price</span>
-                                <input
-                                  type="number"
-                                  name="price"
-                                  required
-                                  min="1"
-                                  defaultValue={departure.price}
-                                  className="field py-2"
-                                />
-                              </label>
-                              <label>
-                                <span className="field-label">Travellers</span>
-                                <input
-                                  type="number"
-                                  name="capacity"
-                                  required
-                                  min="1"
-                                  defaultValue={departure.capacity}
-                                  className="field py-2"
-                                />
-                              </label>
-                              <label>
-                                <span className="field-label">Note</span>
-                                <input
-                                  name="note"
-                                  defaultValue={departure.note ?? ""}
-                                  placeholder="Optional"
-                                  className="field py-2"
-                                />
-                              </label>
-                              <div className="flex items-end gap-2">
-                                <button
-                                  type="submit"
-                                  className="btn-outline px-4 py-2 text-sm"
-                                >
-                                  Save
-                                </button>
-                              </div>
-                            </form>
-
-                            <div className="flex flex-wrap items-center justify-between gap-2 border-t border-stone-100 pt-3">
-                              <div className="flex flex-wrap items-center gap-2">
-                                {isPast ? (
-                                  <span className="rounded-full bg-stone-200 px-3 py-1.5 text-sm font-extrabold uppercase tracking-wider text-stone-500">
-                                    Past
-                                  </span>
-                                ) : null}
-                                <span className="inline-flex items-center gap-1.5 rounded-full bg-sand-100 px-3 py-1.5 text-sm font-bold text-stone-600">
-                                  <Users className="h-3.5 w-3.5 text-blue-600" />
-                                  {departure.booked}/{departure.capacity} booked ·{" "}
-                                  {departure.seatsLeft} left
-                                </span>
-                                {departureRequests.length ? (
-                                  <Link
-                                    href={departureRequestsHref}
-                                    className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-3 py-1.5 text-sm font-bold text-blue-700 ring-1 ring-inset ring-blue-100 transition hover:bg-blue-100"
-                                  >
-                                    <Ticket className="h-3.5 w-3.5" />
-                                    {departureRequests.length}{" "}
-                                    {departureRequests.length === 1
-                                      ? "request"
-                                      : "requests"}
-                                  </Link>
-                                ) : null}
-                              </div>
-                              <div className="flex flex-wrap items-center gap-2">
-                                <Link
-                                  href={`/admin/bookings/departures/${departure._id}`}
-                                  className="btn-outline px-4 py-2 text-sm"
-                                >
-                                  Details
-                                  <ArrowRight className="h-3.5 w-3.5" />
-                                </Link>
-                                <AdminDeleteButton
-                                  action={deleteDepartureAction}
-                                  id={departure._id}
-                                  fields={{
-                                    tourSlug: selectedTour.slug,
-                                    returnTo,
-                                  }}
-                                  confirmText={`Delete the departure on ${formatDate(
-                                    departure.startDate,
-                                  )}?`}
-                                />
-                              </div>
-                            </div>
-                          </div>
-                        </article>
+                        <tr role="row" key={booking._id}>
+                          <td role="cell" className="admin-booking-traveller">
+                            <strong>{booking.name}</strong>
+                            <p><a href={`mailto:${booking.email}`}>{booking.email}</a></p>
+                            {booking.phone && <p><a href={`tel:${booking.phone}`}>{booking.phone}</a></p>}
+                            <p>Requested {dateFormatter.format(new Date(booking.createdAt))}</p>
+                            {booking.notes && <details className="mt-1"><summary>Traveller note</summary><p>{booking.notes}</p></details>}
+                          </td>
+                          <td role="cell" className="admin-booking-package">
+                            <strong>{booking.tourTitle || booking.tourSlug}</strong>
+                            <p>{booking.departureId ? (
+                              <Link className="admin-data-link" href={`/admin/departures/${booking.departureId}`}>{date}<ArrowUpRight size={13} aria-hidden /></Link>
+                            ) : date}</p>
+                          </td>
+                          <td role="cell" data-mobile-label="Guests" className="admin-cell-number">{booking.travellers}</td>
+                          <td role="cell" data-mobile-label="Amount" className="admin-cell-number whitespace-nowrap"><strong>{booking.amount ? formatINR(booking.amount) : "On request"}</strong></td>
+                          <td role="cell"><AdminBookingStatus key={booking.status} id={booking._id} name={booking.name} status={booking.status} returnTo={returnTo} /></td>
+                          <td role="cell"><AdminDeleteButton compact label={`Delete request from ${booking.name}`} action={deleteBookingAction}
+                            id={booking._id} fields={{ returnTo }} confirmText={`Delete the booking request from ${booking.name}?`} /></td>
+                        </tr>
                       );
                     })}
-                  </div>
-                ) : (
-                  <div className="mt-3 rounded-2xl border border-dashed border-stone-300 bg-white px-5 py-8 text-center">
-                    <CalendarDays className="mx-auto h-6 w-6 text-stone-400" />
-                    <p className="mt-2 text-sm font-semibold text-stone-500">
-                      No dates yet. Add the first departure above.
-                    </p>
-                  </div>
-                )}
-              </section>
-            </>
-          ) : null}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="admin-list-empty"><Inbox size={25} aria-hidden />
+                <strong>{filters.size ? "No requests match these filters" : "No booking requests yet"}</strong>
+                {!!filters.size && <Link href="/admin/bookings" className="btn-outline mt-2">Clear filters</Link>}
+              </div>
+            )}
+            <AdminListPagination path="/admin/bookings" filters={filters} page={page} pageSize={pageSize} total={filtered.length} />
+          </section>
         </>
       )}
     </div>

@@ -1,210 +1,22 @@
 "use client";
 
+import { AdminHighlightsField } from "./admin-highlights-field";
+import { AdminRichField, AdminRichList } from "./admin-rich-fields";
+import { AdminCheckbox } from "./admin-checkbox";
 import { AdminAuthoringForm } from "./admin-authoring-form";
 import { AdminContentEditor } from "./admin-content-editor";
+import { DestinationPicker, type DestinationOption } from "./admin-destination-picker";
+import { AdminPageUrl } from "./admin-page-url";
 import { CoverPhotoField } from "./admin-photo-upload";
 import { useState } from "react";
 import Link from "next/link";
-import { Plus, Trash2, X } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 import { saveTourAction } from "@/app/admin/actions";
-import { AdminSelect } from "@/components/admin/admin-select";
 import type { AdminTour } from "@/lib/types";
-import type { ItineraryBadge, ItineraryBadgeKind } from "@/data/tours";
 import type { TourCity } from "@/lib/tour-cities";
 import { defaultTourCities } from "@/lib/tour-cities";
-import {
-  getItineraryBadges,
-  itineraryBadgeKindLabels,
-} from "@/lib/itinerary";
-
-type Day = {
-  day: number;
-  title: string;
-  description: string;
-  badges: ItineraryBadge[];
-};
-
-type ExperienceOption = {
-  slug: string;
-  title: string;
-  shortTitle: string;
-};
-
-const badgeToneClasses: Record<ItineraryBadgeKind, string> = {
-  meal: "border-gold-200 bg-gold-50 text-gold-800",
-  stay: "border-blue-200 bg-blue-50 text-blue-800",
-  travel: "border-navy-200 bg-navy-50 text-navy-800",
-  experience: "border-stone-200 bg-white text-stone-700",
-  leisure: "border-sand-300 bg-sand-100 text-stone-600",
-};
-
-const badgePresets: ItineraryBadge[] = [
-  { label: "Breakfast", kind: "meal" },
-  { label: "Lunch", kind: "meal" },
-  { label: "Dinner", kind: "meal" },
-  { label: "Meals included", kind: "meal" },
-  { label: "Tea tasting", kind: "meal" },
-  { label: "Overnight stay", kind: "stay" },
-  { label: "Houseboat stay", kind: "stay" },
-  { label: "Hotel stay", kind: "stay" },
-  { label: "Resort stay", kind: "stay" },
-  { label: "Transfer", kind: "travel" },
-  { label: "Flight", kind: "travel" },
-  { label: "Train", kind: "travel" },
-  { label: "Drive", kind: "travel" },
-  { label: "Sightseeing", kind: "experience" },
-  { label: "Guided walk", kind: "experience" },
-  { label: "Wildlife safari", kind: "experience" },
-  { label: "Boat ride", kind: "experience" },
-  { label: "Gondola ride", kind: "experience" },
-  { label: "Cultural site", kind: "experience" },
-  { label: "Cultural show", kind: "experience" },
-  { label: "Free time", kind: "leisure" },
-  { label: "At leisure", kind: "leisure" },
-];
-
-function DayBadges({
-  badges,
-  onChange,
-}: {
-  badges: ItineraryBadge[];
-  onChange: (badges: ItineraryBadge[]) => void;
-}) {
-  const [customLabel, setCustomLabel] = useState("");
-  const [customKind, setCustomKind] =
-    useState<ItineraryBadgeKind>("experience");
-
-  function addBadge(badge: ItineraryBadge) {
-    const label = badge.label.trim();
-    if (!label) return;
-    if (badges.length >= 8) return;
-    if (
-      badges.some(
-        (item) =>
-          item.label.toLowerCase() === label.toLowerCase() &&
-          item.kind === badge.kind,
-      )
-    ) {
-      return;
-    }
-    onChange([...badges, { label, kind: badge.kind }]);
-  }
-
-  function removeBadge(index: number) {
-    onChange(badges.filter((_, badgeIndex) => badgeIndex !== index));
-  }
-
-  return (
-    <div className="mt-2 rounded-xl border border-stone-200 bg-white p-3">
-      <input
-        type="hidden"
-        name="itineraryBadges"
-        value={JSON.stringify(badges)}
-      />
-
-      <p className="text-[11px] font-extrabold uppercase tracking-[0.16em] text-stone-600">
-        Day badges
-      </p>
-
-      {badges.length ? (
-        <div className="mt-2 flex flex-wrap gap-1.5">
-          {badges.map((badge, badgeIndex) => (
-            <span
-              key={`${badge.label}-${badgeIndex}`}
-              className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-[0.1em] ${badgeToneClasses[badge.kind]}`}
-            >
-              {badge.label}
-              <button
-                type="button"
-                onClick={() => removeBadge(badgeIndex)}
-                aria-label={`Remove ${badge.label} badge`}
-                className="grid h-3.5 w-3.5 place-items-center rounded-full transition hover:bg-black/10"
-              >
-                <X className="h-2.5 w-2.5" strokeWidth={3} />
-              </button>
-            </span>
-          ))}
-        </div>
-      ) : (
-        <p className="mt-1.5 text-sm text-stone-600">
-          No badges yet. Leave empty to auto-detect from the description.
-        </p>
-      )}
-
-      <div className="mt-3 flex flex-wrap gap-2">
-        <AdminSelect
-          value=""
-          onValueChange={(next) => {
-            const preset = badgePresets.find(
-              (item) => `${item.kind}:${item.label}` === next,
-            );
-            if (preset) addBadge(preset);
-          }}
-          aria-label="Add a preset badge"
-          className="h-10 w-full py-0 text-sm"
-          wrapperClassName="w-full sm:w-48"
-        >
-          <option value="">Add a badge…</option>
-          {(Object.keys(itineraryBadgeKindLabels) as ItineraryBadgeKind[]).map(
-            (kind) => (
-              <optgroup key={kind} label={itineraryBadgeKindLabels[kind]}>
-                {badgePresets
-                  .filter((preset) => preset.kind === kind)
-                  .map((preset) => (
-                    <option
-                      key={`${kind}:${preset.label}`}
-                      value={`${kind}:${preset.label}`}
-                    >
-                      {preset.label}
-                    </option>
-                  ))}
-              </optgroup>
-            ),
-          )}
-        </AdminSelect>
-
-        <input
-          value={customLabel}
-          onChange={(event) => setCustomLabel(event.target.value)}
-          placeholder="Custom badge"
-          aria-label="Custom badge label"
-          maxLength={40}
-          className="field h-10 min-w-36 flex-1 py-0 text-sm"
-        />
-        <AdminSelect
-          value={customKind}
-          onValueChange={(next) =>
-            setCustomKind(next as ItineraryBadgeKind)
-          }
-          aria-label="Custom badge type"
-          className="h-10 w-full py-0 text-sm"
-          wrapperClassName="w-full sm:w-40"
-        >
-          {(Object.keys(itineraryBadgeKindLabels) as ItineraryBadgeKind[]).map(
-            (kind) => (
-              <option key={kind} value={kind}>
-                {itineraryBadgeKindLabels[kind]}
-              </option>
-            ),
-          )}
-        </AdminSelect>
-        <button
-          type="button"
-          onClick={() => {
-            addBadge({ label: customLabel, kind: customKind });
-            setCustomLabel("");
-          }}
-          disabled={!customLabel.trim() || badges.length >= 8}
-          className="inline-flex h-10 items-center gap-1.5 rounded-xl border border-stone-200 bg-sand-50 px-4 text-sm font-extrabold uppercase tracking-wider text-navy-950 transition hover:border-blue-400 disabled:cursor-not-allowed disabled:opacity-40"
-        >
-          <Plus className="h-3.5 w-3.5" />
-          Add
-        </button>
-      </div>
-    </div>
-  );
-}
-
+import { AdminItineraryEditor } from "./admin-itinerary-editor";
+import { AdminTourExperiences, type ExperienceOption } from "./admin-tour-experiences";
 
 function DepartureCitiesEditor({ initial }: { initial: TourCity[] }) {
   const [cities, setCities] = useState<TourCity[]>(
@@ -304,7 +116,7 @@ function DepartureCitiesEditor({ initial }: { initial: TourCity[] }) {
                 onClick={() => removeCity(index)}
                 disabled={cities.length <= 1}
                 aria-label={`Remove ${city.name || "departure city"}`}
-                className="grid h-10 w-10 place-items-center rounded-xl border border-stone-200 bg-white text-stone-600 transition hover:border-red-200 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-40"
+                className="btn-outline admin-icon-button admin-button-danger"
               >
                 <Trash2 className="h-4 w-4" />
               </button>
@@ -323,7 +135,7 @@ function DepartureCitiesEditor({ initial }: { initial: TourCity[] }) {
           type="button"
           onClick={addCity}
           disabled={cities.length >= 12}
-          className="inline-flex items-center gap-2 rounded-full border border-stone-200 bg-sand-50 px-4 py-2 text-sm font-extrabold uppercase tracking-wider text-navy-950 transition hover:border-blue-400 disabled:cursor-not-allowed disabled:opacity-40"
+          className="btn-outline"
         >
           <Plus className="h-3.5 w-3.5" />
           Add city
@@ -336,183 +148,81 @@ function DepartureCitiesEditor({ initial }: { initial: TourCity[] }) {
 export function AdminTourForm({
   tour,
   experienceOptions,
+  destinationOptions,
 }: {
   tour?: AdminTour;
   experienceOptions: ExperienceOption[];
+  destinationOptions: DestinationOption[];
 }) {
-  const [itinerary, setItinerary] = useState<Day[]>(
-    tour?.itinerary?.length
-      ? tour.itinerary.map((day) => ({
-          day: day.day,
-          title: day.title,
-          description: day.description,
-          badges: getItineraryBadges(day),
-        }))
-      : [{ day: 1, title: "", description: "", badges: [] }],
-  );
-
-  function updateDay(
-    index: number,
-    field: "day" | "title" | "description",
-    value: string,
-  ) {
-    setItinerary((days) =>
-      days.map((day, dayIndex) =>
-        dayIndex === index
-          ? {
-              ...day,
-              [field]: field === "day" ? Number(value) || 1 : value,
-            }
-          : day,
-      ),
-    );
-  }
-
-  function updateDayBadges(index: number, badges: ItineraryBadge[]) {
-    setItinerary((days) =>
-      days.map((day, dayIndex) =>
-        dayIndex === index ? { ...day, badges } : day,
-      ),
-    );
-  }
-
-  function addDay() {
-    setItinerary((days) => [
-      ...days,
-      { day: days.length + 1, title: "", description: "", badges: [] },
-    ]);
-  }
-
-  function removeDay(index: number) {
-    setItinerary((days) =>
-      days
-        .filter((_, dayIndex) => dayIndex !== index)
-        .map((day, dayIndex) => ({ ...day, day: dayIndex + 1 })),
-    );
-  }
-
+  const [pageTitle, setPageTitle] = useState(tour?.title ?? "");
   return (
-    <AdminAuthoringForm action={saveTourAction} cancel={
+    <AdminAuthoringForm submitLabel={tour ? "Save changes" : "Create package"} action={saveTourAction} cancel={
       <Link href="/admin/tours" className="btn-outline">Cancel</Link>
     }>
       <input type="hidden" name="id" value={tour?._id ?? ""} />
 
-      <section className="rounded-[28px] border border-stone-200 bg-white p-6">
-        <p className="eyebrow">The basics</p>
-        <h2 className="mt-2 font-display text-2xl font-semibold text-navy-950">
+      <section className="admin-form-panel">
+        <h2 className="text-base font-semibold text-navy-950">
           Package details
         </h2>
 
-        <div className="mt-5 grid gap-4 sm:grid-cols-2">
-          <div className="sm:col-span-2">
-            <label htmlFor="title" className="field-label">
-              Title
-            </label>
-            <input
-              id="title"
-              name="title"
-              required
-              defaultValue={tour?.title ?? ""}
-              className="field"
-            />
-          </div>
+        <div className="admin-details-layout">
+          <div className="grid min-w-0 gap-4 sm:grid-cols-2">
+            <div className="sm:col-span-2">
+              <label htmlFor="title" className="field-label">
+                Title
+              </label>
+              <input
+                id="title"
+                name="title"
+                required
+                value={pageTitle}
+                maxLength={190}
+                onChange={(event) => setPageTitle(event.target.value)}
+                className="field"
+              />
+            </div>
 
-          <div>
-            <label htmlFor="slug" className="field-label">
-              URL slug
-            </label>
-            <input
-              id="slug"
-              name="slug"
-              defaultValue={tour?.slug ?? ""}
-              className="field"
-            />
-            <p className="mt-1.5 text-sm text-stone-600">
-              Leave blank to generate from the title.
-            </p>
-          </div>
+            <div className="sm:col-span-2">
+              <AdminPageUrl prefix="/tours/" title={pageTitle} savedSlug={tour?.slug} />
+            </div>
 
-          <div>
+            <DestinationPicker options={destinationOptions} initial={tour && {
+              slug: tour.destinationSlug, name: tour.destinationName, region: tour.region,
+            }} />
+
+            <div>
+              <label htmlFor="badge" className="field-label">
+                Badge
+              </label>
+              <input
+                id="badge"
+                name="badge"
+                defaultValue={tour?.badge ?? ""}
+                placeholder="Best Seller"
+                className="field"
+              />
+            </div>
+
+            <div className="sm:col-span-2">
+              <AdminRichField name="summary" label="Short summary"
+                initial={tour?.summary} editor={tour?.richFields?.summary} />
+            </div>
+          </div>
+          <div className="min-w-0">
             <CoverPhotoField initialValue={tour?.image} />
-          </div>
-
-          <div>
-            <label htmlFor="destinationSlug" className="field-label">
-              Destination slug
-            </label>
-            <input
-              id="destinationSlug"
-              name="destinationSlug"
-              required
-              defaultValue={tour?.destinationSlug ?? ""}
-              className="field"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="destinationName" className="field-label">
-              Destination name
-            </label>
-            <input
-              id="destinationName"
-              name="destinationName"
-              defaultValue={tour?.destinationName ?? ""}
-              className="field"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="region" className="field-label">
-              Region
-            </label>
-            <AdminSelect
-              id="region"
-              name="region"
-              defaultValue={tour?.region ?? "India"}
-            >
-              <option value="India">India</option>
-              <option value="International">International</option>
-            </AdminSelect>
-          </div>
-
-          <div>
-            <label htmlFor="badge" className="field-label">
-              Badge
-            </label>
-            <input
-              id="badge"
-              name="badge"
-              defaultValue={tour?.badge ?? ""}
-              placeholder="Best Seller"
-              className="field"
-            />
-          </div>
-
-          <div className="sm:col-span-2">
-            <label htmlFor="summary" className="field-label">
-              Short summary
-            </label>
-            <textarea
-              id="summary"
-              name="summary"
-              rows={3}
-              defaultValue={tour?.summary ?? ""}
-              placeholder="A gentle, beautiful introduction to the valley..."
-              className="field resize-none"
-            />
           </div>
         </div>
       </section>
 
       <AdminContentEditor initialBlocks={tour?.contentBlocks} />
 
-      <section className="rounded-[28px] border border-stone-200 bg-white p-6">
-        <p className="eyebrow">Pricing & departures</p>
-        <h2 className="mt-2 font-display text-2xl font-semibold text-navy-950">
+      <section className="admin-form-panel">
+        <h2 className="text-base font-semibold text-navy-950">
           Numbers & details
         </h2>
 
-        <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <label htmlFor="nights" className="field-label">
               Nights
@@ -620,20 +330,14 @@ export function AdminTourForm({
           </div>
         </div>
 
-        <label className="mt-4 flex items-center gap-2.5 text-sm font-bold text-navy-950">
-          <input
-            type="checkbox"
-            name="featured"
-            defaultChecked={Boolean(tour?.featured)}
-            className="h-4 w-4 rounded border-stone-300 text-blue-600"
-          />
-          Feature this package on the home page
-        </label>
+        <div className="mt-4">
+          <AdminCheckbox name="featured" defaultChecked={Boolean(tour?.featured)}
+            label="Feature this package on the home page" />
+        </div>
       </section>
 
-      <section className="rounded-[28px] border border-stone-200 bg-white p-6">
-        <p className="eyebrow">Departure cities</p>
-        <h2 className="mt-2 font-display text-2xl font-semibold text-navy-950">
+      <section className="admin-form-panel">
+        <h2 className="text-base font-semibold text-navy-950">
           Where travellers can join
         </h2>
         <p className="mt-1 text-sm text-stone-600">
@@ -645,160 +349,28 @@ export function AdminTourForm({
         />
       </section>
 
-      <section className="rounded-[28px] border border-stone-200 bg-white p-6">
-        <p className="eyebrow">The story</p>
-        <h2 className="mt-2 font-display text-2xl font-semibold text-navy-950">
+      <section className="admin-form-panel">
+        <h2 className="text-base font-semibold text-navy-950">
           Highlights & inclusions
         </h2>
 
-        <div className="mt-5 grid gap-4 lg:grid-cols-2">
+        <div className="mt-4 grid gap-4 lg:grid-cols-2">
           <div className="lg:col-span-2">
-            <label htmlFor="highlights" className="field-label">
-              Highlights (one per line)
-            </label>
-            <textarea
-              id="highlights"
-              name="highlights"
-              rows={5}
-              defaultValue={tour?.highlights.join("\n") ?? ""}
-              placeholder={"Dal Lake houseboat\nGulmarg gondola"}
-              className="field resize-none"
-            />
+            <AdminHighlightsField initial={tour?.highlights} />
           </div>
           <div>
-            <label htmlFor="inclusions" className="field-label">
-              Inclusions (one per line)
-            </label>
-            <textarea
-              id="inclusions"
-              name="inclusions"
-              rows={6}
-              defaultValue={tour?.inclusions.join("\n") ?? ""}
-              className="field resize-none"
-            />
+            <AdminRichList name="inclusions" label="Inclusions" itemLabel="inclusion"
+              initial={tour?.inclusions} editors={tour?.richFields?.inclusions} />
           </div>
           <div>
-            <label htmlFor="exclusions" className="field-label">
-              Exclusions (one per line)
-            </label>
-            <textarea
-              id="exclusions"
-              name="exclusions"
-              rows={6}
-              defaultValue={tour?.exclusions.join("\n") ?? ""}
-              className="field resize-none"
-            />
+            <AdminRichList name="exclusions" label="Exclusions" itemLabel="exclusion"
+              initial={tour?.exclusions} editors={tour?.richFields?.exclusions} />
           </div>
         </div>
       </section>
 
-      <section className="rounded-[28px] border border-stone-200 bg-white p-6">
-        <p className="eyebrow">Travel styles</p>
-        <h2 className="mt-2 font-display text-2xl font-semibold text-navy-950">
-          Experiences included
-        </h2>
-        <div className="mt-4 flex flex-wrap gap-2">
-          {experienceOptions.map((experience) => (
-            <label
-              key={experience.slug}
-              className="flex cursor-pointer items-center gap-2 rounded-full border border-stone-200 bg-sand-50 px-4 py-2 text-sm font-bold text-stone-600 transition hover:border-blue-400"
-            >
-              <input
-                type="checkbox"
-                name="experiences"
-                value={experience.slug}
-                defaultChecked={tour?.experiences.includes(experience.slug)}
-                className="h-3.5 w-3.5 rounded border-stone-300 text-blue-600"
-              />
-              {experience.shortTitle}
-            </label>
-          ))}
-          {!experienceOptions.length ? (
-            <p className="text-sm text-stone-600">
-              Add experiences first to tag them on packages.
-            </p>
-          ) : null}
-        </div>
-      </section>
-
-      <section className="rounded-[28px] border border-stone-200 bg-white p-6">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <p className="eyebrow">Day by day</p>
-            <h2 className="mt-2 font-display text-2xl font-semibold text-navy-950">
-              Itinerary
-            </h2>
-            <p className="mt-1 text-sm text-stone-600">
-              Add badges for meals, stay, travel and activities. These appear
-              on the public day-by-day timeline.
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={addDay}
-            className="inline-flex items-center gap-2 rounded-full border border-stone-200 bg-sand-50 px-4 py-2 text-sm font-extrabold uppercase tracking-wider text-navy-950 transition hover:border-blue-400"
-          >
-            <Plus className="h-3.5 w-3.5" />
-            Add day
-          </button>
-        </div>
-
-        <div className="mt-5 space-y-3">
-          {itinerary.map((day, index) => (
-            <div
-              key={index}
-              className="rounded-2xl border border-stone-200 bg-sand-50 p-4"
-            >
-              <div className="flex items-center gap-3">
-                <input
-                  name="itineraryDay"
-                  type="number"
-                  min="1"
-                  value={day.day}
-                  onChange={(event) =>
-                    updateDay(index, "day", event.target.value)
-                  }
-                  aria-label={`Day number for itinerary row ${index + 1}`}
-                  className="field h-10 w-16 shrink-0 px-2 text-center"
-                />
-                <input
-                  name="itineraryTitle"
-                  value={day.title}
-                  onChange={(event) =>
-                    updateDay(index, "title", event.target.value)
-                  }
-                  placeholder="Arrive Srinagar · Dal Lake"
-                  aria-label={`Day title for itinerary row ${index + 1}`}
-                  className="field h-10 flex-1"
-                />
-                <button
-                  type="button"
-                  onClick={() => removeDay(index)}
-                  aria-label="Remove day"
-                  className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-stone-200 bg-white text-stone-600 transition hover:border-red-200 hover:text-red-600"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </button>
-              </div>
-              <textarea
-                name="itineraryDescription"
-                value={day.description}
-                onChange={(event) =>
-                  updateDay(index, "description", event.target.value)
-                }
-                placeholder="What happens on this day?"
-                aria-label={`Day description for itinerary row ${index + 1}`}
-                rows={2}
-                className="field mt-2 resize-none"
-              />
-              <DayBadges
-                badges={day.badges}
-                onChange={(badges) => updateDayBadges(index, badges)}
-              />
-            </div>
-          ))}
-        </div>
-      </section>
+      <AdminTourExperiences options={experienceOptions} selected={tour?.experiences} />
+      <AdminItineraryEditor initialDays={tour?.itinerary} />
 
     </AdminAuthoringForm>
   );

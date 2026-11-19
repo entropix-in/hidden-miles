@@ -17,7 +17,7 @@ export function PageHero({
   items: Array<{ label: string; href?: string }>;
   title: string;
   accent?: string;
-  description?: string;
+  description?: React.ReactNode;
   image: string;
   imageAlt?: string;
   children?: React.ReactNode;

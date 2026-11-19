@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { count, eq, and, ne, inArray } from "drizzle-orm";
+import { count, eq, and, ne, inArray, sql } from "drizzle-orm";
 import {
   adminConfigured,
   createAdminSession,
@@ -21,11 +21,12 @@ import {
   tourDepartures as tourDeparturesTable,
   tours as toursTable,
 } from "@/db/schema";
-import { parseContentBlocks, type ContentBlock } from "@/lib/content-blocks";
+import { readRichValues, type RichFields } from "@/lib/rich-fields";
+import { parseContentBlocks, readContentText, type ContentBlock } from "@/lib/content-blocks";
 import { mediaPathPattern } from "@/lib/media-path";
 import { slugify } from "@/lib/utils";
 import type { Destination } from "@/data/destinations";
-import type { Experience } from "@/data/experiences";
+import { experienceIconLabels, type Experience } from "@/data/experiences";
 import type { Testimonial } from "@/data/site";
 import type { ItineraryBadge, ItineraryBadgeKind, Tour } from "@/data/tours";
 import type { EnquiryStatus } from "@/lib/types";
@@ -72,10 +73,27 @@ function getBoolean(formData: FormData, key: string) {
 }
 
 function getLines(formData: FormData, key: string) {
-  return getString(formData, key)
-    .split("\n")
+  return formData.getAll(key)
+    .flatMap((value) => String(value).split("\n"))
     .map((line) => line.trim())
     .filter(Boolean);
+}
+
+function richText(formData: FormData, name: "description" | "summary" | "quote") {
+  const info = readRichValues(formData, name)[0];
+  return { text: formData.has(name + "Rich") ? info?.text ?? "" : getString(formData, name), editor: info?.editor };
+}
+
+function richList(formData: FormData, name: "highlights" | "inclusions" | "exclusions") {
+  const items = readRichValues(formData, name);
+  return {
+    text: formData.has(name + "Rich") ? items.map((item) => item.text) : getLines(formData, name),
+    editors: items.length ? items.map((item) => item.editor) : undefined,
+  };
+}
+
+function updatedAliases(current: { slug: string; aliases: string[] | null }, slug: string) {
+  return [...new Set([...(current.aliases ?? []), current.slug])].filter((alias) => alias !== slug);
 }
 
 function getList(formData: FormData, key: string) {
@@ -179,11 +197,23 @@ function requireDb(): AppDb {
   return db;
 }
 
+function pageSlug(formData: FormData, title: string) {
+  const slug = getString(formData, "slug") || slugify(title);
+  if (slug.length > 190 || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) {
+    throw new Error("Edit the page URL to use lowercase letters, numbers, and single hyphens.");
+  }
+  return slug;
+}
+
 function revalidateContent() {
   revalidatePath("/");
   revalidatePath("/tours");
   revalidatePath("/destinations");
   revalidatePath("/experiences");
+  revalidatePath("/speciality-tours");
+  revalidatePath("/tours/[slug]", "page");
+  revalidatePath("/destinations/[slug]", "page");
+  revalidatePath("/speciality-tours/[slug]", "page");
   revalidatePath("/sitemap.xml");
 }
 
@@ -222,9 +252,8 @@ export async function saveTourAction(formData: FormData) {
     const title = getString(formData, "title");
 
     if (!title) throw new Error("Package title is required.");
-    if (!getString(formData, "destinationSlug")) {
-      throw new Error("Destination slug is required.");
-    }
+    const destinationSlug = getString(formData, "destinationSlug");
+    if (!destinationSlug) throw new Error("Choose a destination.");
 
     const days = formData.getAll("itineraryDay").map(String);
     const itineraryTitles = formData.getAll("itineraryTitle").map(String);
@@ -232,15 +261,25 @@ export async function saveTourAction(formData: FormData) {
       .getAll("itineraryDescription")
       .map(String);
     const itineraryBadges = formData.getAll("itineraryBadges").map(String);
-
-    const itinerary = itineraryTitles
-      .map((itineraryTitle, index) => ({
+    const itineraryContent = formData.getAll("itineraryContent").map(String);
+    const itinerary = itineraryTitles.flatMap((rawTitle, index) => {
+      const title = rawTitle.trim();
+      const contentBlocks = parseContentBlocks(itineraryContent[index] ?? "");
+      const badges = parseItineraryBadges(itineraryBadges[index] ?? "");
+      if (!title) {
+        if (contentBlocks.length || badges.length) throw new Error(`Add a title for itinerary day ${index + 1}.`);
+        return [];
+      }
+      return [{
         day: Number(days[index]) || index + 1,
-        title: itineraryTitle.trim(),
-        description: (itineraryDescriptions[index] ?? "").trim(),
-        badges: parseItineraryBadges(itineraryBadges[index] ?? ""),
-      }))
-      .filter((item) => item.title);
+        title,
+        description: itineraryContent.length
+          ? readContentText(contentBlocks) : (itineraryDescriptions[index] ?? "").trim(),
+        contentBlocks,
+        badges,
+        manualBadges: itineraryContent.length > 0 && itineraryBadges[index] !== "",
+      }];
+    });
 
     const oldPriceRaw = getString(formData, "oldPrice");
     const oldPrice = oldPriceRaw ? Number(oldPriceRaw) : undefined;
@@ -253,18 +292,25 @@ export async function saveTourAction(formData: FormData) {
       throw new Error("Add at least one departure city.");
     }
 
-    const [existingPhoto] = id ? await db.select({ image: toursTable.image })
+    await ensureContentSeeded(db);
+    const [existingPhoto] = id ? await db.select({ image: toursTable.image, destinationSlug: toursTable.destinationSlug, destinationName: toursTable.destinationName, region: toursTable.region })
       .from(toursTable).where(eq(toursTable.id, parseId(id))).limit(1) : [];
     if (id && !existingPhoto) throw new Error("Package not found.");
+    const [destination] = await db.select({
+      name: destinationsTable.name, region: destinationsTable.region,
+    }).from(destinationsTable).where(eq(destinationsTable.slug, destinationSlug)).limit(1);
+    const legacyDestination = existingPhoto?.destinationSlug === destinationSlug ? existingPhoto : undefined;
+    if (!destination && !legacyDestination) throw new Error("Choose an existing destination.");
+    const summary = richText(formData, "summary");
+    const highlights = richList(formData, "highlights");
+    const inclusions = richList(formData, "inclusions");
+    const exclusions = richList(formData, "exclusions");
     const data: Tour = {
-      slug: getString(formData, "slug") || slugify(title),
+      slug: pageSlug(formData, title),
       title,
-      destinationSlug: getString(formData, "destinationSlug"),
-      destinationName: getString(formData, "destinationName"),
-      region:
-        getString(formData, "region") === "International"
-          ? "International"
-          : "India",
+      destinationSlug,
+      destinationName: destination?.name ?? legacyDestination!.destinationName,
+      region: destination?.region ?? legacyDestination!.region,
       experiences: getList(formData, "experiences"),
       image: coverPhoto(formData, existingPhoto?.image),
       contentBlocks: parseContentBlocks(getString(formData, "contentBlocks")),
@@ -277,24 +323,29 @@ export async function saveTourAction(formData: FormData) {
       badge: badge || undefined,
       departure: getString(formData, "departure"),
       groupSize: getString(formData, "groupSize"),
-      summary: getString(formData, "summary"),
-      highlights: getLines(formData, "highlights"),
-      inclusions: getLines(formData, "inclusions"),
-      exclusions: getLines(formData, "exclusions"),
+      summary: summary.text,
+      highlights: highlights.text,
+      inclusions: inclusions.text,
+      exclusions: exclusions.text,
       itinerary,
       departureCities,
       featured: getBoolean(formData, "featured"),
+      richFields: { summary: summary.editor, highlights: highlights.editors, inclusions: inclusions.editors, exclusions: exclusions.editors } satisfies RichFields,
     };
 
-    await requireSavedPhotos(db, data.image, data.contentBlocks);
-    await ensureContentSeeded(db);
-
+    await requireSavedPhotos(db, data.image, [...(data.contentBlocks ?? []), ...itinerary.flatMap((day) => day.contentBlocks)]);
     if (id) {
       const numericId = parseId(id);
-      await db
-        .update(toursTable)
-        .set(tourValues(data))
-        .where(eq(toursTable.id, numericId));
+      await db.transaction(async (tx) => {
+        const [current] = await tx.select({ slug: toursTable.slug, aliases: toursTable.urlAliases }).from(toursTable)
+          .where(eq(toursTable.id, numericId)).for("update");
+        if (!current) throw new Error("Package not found.");
+        await tx.update(toursTable).set({ ...tourValues(data), urlAliases: updatedAliases(current, data.slug) }).where(eq(toursTable.id, numericId));
+        if (current.slug !== data.slug) {
+          await tx.update(tourDeparturesTable).set({ tourSlug: data.slug }).where(eq(tourDeparturesTable.tourSlug, current.slug));
+          await tx.update(bookingsTable).set({ tourSlug: data.slug }).where(eq(bookingsTable.tourSlug, current.slug));
+        }
+      });
     } else {
       await db.insert(toursTable).values(tourValues(data));
     }
@@ -323,7 +374,7 @@ export async function deleteTourAction(formData: FormData) {
   succeed("/admin/tours", "Package deleted.");
 }
 
-export async function saveDestinationAction(formData: FormData) {
+export async function persistDestinationAction(formData: FormData) {
   await requireAdmin();
 
   const id = getString(formData, "id");
@@ -336,19 +387,22 @@ export async function saveDestinationAction(formData: FormData) {
     const [existingPhoto] = id ? await db.select({ image: destinationsTable.image })
       .from(destinationsTable).where(eq(destinationsTable.id, parseId(id))).limit(1) : [];
     if (id && !existingPhoto) throw new Error("Destination not found.");
+    const description = richText(formData, "description");
+    const highlights = richList(formData, "highlights");
     const data: Destination = {
-      slug: getString(formData, "slug") || slugify(name),
+      slug: pageSlug(formData, name),
       name,
       region:
         getString(formData, "region") === "International"
           ? "International"
           : "India",
       tagline: getString(formData, "tagline"),
-      description: getString(formData, "description"),
+      description: description.text,
       image: coverPhoto(formData, existingPhoto?.image),
       contentBlocks: parseContentBlocks(getString(formData, "contentBlocks")),
       bestTime: getString(formData, "bestTime"),
-      highlights: getLines(formData, "highlights"),
+      highlights: highlights.text,
+      richFields: { description: description.editor, highlights: highlights.editors } satisfies RichFields,
     };
 
     await requireSavedPhotos(db, data.image, data.contentBlocks);
@@ -356,22 +410,30 @@ export async function saveDestinationAction(formData: FormData) {
 
     if (id) {
       const numericId = parseId(id);
-      await db
-        .update(destinationsTable)
-        .set(destinationValues(data))
-        .where(eq(destinationsTable.id, numericId));
+      await db.transaction(async (tx) => {
+        const [current] = await tx.select({ slug: destinationsTable.slug, aliases: destinationsTable.urlAliases }).from(destinationsTable)
+          .where(eq(destinationsTable.id, numericId)).for("update");
+        if (!current) throw new Error("Destination not found.");
+        await tx.update(destinationsTable).set({ ...destinationValues(data), urlAliases: updatedAliases(current, data.slug) }).where(eq(destinationsTable.id, numericId));
+        await tx.update(toursTable).set({
+          destinationSlug: data.slug, destinationName: data.name, region: data.region,
+        }).where(eq(toursTable.destinationSlug, current.slug));
+      });
     } else {
       await db.insert(destinationsTable).values(destinationValues(data));
     }
+    revalidateContent();
+    return { destination: { slug: data.slug, name: data.name, region: data.region } };
   } catch (error) {
     return { error: messageFor(error) };
   }
 
-  revalidateContent();
-  succeed(
-    "/admin/destinations",
-    id ? "Destination updated." : "Destination added.",
-  );
+}
+
+export async function saveDestinationAction(formData: FormData) {
+  const result = await persistDestinationAction(formData);
+  if (result.error) return { error: result.error };
+  succeed("/admin/destinations", getString(formData, "id") ? "Destination updated." : "Destination added.");
 }
 
 export async function deleteDestinationAction(formData: FormData) {
@@ -410,7 +472,7 @@ export async function deleteDestinationAction(formData: FormData) {
   succeed("/admin/destinations", "Destination deleted.");
 }
 
-export async function saveExperienceAction(formData: FormData) {
+export async function persistExperienceAction(formData: FormData) {
   await requireAdmin();
 
   const id = getString(formData, "id");
@@ -421,28 +483,23 @@ export async function saveExperienceAction(formData: FormData) {
     if (!title) throw new Error("Experience title is required.");
 
     const icon = getString(formData, "icon");
-    const validIcons = [
-      "heart",
-      "sparkles",
-      "mountain",
-      "users",
-      "crown",
-      "flower",
-    ];
-    if (!validIcons.includes(icon)) throw new Error("Choose a valid icon.");
+    if (!Object.hasOwn(experienceIconLabels, icon)) throw new Error("Choose a valid icon.");
 
     const [existingPhoto] = id ? await db.select({ image: experiencesTable.image })
       .from(experiencesTable).where(eq(experiencesTable.id, parseId(id))).limit(1) : [];
     if (id && !existingPhoto) throw new Error("Experience not found.");
+    const description = richText(formData, "description");
+    const highlights = richList(formData, "highlights");
     const data: Experience = {
-      slug: getString(formData, "slug") || slugify(title),
+      slug: pageSlug(formData, title),
       title,
       shortTitle: getString(formData, "shortTitle") || title,
-      description: getString(formData, "description"),
+      description: description.text,
       image: coverPhoto(formData, existingPhoto?.image),
       contentBlocks: parseContentBlocks(getString(formData, "contentBlocks")),
       icon: icon as Experience["icon"],
-      highlights: getLines(formData, "highlights"),
+      highlights: highlights.text,
+      richFields: { description: description.editor, highlights: highlights.editors } satisfies RichFields,
     };
 
     await requireSavedPhotos(db, data.image, data.contentBlocks);
@@ -450,22 +507,32 @@ export async function saveExperienceAction(formData: FormData) {
 
     if (id) {
       const numericId = parseId(id);
-      await db
-        .update(experiencesTable)
-        .set(experienceValues(data))
-        .where(eq(experiencesTable.id, numericId));
+      await db.transaction(async (tx) => {
+        const [current] = await tx.select({ slug: experiencesTable.slug, aliases: experiencesTable.urlAliases }).from(experiencesTable)
+          .where(eq(experiencesTable.id, numericId)).for("update");
+        if (!current) throw new Error("Experience not found.");
+        await tx.update(experiencesTable).set({ ...experienceValues(data), urlAliases: updatedAliases(current, data.slug) }).where(eq(experiencesTable.id, numericId));
+        if (current.slug !== data.slug) {
+          const linked = sql`JSON_SEARCH(${toursTable.experiences}, 'one', ${current.slug})`;
+          await tx.update(toursTable)
+            .set({ experiences: sql`JSON_SET(${toursTable.experiences}, JSON_UNQUOTE(${linked}), ${data.slug})` })
+            .where(sql`${linked} IS NOT NULL`);
+        }
+      });
     } else {
       await db.insert(experiencesTable).values(experienceValues(data));
     }
+    revalidateContent();
+    return { experience: { slug: data.slug, title: data.title, shortTitle: data.shortTitle } };
   } catch (error) {
     return { error: messageFor(error) };
   }
+}
 
-  revalidateContent();
-  succeed(
-    "/admin/experiences",
-    id ? "Experience updated." : "Experience added.",
-  );
+export async function saveExperienceAction(formData: FormData) {
+  const result = await persistExperienceAction(formData);
+  if (result.error) return { error: result.error };
+  succeed("/admin/experiences", getString(formData, "id") ? "Experience updated." : "Experience added.");
 }
 
 export async function deleteExperienceAction(formData: FormData) {
@@ -496,12 +563,14 @@ export async function saveTestimonialAction(formData: FormData) {
     const name = getString(formData, "name");
     if (!name) throw new Error("Guest name is required.");
 
+    const quote = richText(formData, "quote");
     const data: Testimonial = {
       name,
       city: getString(formData, "city"),
       tour: getString(formData, "tour"),
       rating: getNumber(formData, "rating", 5),
-      quote: getString(formData, "quote"),
+      quote: quote.text,
+      richFields: { quote: quote.editor } satisfies RichFields,
     };
 
     await ensureContentSeeded(db);
@@ -599,12 +668,14 @@ const bookingStatuses = ["pending", "confirmed", "cancelled"] as const;
 
 function bookingsBackPath(formData: FormData) {
   const returnTo = getString(formData, "returnTo");
-  if (returnTo.startsWith("/admin/bookings")) return returnTo;
+  return /^\/admin\/bookings(?:[/?]|$)/.test(returnTo) ? returnTo : "/admin/bookings";
+}
 
-  const tour = getString(formData, "tourSlug");
-  return tour
-    ? `/admin/bookings?tour=${encodeURIComponent(tour)}`
-    : "/admin/bookings";
+function departuresBackPath(formData: FormData) {
+  const returnTo = getString(formData, "returnTo");
+  if (/^\/admin\/departures(?:[/?]|$)/.test(returnTo)) return returnTo;
+  const slug = getString(formData, "tourSlug");
+  return slug ? `/admin/departures?tour=${encodeURIComponent(slug)}` : "/admin/departures";
 }
 
 export async function saveDepartureAction(formData: FormData) {
@@ -612,7 +683,7 @@ export async function saveDepartureAction(formData: FormData) {
 
   const id = getString(formData, "id");
   const tourSlug = getString(formData, "tourSlug");
-  const backPath = bookingsBackPath(formData);
+  const backPath = departuresBackPath(formData);
 
   let message = "Departure updated.";
 
@@ -632,7 +703,11 @@ export async function saveDepartureAction(formData: FormData) {
 
     if (!tourSlug) throw new Error("Choose a tour package first.");
     if (!dates.length) throw new Error("Choose at least one departure date.");
-    if (dates.some((startDate) => !/^\d{4}-\d{2}-\d{2}$/.test(startDate))) {
+    if (dates.some((startDate) => {
+      const date = new Date(`${startDate}T00:00:00Z`);
+      return !/^\d{4}-\d{2}-\d{2}$/.test(startDate)
+        || !Number.isFinite(date.getTime()) || date.toISOString().slice(0, 10) !== startDate;
+    })) {
       throw new Error("Choose valid departure dates.");
     }
     if (price <= 0) throw new Error("Price must be greater than zero.");
@@ -642,12 +717,17 @@ export async function saveDepartureAction(formData: FormData) {
 
     if (id) {
       const numericId = parseId(id);
-      const existing = await db
-        .select({ id: tourDeparturesTable.id })
+      const [existing] = await db
+        .select({ id: tourDeparturesTable.id, tourSlug: tourDeparturesTable.tourSlug, startDate: tourDeparturesTable.startDate })
         .from(tourDeparturesTable)
         .where(eq(tourDeparturesTable.id, numericId))
         .limit(1);
-      if (!existing.length) throw new Error("Departure not found.");
+      if (existing?.tourSlug !== tourSlug) throw new Error("Departure not found.");
+      if (existing.startDate !== dates[0]) {
+        const [duplicate] = await db.select({ id: tourDeparturesTable.id }).from(tourDeparturesTable)
+          .where(and(eq(tourDeparturesTable.tourSlug, tourSlug), eq(tourDeparturesTable.startDate, dates[0]))).limit(1);
+        if (duplicate) throw new Error("That date is already scheduled for this package.");
+      }
 
       await db
         .update(tourDeparturesTable)
@@ -662,6 +742,8 @@ export async function saveDepartureAction(formData: FormData) {
 
       message = "Departure updated.";
     } else {
+      const [tour] = await db.select({ id: toursTable.id }).from(toursTable).where(eq(toursTable.slug, tourSlug)).limit(1);
+      if (!tour) throw new Error("Choose an existing package.");
       const existingRows = await db
         .select({ startDate: tourDeparturesTable.startDate })
         .from(tourDeparturesTable)
@@ -701,10 +783,11 @@ export async function saveDepartureAction(formData: FormData) {
       }`;
     }
   } catch (error) {
-    fail(backPath, error);
+    return { error: messageFor(error) };
   }
 
   revalidatePath(`/tours/${tourSlug}`);
+  revalidatePath("/admin/departures");
   revalidatePath("/admin/bookings");
   succeed(backPath, message);
 }
@@ -712,7 +795,7 @@ export async function saveDepartureAction(formData: FormData) {
 export async function deleteDepartureAction(formData: FormData) {
   await requireAdmin();
 
-  const backPath = bookingsBackPath(formData);
+  const backPath = departuresBackPath(formData);
 
   try {
     const db = requireDb();
@@ -751,6 +834,7 @@ export async function deleteDepartureAction(formData: FormData) {
     fail(backPath, error);
   }
 
+  revalidatePath("/admin/departures");
   revalidatePath("/admin/bookings");
   succeed(backPath, "Departure deleted.");
 }
@@ -780,6 +864,7 @@ export async function updateBookingStatusAction(formData: FormData) {
   }
 
   revalidatePath("/admin/bookings");
+  revalidatePath("/admin/departures");
   succeed(backPath, "Booking status updated.");
 }
 
@@ -807,5 +892,6 @@ export async function deleteBookingAction(formData: FormData) {
   }
 
   revalidatePath("/admin/bookings");
+  revalidatePath("/admin/departures");
   succeed(backPath, "Booking deleted.");
 }

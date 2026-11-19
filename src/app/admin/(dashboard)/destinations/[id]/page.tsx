@@ -19,9 +19,7 @@ export default async function EditDestinationPage({
     <div>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <AdminPageHeader
-          eyebrow="Destinations"
           title={destination.name}
-          description={`Editing /destinations/${destination.slug}`}
         />
         <div className="mb-6 shrink-0">
           <AdminDeleteButton

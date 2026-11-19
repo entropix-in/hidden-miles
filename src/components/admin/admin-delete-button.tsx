@@ -8,12 +8,14 @@ export function AdminDeleteButton({
   confirmText = "Delete this item? This cannot be undone.",
   label = "Delete",
   fields,
+  compact = false,
 }: {
   action: (formData: FormData) => Promise<void>;
   id: string;
   confirmText?: string;
   label?: string;
   fields?: Record<string, string>;
+  compact?: boolean;
 }) {
   return (
     <form
@@ -32,10 +34,12 @@ export function AdminDeleteButton({
         : null}
       <button
         type="submit"
-        className="inline-flex items-center gap-1.5 rounded-full border border-red-200 bg-red-50 px-3.5 py-2 text-sm font-extrabold uppercase tracking-wider text-red-700 transition hover:border-red-300 hover:bg-red-100"
+        className={compact ? "btn-outline admin-icon-button admin-button-danger" : "btn-outline admin-button-danger"}
+        aria-label={compact ? label : undefined}
+        title={compact ? label : undefined}
       >
         <Trash2 className="h-3.5 w-3.5" />
-        {label}
+        {!compact && label}
       </button>
     </form>
   );

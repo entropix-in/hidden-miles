@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { CalendarDays, ChevronLeft, ChevronRight, X } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 const monthFormatter = new Intl.DateTimeFormat("en-IN", {
   month: "long",
@@ -31,13 +30,18 @@ function formatSelected(value: string) {
   return selectedFormatter.format(new Date(`${value}T00:00:00Z`));
 }
 
-export function DepartureCalendar({ minDate }: { minDate: string }) {
+export function DepartureCalendar({ minDate, unavailable = [], selected, onToggleDate, onClear }: {
+  minDate: string;
+  unavailable?: string[];
+  selected: string[];
+  onToggleDate: (date: string) => void;
+  onClear: () => void;
+}) {
   const min = new Date(`${minDate}T00:00:00Z`);
   const [month, setMonth] = useState({
     year: min.getUTCFullYear(),
     month: min.getUTCMonth(),
   });
-  const [selected, setSelected] = useState<string[]>([]);
 
   const atFirstMonth =
     month.year === min.getUTCFullYear() && month.month === min.getUTCMonth();
@@ -64,17 +68,8 @@ export function DepartureCalendar({ minDate }: { minDate: string }) {
     });
   }
 
-  function toggleDate(date: string) {
-    if (date < minDate) return;
-    setSelected((current) =>
-      current.includes(date)
-        ? current.filter((item) => item !== date)
-        : [...current, date].sort(),
-    );
-  }
-
   return (
-    <div>
+    <div className="admin-compact-calendar">
       <div className="flex items-center justify-between gap-2">
         <span className="field-label mb-0">Departure dates</span>
         <span className="text-sm font-bold text-stone-400">
@@ -82,7 +77,7 @@ export function DepartureCalendar({ minDate }: { minDate: string }) {
         </span>
       </div>
 
-      <div className="mt-2 rounded-2xl border border-stone-200 bg-white p-3">
+      <div className="admin-calendar-panel">
         <div className="flex items-center justify-between gap-2">
           <button
             type="button"
@@ -93,7 +88,7 @@ export function DepartureCalendar({ minDate }: { minDate: string }) {
           >
             <ChevronLeft className="h-4 w-4" />
           </button>
-          <p className="flex items-center gap-1.5 text-sm font-extrabold text-navy-950">
+          <p className="flex items-center gap-1.5 text-sm font-semibold text-navy-950">
             <CalendarDays className="h-3.5 w-3.5 text-blue-600" />
             {monthFormatter.format(
               new Date(Date.UTC(month.year, month.month, 1)),
@@ -113,7 +108,7 @@ export function DepartureCalendar({ minDate }: { minDate: string }) {
           {weekdays.map((day, index) => (
             <span
               key={`${day}-${index}`}
-              className="text-[10px] font-extrabold uppercase tracking-wider text-stone-400"
+              className="text-xs font-semibold text-stone-600"
             >
               {day}
             </span>
@@ -123,7 +118,8 @@ export function DepartureCalendar({ minDate }: { minDate: string }) {
               return <span key={`blank-${index}`} />;
             }
 
-            const disabled = date < minDate;
+            const alreadyScheduled = unavailable.includes(date);
+            const disabled = date < minDate || alreadyScheduled;
             const active = selected.includes(date);
             const today = date === minDate;
 
@@ -131,19 +127,12 @@ export function DepartureCalendar({ minDate }: { minDate: string }) {
               <button
                 key={date}
                 type="button"
-                onClick={() => toggleDate(date)}
+                onClick={() => onToggleDate(date)}
                 disabled={disabled}
-                aria-label={`Select ${formatSelected(date)}`}
+                aria-label={`${formatSelected(date)}${alreadyScheduled ? ", already scheduled" : ""}`}
                 aria-pressed={active}
-                className={cn(
-                  "grid aspect-square place-items-center rounded-full text-sm font-bold transition",
-                  disabled && "cursor-not-allowed text-stone-300",
-                  !disabled &&
-                    !active &&
-                    "text-stone-700 hover:bg-blue-50 hover:text-blue-700",
-                  active && "bg-blue-600 text-white shadow-md shadow-blue-900/20",
-                  today && !active && "ring-1 ring-blue-300",
-                )}
+                data-today={today || undefined}
+                className="admin-calendar-day"
               >
                 {Number(date.slice(-2))}
               </button>
@@ -157,12 +146,12 @@ export function DepartureCalendar({ minDate }: { minDate: string }) {
           {selected.map((date) => (
             <span
               key={date}
-              className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-[0.08em] text-blue-800"
+              className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2.5 py-1 text-[11px] font-semibold text-blue-800"
             >
               {formatSelected(date)}
               <button
                 type="button"
-                onClick={() => toggleDate(date)}
+                onClick={() => onToggleDate(date)}
                 aria-label={`Remove ${formatSelected(date)}`}
                 className="grid h-3.5 w-3.5 place-items-center rounded-full transition hover:bg-blue-200"
               >
@@ -172,15 +161,15 @@ export function DepartureCalendar({ minDate }: { minDate: string }) {
           ))}
           <button
             type="button"
-            onClick={() => setSelected([])}
-            className="text-[11px] font-extrabold uppercase tracking-wider text-stone-400 underline decoration-dotted underline-offset-4 hover:text-blue-700"
+            onClick={onClear}
+            className="text-[11px] font-semibold text-stone-400 underline decoration-dotted underline-offset-4 hover:text-blue-700"
           >
             Clear
           </button>
         </div>
       ) : (
-        <p className="mt-2 text-sm text-stone-400">
-          Tap one or more dates in the calendar to make them bookable.
+        <p className="admin-editor-help mt-2">
+          Choose one or more dates.
         </p>
       )}
 

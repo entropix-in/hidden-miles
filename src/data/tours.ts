@@ -1,3 +1,4 @@
+import type { RichFields } from "@/lib/rich-fields";
 import type { ContentBlock } from "@/lib/content-blocks";
 
 import type { TourCity } from "@/lib/tour-cities";
@@ -19,9 +20,13 @@ export type ItineraryDay = {
   title: string;
   description: string;
   badges?: ItineraryBadge[];
+  contentBlocks?: ContentBlock[];
+  manualBadges?: boolean;
 };
 
 export type Tour = {
+  richFields?: RichFields;
+  urlAliases?: string[];
   contentBlocks?: ContentBlock[];
   slug: string;
   title: string;

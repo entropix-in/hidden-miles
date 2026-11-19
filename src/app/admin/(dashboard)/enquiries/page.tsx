@@ -24,9 +24,7 @@ export default async function AdminEnquiriesPage() {
     return (
       <div>
         <AdminPageHeader
-          eyebrow="Enquiries"
           title="Enquiries"
-          description="Messages sent by travellers from the website."
         />
         <DatabaseSetupNotice
           configured={result.status.configured}
@@ -45,9 +43,7 @@ export default async function AdminEnquiriesPage() {
   return (
     <div>
       <AdminPageHeader
-        eyebrow="Enquiries"
         title="Enquiries"
-        description="Every enquiry submitted on the website lands here in real time."
       />
 
       {result.status.error ? (
@@ -66,8 +62,8 @@ export default async function AdminEnquiriesPage() {
             key={label}
             className={`rounded-2xl border border-stone-200 bg-white px-4 py-3 ${statusStyles[status]}`}
           >
-            <p className="text-2xl font-extrabold">{value}</p>
-            <p className="text-sm font-extrabold uppercase tracking-wider opacity-70">
+            <p className="text-2xl font-semibold">{value}</p>
+            <p className="text-sm font-semibold opacity-70">
               {label}
             </p>
           </div>
@@ -82,7 +78,7 @@ export default async function AdminEnquiriesPage() {
             return (
               <article
                 key={enquiry._id}
-                className="rounded-[26px] border border-stone-200 bg-white p-5"
+                className="rounded-xl border border-stone-200 bg-white p-5"
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
@@ -91,11 +87,11 @@ export default async function AdminEnquiriesPage() {
                         {enquiry.name}
                       </h2>
                       <span
-                        className={`rounded-full px-2.5 py-1 text-sm font-extrabold uppercase tracking-wider ${statusStyles[status]}`}
+                        className={`rounded-full px-2.5 py-1 text-sm font-semibold ${statusStyles[status]}`}
                       >
                         {status}
                       </span>
-                      <span className="rounded-full bg-sand-200 px-2.5 py-1 text-sm font-extrabold uppercase tracking-wider text-navy-800">
+                      <span className="rounded-full bg-sand-200 px-2.5 py-1 text-sm font-semibold text-navy-800">
                         {enquiry.type === "newsletter"
                           ? "Newsletter"
                           : "Enquiry"}
@@ -127,7 +123,7 @@ export default async function AdminEnquiriesPage() {
                     </AdminSelect>
                     <button
                       type="submit"
-                      className="rounded-full bg-navy-950 px-3.5 py-2 text-sm font-extrabold uppercase tracking-wider text-sand-50 transition hover:bg-navy-900"
+                      className="btn-outline"
                     >
                       Save
                     </button>
@@ -166,7 +162,7 @@ export default async function AdminEnquiriesPage() {
                 </div>
 
                 {enquiry.tour ? (
-                  <p className="mt-3 inline-flex rounded-full bg-sand-100 px-3 py-1.5 text-sm font-extrabold uppercase tracking-wider text-navy-800">
+                  <p className="mt-3 inline-flex rounded-full bg-sand-100 px-3 py-1.5 text-sm font-semibold text-navy-800">
                     {enquiry.tour}
                   </p>
                 ) : null}
@@ -179,7 +175,7 @@ export default async function AdminEnquiriesPage() {
 
                 <Link
                   href={enquiry.email ? `mailto:${enquiry.email}` : "/admin"}
-                  className="mt-3 inline-block text-sm font-extrabold uppercase tracking-wider text-blue-700 hover:text-blue-800"
+                  className="mt-3 inline-block text-sm font-semibold text-blue-700 hover:text-blue-800"
                 >
                   Reply by email
                 </Link>

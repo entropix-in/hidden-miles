@@ -1,13 +1,25 @@
+import type { RichFields } from "@/lib/rich-fields";
 import type { ContentBlock } from "@/lib/content-blocks";
 
+export const experienceIconLabels = {
+  heart: "Heart",
+  sparkles: "Sparkles",
+  mountain: "Mountain",
+  users: "Group",
+  crown: "Crown",
+  flower: "Flower",
+} as const;
+
 export type Experience = {
+  richFields?: RichFields;
+  urlAliases?: string[];
   contentBlocks?: ContentBlock[];
   slug: string;
   title: string;
   shortTitle: string;
   description: string;
   image: string;
-  icon: "heart" | "sparkles" | "mountain" | "users" | "crown" | "flower";
+  icon: keyof typeof experienceIconLabels;
   highlights: string[];
 };
 

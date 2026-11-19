@@ -22,9 +22,7 @@ export default async function AdminDestinationsPage() {
     return (
       <div>
         <AdminPageHeader
-          eyebrow="Destinations"
           title="Destinations"
-          description="The places travellers can explore on Hidden Miles."
         />
         <DatabaseSetupNotice
           configured={result.status.configured}
@@ -37,9 +35,7 @@ export default async function AdminDestinationsPage() {
   return (
     <div>
       <AdminPageHeader
-        eyebrow="Destinations"
         title="Destinations"
-        description="The places travellers can explore. Packages are grouped by destination."
         actionHref="/admin/destinations/new"
         actionLabel="New destination"
       />
@@ -58,7 +54,7 @@ export default async function AdminDestinationsPage() {
             return (
               <article
                 key={destination._id}
-                className="overflow-hidden rounded-[26px] border border-stone-200 bg-white"
+                className="overflow-hidden rounded-xl border border-stone-200 bg-white"
               >
                 <div className="relative aspect-[16/9]">
                   {destination.image ? (
@@ -70,13 +66,13 @@ export default async function AdminDestinationsPage() {
                       className="object-cover"
                     />
                   ) : (
-                    <div className="grid h-full w-full place-items-center bg-sand-200 text-sm font-bold uppercase tracking-wider text-stone-400">
+                    <div className="grid h-full w-full place-items-center bg-sand-200 text-sm font-bold text-stone-400">
                       No image
                     </div>
                   )}
                   <div className="absolute inset-0 bg-gradient-to-t from-navy-950/70 to-transparent" />
                   <div className="absolute bottom-3 left-4 text-sand-50">
-                    <p className="text-sm font-extrabold uppercase tracking-wider text-blue-300">
+                    <p className="text-sm font-semibold text-blue-300">
                       {destination.region} · {count}{" "}
                       {count === 1 ? "package" : "packages"}
                     </p>
@@ -93,14 +89,14 @@ export default async function AdminDestinationsPage() {
                     <Link
                       href={`/destinations/${destination.slug}`}
                       target="_blank"
-                      className="grid h-9 w-9 place-items-center rounded-full border border-stone-200 text-stone-500 transition hover:border-blue-400 hover:text-blue-700"
+                      className="btn-outline admin-icon-button"
                       aria-label={`View ${destination.name} on the website`}
                     >
                       <ExternalLink className="h-3.5 w-3.5" />
                     </Link>
                     <Link
                       href={`/admin/destinations/${destination._id}`}
-                      className="inline-flex items-center gap-1.5 rounded-full border border-stone-200 bg-sand-50 px-3.5 py-2 text-sm font-extrabold uppercase tracking-wider text-navy-950 transition hover:border-blue-400"
+                      className="btn-outline"
                     >
                       <Pencil className="h-3.5 w-3.5" />
                       Edit

@@ -19,9 +19,7 @@ export default async function EditTestimonialPage({
     <div>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <AdminPageHeader
-          eyebrow="Testimonials"
           title={testimonial.name}
-          description={testimonial.tour}
         />
         <div className="mb-6 shrink-0">
           <AdminDeleteButton

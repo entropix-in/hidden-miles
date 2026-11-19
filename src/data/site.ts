@@ -1,3 +1,4 @@
+import type { RichFields } from "@/lib/rich-fields";
 export const site = {
   name: "Hidden Miles",
   legalName: "Hidden Miles Holidays Pvt. Ltd.",
@@ -161,6 +162,7 @@ export const trustPoints = [
 ];
 
 export type Testimonial = {
+  richFields?: RichFields;
   name: string;
   city: string;
   tour: string;

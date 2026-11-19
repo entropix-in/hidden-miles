@@ -88,6 +88,7 @@ export function deriveItineraryBadges(day: ItineraryDay): ItineraryBadge[] {
  * keywords found in the day title and description.
  */
 export function getItineraryBadges(day: ItineraryDay): ItineraryBadge[] {
+  if (day.manualBadges) return day.badges ?? [];
   return day.badges?.length ? day.badges : deriveItineraryBadges(day);
 }
 

@@ -1,3 +1,5 @@
+import type { RichFields } from "@/lib/rich-fields";
+import type { ItineraryDay } from "@/data/tours";
 import {
   bigint,
   date,
@@ -42,6 +44,8 @@ export const tours = mysqlTable(
     experiences: json("experiences").$type<string[]>().notNull(),
     image: varchar("image", { length: 1000 }).notNull(),
     contentBlocks: json("content_blocks").$type<ContentBlock[]>(),
+    richFields: json("rich_fields").$type<RichFields>(),
+    urlAliases: json("url_aliases").$type<string[]>(),
     nights: int("nights", { unsigned: true }).notNull().default(0),
     days: int("days", { unsigned: true }).notNull().default(1),
     price: int("price", { unsigned: true }).notNull().default(0),
@@ -57,17 +61,7 @@ export const tours = mysqlTable(
     highlights: json("highlights").$type<string[]>().notNull(),
     inclusions: json("inclusions").$type<string[]>().notNull(),
     exclusions: json("exclusions").$type<string[]>().notNull(),
-    itinerary: json("itinerary").$type<
-      Array<{
-        day: number;
-        title: string;
-        description: string;
-        badges?: Array<{
-          label: string;
-          kind: "meal" | "stay" | "travel" | "experience" | "leisure";
-        }>;
-      }>
-    >().notNull(),
+    itinerary: json("itinerary").$type<ItineraryDay[]>().notNull(),
     departureCities: json("departure_cities").$type<
       Array<{ name: string; note: string; priceDelta: number }>
     >(),
@@ -100,6 +94,8 @@ export const destinations = mysqlTable(
     description: text("description").notNull(),
     image: varchar("image", { length: 1000 }).notNull(),
     contentBlocks: json("content_blocks").$type<ContentBlock[]>(),
+    richFields: json("rich_fields").$type<RichFields>(),
+    urlAliases: json("url_aliases").$type<string[]>(),
     bestTime: varchar("best_time", { length: 190 }).notNull().default(""),
     highlights: json("highlights").$type<string[]>().notNull(),
     createdAt: timestamp("created_at").notNull().defaultNow(),
@@ -123,6 +119,8 @@ export const experiences = mysqlTable(
     description: text("description").notNull(),
     image: varchar("image", { length: 1000 }).notNull(),
     contentBlocks: json("content_blocks").$type<ContentBlock[]>(),
+    richFields: json("rich_fields").$type<RichFields>(),
+    urlAliases: json("url_aliases").$type<string[]>(),
     icon: varchar("icon", { length: 32 }).notNull().default("sparkles"),
     highlights: json("highlights").$type<string[]>().notNull(),
     createdAt: timestamp("created_at").notNull().defaultNow(),
@@ -143,6 +141,7 @@ export const testimonials = mysqlTable("testimonials", {
   tour: varchar("tour", { length: 190 }).notNull().default(""),
   rating: tinyint("rating", { unsigned: true }).notNull().default(5),
   quote: text("quote").notNull(),
+  richFields: json("rich_fields").$type<RichFields>(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow().onUpdateNow(),
 });

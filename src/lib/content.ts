@@ -55,6 +55,8 @@ function mapTour(row: TourRow): AdminTour {
     experiences: row.experiences,
     image: row.image,
     contentBlocks: row.contentBlocks ?? undefined,
+    richFields: row.richFields ?? undefined,
+    urlAliases: row.urlAliases ?? undefined,
     nights: Number(row.nights),
     days: Number(row.days),
     price: Number(row.price),
@@ -85,6 +87,8 @@ function mapDestination(row: DestinationRow): AdminDestination {
     description: row.description,
     image: row.image,
     contentBlocks: row.contentBlocks ?? undefined,
+    richFields: row.richFields ?? undefined,
+    urlAliases: row.urlAliases ?? undefined,
     bestTime: row.bestTime,
     highlights: row.highlights,
   };
@@ -100,6 +104,8 @@ function mapExperience(row: ExperienceRow): AdminExperience {
     description: row.description,
     image: row.image,
     contentBlocks: row.contentBlocks ?? undefined,
+    richFields: row.richFields ?? undefined,
+    urlAliases: row.urlAliases ?? undefined,
     icon: row.icon as Experience["icon"],
     highlights: row.highlights,
   };
@@ -114,6 +120,7 @@ function mapTestimonial(row: TestimonialRow): AdminTestimonial {
     tour: row.tour,
     rating: Number(row.rating),
     quote: row.quote,
+    richFields: row.richFields ?? undefined,
     createdAt: row.createdAt.getTime(),
   };
 }
@@ -179,7 +186,7 @@ export async function loadTours(): Promise<Tour[]> {
 
 export async function loadTour(slug: string): Promise<Tour | undefined> {
   const tours = await loadTours();
-  return tours.find((tour) => tour.slug === slug);
+  return tours.find((tour) => tour.slug === slug) ?? tours.find((tour) => tour.urlAliases?.includes(slug));
 }
 
 export async function loadDestinations(): Promise<Destination[]> {
@@ -204,7 +211,8 @@ export async function loadDestination(
   slug: string,
 ): Promise<Destination | undefined> {
   const destinations = await loadDestinations();
-  return destinations.find((destination) => destination.slug === slug);
+  return destinations.find((destination) => destination.slug === slug)
+    ?? destinations.find((destination) => destination.urlAliases?.includes(slug));
 }
 
 export async function loadExperiences(): Promise<Experience[]> {

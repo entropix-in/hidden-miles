@@ -1,5 +1,6 @@
 "use client";
 
+import { RichFieldText } from "@/components/site/page-content-blocks";
 import { useMemo, useState } from "react";
 import { Quote, Star } from "lucide-react";
 import type { Testimonial } from "@/data/site";
@@ -143,7 +144,7 @@ export function TestimonialsExplorer({
             </div>
 
             <blockquote className="mt-4 flex-1 text-[14px] leading-7 text-stone-600">
-              “{testimonial.quote}”
+              “<RichFieldText editor={testimonial.richFields?.quote} fallback={testimonial.quote} />”
             </blockquote>
 
             {testimonial.tour ? (

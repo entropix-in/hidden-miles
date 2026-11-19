@@ -42,3 +42,24 @@ export function parseContentBlocks(raw: string): ContentBlock[] {
     throw new Error("Page content includes an invalid block.");
   });
 }
+
+
+export function readContentText(blocks: ContentBlock[]) {
+  const editor = createEditor({ nodes: contentNodes });
+  return blocks.flatMap((block) => {
+    if (block.type !== "text") return [];
+    const state = editor.parseEditorState(block.editor);
+    return [state.read(() => $getRoot().getTextContent().trim())];
+  }).join("\n\n");
+}
+
+export function isContentLink(url: string) {
+  if (/^\/(?![\\/])/.test(url)) return !/[\\\s]/.test(url);
+  if (/^(mailto:|tel:)/i.test(url)) return /^(mailto:|tel:)\S+$/i.test(url);
+  if (!/^https?:\/\//i.test(url)) return false;
+  try {
+    return Boolean(new URL(url).hostname) && !/[\\\s]/.test(url);
+  } catch {
+    return false;
+  }
+}

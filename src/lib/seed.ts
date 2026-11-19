@@ -73,6 +73,7 @@ export function tourValues(tour: Tour) {
     departure: tour.departure,
     groupSize: tour.groupSize,
     summary: tour.summary,
+    richFields: tour.richFields ?? null,
     highlights: tour.highlights,
     inclusions: tour.inclusions,
     exclusions: tour.exclusions,
@@ -89,6 +90,7 @@ export function destinationValues(destination: Destination) {
     region: destination.region,
     tagline: destination.tagline,
     description: destination.description,
+    richFields: destination.richFields ?? null,
     image: destination.image,
     contentBlocks: destination.contentBlocks ?? null,
     bestTime: destination.bestTime,
@@ -102,6 +104,7 @@ export function experienceValues(experience: Experience) {
     title: experience.title,
     shortTitle: experience.shortTitle,
     description: experience.description,
+    richFields: experience.richFields ?? null,
     image: experience.image,
     contentBlocks: experience.contentBlocks ?? null,
     icon: experience.icon,
@@ -116,6 +119,7 @@ export function testimonialValues(testimonial: Testimonial) {
     tour: testimonial.tour,
     rating: testimonial.rating,
     quote: testimonial.quote,
+    richFields: testimonial.richFields ?? null,
   } satisfies typeof testimonialsTable.$inferInsert;
 }
 

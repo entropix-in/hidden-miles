@@ -1,6 +1,9 @@
+import type { RichFields } from "@/lib/rich-fields";
 import type { ContentBlock } from "@/lib/content-blocks";
 
 export type Destination = {
+  richFields?: RichFields;
+  urlAliases?: string[];
   contentBlocks?: ContentBlock[];
   slug: string;
   name: string;

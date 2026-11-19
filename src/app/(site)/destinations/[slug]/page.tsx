@@ -1,8 +1,8 @@
-import { PageContentBlocks } from "@/components/site/page-content-blocks";
+import { PageContentBlocks, RichFieldText } from "@/components/site/page-content-blocks";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { Clock, IndianRupee, Plane, Sun } from "lucide-react";
 import { Breadcrumbs } from "@/components/site/breadcrumbs";
 import { CtaBand } from "@/components/site/cta-band";
@@ -46,6 +46,7 @@ export default async function DestinationDetailPage({
   const { slug } = await params;
   const destination = await loadDestination(slug);
   if (!destination) notFound();
+  if (destination.slug !== slug) redirect(`/destinations/${destination.slug}`);
 
   const [allDestinations, allTours] = await Promise.all([
     loadDestinations(),
@@ -146,7 +147,7 @@ export default async function DestinationDetailPage({
         <div className="grid gap-12 lg:grid-cols-[1fr_440px] lg:gap-20">
           <div>
             <h2 className="type-h2 text-ink">About {destination.name}</h2>
-            <p className="type-lead mt-4 text-navy-700">{destination.description}</p>
+            <p className="type-lead mt-4 text-navy-700"><RichFieldText editor={destination.richFields?.description} fallback={destination.description} /></p>
             <PageContentBlocks blocks={destination.contentBlocks} />
             <Link href="/contact" className="btn btn-outline mt-7">
               Plan a private {destination.name} trip
@@ -157,7 +158,7 @@ export default async function DestinationDetailPage({
           <div>
             {destination.highlights.map((highlight, index) => (
               <div
-                key={highlight}
+                key={index}
                 className={`flex items-center gap-5 py-5 ${
                   index ? "border-t border-sand-300" : ""
                 }`}
@@ -165,7 +166,7 @@ export default async function DestinationDetailPage({
                 <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-sand-200 text-sm font-bold text-ink">
                   {index + 1}
                 </span>
-                <span className="type-title text-ink">{highlight}</span>
+                <span className="type-title text-ink"><RichFieldText editor={destination.richFields?.highlights?.[index]} fallback={highlight} /></span>
               </div>
             ))}
           </div>

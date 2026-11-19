@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import Image from "next/image";
-import { IS_BOLD, IS_CODE, IS_HIGHLIGHT, IS_ITALIC, IS_STRIKETHROUGH, IS_SUBSCRIPT, IS_SUPERSCRIPT, IS_UNDERLINE } from "lexical";
-import type { ContentBlock } from "@/lib/content-blocks";
+import { type SerializedEditorState, IS_BOLD, IS_CODE, IS_HIGHLIGHT, IS_ITALIC, IS_STRIKETHROUGH, IS_SUBSCRIPT, IS_SUPERSCRIPT, IS_UNDERLINE } from "lexical";
+import { isContentLink, type ContentBlock } from "@/lib/content-blocks";
 import { mediaPathPattern } from "@/lib/media-path";
 
 type RichNode = {
@@ -16,11 +16,15 @@ type RichNode = {
   url?: string;
 };
 
-function richNode(node: RichNode, key: number, depth: number): ReactNode {
+function richNode(node: RichNode, key: number, depth: number, inline = false): ReactNode {
   if (!node || depth > 20) return null;
   const children = Array.isArray(node.children)
-    ? node.children.map((child, index) => richNode(child, index, depth + 1))
+    ? node.children.map((child, index) => richNode(child, index, depth + 1, inline))
     : null;
+
+  if (inline && ["paragraph", "heading", "quote", "list", "listitem"].includes(node.type ?? "")) {
+    return <span key={key}>{children}</span>;
+  }
 
   switch (node.type) {
     case "paragraph": return <p key={key}>{children}</p>;
@@ -41,8 +45,9 @@ function richNode(node: RichNode, key: number, depth: number): ReactNode {
         </>}
         {children}
       </li>;
+    case "autolink":
     case "link":
-      return typeof node.url === "string" && /^(https?:\/\/|mailto:|tel:|\/(?![\\/]))/i.test(node.url)
+      return typeof node.url === "string" && isContentLink(node.url)
         ? <a key={key} href={node.url}>{children}</a> : <span key={key}>{children}</span>;
     case "linebreak": return <br key={key} />;
     case "tab":
@@ -81,4 +86,15 @@ export function PageContentBlocks({ blocks }: { blocks?: ContentBlock[] }) {
           </div>)}
     </div>
   );
+}
+
+
+export function RichFieldText({ editor, fallback }: { editor?: SerializedEditorState; fallback: string }) {
+  if (!editor) return fallback;
+  return editor.root.children.map((node, index) => (
+    <span key={index}>
+      {index > 0 && <br />}
+      {richNode(node, index, 0, true)}
+    </span>
+  ));
 }

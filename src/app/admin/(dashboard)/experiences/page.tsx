@@ -20,9 +20,7 @@ export default async function AdminExperiencesPage() {
     return (
       <div>
         <AdminPageHeader
-          eyebrow="Experiences"
           title="Experiences"
-          description="Travel styles that packages can be tagged with."
         />
         <DatabaseSetupNotice
           configured={result.status.configured}
@@ -35,9 +33,7 @@ export default async function AdminExperiencesPage() {
   return (
     <div>
       <AdminPageHeader
-        eyebrow="Experiences"
         title="Experiences"
-        description="Travel styles travellers can browse and filter by."
         actionHref="/admin/experiences/new"
         actionLabel="New experience"
       />
@@ -51,7 +47,7 @@ export default async function AdminExperiencesPage() {
           {result.data.map((experience) => (
             <article
               key={experience._id}
-              className="overflow-hidden rounded-[26px] border border-stone-200 bg-white"
+              className="overflow-hidden rounded-xl border border-stone-200 bg-white"
             >
               <div className="relative aspect-[16/9]">
                 {experience.image ? (
@@ -63,7 +59,7 @@ export default async function AdminExperiencesPage() {
                     className="object-cover"
                   />
                 ) : (
-                  <div className="grid h-full w-full place-items-center bg-sand-200 text-sm font-bold uppercase tracking-wider text-stone-400">
+                  <div className="grid h-full w-full place-items-center bg-sand-200 text-sm font-bold text-stone-400">
                     No image
                   </div>
                 )}
@@ -83,14 +79,14 @@ export default async function AdminExperiencesPage() {
                   <Link
                     href={`/tours?experience=${experience.slug}`}
                     target="_blank"
-                    className="grid h-9 w-9 place-items-center rounded-full border border-stone-200 text-stone-500 transition hover:border-blue-400 hover:text-blue-700"
+                    className="btn-outline admin-icon-button"
                     aria-label={`View ${experience.title} on the website`}
                   >
                     <ExternalLink className="h-3.5 w-3.5" />
                   </Link>
                   <Link
                     href={`/admin/experiences/${experience._id}`}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-stone-200 bg-sand-50 px-3.5 py-2 text-sm font-extrabold uppercase tracking-wider text-navy-950 transition hover:border-blue-400"
+                    className="btn-outline"
                   >
                     <Pencil className="h-3.5 w-3.5" />
                     Edit

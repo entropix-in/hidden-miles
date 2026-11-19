@@ -1,7 +1,7 @@
-import { PageContentBlocks } from "@/components/site/page-content-blocks";
+import { PageContentBlocks, RichFieldText } from "@/components/site/page-content-blocks";
 import type { Metadata } from "next";
 import Image from "next/image";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import {
   Check,
   Clock,
@@ -62,6 +62,7 @@ export default async function TourDetailPage({
   const { slug } = await params;
   const tour = await loadTour(slug);
   if (!tour) notFound();
+  if (tour.slug !== slug) redirect(`/tours/${tour.slug}`);
 
   const [allTours, departures, destination, testimonials] = await Promise.all([
     loadTours(),
@@ -280,17 +281,17 @@ export default async function TourDetailPage({
 
             <section id="overview" className="scroll-mt-32 pt-14">
               <h2 className="type-h3 text-ink">Why you&apos;ll love it</h2>
-              <p className="type-body mt-3 text-navy-700">{tour.summary}</p>
+              <p className="type-body mt-3 text-navy-700"><RichFieldText editor={tour.richFields?.summary} fallback={tour.summary} /></p>
               <PageContentBlocks blocks={tour.contentBlocks} />
 
               <div className="mt-7 grid gap-x-6 gap-y-4 sm:grid-cols-2">
-                {tour.highlights.map((highlight) => (
-                  <div key={highlight} className="flex items-center gap-3.5">
+                {tour.highlights.map((highlight, index) => (
+                  <div key={index} className="flex items-center gap-3.5">
                     <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-gold-100 text-gold-600">
                       <Check className="h-3.5 w-3.5" strokeWidth={3} />
                     </span>
                     <span className="text-sm font-semibold text-ink">
-                      {highlight}
+                      <RichFieldText editor={tour.richFields?.highlights?.[index]} fallback={highlight} />
                     </span>
                   </div>
                 ))}
@@ -307,13 +308,13 @@ export default async function TourDetailPage({
                 <div className="rounded-[20px] border border-sand-300 bg-paper p-7">
                   <h2 className="type-title text-ink">What&apos;s included</h2>
                   <ul className="mt-4 space-y-3">
-                    {tour.inclusions.map((item) => (
-                      <li key={item} className="flex items-start gap-3">
+                    {tour.inclusions.map((item, index) => (
+                      <li key={index} className="flex items-start gap-3">
                         <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-success-soft text-success">
                           <Check className="h-3 w-3" strokeWidth={3} />
                         </span>
                         <span className="text-sm leading-6 text-navy-700">
-                          {item}
+                          <RichFieldText editor={tour.richFields?.inclusions?.[index]} fallback={item} />
                         </span>
                       </li>
                     ))}
@@ -322,13 +323,13 @@ export default async function TourDetailPage({
                 <div className="rounded-[20px] border border-sand-300 bg-sand-100 p-7">
                   <h2 className="type-title text-ink">Not included</h2>
                   <ul className="mt-4 space-y-3">
-                    {tour.exclusions.map((item) => (
-                      <li key={item} className="flex items-start gap-3">
+                    {tour.exclusions.map((item, index) => (
+                      <li key={index} className="flex items-start gap-3">
                         <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-danger-soft text-danger">
                           <X className="h-3 w-3" strokeWidth={3} />
                         </span>
                         <span className="text-sm leading-6 text-navy-700">
-                          {item}
+                          <RichFieldText editor={tour.richFields?.exclusions?.[index]} fallback={item} />
                         </span>
                       </li>
                     ))}
@@ -352,7 +353,7 @@ export default async function TourDetailPage({
                     </div>
                     <div>
                       <p className="font-display text-[19px] leading-[1.55] text-paper">
-                        “{quote.quote}”
+                        “<RichFieldText editor={quote.richFields?.quote} fallback={quote.quote} />”
                       </p>
                       <p className="mt-3 text-sm font-bold text-gold-400">
                         {quote.name} · {quote.city}

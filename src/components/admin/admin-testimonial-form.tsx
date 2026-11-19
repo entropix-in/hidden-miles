@@ -1,3 +1,4 @@
+import { AdminRichField } from "./admin-rich-fields";
 import Link from "next/link";
 import { Save } from "lucide-react";
 import { saveTestimonialAction } from "@/app/admin/actions";
@@ -13,13 +14,12 @@ export function AdminTestimonialForm({
     <form action={saveTestimonialAction} className="space-y-5">
       <input type="hidden" name="id" value={testimonial?._id ?? ""} />
 
-      <section className="rounded-[28px] border border-stone-200 bg-white p-6">
-        <p className="eyebrow">Guest story</p>
-        <h2 className="mt-2 font-display text-2xl font-semibold text-navy-950">
+      <section className="admin-form-panel">
+        <h2 className="text-base font-semibold text-navy-950">
           Testimonial details
         </h2>
 
-        <div className="mt-5 grid gap-4 sm:grid-cols-2">
+        <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <div>
             <label htmlFor="name" className="field-label">
               Guest name
@@ -61,22 +61,13 @@ export function AdminTestimonialForm({
             <AdminStarRating defaultValue={testimonial?.rating ?? 5} />
           </div>
           <div className="sm:col-span-2">
-            <label htmlFor="quote" className="field-label">
-              Quote
-            </label>
-            <textarea
-              id="quote"
-              name="quote"
-              rows={5}
-              defaultValue={testimonial?.quote ?? ""}
-              placeholder="Our tour leader felt like family by day two..."
-              className="field resize-none"
-            />
+            <AdminRichField name="quote" label="Quote"
+              initial={testimonial?.quote} editor={testimonial?.richFields?.quote} />
           </div>
         </div>
       </section>
 
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-[28px] border border-stone-200 bg-white px-6 py-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-stone-200 bg-white px-6 py-4">
         <Link href="/admin/testimonials" className="btn-outline">
           Cancel
         </Link>

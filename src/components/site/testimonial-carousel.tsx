@@ -1,5 +1,6 @@
 "use client";
 
+import { RichFieldText } from "@/components/site/page-content-blocks";
 import { useState } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Rating } from "@/components/site/rating";
@@ -43,7 +44,7 @@ export function TestimonialCarousel({
 
       <div aria-live="polite" aria-atomic="true">
         <blockquote className="font-display text-[20px] leading-[1.5] text-ink">
-          {active.quote}
+          <RichFieldText editor={active.richFields?.quote} fallback={active.quote} />
         </blockquote>
 
         <div className="mt-6 flex items-center gap-3.5">

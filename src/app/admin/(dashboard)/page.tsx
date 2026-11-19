@@ -3,7 +3,6 @@ import type { ReactNode } from "react";
 import {
   ArrowDownRight,
   ArrowRight,
-  ArrowUpRight,
   CalendarCheck,
   CalendarDays,
   CheckCircle2,
@@ -117,7 +116,7 @@ function StatusPill({
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-[0.08em] ring-1 ring-inset",
+        "inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-semibold ring-1 ring-inset",
         className,
       )}
     >
@@ -136,7 +135,7 @@ function Panel({
   return (
     <section
       className={cn(
-        "rounded-2xl border border-stone-200 bg-white shadow-sm shadow-navy-950/[0.03]",
+        "rounded-xl border border-stone-200 bg-white",
         className,
       )}
     >
@@ -145,68 +144,32 @@ function Panel({
   );
 }
 
-const statTones = {
-  blue: {
-    bar: "bg-blue-500",
-    icon: "bg-blue-50 text-blue-700",
-  },
-  gold: {
-    bar: "bg-gold-400",
-    icon: "bg-gold-100 text-gold-700",
-  },
-  navy: {
-    bar: "bg-navy-700",
-    icon: "bg-navy-50 text-navy-700",
-  },
-  emerald: {
-    bar: "bg-emerald-500",
-    icon: "bg-emerald-50 text-emerald-700",
-  },
-} as const;
-
 function StatCard({
   label,
   value,
   detail,
   icon: Icon,
-  tone,
   href,
 }: {
   label: string;
   value: ReactNode;
   detail: ReactNode;
   icon: LucideIcon;
-  tone: keyof typeof statTones;
   href: string;
 }) {
-  const styles = statTones[tone];
-
   return (
     <Link
       href={href}
-      className="group relative overflow-hidden rounded-2xl border border-stone-200 bg-white p-5 shadow-sm shadow-navy-950/[0.03] transition hover:-translate-y-0.5 hover:border-stone-300 hover:shadow-lg hover:shadow-navy-950/5"
+      className="admin-overview-stat"
     >
-      <span
-        aria-hidden
-        className={cn("absolute inset-x-0 top-0 h-1", styles.bar)}
-      />
-      <div className="flex items-start justify-between gap-3">
-        <p className="text-[11px] font-extrabold uppercase tracking-[0.16em] text-stone-500">
-          {label}
-        </p>
-        <span
-          className={cn(
-            "grid h-9 w-9 shrink-0 place-items-center rounded-xl",
-            styles.icon,
-          )}
-        >
-          <Icon className="h-4 w-4" />
-        </span>
+      <div className="flex items-center gap-2.5">
+        <Icon size={16} className="admin-overview-stat-icon" aria-hidden />
+        <p>{label}</p>
       </div>
-      <p className="mt-4 font-display text-[32px] font-semibold leading-none tracking-tight text-navy-950">
+      <p className="admin-overview-value">
         {value}
       </p>
-      <p className="mt-2.5 text-xs font-semibold leading-4 text-stone-500">
+      <p className="admin-overview-meta">
         {detail}
       </p>
     </Link>
@@ -339,20 +302,17 @@ export default async function AdminDashboardPage() {
   const attentionItems = [
     {
       count: pendingBookings.length,
-      label:
-        pendingBookings.length === 1
-          ? "Booking awaiting confirmation"
-          : "Bookings awaiting confirmation",
+      label: "Pending bookings",
       description: pendingValue
         ? `${formatINR(pendingValue)} in the pipeline`
         : "Confirm or release these seats",
-      href: "/admin/bookings",
+      href: "/admin/bookings?status=pending",
       icon: Clock3,
       tone: "bg-gold-100 text-gold-700",
     },
     {
       count: newEnquiries,
-      label: newEnquiries === 1 ? "New enquiry to reply to" : "New enquiries to reply to",
+      label: "New enquiries",
       description: `${enquiries.data.length} enquiries in total`,
       href: "/admin/enquiries",
       icon: Mail,
@@ -365,7 +325,7 @@ export default async function AdminDashboardPage() {
           ? "Package without dates"
           : "Packages without dates",
       description: "Travellers cannot book them yet",
-      href: "/admin/bookings",
+      href: "/admin/departures",
       icon: CalendarDays,
       tone: "bg-navy-50 text-navy-700",
     },
@@ -386,7 +346,7 @@ export default async function AdminDashboardPage() {
     {
       label: "Departures",
       value: departures.data.length,
-      href: "/admin/bookings",
+      href: "/admin/departures",
       icon: CalendarCheck,
     },
     {
@@ -417,31 +377,15 @@ export default async function AdminDashboardPage() {
 
   return (
     <div className="space-y-6">
-      <header className="flex flex-col gap-5 border-b border-stone-200 pb-6 lg:flex-row lg:items-end lg:justify-between">
+      <header className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         <div>
-          <p className="eyebrow">
-            <CalendarDays className="h-3.5 w-3.5" />
-            {todayLabel}
-          </p>
-          <h1 className="mt-1 font-display text-2xl font-semibold text-navy-950 sm:text-[1.875rem]">
-            Dashboard overview
-          </h1>
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-stone-500">
-            Bookings, revenue and traveller enquiries across Hidden Miles, all in
-            one place.
+          <h1 className="admin-page-title">Dashboard</h1>
+          <p className="mt-1 flex items-center gap-2 text-[13px] text-stone-500">
+            <CalendarDays size={15} aria-hidden />{todayLabel}
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <Link
-            href="/"
-            className="btn-outline px-5 py-2.5 text-sm"
-            target="_blank"
-            rel="noreferrer"
-          >
-            View website
-            <ArrowUpRight className="h-3.5 w-3.5" />
-          </Link>
-          <Link href="/admin/tours/new" className="btn-primary px-5 py-2.5 text-sm">
+          <Link href="/admin/tours/new" className="btn-primary">
             <Plus className="h-4 w-4" />
             New package
           </Link>
@@ -472,14 +416,14 @@ export default async function AdminDashboardPage() {
                 </div>
               </div>
               <form action={seedContentAction} className="shrink-0">
-                <button type="submit" className="btn-primary px-5 py-2.5 text-sm">
+                <button type="submit" className="btn-primary">
                   Import content
                 </button>
               </form>
             </div>
           ) : null}
 
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="admin-overview-stats">
             <StatCard
               label="Confirmed revenue"
               value={formatINR(confirmedRevenue)}
@@ -487,8 +431,7 @@ export default async function AdminDashboardPage() {
                 confirmedBookings.length === 1 ? "booking" : "bookings"
               } · ${formatINR(averageBooking)} average`}
               icon={IndianRupee}
-              tone="blue"
-              href="/admin/bookings"
+              href="/admin/bookings?status=confirmed"
             />
             <StatCard
               label="Pending requests"
@@ -499,15 +442,13 @@ export default async function AdminDashboardPage() {
                   : "No pending booking value"
               }
               icon={Clock3}
-              tone="gold"
-              href="/admin/bookings"
+              href="/admin/bookings?status=pending"
             />
             <StatCard
               label="New enquiries"
               value={newEnquiries}
               detail={`${contactedEnquiries} in progress · ${enquiries.data.length} total`}
               icon={Inbox}
-              tone="navy"
               href="/admin/enquiries"
             />
             <StatCard
@@ -524,35 +465,31 @@ export default async function AdminDashboardPage() {
                 upcomingDepartures.length === 1 ? "departure" : "departures"
               }`}
               icon={Users}
-              tone="emerald"
-              href="/admin/bookings"
+              href="/admin/departures"
             />
           </div>
 
           <Panel className="overflow-hidden">
             <div className="flex flex-wrap items-center justify-between gap-3 border-b border-stone-100 px-5 py-4 sm:px-6">
               <div>
-                <h2 className="font-display text-xl font-semibold text-navy-950">
-                  Content library
+                <h2 className="font-display text-base font-semibold text-navy-950">
+                  Manage content
                 </h2>
-                <p className="mt-0.5 text-xs font-semibold text-stone-500">
-                  Everything published across the website
-                </p>
               </div>
               <Link
                 href="/admin/tours"
-                className="inline-flex items-center gap-1 text-xs font-extrabold uppercase tracking-wider text-blue-700 hover:text-blue-800"
+                className="inline-flex items-center gap-1 text-xs font-semibold text-blue-700 hover:text-blue-800"
               >
                 Manage packages
                 <ArrowRight className="h-3.5 w-3.5" />
               </Link>
             </div>
-            <div className="grid grid-cols-2 gap-px bg-stone-100 sm:grid-cols-3 2xl:grid-cols-6">
+            <div className="grid grid-cols-2 gap-px bg-stone-100 sm:grid-cols-3 lg:grid-cols-6">
               {catalog.map((item) => (
                 <Link
                   key={item.label}
                   href={item.href}
-                  className="group flex items-center gap-3 bg-white px-4 py-4 transition hover:bg-sand-50"
+                  className="group flex items-center gap-2 bg-white px-3 py-3 transition hover:bg-sand-50"
                 >
                   <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-sand-100 text-navy-700 transition group-hover:bg-blue-50 group-hover:text-blue-700">
                     <item.icon className="h-4 w-4" />
@@ -575,12 +512,10 @@ export default async function AdminDashboardPage() {
               <Panel className="p-5 sm:p-6">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
-                    <p className="text-[11px] font-extrabold uppercase tracking-[0.16em] text-stone-500">
+                    <h2 className="font-display text-base font-semibold text-navy-950">
                       Activity
-                    </p>
-                    <h2 className="mt-1 font-display text-xl font-semibold text-navy-950">
-                      Last 14 days
                     </h2>
+                    <p className="mt-0.5 text-xs text-stone-500">Last 14 days</p>
                   </div>
                   <div className="flex items-center gap-4 text-xs font-bold text-stone-500">
                     <span className="flex items-center gap-1.5">
@@ -655,7 +590,7 @@ export default async function AdminDashboardPage() {
                   {weekChange !== null ? (
                     <span
                       className={cn(
-                        "inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-extrabold",
+                        "inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-semibold",
                         weekChange >= 0
                           ? "bg-emerald-50 text-emerald-700"
                           : "bg-red-50 text-red-700",
@@ -676,7 +611,7 @@ export default async function AdminDashboardPage() {
 
                 <div className="mt-5 grid gap-3 border-t border-stone-100 pt-4 sm:grid-cols-3">
                   <div className="min-w-0">
-                    <p className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-stone-400">
+                    <p className="text-[11px] font-semibold text-stone-400">
                       Top package
                     </p>
                     <p className="mt-1 truncate text-sm font-bold text-navy-950">
@@ -687,7 +622,7 @@ export default async function AdminDashboardPage() {
                     </p>
                   </div>
                   <div className="min-w-0">
-                    <p className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-stone-400">
+                    <p className="text-[11px] font-semibold text-stone-400">
                       Average booking
                     </p>
                     <p className="mt-1 text-sm font-bold text-navy-950">
@@ -698,7 +633,7 @@ export default async function AdminDashboardPage() {
                     </p>
                   </div>
                   <div className="min-w-0">
-                    <p className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-stone-400">
+                    <p className="text-[11px] font-semibold text-stone-400">
                       Next departure
                     </p>
                     <p className="mt-1 truncate text-sm font-bold text-navy-950">
@@ -716,16 +651,13 @@ export default async function AdminDashboardPage() {
               <Panel className="overflow-hidden">
                 <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-4 sm:px-6">
                   <div>
-                    <h2 className="font-display text-xl font-semibold text-navy-950">
+                    <h2 className="font-display text-base font-semibold text-navy-950">
                       Recent bookings
                     </h2>
-                    <p className="mt-0.5 text-xs font-semibold text-stone-500">
-                      Newest requests from travellers
-                    </p>
-                  </div>
+                    </div>
                   <Link
                     href="/admin/bookings"
-                    className="inline-flex items-center gap-1 text-xs font-extrabold uppercase tracking-wider text-blue-700 hover:text-blue-800"
+                    className="inline-flex items-center gap-1 text-xs font-semibold text-blue-700 hover:text-blue-800"
                   >
                     All bookings
                     <ArrowRight className="h-3.5 w-3.5" />
@@ -736,14 +668,14 @@ export default async function AdminDashboardPage() {
                   <div className="admin-table-scroll" tabIndex={0} role="region" aria-label="Recent booking requests">
                     <table className="w-full min-w-[680px] text-left text-sm">
                       <thead>
-                        <tr className="border-y border-stone-100 bg-sand-50/60 text-[10px] font-extrabold uppercase tracking-[0.12em] text-stone-500">
-                          <th className="px-6 py-2.5 font-extrabold">Traveller</th>
-                          <th className="px-3 py-2.5 font-extrabold">Package</th>
-                          <th className="px-3 py-2.5 font-extrabold">Travel date</th>
-                          <th className="px-3 py-2.5 text-right font-extrabold">
+                        <tr className="border-y border-stone-100 bg-sand-50/60 text-[10px] font-semibold text-stone-500">
+                          <th className="px-6 py-2.5 font-semibold">Traveller</th>
+                          <th className="px-3 py-2.5 font-semibold">Package</th>
+                          <th className="px-3 py-2.5 font-semibold">Travel date</th>
+                          <th className="px-3 py-2.5 text-right font-semibold">
                             Amount
                           </th>
-                          <th className="px-6 py-2.5 text-right font-extrabold">
+                          <th className="px-6 py-2.5 text-right font-semibold">
                             Status
                           </th>
                         </tr>
@@ -756,7 +688,7 @@ export default async function AdminDashboardPage() {
                           >
                             <td className="px-6 py-3">
                               <div className="flex items-center gap-3">
-                                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-navy-50 text-[11px] font-extrabold text-navy-700">
+                                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-navy-50 text-[11px] font-semibold text-navy-700">
                                   {initials(booking.name) || "?"}
                                 </span>
                                 <div className="min-w-0">
@@ -816,12 +748,12 @@ export default async function AdminDashboardPage() {
             <div className="min-w-0 space-y-5">
               <Panel className="p-5 sm:p-6">
                 <div className="flex items-center justify-between gap-3">
-                  <h2 className="font-display text-xl font-semibold text-navy-950">
+                  <h2 className="font-display text-base font-semibold text-navy-950">
                     Needs attention
                   </h2>
                   <span
                     className={cn(
-                      "rounded-full px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-[0.08em]",
+                      "rounded-full px-2.5 py-0.5 text-[10px] font-semibold",
                       attentionCount
                         ? "bg-gold-100 text-gold-800"
                         : "bg-emerald-50 text-emerald-700",
@@ -848,14 +780,14 @@ export default async function AdminDashboardPage() {
                           <item.icon className="h-4 w-4" />
                         </span>
                         <div className="min-w-0 flex-1">
-                          <p className="truncate text-sm font-bold text-navy-950">
+                          <p className="text-sm font-semibold text-navy-950">
                             {item.label}
                           </p>
-                          <p className="truncate text-xs text-stone-500">
+                          <p className="text-xs text-stone-500">
                             {item.description}
                           </p>
                         </div>
-                        <span className="shrink-0 rounded-full bg-white px-2 py-0.5 text-xs font-extrabold text-stone-700 ring-1 ring-inset ring-stone-200">
+                        <span className="shrink-0 rounded-full bg-white px-2 py-0.5 text-xs font-semibold text-stone-700 ring-1 ring-inset ring-stone-200">
                           {item.count}
                         </span>
                         <ChevronRight className="h-4 w-4 shrink-0 text-stone-300 transition group-hover:text-blue-600" />
@@ -879,12 +811,12 @@ export default async function AdminDashboardPage() {
 
               <Panel className="overflow-hidden">
                 <div className="flex items-center justify-between gap-3 px-5 py-4 sm:px-6">
-                  <h2 className="font-display text-xl font-semibold text-navy-950">
+                  <h2 className="font-display text-base font-semibold text-navy-950">
                     Upcoming departures
                   </h2>
                   <Link
-                    href="/admin/bookings"
-                    className="inline-flex items-center gap-1 text-xs font-extrabold uppercase tracking-wider text-blue-700 hover:text-blue-800"
+                    href="/admin/departures"
+                    className="inline-flex items-center gap-1 text-xs font-semibold text-blue-700 hover:text-blue-800"
                   >
                     Manage
                     <ArrowRight className="h-3.5 w-3.5" />
@@ -910,14 +842,14 @@ export default async function AdminDashboardPage() {
                       return (
                         <Link
                           key={departure._id}
-                          href={`/admin/bookings/departures/${departure._id}`}
+                          href={`/admin/departures/${departure._id}`}
                           className="flex items-center gap-3.5 px-5 py-3 transition hover:bg-sand-50/70 sm:px-6"
                         >
                           <span className="grid h-11 w-11 shrink-0 place-content-center rounded-xl border border-stone-200 bg-sand-50 text-center leading-none">
                             <span className="font-display text-base font-semibold text-navy-950">
                               {date.getUTCDate()}
                             </span>
-                            <span className="mt-1 text-[9px] font-extrabold uppercase tracking-wider text-stone-500">
+                            <span className="mt-1 text-[9px] font-semibold text-stone-500">
                               {monthFormatter.format(date)}
                             </span>
                           </span>
@@ -964,12 +896,12 @@ export default async function AdminDashboardPage() {
 
               <Panel className="overflow-hidden">
                 <div className="flex items-center justify-between gap-3 px-5 py-4 sm:px-6">
-                  <h2 className="font-display text-xl font-semibold text-navy-950">
+                  <h2 className="font-display text-base font-semibold text-navy-950">
                     Latest enquiries
                   </h2>
                   <Link
                     href="/admin/enquiries"
-                    className="inline-flex items-center gap-1 text-xs font-extrabold uppercase tracking-wider text-blue-700 hover:text-blue-800"
+                    className="inline-flex items-center gap-1 text-xs font-semibold text-blue-700 hover:text-blue-800"
                   >
                     Inbox
                     <ArrowRight className="h-3.5 w-3.5" />
@@ -1021,6 +953,9 @@ export default async function AdminDashboardPage() {
               </Panel>
             </div>
           </div>
+
+
+
         </>
       )}
     </div>

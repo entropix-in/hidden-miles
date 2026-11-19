@@ -32,7 +32,7 @@ export function AdminStatCard({
   return (
     <div className="rounded-2xl border border-stone-200 bg-white p-4 shadow-sm shadow-navy-950/[0.03]">
       <div className="flex items-start justify-between gap-3">
-        <p className="text-[11px] font-extrabold uppercase tracking-[0.16em] text-stone-500">
+        <p className="text-[11px] font-semibold text-stone-500">
           {label}
         </p>
         <span
@@ -83,30 +83,20 @@ export function AdminNotice({
 }
 
 export function AdminPageHeader({
-  eyebrow,
   title,
-  description,
   actionHref,
   actionLabel,
 }: {
-  eyebrow: string;
   title: string;
-  description?: string;
   actionHref?: string;
   actionLabel?: string;
 }) {
   return (
     <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
       <div>
-        <p className="eyebrow">{eyebrow}</p>
-        <h1 className="mt-1 font-display text-2xl font-semibold text-navy-950 sm:text-[1.875rem]">
+        <h1 className="admin-page-title">
           {title}
         </h1>
-        {description ? (
-          <p className="mt-1 max-w-2xl text-[13px] leading-5 text-stone-500">
-            {description}
-          </p>
-        ) : null}
       </div>
       {actionHref && actionLabel ? (
         <Link href={actionHref} className="btn-primary shrink-0">
