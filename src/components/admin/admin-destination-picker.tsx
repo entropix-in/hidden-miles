@@ -67,7 +67,7 @@ export function DestinationPicker({ options, initial }: {
           )}
         </AdminCreateDrawer>
       </div>
-      {destination && <p className="admin-editor-help mt-1.5">{destination.region}</p>}
+      {destination && <p className="admin-editor-help mt-1">{destination.region}</p>}
     </div>
   );
 }

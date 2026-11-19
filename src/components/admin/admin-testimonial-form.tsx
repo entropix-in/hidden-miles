@@ -11,11 +11,11 @@ export function AdminTestimonialForm({
   testimonial?: AdminTestimonial;
 }) {
   return (
-    <form action={saveTestimonialAction} className="space-y-5">
+    <form action={saveTestimonialAction} className="space-y-4">
       <input type="hidden" name="id" value={testimonial?._id ?? ""} />
 
       <section className="admin-form-panel">
-        <h2 className="text-base font-semibold text-navy-950">
+        <h2 className="text-base font-medium text-(--studio-text)">
           Testimonial details
         </h2>
 
@@ -67,7 +67,7 @@ export function AdminTestimonialForm({
         </div>
       </section>
 
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-stone-200 bg-white px-6 py-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-stone-200 bg-white px-5 py-4">
         <Link href="/admin/testimonials" className="btn-outline">
           Cancel
         </Link>

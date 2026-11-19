@@ -101,7 +101,7 @@ const bookingStatusStyles: Record<BookingStatus, string> = {
 };
 
 const enquiryStatusStyles: Record<EnquiryStatus, string> = {
-  new: "bg-blue-50 text-blue-700 ring-blue-200",
+  new: "bg-(--studio-pine-wash) text-(--studio-pine) ring-(--studio-rule)",
   contacted: "bg-gold-100 text-gold-800 ring-gold-200",
   closed: "bg-stone-100 text-stone-600 ring-stone-200",
 };
@@ -116,7 +116,7 @@ function StatusPill({
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-semibold ring-1 ring-inset",
+        "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ring-1 ring-inset",
         className,
       )}
     >
@@ -162,7 +162,7 @@ function StatCard({
       href={href}
       className="admin-overview-stat"
     >
-      <div className="flex items-center gap-2.5">
+      <div className="flex items-center gap-2">
         <Icon size={16} className="admin-overview-stat-icon" aria-hidden />
         <p>{label}</p>
       </div>
@@ -316,7 +316,7 @@ export default async function AdminDashboardPage() {
       description: `${enquiries.data.length} enquiries in total`,
       href: "/admin/enquiries",
       icon: Mail,
-      tone: "bg-blue-50 text-blue-700",
+      tone: "bg-(--studio-pine-wash) text-(--studio-pine)",
     },
     {
       count: toursWithoutDepartures.length,
@@ -327,7 +327,7 @@ export default async function AdminDashboardPage() {
       description: "Travellers cannot book them yet",
       href: "/admin/departures",
       icon: CalendarDays,
-      tone: "bg-navy-50 text-navy-700",
+      tone: "bg-(--studio-pine-wash) text-(--studio-secondary)",
     },
   ].filter((item) => item.count > 0);
 
@@ -380,7 +380,7 @@ export default async function AdminDashboardPage() {
       <header className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         <div>
           <h1 className="admin-page-title">Dashboard</h1>
-          <p className="mt-1 flex items-center gap-2 text-[13px] text-stone-500">
+          <p className="mt-1 flex items-center gap-2 text-sm text-stone-500">
             <CalendarDays size={15} aria-hidden />{todayLabel}
           </p>
         </div>
@@ -399,16 +399,16 @@ export default async function AdminDashboardPage() {
           {status.error ? <AdminNotice error={status.error} /> : null}
 
           {!status.seeded ? (
-            <div className="flex flex-col items-start justify-between gap-4 rounded-2xl border border-blue-200 bg-blue-50/70 p-5 sm:flex-row sm:items-center">
-              <div className="flex items-start gap-3.5">
-                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-blue-100 text-blue-700">
+            <div className="flex flex-col items-start justify-between gap-4 rounded-2xl border border-(--studio-rule) bg-(--studio-pine-wash) p-5 sm:flex-row sm:items-center">
+              <div className="flex items-start gap-3">
+                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-(--studio-pine-wash) text-(--studio-pine)">
                   <Database className="h-5 w-5" />
                 </span>
                 <div>
-                  <h2 className="font-display text-lg font-semibold text-navy-950">
+                  <h2 className="text-base font-medium text-(--studio-text)">
                     Import your starter content
                   </h2>
-                  <p className="mt-0.5 max-w-xl text-sm leading-5 text-stone-600">
+                  <p className="mt-1 max-w-xl text-sm leading-5 text-stone-600">
                     Bring the existing packages, destinations, experiences and
                     testimonials into the site. You can edit or delete anything
                     afterwards.
@@ -456,7 +456,7 @@ export default async function AdminDashboardPage() {
               value={
                 <>
                   {upcomingBooked}
-                  <span className="ml-1 text-lg font-medium text-stone-400">
+                  <span className="ml-1 text-base font-medium text-stone-500">
                     / {upcomingCapacity}
                   </span>
                 </>
@@ -470,15 +470,15 @@ export default async function AdminDashboardPage() {
           </div>
 
           <Panel className="overflow-hidden">
-            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-stone-100 px-5 py-4 sm:px-6">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-stone-200 px-5 py-4">
               <div>
-                <h2 className="font-display text-base font-semibold text-navy-950">
+                <h2 className="text-base font-medium text-(--studio-text)">
                   Manage content
                 </h2>
               </div>
               <Link
                 href="/admin/tours"
-                className="inline-flex items-center gap-1 text-xs font-semibold text-blue-700 hover:text-blue-800"
+                className="inline-flex items-center gap-1 text-xs font-medium text-(--studio-pine) hover:text-(--studio-pine-dark)"
               >
                 Manage packages
                 <ArrowRight className="h-3.5 w-3.5" />
@@ -489,16 +489,16 @@ export default async function AdminDashboardPage() {
                 <Link
                   key={item.label}
                   href={item.href}
-                  className="group flex items-center gap-2 bg-white px-3 py-3 transition hover:bg-sand-50"
+                  className="group flex items-center gap-2 bg-white p-5 transition hover:bg-sand-50"
                 >
-                  <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-sand-100 text-navy-700 transition group-hover:bg-blue-50 group-hover:text-blue-700">
+                  <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-sand-100 text-(--studio-secondary) transition group-hover:bg-(--studio-pine-wash) group-hover:text-(--studio-pine-dark)">
                     <item.icon className="h-4 w-4" />
                   </span>
                   <div className="min-w-0">
-                    <p className="font-display text-xl font-semibold leading-none text-navy-950">
+                    <p className="text-2xl font-semibold leading-none text-(--studio-text)">
                       {item.value}
                     </p>
-                    <p className="mt-1 text-xs font-semibold text-stone-600">
+                    <p className="mt-1 text-xs font-medium text-stone-600">
                       {item.label}
                     </p>
                   </div>
@@ -507,22 +507,22 @@ export default async function AdminDashboardPage() {
             </div>
           </Panel>
 
-          <div className="grid gap-5 xl:grid-cols-[minmax(0,1.65fr)_minmax(0,1fr)]">
-            <div className="min-w-0 space-y-5">
-              <Panel className="p-5 sm:p-6">
+          <div className="grid gap-4 xl:grid-cols-[minmax(0,1.65fr)_minmax(0,1fr)]">
+            <div className="min-w-0 space-y-4">
+              <Panel className="p-5">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
-                    <h2 className="font-display text-base font-semibold text-navy-950">
+                    <h2 className="text-base font-medium text-(--studio-text)">
                       Activity
                     </h2>
-                    <p className="mt-0.5 text-xs text-stone-500">Last 14 days</p>
+                    <p className="mt-1 text-xs text-stone-500">Last 14 days</p>
                   </div>
-                  <div className="flex items-center gap-4 text-xs font-bold text-stone-500">
-                    <span className="flex items-center gap-1.5">
-                      <span className="h-2 w-2 rounded-full bg-blue-600" />
+                  <div className="flex items-center gap-4 text-xs font-medium text-stone-500">
+                    <span className="flex items-center gap-2">
+                      <span className="h-2 w-2 rounded-full bg-(--studio-pine)" />
                       Bookings
                     </span>
-                    <span className="flex items-center gap-1.5">
+                    <span className="flex items-center gap-2">
                       <span className="h-2 w-2 rounded-full bg-gold-400" />
                       Enquiries
                     </span>
@@ -537,11 +537,11 @@ export default async function AdminDashboardPage() {
                     {[0, 1, 2, 3].map((line) => (
                       <span
                         key={line}
-                        className="border-t border-dashed border-stone-100"
+                        className="border-t border-dashed border-stone-200"
                       />
                     ))}
                   </div>
-                  <div className="relative flex h-36 items-end gap-1 sm:gap-1.5">
+                  <div className="relative flex h-36 items-end gap-1 sm:gap-2">
                     {activity.map((day) => (
                       <div
                         key={day.key}
@@ -549,7 +549,7 @@ export default async function AdminDashboardPage() {
                       >
                         <span
                           title={`${day.label}: ${day.bookings} bookings`}
-                          className="w-1/2 max-w-3 rounded-t-sm bg-blue-600/85 transition group-hover:bg-blue-600"
+                          className="w-1/2 max-w-3 rounded-t-sm bg-(--studio-pine)/85 transition group-hover:bg-(--studio-pine)"
                           style={{
                             height: `${(day.bookings / maxActivity) * 100}%`,
                           }}
@@ -564,12 +564,12 @@ export default async function AdminDashboardPage() {
                       </div>
                     ))}
                   </div>
-                  <div className="mt-2 flex gap-1 sm:gap-1.5">
+                  <div className="mt-2 flex gap-1 sm:gap-2">
                     {activity.map((day, index) => (
                       <span
                         key={day.key}
                         className={cn(
-                          "flex-1 text-center text-[10px] font-semibold text-stone-400",
+                          "flex-1 text-center text-xs font-medium text-stone-500",
                           index % 2 === 0 ? "" : "hidden sm:block",
                         )}
                       >
@@ -579,7 +579,7 @@ export default async function AdminDashboardPage() {
                   </div>
                 </div>
 
-                <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs font-semibold text-stone-500">
+                <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-medium text-stone-500">
                   <span>
                     {activityTotals.bookings}{" "}
                     {activityTotals.bookings === 1 ? "booking" : "bookings"} ·{" "}
@@ -590,7 +590,7 @@ export default async function AdminDashboardPage() {
                   {weekChange !== null ? (
                     <span
                       className={cn(
-                        "inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-semibold",
+                        "inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-medium",
                         weekChange >= 0
                           ? "bg-emerald-50 text-emerald-700"
                           : "bg-red-50 text-red-700",
@@ -605,41 +605,41 @@ export default async function AdminDashboardPage() {
                       {weekChange}% week on week
                     </span>
                   ) : (
-                    <span className="text-stone-400">No comparison yet</span>
+                    <span className="text-stone-500">No comparison yet</span>
                   )}
                 </div>
 
-                <div className="mt-5 grid gap-3 border-t border-stone-100 pt-4 sm:grid-cols-3">
+                <div className="mt-4 grid gap-3 border-t border-stone-200 pt-4 sm:grid-cols-3">
                   <div className="min-w-0">
-                    <p className="text-[11px] font-semibold text-stone-400">
+                    <p className="text-xs font-medium text-stone-500">
                       Top package
                     </p>
-                    <p className="mt-1 truncate text-sm font-bold text-navy-950">
+                    <p className="mt-1 truncate text-sm font-medium text-(--studio-text)">
                       {topTour ? topTour[0] : "No sales yet"}
                     </p>
-                    <p className="truncate text-xs font-semibold text-stone-500">
+                    <p className="truncate text-xs font-medium text-stone-500">
                       {topTour ? formatINR(topTour[1]) : "Confirmed revenue"}
                     </p>
                   </div>
                   <div className="min-w-0">
-                    <p className="text-[11px] font-semibold text-stone-400">
+                    <p className="text-xs font-medium text-stone-500">
                       Average booking
                     </p>
-                    <p className="mt-1 text-sm font-bold text-navy-950">
+                    <p className="mt-1 text-sm font-medium text-(--studio-text)">
                       {formatINR(averageBooking)}
                     </p>
-                    <p className="text-xs font-semibold text-stone-500">
+                    <p className="text-xs font-medium text-stone-500">
                       Per confirmed booking
                     </p>
                   </div>
                   <div className="min-w-0">
-                    <p className="text-[11px] font-semibold text-stone-400">
+                    <p className="text-xs font-medium text-stone-500">
                       Next departure
                     </p>
-                    <p className="mt-1 truncate text-sm font-bold text-navy-950">
+                    <p className="mt-1 truncate text-sm font-medium text-(--studio-text)">
                       {nextDeparture ? formatDate(nextDeparture.startDate) : "None scheduled"}
                     </p>
-                    <p className="text-xs font-semibold text-stone-500">
+                    <p className="text-xs font-medium text-stone-500">
                       {nextDeparture
                         ? `${nextDeparture.seatsLeft} of ${nextDeparture.capacity} seats left`
                         : "Add dates in bookings"}
@@ -649,15 +649,15 @@ export default async function AdminDashboardPage() {
               </Panel>
 
               <Panel className="overflow-hidden">
-                <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-4 sm:px-6">
+                <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-4">
                   <div>
-                    <h2 className="font-display text-base font-semibold text-navy-950">
+                    <h2 className="text-base font-medium text-(--studio-text)">
                       Recent bookings
                     </h2>
                     </div>
                   <Link
                     href="/admin/bookings"
-                    className="inline-flex items-center gap-1 text-xs font-semibold text-blue-700 hover:text-blue-800"
+                    className="inline-flex items-center gap-1 text-xs font-medium text-(--studio-pine) hover:text-(--studio-pine-dark)"
                   >
                     All bookings
                     <ArrowRight className="h-3.5 w-3.5" />
@@ -668,14 +668,14 @@ export default async function AdminDashboardPage() {
                   <div className="admin-table-scroll" tabIndex={0} role="region" aria-label="Recent booking requests">
                     <table className="w-full min-w-[680px] text-left text-sm">
                       <thead>
-                        <tr className="border-y border-stone-100 bg-sand-50/60 text-[10px] font-semibold text-stone-500">
-                          <th className="px-6 py-2.5 font-semibold">Traveller</th>
-                          <th className="px-3 py-2.5 font-semibold">Package</th>
-                          <th className="px-3 py-2.5 font-semibold">Travel date</th>
-                          <th className="px-3 py-2.5 text-right font-semibold">
+                        <tr className="border-y border-stone-200 bg-sand-50/60 text-xs font-medium text-stone-500">
+                          <th className="px-5 py-2 font-medium">Traveller</th>
+                          <th className="px-3 py-2 font-medium">Package</th>
+                          <th className="px-3 py-2 font-medium">Travel date</th>
+                          <th className="px-3 py-2 text-right font-medium">
                             Amount
                           </th>
-                          <th className="px-6 py-2.5 text-right font-semibold">
+                          <th className="px-5 py-2 text-right font-medium">
                             Status
                           </th>
                         </tr>
@@ -686,13 +686,13 @@ export default async function AdminDashboardPage() {
                             key={booking._id}
                             className="transition hover:bg-sand-50/70"
                           >
-                            <td className="px-6 py-3">
+                            <td className="px-5 py-3">
                               <div className="flex items-center gap-3">
-                                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-navy-50 text-[11px] font-semibold text-navy-700">
+                                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-(--studio-pine-wash) text-xs font-medium text-(--studio-secondary)">
                                   {initials(booking.name) || "?"}
                                 </span>
                                 <div className="min-w-0">
-                                  <p className="truncate text-sm font-bold text-navy-950">
+                                  <p className="truncate text-sm font-medium text-(--studio-text)">
                                     {booking.name}
                                   </p>
                                   <p className="truncate text-xs text-stone-500">
@@ -702,7 +702,7 @@ export default async function AdminDashboardPage() {
                               </div>
                             </td>
                             <td className="px-3 py-3">
-                              <p className="max-w-[180px] truncate text-sm font-semibold text-stone-700">
+                              <p className="max-w-[180px] truncate text-sm font-medium text-stone-600">
                                 {booking.tourTitle || booking.tourSlug}
                               </p>
                               <p className="text-xs text-stone-500">
@@ -710,15 +710,15 @@ export default async function AdminDashboardPage() {
                                 {booking.travellers === 1 ? "traveller" : "travellers"}
                               </p>
                             </td>
-                            <td className="whitespace-nowrap px-3 py-3 text-sm font-semibold text-stone-600">
+                            <td className="whitespace-nowrap px-3 py-3 text-sm font-medium text-stone-600">
                               {formatDate(booking.startDate)}
                             </td>
-                            <td className="whitespace-nowrap px-3 py-3 text-right text-sm font-bold text-navy-950">
+                            <td className="whitespace-nowrap px-3 py-3 text-right text-sm font-medium text-(--studio-text)">
                               {booking.amount
                                 ? formatINR(booking.amount)
                                 : "On request"}
                             </td>
-                            <td className="px-6 py-3 text-right">
+                            <td className="px-5 py-3 text-right">
                               <StatusPill
                                 label={booking.status}
                                 className={bookingStatusStyles[booking.status]}
@@ -730,10 +730,10 @@ export default async function AdminDashboardPage() {
                     </table>
                   </div>
                 ) : (
-                  <div className="mx-5 mb-5 mt-5 flex items-center gap-3 rounded-xl border border-dashed border-stone-200 bg-sand-50/60 px-4 py-8 sm:mx-6 sm:mb-6">
+                  <div className="mx-5 mb-4 mt-4 flex items-center gap-3 rounded-xl border border-dashed border-stone-200 bg-sand-50/60 px-4 py-6 sm:mx-6 sm:mb-6">
                     <Ticket className="h-5 w-5 shrink-0 text-stone-300" />
                     <div>
-                      <p className="text-sm font-bold text-navy-950">
+                      <p className="text-sm font-medium text-(--studio-text)">
                         No bookings yet
                       </p>
                       <p className="text-xs text-stone-500">
@@ -745,15 +745,15 @@ export default async function AdminDashboardPage() {
               </Panel>
             </div>
 
-            <div className="min-w-0 space-y-5">
-              <Panel className="p-5 sm:p-6">
+            <div className="min-w-0 space-y-4">
+              <Panel className="p-5">
                 <div className="flex items-center justify-between gap-3">
-                  <h2 className="font-display text-base font-semibold text-navy-950">
+                  <h2 className="text-base font-medium text-(--studio-text)">
                     Needs attention
                   </h2>
                   <span
                     className={cn(
-                      "rounded-full px-2.5 py-0.5 text-[10px] font-semibold",
+                      "rounded-full px-2.5 py-0.5 text-xs font-medium",
                       attentionCount
                         ? "bg-gold-100 text-gold-800"
                         : "bg-emerald-50 text-emerald-700",
@@ -769,7 +769,7 @@ export default async function AdminDashboardPage() {
                       <Link
                         key={item.label}
                         href={item.href}
-                        className="group flex items-center gap-3 rounded-xl border border-stone-100 bg-sand-50/50 px-3 py-2.5 transition hover:border-blue-200 hover:bg-blue-50/50"
+                        className="group flex items-center gap-3 rounded-xl border border-stone-200 bg-sand-50/50 px-4 py-3 transition hover:border-(--studio-rule) hover:bg-(--studio-pine-wash)"
                       >
                         <span
                           className={cn(
@@ -780,28 +780,28 @@ export default async function AdminDashboardPage() {
                           <item.icon className="h-4 w-4" />
                         </span>
                         <div className="min-w-0 flex-1">
-                          <p className="text-sm font-semibold text-navy-950">
+                          <p className="text-sm font-medium text-(--studio-text)">
                             {item.label}
                           </p>
                           <p className="text-xs text-stone-500">
                             {item.description}
                           </p>
                         </div>
-                        <span className="shrink-0 rounded-full bg-white px-2 py-0.5 text-xs font-semibold text-stone-700 ring-1 ring-inset ring-stone-200">
+                        <span className="shrink-0 rounded-full bg-white px-2 py-0.5 text-xs font-medium text-stone-600 ring-1 ring-inset ring-stone-200">
                           {item.count}
                         </span>
-                        <ChevronRight className="h-4 w-4 shrink-0 text-stone-300 transition group-hover:text-blue-600" />
+                        <ChevronRight className="h-4 w-4 shrink-0 text-stone-300 transition group-hover:text-(--studio-pine-dark)" />
                       </Link>
                     ))}
                   </div>
                 ) : (
                   <div className="mt-4 flex items-start gap-3 rounded-xl bg-emerald-50/70 px-4 py-4">
-                    <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
+                    <CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-emerald-600" />
                     <div>
-                      <p className="text-sm font-bold text-emerald-900">
+                      <p className="text-sm font-medium text-emerald-900">
                         You are all caught up
                       </p>
-                      <p className="mt-0.5 text-xs text-emerald-800/80">
+                      <p className="mt-1 text-xs text-emerald-800/80">
                         Every enquiry and booking has been handled.
                       </p>
                     </div>
@@ -810,13 +810,13 @@ export default async function AdminDashboardPage() {
               </Panel>
 
               <Panel className="overflow-hidden">
-                <div className="flex items-center justify-between gap-3 px-5 py-4 sm:px-6">
-                  <h2 className="font-display text-base font-semibold text-navy-950">
+                <div className="flex items-center justify-between gap-3 px-5 py-4">
+                  <h2 className="text-base font-medium text-(--studio-text)">
                     Upcoming departures
                   </h2>
                   <Link
                     href="/admin/departures"
-                    className="inline-flex items-center gap-1 text-xs font-semibold text-blue-700 hover:text-blue-800"
+                    className="inline-flex items-center gap-1 text-xs font-medium text-(--studio-pine) hover:text-(--studio-pine-dark)"
                   >
                     Manage
                     <ArrowRight className="h-3.5 w-3.5" />
@@ -824,7 +824,7 @@ export default async function AdminDashboardPage() {
                 </div>
 
                 {upcomingDepartures.length ? (
-                  <div className="divide-y divide-stone-100 border-t border-stone-100">
+                  <div className="divide-y divide-stone-100 border-t border-stone-200">
                     {upcomingDepartures.slice(0, 4).map((departure) => {
                       const date = new Date(`${departure.startDate}T00:00:00Z`);
                       const fill = departure.capacity
@@ -843,21 +843,21 @@ export default async function AdminDashboardPage() {
                         <Link
                           key={departure._id}
                           href={`/admin/departures/${departure._id}`}
-                          className="flex items-center gap-3.5 px-5 py-3 transition hover:bg-sand-50/70 sm:px-6"
+                          className="flex items-center gap-3 px-5 py-3 transition hover:bg-sand-50/70"
                         >
                           <span className="grid h-11 w-11 shrink-0 place-content-center rounded-xl border border-stone-200 bg-sand-50 text-center leading-none">
-                            <span className="font-display text-base font-semibold text-navy-950">
+                            <span className="text-base font-medium text-(--studio-text)">
                               {date.getUTCDate()}
                             </span>
-                            <span className="mt-1 text-[9px] font-semibold text-stone-500">
+                            <span className="mt-1 text-xs font-medium text-stone-500">
                               {monthFormatter.format(date)}
                             </span>
                           </span>
                           <div className="min-w-0 flex-1">
-                            <p className="truncate text-sm font-bold text-navy-950">
+                            <p className="truncate text-sm font-medium text-(--studio-text)">
                               {tour?.title ?? departure.tourSlug}
                             </p>
-                            <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-stone-100">
+                            <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-stone-100">
                               <span
                                 className={cn(
                                   "block h-full rounded-full",
@@ -865,12 +865,12 @@ export default async function AdminDashboardPage() {
                                     ? "bg-stone-400"
                                     : fill >= 80
                                       ? "bg-gold-400"
-                                      : "bg-blue-500",
+                                      : "bg-(--studio-pine)",
                                 )}
                                 style={{ width: `${fill}%` }}
                               />
                             </div>
-                            <p className="mt-1 text-[11px] font-semibold text-stone-500">
+                            <p className="mt-1 text-xs font-medium text-stone-500">
                               {departure.booked}/{departure.capacity} booked ·{" "}
                               {departure.seatsLeft === 0
                                 ? "Sold out"
@@ -882,12 +882,12 @@ export default async function AdminDashboardPage() {
                     })}
                   </div>
                 ) : (
-                  <div className="border-t border-stone-100 px-5 py-7 text-center sm:px-6">
+                  <div className="border-t border-stone-200 px-5 py-6 text-center">
                     <CalendarDays className="mx-auto h-5 w-5 text-stone-300" />
-                    <p className="mt-2 text-sm font-bold text-navy-950">
+                    <p className="mt-2 text-sm font-medium text-(--studio-text)">
                       No dates scheduled
                     </p>
-                    <p className="mt-0.5 text-xs text-stone-500">
+                    <p className="mt-1 text-xs text-stone-500">
                       Add departure dates to start taking bookings.
                     </p>
                   </div>
@@ -895,13 +895,13 @@ export default async function AdminDashboardPage() {
               </Panel>
 
               <Panel className="overflow-hidden">
-                <div className="flex items-center justify-between gap-3 px-5 py-4 sm:px-6">
-                  <h2 className="font-display text-base font-semibold text-navy-950">
+                <div className="flex items-center justify-between gap-3 px-5 py-4">
+                  <h2 className="text-base font-medium text-(--studio-text)">
                     Latest enquiries
                   </h2>
                   <Link
                     href="/admin/enquiries"
-                    className="inline-flex items-center gap-1 text-xs font-semibold text-blue-700 hover:text-blue-800"
+                    className="inline-flex items-center gap-1 text-xs font-medium text-(--studio-pine) hover:text-(--studio-pine-dark)"
                   >
                     Inbox
                     <ArrowRight className="h-3.5 w-3.5" />
@@ -909,15 +909,15 @@ export default async function AdminDashboardPage() {
                 </div>
 
                 {enquiries.data.length ? (
-                  <div className="divide-y divide-stone-100 border-t border-stone-100">
+                  <div className="divide-y divide-stone-100 border-t border-stone-200">
                     {enquiries.data.slice(0, 4).map((enquiry) => (
                       <Link
                         key={enquiry._id}
                         href="/admin/enquiries"
-                        className="block px-5 py-3 transition hover:bg-sand-50/70 sm:px-6"
+                        className="block px-5 py-3 transition hover:bg-sand-50/70"
                       >
                         <div className="flex items-center justify-between gap-3">
-                          <p className="truncate text-sm font-bold text-navy-950">
+                          <p className="truncate text-sm font-medium text-(--studio-text)">
                             {enquiry.name}
                           </p>
                           <StatusPill
@@ -925,13 +925,13 @@ export default async function AdminDashboardPage() {
                             className={enquiryStatusStyles[enquiry.status ?? "new"]}
                           />
                         </div>
-                        <p className="mt-0.5 truncate text-xs text-stone-500">
+                        <p className="mt-1 truncate text-xs text-stone-500">
                           {enquiry.tour ||
                             enquiry.destination ||
                             enquiry.email ||
                             "General enquiry"}
                         </p>
-                        <p className="mt-1 flex items-center gap-1.5 text-[11px] font-semibold text-stone-400">
+                        <p className="mt-1 flex items-center gap-2 text-xs font-medium text-stone-500">
                           <span className="capitalize">{enquiry.type}</span>
                           <span aria-hidden>·</span>
                           {timeAgo(enquiry.createdAt)}
@@ -940,12 +940,12 @@ export default async function AdminDashboardPage() {
                     ))}
                   </div>
                 ) : (
-                  <div className="border-t border-stone-100 px-5 py-7 text-center sm:px-6">
+                  <div className="border-t border-stone-200 px-5 py-6 text-center">
                     <Inbox className="mx-auto h-5 w-5 text-stone-300" />
-                    <p className="mt-2 text-sm font-bold text-navy-950">
+                    <p className="mt-2 text-sm font-medium text-(--studio-text)">
                       No enquiries yet
                     </p>
-                    <p className="mt-0.5 text-xs text-stone-500">
+                    <p className="mt-1 text-xs text-stone-500">
                       Traveller messages will appear here.
                     </p>
                   </div>

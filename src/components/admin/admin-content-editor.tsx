@@ -136,7 +136,7 @@ export function RichTextBlock({ value, onChange, label, compact = false }: {
     <LexicalComposer initialConfig={{
       namespace: "HiddenMilesContent",
       nodes: contentNodes,
-      theme: { text: { bold: "font-bold", italic: "italic", underline: "underline" }, list: { listitemChecked: "admin-check-checked", listitemUnchecked: "admin-check-unchecked" } },
+      theme: { text: { bold: "font-medium", italic: "italic", underline: "underline" }, list: { listitemChecked: "admin-check-checked", listitemUnchecked: "admin-check-unchecked" } },
       onError: (error) => { throw error; },
       editorState: value ? JSON.stringify(value) : undefined,
     }}>
@@ -225,7 +225,7 @@ export function AdminContentEditor({ initialBlocks = [] }: { initialBlocks?: Con
 
   return (
     <section className="admin-content-editor" aria-labelledby={`${id}-title`}>
-      <h2 id={`${id}-title`} className="font-semibold text-navy-950">Page content</h2>
+      <h2 id={`${id}-title`} className="font-medium text-(--studio-text)">Page content</h2>
       <input type="hidden" name="contentBlocks" value={JSON.stringify(blocks.flatMap(({ id: blockId, ...block }) => {
         void blockId;
         return block.type === "text" && !block.editor ? [] : [block];

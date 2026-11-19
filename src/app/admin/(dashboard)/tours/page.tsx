@@ -64,7 +64,7 @@ export default async function AdminToursPage({ searchParams }: {
       ) : null}
 
       {!result.status.seeded ? (
-        <div className="mb-5 rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm font-semibold text-blue-900">
+        <div className="mb-4 rounded-2xl border border-(--studio-rule) bg-(--studio-pine-wash) px-4 py-3 text-sm font-medium text-(--studio-pine)">
           Starter content has not been imported yet.{" "}
           <Link href="/admin" className="underline">
             Import it from the dashboard
@@ -117,7 +117,7 @@ export default async function AdminToursPage({ searchParams }: {
                     className="object-cover"
                   />
                 ) : (
-                  <div className="grid h-full w-full place-items-center bg-sand-200 text-sm font-bold text-stone-400">
+                  <div className="grid h-full w-full place-items-center bg-sand-200 text-sm font-medium text-stone-500">
                     No image
                   </div>
                 )}
@@ -125,22 +125,22 @@ export default async function AdminToursPage({ searchParams }: {
 
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="rounded-full bg-sand-200 px-2.5 py-1 text-sm font-semibold text-navy-800">
+                  <span className="rounded-full bg-sand-200 px-2.5 py-1 text-sm font-medium text-(--studio-secondary)">
                     {tour.region}
                   </span>
                   {tour.featured ? (
-                    <span className="rounded-full bg-blue-100 px-2.5 py-1 text-sm font-semibold text-blue-800">
+                    <span className="rounded-full bg-(--studio-pine-wash) px-2.5 py-1 text-sm font-medium text-(--studio-pine)">
                       Featured
                     </span>
                   ) : null}
-                  <span className="text-sm font-bold text-stone-400">
+                  <span className="text-sm font-medium text-stone-500">
                     {tour.nights}N / {tour.days}D
                   </span>
                 </div>
-                <h2 className="mt-1.5 font-display text-base font-semibold text-navy-950">
+                <h2 className="mt-1 text-base font-medium text-(--studio-text)">
                   {tour.title}
                 </h2>
-                <p className="mt-0.5 text-sm font-semibold text-stone-500">
+                <p className="mt-1 text-sm font-medium text-stone-500">
                   {tour.destinationName} · {formatINR(tour.price)} per person
                 </p>
               </div>

@@ -44,7 +44,7 @@ export default async function AdminDashboardLayout({
       } />
 
       <div className="min-w-0">
-        <main id="admin-main" tabIndex={-1} className="mx-auto max-w-[100rem] px-4 py-5 sm:px-6 lg:px-8 lg:py-7">{children}</main>
+        <main id="admin-main" tabIndex={-1} className="mx-auto max-w-[100rem] px-4 py-5 sm:px-5 lg:px-8 lg:py-6">{children}</main>
       </div>
 
       <Suspense fallback={null}>

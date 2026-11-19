@@ -54,7 +54,7 @@ function BadgeEditor({ badge, badges, onSave, onRemove }: {
             {!badge && (
               <div className="mb-3">
                 <p className="field-label">Quick add</p>
-                <div className="flex flex-wrap gap-1.5">
+                <div className="flex flex-wrap gap-2">
                   {quickBadges.map((preset) => (
                     <button type="button" key={preset.label} className="admin-day-badge"
                       disabled={duplicate(preset)} onClick={() => save(preset)}>{preset.label}</button>

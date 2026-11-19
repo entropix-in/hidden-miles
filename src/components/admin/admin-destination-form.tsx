@@ -25,7 +25,7 @@ export function AdminDestinationForm({
       <input type="hidden" name="id" value={destination?._id ?? ""} />
 
       <section className="admin-form-panel">
-        <h2 className="text-base font-semibold text-navy-950">
+        <h2 className="text-base font-medium text-(--studio-text)">
           Destination details
         </h2>
 

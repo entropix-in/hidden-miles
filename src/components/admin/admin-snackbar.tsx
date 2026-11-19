@@ -80,17 +80,17 @@ export function AdminSnackbar() {
     >
       <div
         className={cn(
-          "pointer-events-auto flex w-full max-w-sm items-start gap-3 rounded-2xl border px-4 py-3 text-sm font-semibold shadow-xl shadow-navy-950/20 transition-all duration-300",
+          "pointer-events-auto flex w-full max-w-sm items-start gap-3 rounded-2xl border px-4 py-3 text-sm font-medium shadow-xl shadow-navy-950/20 transition-all duration-300",
           closing ? "translate-y-2 opacity-0" : "translate-y-0 opacity-100",
           active.tone === "error"
             ? "border-red-200 bg-red-50 text-red-700"
-            : "border-navy-900/10 bg-navy-950 text-sand-50",
+            : "border-(--studio-rule) bg-(--studio-text) text-sand-50",
         )}
       >
         {active.tone === "error" ? (
-          <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-red-600" />
+          <AlertTriangle className="mt-1 h-4 w-4 shrink-0 text-red-600" />
         ) : (
-          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-gold-300" />
+          <CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-gold-300" />
         )}
         <p className="flex-1 leading-5">{active.message}</p>
         <button

@@ -203,7 +203,7 @@
     font-family: var(--font-sans);
     font-size: 18px;
     line-height: 26px;
-    font-weight: 700;
+    font-weight: 600;
   }
 
   .type-lead {
@@ -579,7 +579,7 @@
     color: var(--color-ink);
     font-size: 14px;
     line-height: 20px;
-    font-weight: 700;
+    font-weight: 600;
   }
 
   .field {
@@ -815,7 +815,7 @@
 
 .admin-studio .field-label {
   margin-bottom: 0.375rem;
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
 }
 
 .admin-studio .field {
@@ -828,7 +828,7 @@
 .admin-studio :is(.btn-primary, .btn-outline) {
   border-radius: 0.625rem;
   padding-inline: 0.875rem;
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
 }
 
 @media (min-width: 640px) {
@@ -840,7 +840,7 @@
 .admin-content-editor {
   display: grid;
   gap: 0.625rem;
-  padding: clamp(1rem, 3vw, 1.5rem);
+  padding: clamp(var(--space-4), 3vw, var(--space-5));
   border: 1px solid var(--color-stone-200);
   border-radius: 1rem;
   background: white;
@@ -852,7 +852,7 @@
 
 .admin-editor-help {
   color: var(--color-stone-600);
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   line-height: 1.4;
 }
 
@@ -890,8 +890,8 @@
   padding: 0.375rem 0.75rem;
   color: var(--color-navy-950);
   background: var(--color-sand-100);
-  font-size: 0.8125rem;
-  font-weight: 700;
+  font-size: 0.875rem;
+  font-weight: 600;
 }
 
 .admin-editor-toolbar {
@@ -913,7 +913,7 @@
   border-radius: 0.5rem;
   padding: 0.25rem 0.5rem;
   color: var(--color-navy-950);
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;
 }
@@ -958,8 +958,8 @@
 }
 
 :is(.admin-editor-input, .page-rich-text) :is(h3, h4) {
-  font-weight: 700;
-  font-size: 1.2em;
+  font-weight: 600;
+  font-size: 1rem;
 }
 
 :is(.admin-editor-input, .page-rich-text) blockquote {
@@ -1024,7 +1024,7 @@
 .admin-photo-control input {
   min-width: 0;
   max-width: 100%;
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
 }
 
 .admin-photo-control input::file-selector-button {
@@ -1085,11 +1085,11 @@
 
 .admin-authoring-form > section {
   border-radius: 1rem;
-  padding: clamp(1rem, 3vw, 1.5rem);
+  padding: clamp(var(--space-4), 3vw, var(--space-5));
 }
 
 .admin-authoring-form section > h2 {
-  font-size: 1.25rem;
+  font-size: 1rem;
 }
 
 .admin-studio .field::placeholder {

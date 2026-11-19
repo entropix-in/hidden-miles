@@ -66,17 +66,17 @@ export default async function AdminDestinationsPage() {
                       className="object-cover"
                     />
                   ) : (
-                    <div className="grid h-full w-full place-items-center bg-sand-200 text-sm font-bold text-stone-400">
+                    <div className="grid h-full w-full place-items-center bg-sand-200 text-sm font-medium text-stone-500">
                       No image
                     </div>
                   )}
                   <div className="absolute inset-0 bg-gradient-to-t from-navy-950/70 to-transparent" />
                   <div className="absolute bottom-3 left-4 text-sand-50">
-                    <p className="text-sm font-semibold text-blue-300">
+                    <p className="text-sm font-medium text-white/90 drop-shadow-sm">
                       {destination.region} · {count}{" "}
                       {count === 1 ? "package" : "packages"}
                     </p>
-                    <h2 className="font-display text-2xl font-semibold">
+                    <h2 className="text-base font-semibold">
                       {destination.name}
                     </h2>
                   </div>

@@ -117,7 +117,7 @@ export function AdminItineraryEditor({ initialDays = [] }: { initialDays?: Itine
   return (
     <section className="admin-form-panel" data-itinerary>
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-base font-semibold">Itinerary</h2>
+        <h2 className="text-base font-medium">Itinerary</h2>
         <button type="button" className="btn-outline" onClick={addDay}>
           <Plus size={16} aria-hidden /> Add day
         </button>

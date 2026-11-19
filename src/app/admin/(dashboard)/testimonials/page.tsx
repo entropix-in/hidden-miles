@@ -72,9 +72,9 @@ export default async function AdminTestimonialsPage() {
               <blockquote className="mt-3 flex-1 text-sm leading-6 text-stone-600">
                 “{testimonial.quote}”
               </blockquote>
-              <p className="mt-4 border-t border-dashed border-stone-200 pt-3 text-sm font-semibold text-navy-950">
+              <p className="mt-4 border-t border-dashed border-stone-200 pt-3 text-sm font-medium text-(--studio-text)">
                 {testimonial.name}
-                <span className="ml-2 font-semibold text-stone-400">
+                <span className="ml-2 font-medium text-stone-500">
                   {testimonial.city} · {testimonial.tour}
                 </span>
               </p>

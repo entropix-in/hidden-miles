@@ -58,7 +58,7 @@ export function AdminStarRating({
             </label>
           );
         })}
-        <span className="ml-2 text-sm font-semibold text-navy-950">
+        <span className="ml-2 text-sm font-medium text-(--studio-text)">
           {value}.0 / 5
         </span>
       </div>

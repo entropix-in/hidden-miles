@@ -24,30 +24,30 @@ export default async function AdminLoginPage({
   const configured = adminConfigured();
 
   return (
-    <div className="admin-studio grid min-h-screen place-items-center px-4 py-8">
+    <div className="admin-studio grid min-h-screen place-items-center px-4 py-6">
         <div className="w-full max-w-md">
           <Link
             href="/"
-            className="inline-flex items-center gap-2 text-sm font-semibold text-stone-600 transition hover:text-blue-700"
+            className="inline-flex items-center gap-2 text-sm font-medium text-stone-600 transition hover:text-(--studio-pine-dark)"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
             Back to website
           </Link>
 
-          <div className="mt-5 rounded-2xl border border-stone-200 bg-white p-6 shadow-sm sm:p-8">
+          <div className="mt-4 rounded-2xl border border-stone-200 bg-white p-5 shadow-sm sm:p-6">
             <h1 className="admin-page-title">Sign in to Hidden Miles</h1>
 
             {error ? (
-              <div role="alert" className="mt-5 flex items-start gap-2 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">
-                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+              <div role="alert" className="mt-4 flex items-start gap-2 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+                <AlertTriangle className="mt-1 h-4 w-4 shrink-0" />
                 {error}
               </div>
             ) : null}
 
             {!configured ? (
-              <div className="mt-5 rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm leading-5 text-blue-900">
-                Set <code className="font-bold">ADMIN_PASSWORD</code> and{" "}
-                <code className="font-bold">ADMIN_SESSION_SECRET</code> in your
+              <div className="mt-4 rounded-2xl border border-(--studio-rule) bg-(--studio-pine-wash) px-4 py-3 text-sm leading-5 text-(--studio-pine)">
+                Set <code className="font-medium">ADMIN_PASSWORD</code> and{" "}
+                <code className="font-medium">ADMIN_SESSION_SECRET</code> in your
                 environment to enable admin login.
               </div>
             ) : null}

@@ -59,11 +59,11 @@ function DepartureCitiesEditor({ initial }: { initial: TourCity[] }) {
         value={JSON.stringify(cities)}
       />
 
-      <div className="mt-5 space-y-3">
+      <div className="mt-4 space-y-3">
         {cities.map((city, index) => (
           <div
             key={index}
-            className="rounded-2xl border border-stone-200 bg-sand-50 p-4"
+            className="rounded-2xl border border-stone-200 bg-sand-50 p-5"
           >
             <div className="grid gap-3 sm:grid-cols-[1.1fr_1.5fr_0.7fr_auto] sm:items-end">
               <div>
@@ -162,7 +162,7 @@ export function AdminTourForm({
       <input type="hidden" name="id" value={tour?._id ?? ""} />
 
       <section className="admin-form-panel">
-        <h2 className="text-base font-semibold text-navy-950">
+        <h2 className="text-base font-medium text-(--studio-text)">
           Package details
         </h2>
 
@@ -218,7 +218,7 @@ export function AdminTourForm({
       <AdminContentEditor initialBlocks={tour?.contentBlocks} />
 
       <section className="admin-form-panel">
-        <h2 className="text-base font-semibold text-navy-950">
+        <h2 className="text-base font-medium text-(--studio-text)">
           Numbers & details
         </h2>
 
@@ -337,7 +337,7 @@ export function AdminTourForm({
       </section>
 
       <section className="admin-form-panel">
-        <h2 className="text-base font-semibold text-navy-950">
+        <h2 className="text-base font-medium text-(--studio-text)">
           Where travellers can join
         </h2>
         <p className="mt-1 text-sm text-stone-600">
@@ -350,7 +350,7 @@ export function AdminTourForm({
       </section>
 
       <section className="admin-form-panel">
-        <h2 className="text-base font-semibold text-navy-950">
+        <h2 className="text-base font-medium text-(--studio-text)">
           Highlights & inclusions
         </h2>
 

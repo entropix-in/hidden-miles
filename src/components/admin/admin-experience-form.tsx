@@ -36,7 +36,7 @@ export function AdminExperienceForm({
       <input type="hidden" name="id" value={experience?._id ?? ""} />
 
       <section className={onCreate ? "admin-inline-experience" : "admin-form-panel"}>
-        {!onCreate && <h2 className="text-base font-semibold text-navy-950">Experience details</h2>}
+        {!onCreate && <h2 className="text-base font-medium text-(--studio-text)">Experience details</h2>}
 
         <div className="admin-details-layout">
           <div className="grid min-w-0 gap-4 sm:grid-cols-2">

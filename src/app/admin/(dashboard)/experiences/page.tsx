@@ -59,17 +59,17 @@ export default async function AdminExperiencesPage() {
                     className="object-cover"
                   />
                 ) : (
-                  <div className="grid h-full w-full place-items-center bg-sand-200 text-sm font-bold text-stone-400">
+                  <div className="grid h-full w-full place-items-center bg-sand-200 text-sm font-medium text-stone-500">
                     No image
                   </div>
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-navy-950/60 to-transparent" />
-                <span className="absolute left-4 top-4 grid h-10 w-10 place-items-center rounded-full bg-white/90 text-blue-700">
+                <span className="absolute left-4 top-4 grid h-10 w-10 place-items-center rounded-full bg-white/90 text-(--studio-pine)">
                   <ExperienceIcon icon={experience.icon} />
                 </span>
               </div>
               <div className="p-4">
-                <h2 className="font-display text-xl font-semibold text-navy-950">
+                <h2 className="text-base font-medium text-(--studio-text)">
                   {experience.title}
                 </h2>
                 <p className="mt-1 line-clamp-2 text-sm leading-5 text-stone-500">

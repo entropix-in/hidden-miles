@@ -16,7 +16,7 @@ export function AdminTourExperiences({ options, selected = [] }: {
   return (
     <section className="admin-form-panel">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-base font-semibold">Experiences included</h2>
+        <h2 className="text-base font-medium">Experiences included</h2>
         <AdminCreateDrawer entity="experience">
           {({ close, initialFocus }) => (
             <AdminExperienceForm titleRef={initialFocus} onCreate={(option) => {
