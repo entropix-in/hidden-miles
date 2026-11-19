@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { LockKeyhole } from "lucide-react";
-import { AuthCard, AuthError } from "@/components/site/auth-card";
+import { AuthCard, AuthError, AuthNotice } from "@/components/site/auth-card";
 import { loginAction } from "@/lib/user-actions";
 import { accountsConfigured, getSessionUser, safeNext } from "@/lib/user-auth";
 
@@ -22,12 +22,17 @@ export default async function LoginPage({
   const params = await searchParams;
   const next = safeNext(typeof params.next === "string" ? params.next : undefined);
   const error = typeof params.error === "string" ? params.error : "";
+  const notice = typeof params.notice === "string" ? params.notice : "";
   const email = typeof params.email === "string" ? params.email : "";
 
   if (await getSessionUser()) redirect(next);
 
   const configured = accountsConfigured();
   const signupHref = next === "/account" ? "/signup" : `/signup?next=${encodeURIComponent(next)}`;
+  const forgotHref =
+    next === "/account"
+      ? "/forgot-password"
+      : `/forgot-password?next=${encodeURIComponent(next)}`;
 
   return (
     <AuthCard
@@ -35,6 +40,7 @@ export default async function LoginPage({
       title="Sign in to book your tour"
       subtitle="Your bookings, traveller details and trip updates live in one account."
     >
+      <AuthNotice message={notice} />
       <AuthError message={error} />
 
       {!configured ? (
@@ -66,9 +72,12 @@ export default async function LoginPage({
             <label htmlFor="password" className="field-label">
               Password
             </label>
-            <span className="text-xs font-medium text-navy-500">
-              At least 8 characters
-            </span>
+            <Link
+              href={forgotHref}
+              className="text-xs font-bold text-blue-700 underline-offset-4 transition hover:text-blue-800 hover:underline"
+            >
+              Forgot password?
+            </Link>
           </div>
           <input
             id="password"

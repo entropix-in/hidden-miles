@@ -104,3 +104,18 @@ export function AuthError({ message }: { message: string }) {
     </div>
   );
 }
+
+export function AuthNotice({ message }: { message: string }) {
+  if (!message) return null;
+  return (
+    <div
+      role="status"
+      className="mb-5 flex items-start gap-2 rounded-[14px] border border-success/30 bg-success-soft px-4 py-3 text-sm font-semibold text-success"
+    >
+      <span aria-hidden="true" className="mt-px">
+        ✓
+      </span>
+      {message}
+    </div>
+  );
+}

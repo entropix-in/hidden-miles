@@ -207,6 +207,21 @@ export const userSessions = mysqlTable(
   ],
 );
 
+export const passwordResets = mysqlTable(
+  "password_resets",
+  {
+    // SHA-256 of the emailed token — the raw token is never stored.
+    id: varchar("id", { length: 64 }).primaryKey(),
+    userId: bigint("user_id", { mode: "number", unsigned: true }).notNull(),
+    expiresAt: timestamp("expires_at").notNull(),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+  },
+  (table) => [
+    index("idx_password_resets_user").on(table.userId),
+    index("idx_password_resets_expiry").on(table.expiresAt),
+  ],
+);
+
 export const settings = mysqlTable("settings", {
   settingKey: varchar("setting_key", { length: 64 }).primaryKey(),
   seeded: tinyint("seeded").notNull().default(0),

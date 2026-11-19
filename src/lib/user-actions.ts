@@ -4,7 +4,13 @@ import { redirect } from "next/navigation";
 import { eq } from "drizzle-orm";
 import { dbErrorMessage, getDb } from "@/db";
 import { users } from "@/db/schema";
+import { sendPasswordResetEmail } from "@/lib/mail";
 import { hashPassword, verifyPassword } from "@/lib/password";
+import {
+  applyPasswordReset,
+  createPasswordResetToken,
+  findPasswordReset,
+} from "@/lib/password-reset";
 import {
   createUserSession,
   destroyUserSession,
@@ -15,6 +21,12 @@ import {
 
 function getString(formData: FormData, key: string) {
   return String(formData.get(key) ?? "").trim();
+}
+
+function siteUrl() {
+  return (
+    process.env.NEXT_PUBLIC_SITE_URL?.trim() || "http://localhost:3000"
+  ).replace(/\/$/, "");
 }
 
 function authUrl(
@@ -156,4 +168,111 @@ export async function loginAction(formData: FormData) {
 export async function logoutAction() {
   await destroyUserSession();
   redirect("/");
+}
+
+export async function requestPasswordResetAction(formData: FormData) {
+  const email = normalizeEmail(getString(formData, "email").slice(0, 190));
+
+  if (!isValidEmail(email)) {
+    redirect(
+      `/forgot-password?error=${encodeURIComponent(
+        "Please enter a valid email address.",
+      )}`,
+    );
+  }
+
+  const db = getDb();
+  if (!db) {
+    redirect(
+      `/forgot-password?error=${encodeURIComponent(
+        "Accounts are not available right now. Please try again later.",
+      )}`,
+    );
+  }
+
+  const [user] = await db
+    .select({ id: users.id, name: users.name })
+    .from(users)
+    .where(eq(users.email, email))
+    .limit(1);
+
+  // Same response whether or not the account exists.
+  if (!user) redirect("/forgot-password?sent=1");
+
+  let devLink = "";
+  try {
+    const token = await createPasswordResetToken(Number(user.id));
+    if (token) {
+      const next = safeNext(getString(formData, "next"));
+      const link = `${siteUrl()}/reset-password?token=${encodeURIComponent(
+        token,
+      )}${next !== "/account" ? `&next=${encodeURIComponent(next)}` : ""}`;
+      const sent = await sendPasswordResetEmail({
+        to: email,
+        name: user.name,
+        url: link,
+      });
+      if (!sent && process.env.NODE_ENV !== "production") {
+        devLink = link;
+      }
+    }
+  } catch (error) {
+    console.error(
+      "[hidden-miles] failed to issue password reset",
+      dbErrorMessage(error),
+    );
+  }
+
+  redirect(
+    devLink
+      ? `/forgot-password?sent=1&dev=${encodeURIComponent(devLink)}`
+      : "/forgot-password?sent=1",
+  );
+}
+
+export async function resetPasswordAction(formData: FormData) {
+  const token = getString(formData, "token");
+  const next = safeNext(getString(formData, "next"));
+  const password = String(formData.get("password") ?? "");
+  const confirm = String(formData.get("confirmPassword") ?? "");
+
+  const expiredUrl = `/reset-password?error=${encodeURIComponent(
+    "This reset link is invalid or has expired. Request a new one.",
+  )}`;
+
+  if (!token) {
+    redirect(
+      `/forgot-password?error=${encodeURIComponent(
+        "Request a new reset link to continue.",
+      )}`,
+    );
+  }
+
+  const target = await findPasswordReset(token);
+  if (!target) redirect(expiredUrl);
+
+  const back = (message: string) =>
+    `/reset-password?token=${encodeURIComponent(
+      token,
+    )}&error=${encodeURIComponent(message)}${
+      next !== "/account" ? `&next=${encodeURIComponent(next)}` : ""
+    }`;
+
+  if (password.length < 8) {
+    redirect(back("Use at least 8 characters for your new password."));
+  }
+  if (password !== confirm) {
+    redirect(back("Those passwords do not match."));
+  }
+
+  const updated = await applyPasswordReset(token, await hashPassword(password));
+  if (!updated) redirect(expiredUrl);
+
+  const loginParams = new URLSearchParams({
+    notice: "Your password has been updated. Sign in with your new password.",
+    email: updated.email,
+  });
+  if (next !== "/account") loginParams.set("next", next);
+
+  redirect(`/login?${loginParams.toString()}`);
 }
