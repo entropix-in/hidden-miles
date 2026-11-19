@@ -621,6 +621,8 @@ export async function deleteTestimonialAction(formData: FormData) {
 
 export async function updateEnquiryStatusAction(formData: FormData) {
   await requireAdmin();
+  const requested = getString(formData, "returnTo");
+  const back = /^\/admin\/enquiries(?:\/\d+)?(?:\?|$)/.test(requested) ? requested : "/admin/enquiries";
 
   try {
     const db = requireDb();
@@ -643,10 +645,12 @@ export async function updateEnquiryStatusAction(formData: FormData) {
       .set({ status })
       .where(eq(enquiriesTable.id, numericId));
   } catch (error) {
-    fail("/admin/enquiries", error);
+    fail(back, error);
   }
 
-  succeed("/admin/enquiries", "Enquiry status updated.");
+  revalidatePath("/admin/enquiries");
+  revalidatePath("/admin");
+  succeed(back, "Enquiry status updated.");
 }
 
 export async function seedContentAction() {

@@ -5,24 +5,26 @@ import { Dialog } from "@base-ui/react/dialog";
 import { CalendarPlus, Pencil, X } from "lucide-react";
 import { saveDepartureAction } from "@/app/admin/actions";
 import type { TourDeparture } from "@/lib/types";
-import { AdminPackagePicker, type PackageOption } from "./admin-package-picker";
+import { AdminDeparturePackage, type DeparturePackage } from "./admin-departure-package";
+import { AdminPackagePicker } from "./admin-package-picker";
 import { DepartureCalendar } from "./departure-calendar";
 
-export function AdminDepartureEditor({ packages, selected, departure, unavailable, minDate, returnTo, defaultOpen }: {
-  packages: PackageOption[];
-  selected?: PackageOption;
+export function AdminDepartureEditor({ packages, selected, departure, unavailable, minDate, returnTo, defaultOpen, triggerLabel }: {
+  packages: DeparturePackage[];
+  selected?: DeparturePackage;
   departure?: TourDeparture;
   unavailable: { tourSlug: string; startDate: string }[];
   minDate: string;
   returnTo: string;
   defaultOpen?: boolean;
+  triggerLabel?: string;
 }) {
   const title = departure ? "Edit departure" : "Add departure dates";
   const [open, setOpen] = useState(Boolean(defaultOpen));
   const Icon = departure ? Pencil : CalendarPlus;
   return (
     <Dialog.Root open={open} onOpenChange={setOpen} disablePointerDismissal>
-      <Dialog.Trigger className={departure ? "btn-outline" : "btn-primary"}><Icon size={16} aria-hidden />{departure ? "Edit" : "Add dates"}</Dialog.Trigger>
+      <Dialog.Trigger className={departure ? "btn-outline" : "btn-primary"}><Icon size={16} aria-hidden />{triggerLabel ?? (departure ? "Edit" : "Add dates")}</Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Backdrop className="admin-drawer-backdrop" />
         <Dialog.Popup className="admin-studio admin-drawer">
@@ -39,8 +41,8 @@ export function AdminDepartureEditor({ packages, selected, departure, unavailabl
 }
 
 function DepartureFields({ packages, selected, departure, unavailable, minDate, returnTo, title }: {
-  packages: PackageOption[];
-  selected?: PackageOption;
+  packages: DeparturePackage[];
+  selected?: DeparturePackage;
   departure?: TourDeparture;
   unavailable: { tourSlug: string; startDate: string }[];
   minDate: string;
@@ -48,7 +50,7 @@ function DepartureFields({ packages, selected, departure, unavailable, minDate, 
   title: string;
 }) {
   const [tour, setTour] = useState(selected);
-  const [dates, setDates] = useState<string[]>([]);
+  const [dates, setDates] = useState<string[]>(departure ? [departure.startDate] : []);
   const [error, setError] = useState("");
   const [pending, startTransition] = useTransition();
   const errorText = useRef<HTMLParagraphElement>(null);
@@ -62,8 +64,8 @@ function DepartureFields({ packages, selected, departure, unavailable, minDate, 
     <form aria-label={title} className="grid gap-4" onSubmit={(event) => {
       event.preventDefault();
       if (pending) return;
-      if (!departure && (!tour || !dates.length)) {
-        reportError(tour ? "Choose at least one date." : "Choose a package first.");
+      if ((!tour && !departure) || !dates.length) {
+        reportError(tour || departure ? "Choose at least one date." : "Choose a package first.");
         return;
       }
       setError("");
@@ -80,29 +82,28 @@ function DepartureFields({ packages, selected, departure, unavailable, minDate, 
       <input type="hidden" name="id" value={departure?._id ?? ""} />
       <input type="hidden" name="returnTo" value={returnTo} />
       <input type="hidden" name="tourSlug" value={departure?.tourSlug ?? tour?.slug ?? ""} />
-      {selected ? (
-        <div className="admin-departure-context"><span className="field-label">Package</span><strong>{selected.title}</strong></div>
-      ) : (
+      {!selected && !departure && (
         <AdminPackagePicker packages={packages} onSelect={(option) => {
-          setTour(option ?? undefined);
+          setTour(packages.find((item) => item.slug === option?.slug));
           setDates([]);
           setError("");
         }} />
       )}
-      {departure ? (
-        <label><span className="field-label">Departure date</span>
-          <input className="field" type="date" name="startDate" required defaultValue={departure.startDate} />
-        </label>
-      ) : tour ? (
-        <DepartureCalendar key={tour.slug} minDate={minDate}
-          unavailable={unavailable.filter((item) => item.tourSlug === tour.slug).map((item) => item.startDate)}
-          selected={dates}
-          onToggleDate={(date) => {
-            setDates((current) => current.includes(date) ? current.filter((item) => item !== date) : [...current, date].sort());
+      {tour && <div className="admin-departure-context"><span className="field-label">Package</span>
+        <AdminDeparturePackage tour={tour} details showPrice />
+      </div>}
+      {(tour || departure) && (
+        <DepartureCalendar key={tour?.slug ?? departure?.tourSlug} today={minDate} minDate={departure ? undefined : minDate}
+          multiple={!departure} selected={dates}
+          unavailable={unavailable.filter((item) =>
+            item.tourSlug === (tour?.slug ?? departure?.tourSlug) && item.startDate !== departure?.startDate).map((item) => item.startDate)}
+          onSelect={(date) => {
+            setDates((current) => departure ? [date]
+              : current.includes(date) ? current.filter((item) => item !== date) : [...current, date].sort());
             setError("");
           }}
-          onClear={() => setDates([])} />
-      ) : null}
+          onRemove={(date) => setDates((current) => current.filter((item) => item !== date))} />
+      )}
       {(tour || departure) && (
         <>
           <div className="grid grid-cols-2 gap-3" key={tour?.slug}>

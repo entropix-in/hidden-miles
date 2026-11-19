@@ -486,6 +486,16 @@ export async function loadAdminTestimonial(
   return result.data.find((testimonial) => testimonial._id === id);
 }
 
+export async function loadAdminEnquiry(id: string): Promise<AdminResult<AdminEnquiry>> {
+  const numericId = Number(id);
+  return adminResult(
+    (db) => /^\d+$/.test(id) && Number.isSafeInteger(numericId) && numericId > 0
+      ? db.select().from(enquiriesTable).where(eq(enquiriesTable.id, numericId)).limit(1)
+      : Promise.resolve([]),
+    mapEnquiry,
+  );
+}
+
 export async function loadAdminEnquiries(): Promise<AdminResult<AdminEnquiry>> {
   return adminResult(
     (db) =>
@@ -495,5 +505,15 @@ export async function loadAdminEnquiries(): Promise<AdminResult<AdminEnquiry>> {
         .orderBy(desc(enquiriesTable.createdAt))
         .limit(200),
     mapEnquiry,
+  );
+}
+
+export function loadAdminBooking(id: string): Promise<AdminResult<TourBooking>> {
+  const numericId = Number(id);
+  return adminResult(
+    (db) => /^\d+$/.test(id) && Number.isSafeInteger(numericId) && numericId > 0
+      ? db.select().from(bookingsTable).where(eq(bookingsTable.id, numericId)).limit(1)
+      : Promise.resolve([]),
+    mapBooking,
   );
 }
