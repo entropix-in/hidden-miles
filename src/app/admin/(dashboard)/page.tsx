@@ -116,7 +116,7 @@ function StatusPill({
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs in-[table]:text-sm font-medium ring-1 ring-inset",
+        "inline-flex items-center rounded-full px-2.5 py-0.5 text-sm font-medium ring-1 ring-inset",
         className,
       )}
     >
@@ -478,7 +478,7 @@ export default async function AdminDashboardPage() {
               </div>
               <Link
                 href="/admin/tours"
-                className="inline-flex items-center gap-1 text-xs font-medium text-(--studio-pine) hover:text-(--studio-pine-dark)"
+                className="inline-flex items-center gap-1 text-sm font-medium text-(--studio-pine) hover:text-(--studio-pine-dark)"
               >
                 Manage packages
                 <ArrowRight className="h-3.5 w-3.5" />
@@ -498,7 +498,7 @@ export default async function AdminDashboardPage() {
                     <p className="text-2xl font-semibold leading-none text-(--studio-text)">
                       {item.value}
                     </p>
-                    <p className="mt-1 text-xs font-medium text-stone-600">
+                    <p className="mt-1 text-sm font-medium text-stone-600">
                       {item.label}
                     </p>
                   </div>
@@ -515,9 +515,9 @@ export default async function AdminDashboardPage() {
                     <h2 className="text-base font-medium text-(--studio-text)">
                       Activity
                     </h2>
-                    <p className="mt-1 text-xs text-stone-500">Last 14 days</p>
+                    <p className="mt-1 text-sm text-stone-500">Last 14 days</p>
                   </div>
-                  <div className="flex items-center gap-4 text-xs font-medium text-stone-500">
+                  <div className="flex items-center gap-4 text-sm font-medium text-stone-500">
                     <span className="flex items-center gap-2">
                       <span className="h-2 w-2 rounded-full bg-(--studio-pine)" />
                       Bookings
@@ -569,7 +569,7 @@ export default async function AdminDashboardPage() {
                       <span
                         key={day.key}
                         className={cn(
-                          "flex-1 text-center text-xs font-medium text-stone-500",
+                          "flex-1 text-center text-sm font-medium text-stone-500",
                           index % 2 === 0 ? "" : "hidden sm:block",
                         )}
                       >
@@ -579,7 +579,7 @@ export default async function AdminDashboardPage() {
                   </div>
                 </div>
 
-                <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-medium text-stone-500">
+                <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm font-medium text-stone-500">
                   <span>
                     {activityTotals.bookings}{" "}
                     {activityTotals.bookings === 1 ? "booking" : "bookings"} ·{" "}
@@ -611,35 +611,35 @@ export default async function AdminDashboardPage() {
 
                 <div className="mt-4 grid gap-3 border-t border-stone-200 pt-4 sm:grid-cols-3">
                   <div className="min-w-0">
-                    <p className="text-xs font-medium text-stone-500">
+                    <p className="text-sm font-medium text-stone-500">
                       Top package
                     </p>
                     <p className="mt-1 truncate text-sm font-medium text-(--studio-text)">
                       {topTour ? topTour[0] : "No sales yet"}
                     </p>
-                    <p className="truncate text-xs font-medium text-stone-500">
+                    <p className="truncate text-sm font-medium text-stone-500">
                       {topTour ? formatINR(topTour[1]) : "Confirmed revenue"}
                     </p>
                   </div>
                   <div className="min-w-0">
-                    <p className="text-xs font-medium text-stone-500">
+                    <p className="text-sm font-medium text-stone-500">
                       Average booking
                     </p>
                     <p className="mt-1 text-sm font-medium text-(--studio-text)">
                       {formatINR(averageBooking)}
                     </p>
-                    <p className="text-xs font-medium text-stone-500">
+                    <p className="text-sm font-medium text-stone-500">
                       Per confirmed booking
                     </p>
                   </div>
                   <div className="min-w-0">
-                    <p className="text-xs font-medium text-stone-500">
+                    <p className="text-sm font-medium text-stone-500">
                       Next departure
                     </p>
                     <p className="mt-1 truncate text-sm font-medium text-(--studio-text)">
                       {nextDeparture ? formatDate(nextDeparture.startDate) : "None scheduled"}
                     </p>
-                    <p className="text-xs font-medium text-stone-500">
+                    <p className="text-sm font-medium text-stone-500">
                       {nextDeparture
                         ? `${nextDeparture.seatsLeft} of ${nextDeparture.capacity} seats left`
                         : "Add dates in bookings"}
@@ -657,7 +657,7 @@ export default async function AdminDashboardPage() {
                     </div>
                   <Link
                     href="/admin/bookings"
-                    className="inline-flex items-center gap-1 text-xs font-medium text-(--studio-pine) hover:text-(--studio-pine-dark)"
+                    className="inline-flex items-center gap-1 text-sm font-medium text-(--studio-pine) hover:text-(--studio-pine-dark)"
                   >
                     All bookings
                     <ArrowRight className="h-3.5 w-3.5" />
@@ -736,7 +736,7 @@ export default async function AdminDashboardPage() {
                       <p className="text-sm font-medium text-(--studio-text)">
                         No bookings yet
                       </p>
-                      <p className="text-xs text-stone-500">
+                      <p className="text-sm text-stone-500">
                         Requests will appear here as travellers book from the website.
                       </p>
                     </div>
@@ -753,7 +753,7 @@ export default async function AdminDashboardPage() {
                   </h2>
                   <span
                     className={cn(
-                      "rounded-full px-2.5 py-0.5 text-xs font-medium",
+                      "rounded-full px-2.5 py-0.5 text-sm font-medium",
                       attentionCount
                         ? "bg-gold-100 text-gold-800"
                         : "bg-emerald-50 text-emerald-700",
@@ -783,11 +783,11 @@ export default async function AdminDashboardPage() {
                           <p className="text-sm font-medium text-(--studio-text)">
                             {item.label}
                           </p>
-                          <p className="text-xs text-stone-500">
+                          <p className="text-sm text-stone-500">
                             {item.description}
                           </p>
                         </div>
-                        <span className="shrink-0 rounded-full bg-white px-2 py-0.5 text-xs font-medium text-stone-600 ring-1 ring-inset ring-stone-200">
+                        <span className="shrink-0 rounded-full bg-white px-2 py-0.5 text-sm font-medium text-stone-600 ring-1 ring-inset ring-stone-200">
                           {item.count}
                         </span>
                         <ChevronRight className="h-4 w-4 shrink-0 text-stone-300 transition group-hover:text-(--studio-pine-dark)" />
@@ -801,7 +801,7 @@ export default async function AdminDashboardPage() {
                       <p className="text-sm font-medium text-emerald-900">
                         You are all caught up
                       </p>
-                      <p className="mt-1 text-xs text-emerald-800/80">
+                      <p className="mt-1 text-sm text-emerald-800/80">
                         Every enquiry and booking has been handled.
                       </p>
                     </div>
@@ -816,7 +816,7 @@ export default async function AdminDashboardPage() {
                   </h2>
                   <Link
                     href="/admin/departures"
-                    className="inline-flex items-center gap-1 text-xs font-medium text-(--studio-pine) hover:text-(--studio-pine-dark)"
+                    className="inline-flex items-center gap-1 text-sm font-medium text-(--studio-pine) hover:text-(--studio-pine-dark)"
                   >
                     Manage
                     <ArrowRight className="h-3.5 w-3.5" />
@@ -845,11 +845,11 @@ export default async function AdminDashboardPage() {
                           href={`/admin/departures/${departure._id}`}
                           className="flex items-center gap-3 px-5 py-3 transition hover:bg-sand-50/70"
                         >
-                          <span className="grid h-11 w-11 shrink-0 place-content-center rounded-xl border border-stone-200 bg-sand-50 text-center leading-none">
-                            <span className="text-base font-medium text-(--studio-text)">
+                          <span className="grid min-h-11 min-w-11 shrink-0 place-content-center gap-0.5 rounded-xl border border-stone-200 bg-sand-50 px-1.5 py-1 text-center">
+                            <span className="text-base leading-tight font-medium text-(--studio-text)">
                               {date.getUTCDate()}
                             </span>
-                            <span className="mt-1 text-xs font-medium text-stone-500">
+                            <span className="text-sm leading-tight font-medium text-stone-500">
                               {monthFormatter.format(date)}
                             </span>
                           </span>
@@ -870,7 +870,7 @@ export default async function AdminDashboardPage() {
                                 style={{ width: `${fill}%` }}
                               />
                             </div>
-                            <p className="mt-1 text-xs font-medium text-stone-500">
+                            <p className="mt-1 text-sm font-medium text-stone-500">
                               {departure.booked}/{departure.capacity} booked ·{" "}
                               {departure.seatsLeft === 0
                                 ? "Sold out"
@@ -887,7 +887,7 @@ export default async function AdminDashboardPage() {
                     <p className="mt-2 text-sm font-medium text-(--studio-text)">
                       No dates scheduled
                     </p>
-                    <p className="mt-1 text-xs text-stone-500">
+                    <p className="mt-1 text-sm text-stone-500">
                       Add departure dates to start taking bookings.
                     </p>
                   </div>
@@ -901,7 +901,7 @@ export default async function AdminDashboardPage() {
                   </h2>
                   <Link
                     href="/admin/enquiries"
-                    className="inline-flex items-center gap-1 text-xs font-medium text-(--studio-pine) hover:text-(--studio-pine-dark)"
+                    className="inline-flex items-center gap-1 text-sm font-medium text-(--studio-pine) hover:text-(--studio-pine-dark)"
                   >
                     Inbox
                     <ArrowRight className="h-3.5 w-3.5" />
@@ -925,13 +925,13 @@ export default async function AdminDashboardPage() {
                             className={enquiryStatusStyles[enquiry.status ?? "new"]}
                           />
                         </div>
-                        <p className="mt-1 truncate text-xs text-stone-500">
+                        <p className="mt-1 truncate text-sm text-stone-500">
                           {enquiry.tour ||
                             enquiry.destination ||
                             enquiry.email ||
                             "General enquiry"}
                         </p>
-                        <p className="mt-1 flex items-center gap-2 text-xs font-medium text-stone-500">
+                        <p className="mt-1 flex items-center gap-2 text-sm font-medium text-stone-500">
                           <span className="capitalize">{enquiry.type}</span>
                           <span aria-hidden>·</span>
                           {timeAgo(enquiry.createdAt)}
@@ -945,7 +945,7 @@ export default async function AdminDashboardPage() {
                     <p className="mt-2 text-sm font-medium text-(--studio-text)">
                       No enquiries yet
                     </p>
-                    <p className="mt-1 text-xs text-stone-500">
+                    <p className="mt-1 text-sm text-stone-500">
                       Traveller messages will appear here.
                     </p>
                   </div>

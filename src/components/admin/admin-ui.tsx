@@ -32,7 +32,7 @@ export function AdminStatCard({
   return (
     <div className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm shadow-navy-950/[0.03]">
       <div className="flex items-start justify-between gap-3">
-        <p className="text-xs font-medium text-stone-500">
+        <p className="text-sm font-medium text-stone-500">
           {label}
         </p>
         <span
@@ -47,7 +47,7 @@ export function AdminStatCard({
       <p className="mt-3 text-2xl font-semibold leading-none tracking-tight text-(--studio-text)">
         {value}
       </p>
-      <p className="mt-2 text-xs font-medium leading-4 text-stone-500">
+      <p className="mt-2 text-sm font-medium leading-4 text-stone-500">
         {detail}
       </p>
     </div>
