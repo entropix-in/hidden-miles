@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowLeft, ArrowRight, Inbox } from "lucide-react";
 import { AdminDepartureEditor } from "@/components/admin/admin-departure-editor";
 import { AdminDeparturePackage, departurePackage } from "@/components/admin/admin-departure-package";
+import { AdminListPagination, adminPageNumber } from "@/components/admin/admin-list-pagination";
 import { AdminNotice, DatabaseSetupNotice } from "@/components/admin/admin-ui";
 import { loadAdminBookings, loadAdminDepartures, loadAdminTours } from "@/lib/content";
 import { bookingStatusLabels } from "@/lib/booking-status";
@@ -28,6 +29,15 @@ export default async function AdminDepartureDetailPage({ params, searchParams }:
   const tour = source && departurePackage(source);
   const bookingsResult = await loadAdminBookings(departure.tourSlug);
   const bookings = bookingsResult.data.filter((item) => item.departureId === id);
+  const requestsPageSize = 10;
+  const requestsPage = adminPageNumber(
+    search.page,
+    Math.max(1, Math.ceil(bookings.length / requestsPageSize)),
+  );
+  const visibleBookings = bookings.slice(
+    (requestsPage - 1) * requestsPageSize,
+    requestsPage * requestsPageSize,
+  );
   const pending = bookings.filter((item) => item.status === "pending").length;
   const title = dateLabel(departure.startDate);
   const today = calendarToday();
@@ -83,7 +93,7 @@ export default async function AdminDepartureDetailPage({ params, searchParams }:
                 <th role="columnheader" scope="col">Status</th>
               </tr></thead>
               <tbody role="rowgroup">
-                {bookings.map((booking) => (
+                {visibleBookings.map((booking) => (
                   <tr key={booking._id} role="row">
                     <td role="cell" className="admin-departure-guest"><span>{booking.name}</span>
                       <p><a className="admin-data-link" href={`mailto:${booking.email}`}>{booking.email}</a></p></td>
@@ -98,6 +108,13 @@ export default async function AdminDepartureDetailPage({ params, searchParams }:
         ) : (
           <div className="admin-list-empty"><Inbox size={22} aria-hidden /><span>No booking requests for this departure yet.</span></div>
         )}
+        <AdminListPagination
+          path={url}
+          filters={new URLSearchParams()}
+          page={requestsPage}
+          pageSize={requestsPageSize}
+          total={bookings.length}
+        />
       </section>
 
     </div>

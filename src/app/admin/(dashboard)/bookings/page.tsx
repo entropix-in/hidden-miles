@@ -11,7 +11,7 @@ import { loadAdminBookings, loadAdminDepartures, loadAdminTours } from "@/lib/co
 import { formatINR } from "@/lib/utils";
 
 const dateFormatter = new Intl.DateTimeFormat("en-IN", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
-const pageSize = 20;
+const pageSize = 10;
 const columns = [
   ["traveller", "Traveller"], ["package", "Package"], ["departure", "Departure date"], ["guests", "Guests"],
   ["amount", "Amount"], ["received", "Received"], ["status", "Status"],

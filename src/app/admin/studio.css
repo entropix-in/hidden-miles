@@ -786,6 +786,28 @@ th.admin-table-actions { display: table-cell; text-align: end; }
 .admin-list-empty strong { color: var(--studio-text); }
 .admin-list-pagination { padding: 0.75rem 1rem; color: var(--studio-muted); }
 .admin-data-panel > .admin-list-pagination { border-block-start: 1px solid var(--studio-rule); }
+.admin-pagination-pages { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
+.admin-page-numbers { display: flex; align-items: center; gap: 0.25rem; }
+.admin-page-number {
+  display: grid;
+  place-items: center;
+  min-width: 2rem;
+  height: 2rem;
+  padding: 0 0.5rem;
+  border: 1px solid transparent;
+  border-radius: 0.5rem;
+  color: var(--studio-secondary);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease;
+}
+a.admin-page-number:hover { background: var(--studio-inset); border-color: var(--studio-rule); color: var(--studio-text); }
+.admin-page-number[aria-current="page"] { background: var(--studio-pine); border-color: var(--studio-pine); color: #fff; }
+.admin-page-gap { min-width: 1rem; color: var(--studio-muted); text-align: center; }
+@media (max-width: 30rem) {
+  .admin-page-arrow-label { display: none; }
+}
 
 .admin-departure-context {
   padding: 0.625rem 0.75rem;

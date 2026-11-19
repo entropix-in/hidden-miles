@@ -15,7 +15,7 @@ import { formatINR, imageUrl } from "@/lib/utils";
 import { AdminSelect } from "@/components/admin/admin-select";
 import { AdminListPagination, adminPageNumber } from "@/components/admin/admin-list-pagination";
 
-const pageSize = 20;
+const pageSize = 10;
 
 export default async function AdminToursPage({ searchParams }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
