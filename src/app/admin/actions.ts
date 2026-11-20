@@ -132,9 +132,7 @@ function parseItineraryBadges(raw: string): ItineraryBadge[] {
       if (!label || !itineraryBadgeKinds.includes(kind)) continue;
       if (
         badges.some(
-          (badge) =>
-            badge.kind === kind &&
-            badge.label.toLowerCase() === label.toLowerCase(),
+          (badge) => badge.label.toLowerCase() === label.toLowerCase(),
         )
       ) {
         continue;

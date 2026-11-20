@@ -4,8 +4,6 @@ import { useId, useRef, useState } from "react";
 import { Popover } from "@base-ui/react/popover";
 import { Pencil, Plus } from "lucide-react";
 import type { ItineraryBadge, ItineraryBadgeKind } from "@/data/tours";
-import { itineraryBadgeKindLabels } from "@/lib/itinerary";
-import { AdminSelect } from "./admin-select";
 
 const quickBadges: ItineraryBadge[] = [
   { label: "Breakfast", kind: "meal" },
@@ -15,6 +13,14 @@ const quickBadges: ItineraryBadge[] = [
   { label: "Overnight stay", kind: "stay" },
   { label: "Free time", kind: "leisure" },
 ];
+
+function kindForLabel(label: string): ItineraryBadgeKind {
+  return (
+    quickBadges.find(
+      (badge) => badge.label.toLowerCase() === label.toLowerCase(),
+    )?.kind ?? "experience"
+  );
+}
 
 function BadgeEditor({ badge, badges, onSave, onRemove }: {
   badge?: ItineraryBadge;
@@ -26,12 +32,11 @@ function BadgeEditor({ badge, badges, onSave, onRemove }: {
   const input = useRef<HTMLInputElement>(null);
   const [open, setOpen] = useState(false);
   const [label, setLabel] = useState("");
-  const [kind, setKind] = useState<ItineraryBadgeKind>("experience");
-  const duplicate = (candidate: ItineraryBadge) => badges.some((item) =>
-    item !== badge && item.kind === candidate.kind && item.label.toLowerCase() === candidate.label.toLowerCase());
+  const duplicate = (candidate: string) => badges.some((item) =>
+    item !== badge && item.label.toLowerCase() === candidate.toLowerCase());
 
   function save(candidate: ItineraryBadge) {
-    if (!candidate.label || duplicate(candidate)) return;
+    if (!candidate.label || duplicate(candidate.label)) return;
     onSave(candidate);
     setOpen(false);
   }
@@ -40,7 +45,6 @@ function BadgeEditor({ badge, badges, onSave, onRemove }: {
     <Popover.Root open={open} onOpenChange={(next) => {
       if (next) {
         setLabel(badge?.label ?? "");
-        setKind(badge?.kind ?? "experience");
       }
       setOpen(next);
     }}>
@@ -57,7 +61,7 @@ function BadgeEditor({ badge, badges, onSave, onRemove }: {
                 <div className="flex flex-wrap gap-2">
                   {quickBadges.map((preset) => (
                     <button type="button" key={preset.label} className="admin-day-badge"
-                      disabled={duplicate(preset)} onClick={() => save(preset)}>{preset.label}</button>
+                      disabled={duplicate(preset.label)} onClick={() => save(preset)}>{preset.label}</button>
                   ))}
                 </div>
               </div>
@@ -68,19 +72,14 @@ function BadgeEditor({ badge, badges, onSave, onRemove }: {
               onKeyDown={(event) => {
                 if (event.key === "Enter" && !event.nativeEvent.isComposing) {
                   event.preventDefault();
-                  save({ label: label.trim(), kind });
+                  save({ label: label.trim(), kind: kindForLabel(label.trim()) });
                 }
               }} />
-            <label className="field-label mt-3" htmlFor={id + "-category"}>Category</label>
-            <AdminSelect id={id + "-category"} value={kind} onValueChange={(value) => setKind(value as ItineraryBadgeKind)}>
-              {Object.entries(itineraryBadgeKindLabels).map(([value, text]) =>
-                <option key={value} value={value}>{text}</option>)}
-            </AdminSelect>
             <div className="admin-popover-actions">
               {onRemove && <button type="button" className="btn-outline admin-button-danger"
                 onClick={() => { onRemove(); setOpen(false); }}>Remove</button>}
-              <button type="button" className="btn-primary" disabled={!label.trim() || duplicate({ label: label.trim(), kind })}
-                onClick={() => save({ label: label.trim(), kind })}>{badge ? "Save badge" : "Add custom badge"}</button>
+              <button type="button" className="btn-primary" disabled={!label.trim() || duplicate(label.trim())}
+                onClick={() => save({ label: label.trim(), kind: kindForLabel(label.trim()) })}>{badge ? "Save badge" : "Add custom badge"}</button>
             </div>
           </Popover.Popup>
         </Popover.Positioner>

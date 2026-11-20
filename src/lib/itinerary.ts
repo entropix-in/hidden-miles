@@ -1,8 +1,4 @@
-import type {
-  ItineraryBadge,
-  ItineraryBadgeKind,
-  ItineraryDay,
-} from "@/data/tours";
+import type { ItineraryBadge, ItineraryDay } from "@/data/tours";
 
 type BadgeRule = ItineraryBadge & {
   pattern: RegExp;
@@ -91,11 +87,3 @@ export function getItineraryBadges(day: ItineraryDay): ItineraryBadge[] {
   if (day.manualBadges) return day.badges ?? [];
   return day.badges?.length ? day.badges : deriveItineraryBadges(day);
 }
-
-export const itineraryBadgeKindLabels: Record<ItineraryBadgeKind, string> = {
-  meal: "Food & drinks",
-  stay: "Stay",
-  travel: "Travel",
-  experience: "Experience",
-  leisure: "Leisure",
-};
