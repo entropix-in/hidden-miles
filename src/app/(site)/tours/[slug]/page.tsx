@@ -17,7 +17,7 @@ import {
   Sun,
   X,
 } from "lucide-react";
-import { BookingCard } from "@/components/site/booking-card";
+import { BookingCard, BookingCardDock } from "@/components/site/booking-card";
 import { Breadcrumbs } from "@/components/site/breadcrumbs";
 import { ItineraryTimeline } from "@/components/site/itinerary-timeline";
 import { SectionHeading } from "@/components/site/section-heading";
@@ -412,15 +412,17 @@ export default async function TourDetailPage({
             </section>
           </main>
 
-          <aside id="book" className="scroll-mt-32 lg:sticky lg:top-32">
-            <BookingCard
-              tourSlug={tour.slug}
-              basePrice={tour.price}
-              oldPrice={tour.oldPrice}
-              departures={departures}
-              tourTitle={tour.title}
-              cities={resolveTourCities(tour.departureCities)}
-            />
+          <aside id="book" className="scroll-mt-32 lg:self-stretch">
+            <BookingCardDock>
+              <BookingCard
+                tourSlug={tour.slug}
+                basePrice={tour.price}
+                oldPrice={tour.oldPrice}
+                departures={departures}
+                tourTitle={tour.title}
+                cities={resolveTourCities(tour.departureCities)}
+              />
+            </BookingCardDock>
           </aside>
         </div>
       </div>

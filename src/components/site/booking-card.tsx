@@ -1,8 +1,9 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
-import { Check, ChevronDown, Minus, Phone, Plus, ShieldCheck } from "lucide-react";
+import { Dialog } from "@base-ui/react/dialog";
+import { Check, Minus, Phone, Plus, ShieldCheck, X } from "lucide-react";
 import type { TourDeparture } from "@/lib/types";
 import { site } from "@/data/site";
 import { cn, formatINR } from "@/lib/utils";
@@ -16,7 +17,11 @@ const dateFormatter = new Intl.DateTimeFormat("en-IN", {
   timeZone: "UTC",
 });
 
-const VISIBLE_DATES = 4;
+function seatLabel(seatsLeft: number) {
+  if (seatsLeft <= 0) return "Sold out";
+  if (seatsLeft <= 5) return `Only ${seatsLeft} left`;
+  return `${seatsLeft} seats left`;
+}
 
 export function BookingCard({
   tourSlug,
@@ -54,16 +59,13 @@ export function BookingCard({
   );
 
   const allDates = departures.length ? departures : fallback;
-  const [selectedId, setSelectedId] = useState(allDates[0]?._id ?? "");
-  const [showAllDates, setShowAllDates] = useState(false);
+  const [selectedId, setSelectedId] = useState(
+    allDates.find((date) => date.seatsLeft > 0)?._id ?? allDates[0]?._id ?? "",
+  );
+  const [pickerOpen, setPickerOpen] = useState(false);
   const [city, setCity] = useState(cities[0]?.name ?? "");
   const [adults, setAdults] = useState(2);
   const [children, setChildren] = useState(1);
-
-  const visibleDates = showAllDates
-    ? allDates
-    : allDates.slice(0, VISIBLE_DATES);
-  const hasMoreDates = allDates.length > VISIBLE_DATES;
 
   const selected = allDates.find((date) => date._id === selectedId) ?? allDates[0];
   const cityOption =
@@ -77,7 +79,7 @@ export function BookingCard({
   const cityHint = landOnly
     ? "Land-only package · no flights included"
     : cityOption.priceDelta === 0
-      ? "Base fare · return flights included"
+      ? null
       : `${cityOption.priceDelta > 0 ? "Add" : "Less"} ${formatINR(Math.abs(cityOption.priceDelta))} · return flights included`;
 
   const bookingParams = new URLSearchParams();
@@ -107,127 +109,168 @@ export function BookingCard({
         </span>
         <span className="type-small text-navy-500">per person</span>
       </p>
-      <p className="mt-2 text-[13px] font-medium text-navy-500">
-        Twin sharing · plus 5% GST
-      </p>
 
-      <div className="route-line my-6" />
-
-      <div className="flex items-baseline justify-between gap-3">
+      <div className="mt-6 flex items-baseline justify-between gap-3">
         <p className="type-label text-navy-500">Departure date</p>
-        <span className="text-[12px] font-semibold text-navy-500">
-          {allDates.length} {allDates.length === 1 ? "date" : "dates"}
-        </span>
+        {allDates.length ? (
+          <button
+            type="button"
+            onClick={() => setPickerOpen(true)}
+            className="text-[12px] font-bold text-navy-700 underline decoration-sand-300 decoration-1.5 underline-offset-4 transition hover:text-ink hover:decoration-ink"
+          >
+            Change
+          </button>
+        ) : null}
       </div>
 
-      <div
-        role="radiogroup"
-        aria-label="Departure date"
-        className="mt-3 grid gap-2"
-      >
-        {visibleDates.map((date) => {
-          const sold = date.seatsLeft <= 0;
-          const low = !sold && date.seatsLeft <= 5;
-          const active = selected?._id === date._id;
-
-          return (
-            <button
-              key={date._id}
-              type="button"
-              role="radio"
-              aria-checked={active}
-              disabled={sold}
-              onClick={() => setSelectedId(date._id)}
+      {selected ? (
+        <div className="mt-3 flex items-center gap-3 rounded-[14px] border-[1.5px] border-ink bg-ink px-3.5 py-3 text-paper shadow-[0_12px_28px_-18px_rgba(11,39,53,0.7)]">
+          <span
+            aria-hidden="true"
+            className="grid h-[18px] w-[18px] shrink-0 place-items-center rounded-full border-[1.5px] border-gold-400 bg-gold-400 text-ink"
+          >
+            <Check className="h-3 w-3" strokeWidth={3} />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block truncate text-[13.5px] font-bold">
+              {dateFormatter.format(
+                new Date(`${selected.startDate}T00:00:00Z`),
+              )}
+            </span>
+            <span
               className={cn(
-                "group flex w-full items-center gap-3 rounded-[14px] border-[1.5px] px-3.5 py-3 text-left transition",
-                active
-                  ? "border-ink bg-ink text-paper shadow-[0_12px_28px_-18px_rgba(11,39,53,0.7)]"
-                  : sold
-                    ? "cursor-not-allowed border-sand-300 bg-sand-100 text-navy-500"
-                    : "border-sand-300 bg-paper text-ink hover:border-navy-300 hover:bg-sand-100",
+                "mt-1 inline-flex rounded-full px-2 py-0.5 text-[11px] font-bold",
+                selected.seatsLeft <= 0
+                  ? "bg-sand-200 text-navy-500"
+                  : "bg-gold-400 text-ink",
               )}
             >
-              <span
-                aria-hidden="true"
-                className={cn(
-                  "grid h-[18px] w-[18px] shrink-0 place-items-center rounded-full border-[1.5px] transition",
-                  active
-                    ? "border-gold-400 bg-gold-400 text-ink"
-                    : "border-sand-300 bg-paper text-transparent",
-                )}
+              {seatLabel(selected.seatsLeft)}
+            </span>
+          </span>
+        </div>
+      ) : (
+        <p className="mt-3 rounded-[16px] border border-dashed border-sand-300 bg-sand-100 px-4 py-3 text-[13px] font-medium text-navy-700">
+          New dates are being finalised. Ask us for the next departure.
+        </p>
+      )}
+
+      <Dialog.Root open={pickerOpen} onOpenChange={setPickerOpen}>
+        <Dialog.Portal>
+          <Dialog.Backdrop className="fixed inset-0 z-[80] bg-ink/45 backdrop-blur-[2px]" />
+          <Dialog.Popup className="fixed left-1/2 top-1/2 z-[81] max-h-[85dvh] w-[min(94vw,560px)] -translate-x-1/2 -translate-y-1/2 overflow-y-auto overscroll-contain rounded-[24px] border border-sand-300 bg-paper p-5 shadow-[0_40px_80px_-40px_rgba(11,39,53,0.55)] sm:p-6">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <Dialog.Title className="type-title text-ink">
+                  Choose a departure
+                </Dialog.Title>
+                <Dialog.Description className="mt-1 text-[13px] font-medium text-navy-500">
+                  {allDates.length} departure
+                  {allDates.length === 1 ? "" : "s"} · prices per person
+                </Dialog.Description>
+              </div>
+              <Dialog.Close
+                className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-sand-300 bg-paper text-ink transition hover:border-navy-300 hover:bg-sand-100"
+                aria-label="Close date picker"
               >
-                <Check className="h-3 w-3" strokeWidth={3} />
-              </span>
+                <X className="h-4 w-4" aria-hidden="true" />
+              </Dialog.Close>
+            </div>
 
-              <span className="min-w-0 flex-1">
-                <span
-                  className={cn(
-                    "block truncate text-[13.5px] font-bold",
-                    sold && "line-through",
-                  )}
-                >
-                  {dateFormatter.format(new Date(`${date.startDate}T00:00:00Z`))}
-                </span>
-                <span
-                  className={cn(
-                    "mt-1 inline-flex rounded-full px-2 py-0.5 text-[11px] font-bold",
-                    active
-                      ? "bg-gold-400 text-ink"
-                      : sold
-                        ? "bg-sand-200 text-navy-500"
-                        : low
-                          ? "bg-gold-100 text-gold-700"
-                          : "bg-success-soft text-success",
-                  )}
-                >
-                  {sold
-                    ? "Sold out"
-                    : low
-                      ? `Only ${date.seatsLeft} left`
-                      : `${date.seatsLeft} seats left`}
-                </span>
-              </span>
+            <div
+              role="radiogroup"
+              aria-label="Departure date"
+              className="mt-4 grid gap-2 sm:grid-cols-2"
+            >
+              {allDates.map((date) => {
+                const sold = date.seatsLeft <= 0;
+                const low = !sold && date.seatsLeft <= 5;
+                const active = selected?._id === date._id;
 
-              <span
-                className={cn(
-                  "shrink-0 text-right text-sm font-bold",
-                  active ? "text-paper" : sold ? "text-navy-500" : "text-ink",
-                )}
-              >
-                {formatINR(date.price)}
-                <span
-                  className={cn(
-                    "mt-0.5 block text-[10px] font-medium normal-case tracking-normal",
-                    active ? "text-navy-200" : "text-navy-500",
-                  )}
-                >
-                  per person
-                </span>
-              </span>
-            </button>
-          );
-        })}
-      </div>
+                return (
+                  <button
+                    key={date._id}
+                    type="button"
+                    role="radio"
+                    aria-checked={active}
+                    disabled={sold}
+                    onClick={() => {
+                      setSelectedId(date._id);
+                      setPickerOpen(false);
+                    }}
+                    className={cn(
+                      "flex min-w-0 flex-col items-start gap-2 rounded-[14px] border-[1.5px] p-3 text-left transition",
+                      active
+                        ? "border-ink bg-ink text-paper"
+                        : sold
+                          ? "cursor-not-allowed border-sand-300 bg-sand-100 text-navy-500"
+                          : "border-sand-300 bg-paper text-ink hover:border-navy-300 hover:bg-sand-100",
+                    )}
+                  >
+                    <span className="flex w-full items-center justify-between gap-2">
+                      <span
+                        className={cn(
+                          "truncate text-[13.5px] font-bold",
+                          sold && "line-through",
+                        )}
+                      >
+                        {dateFormatter.format(
+                          new Date(`${date.startDate}T00:00:00Z`),
+                        )}
+                      </span>
+                      {active ? (
+                        <Check
+                          className="h-3.5 w-3.5 shrink-0 text-gold-400"
+                          strokeWidth={3}
+                          aria-hidden="true"
+                        />
+                      ) : null}
+                    </span>
 
-      {hasMoreDates ? (
-        <button
-          type="button"
-          onClick={() => setShowAllDates((current) => !current)}
-          className="mt-2.5 inline-flex w-full items-center justify-center gap-1.5 rounded-full border border-sand-300 bg-paper px-3 py-2 text-[13px] font-bold text-navy-700 transition hover:border-navy-300 hover:text-ink"
-          aria-expanded={showAllDates}
-        >
-          {showAllDates
-            ? "Show fewer dates"
-            : `View all ${allDates.length} departures`}
-          <ChevronDown
-            className={cn(
-              "h-3.5 w-3.5 transition-transform duration-200",
-              showAllDates && "rotate-180",
-            )}
-            aria-hidden="true"
-          />
-        </button>
-      ) : null}
+                    <span
+                      className={cn(
+                        "inline-flex rounded-full px-2 py-0.5 text-[11px] font-bold",
+                        active
+                          ? "bg-gold-400 text-ink"
+                          : sold
+                            ? "bg-sand-200 text-navy-500"
+                            : low
+                              ? "bg-gold-100 text-gold-700"
+                              : "bg-success-soft text-success",
+                      )}
+                    >
+                      {seatLabel(date.seatsLeft)}
+                    </span>
+
+                    <span className="mt-auto flex w-full items-baseline justify-between gap-1 pt-1">
+                      <span
+                        className={cn(
+                          "text-sm font-bold",
+                          active
+                            ? "text-paper"
+                            : sold
+                              ? "text-navy-500"
+                              : "text-ink",
+                        )}
+                      >
+                        {formatINR(date.price)}
+                      </span>
+                      <span
+                        className={cn(
+                          "text-[10px] font-medium",
+                          active ? "text-navy-200" : "text-navy-500",
+                        )}
+                      >
+                        per person
+                      </span>
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </Dialog.Popup>
+        </Dialog.Portal>
+      </Dialog.Root>
 
       <div className="mt-6">
         <label
@@ -248,7 +291,9 @@ export function BookingCard({
             </option>
           ))}
         </Select>
-        <p className="mt-1.5 text-xs font-medium text-navy-500">{cityHint}</p>
+        {cityHint ? (
+          <p className="mt-1.5 text-xs font-medium text-navy-500">{cityHint}</p>
+        ) : null}
       </div>
 
       <div className="mt-6">
@@ -333,9 +378,6 @@ export function BookingCard({
             {formatINR(total)}
           </span>
         </div>
-        <p className="mt-1.5 text-xs font-medium text-navy-500">
-          Plus 5% GST and any add-ons you pick at checkout.
-        </p>
       </div>
 
       <Link
@@ -384,6 +426,46 @@ export function BookingCard({
           <Phone className="h-4 w-4" />
         </span>
       </a>
+    </div>
+  );
+}
+
+/**
+ * Keeps the booking card docked to the bottom of the viewport on desktop.
+ * The sticky top offset is the card's own height, so the card stays pinned to
+ * the bottom edge while the itinerary scrolls and releases at the end of the
+ * column.
+ */
+export function BookingCardDock({ children }: { children: ReactNode }) {
+  const node = useRef<HTMLDivElement>(null);
+  const [top, setTop] = useState<number | null>(null);
+
+  useEffect(() => {
+    const element = node.current;
+    if (!element) return;
+
+    const update = () => {
+      if (!window.matchMedia("(min-width: 1024px)").matches) {
+        setTop(null);
+        return;
+      }
+      setTop(Math.round(window.innerHeight - element.offsetHeight - 24));
+    };
+
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(element);
+    window.addEventListener("resize", update);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", update);
+    };
+  }, []);
+
+  return (
+    <div ref={node} className="lg:sticky" style={top === null ? undefined : { top }}>
+      {children}
     </div>
   );
 }
