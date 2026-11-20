@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Dialog } from "@base-ui/react/dialog";
 import { Check, Minus, Phone, Plus, ShieldCheck, X } from "lucide-react";
 import type { TourDeparture } from "@/lib/types";
+import { fallbackDepartures } from "@/lib/tour-departures";
 import { site } from "@/data/site";
 import { cn, formatINR } from "@/lib/utils";
 import type { TourCity } from "@/lib/tour-cities";
@@ -38,24 +39,8 @@ export function BookingCard({
   cities: TourCity[];
 }) {
   const fallback = useMemo(
-    () =>
-      Array.from({ length: 4 }).map((_, index) => {
-        const start = new Date();
-        start.setUTCDate(start.getUTCDate() + 14 + index * 7);
-        const seats = [6, 18, 3, 12][index] ?? 10;
-        return {
-          _id: `fallback-${index}`,
-          tourSlug: "",
-          startDate: start.toISOString().slice(0, 10),
-          price: basePrice,
-          capacity: 24,
-          booked: 24 - seats,
-          seatsLeft: seats,
-          note: seats <= 5 ? "filling fast" : "available",
-          createdAt: 0,
-        } satisfies TourDeparture;
-      }),
-    [basePrice],
+    () => fallbackDepartures(basePrice, tourSlug),
+    [basePrice, tourSlug],
   );
 
   const allDates = departures.length ? departures : fallback;
@@ -180,7 +165,7 @@ export function BookingCard({
             <div
               role="radiogroup"
               aria-label="Departure date"
-              className="mt-4 grid gap-2 sm:grid-cols-2"
+              className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3"
             >
               {allDates.map((date) => {
                 const sold = date.seatsLeft <= 0;
@@ -199,70 +184,45 @@ export function BookingCard({
                       setPickerOpen(false);
                     }}
                     className={cn(
-                      "flex min-w-0 flex-col items-start gap-2 rounded-[14px] border-[1.5px] p-3 text-left transition",
+                      "rounded-[12px] border-[1.5px] px-3 py-2.5 text-left transition",
                       active
                         ? "border-ink bg-ink text-paper"
                         : sold
-                          ? "cursor-not-allowed border-sand-300 bg-sand-100 text-navy-500"
-                          : "border-sand-300 bg-paper text-ink hover:border-navy-300 hover:bg-sand-100",
+                          ? "border-sand-300 bg-sand-100 text-navy-500"
+                          : "border-sand-300 bg-paper text-ink hover:border-navy-300",
                     )}
                   >
-                    <span className="flex w-full items-center justify-between gap-2">
-                      <span
-                        className={cn(
-                          "truncate text-[13.5px] font-bold",
-                          sold && "line-through",
-                        )}
-                      >
-                        {dateFormatter.format(
-                          new Date(`${date.startDate}T00:00:00Z`),
-                        )}
-                      </span>
-                      {active ? (
-                        <Check
-                          className="h-3.5 w-3.5 shrink-0 text-gold-400"
-                          strokeWidth={3}
-                          aria-hidden="true"
-                        />
-                      ) : null}
-                    </span>
-
                     <span
                       className={cn(
-                        "inline-flex rounded-full px-2 py-0.5 text-[11px] font-bold",
-                        active
-                          ? "bg-gold-400 text-ink"
-                          : sold
-                            ? "bg-sand-200 text-navy-500"
-                            : low
-                              ? "bg-gold-100 text-gold-700"
-                              : "bg-success-soft text-success",
+                        "block text-[13px] font-bold",
+                        sold && "line-through",
                       )}
                     >
-                      {seatLabel(date.seatsLeft)}
+                      {dateFormatter.format(
+                        new Date(`${date.startDate}T00:00:00Z`),
+                      )}
                     </span>
-
-                    <span className="mt-auto flex w-full items-baseline justify-between gap-1 pt-1">
-                      <span
-                        className={cn(
-                          "text-sm font-bold",
-                          active
-                            ? "text-paper"
-                            : sold
-                              ? "text-navy-500"
-                              : "text-ink",
-                        )}
-                      >
-                        {formatINR(date.price)}
-                      </span>
-                      <span
-                        className={cn(
-                          "text-[10px] font-medium",
-                          active ? "text-navy-200" : "text-navy-500",
-                        )}
-                      >
-                        per person
-                      </span>
+                    <span
+                      className={cn(
+                        "mt-0.5 block text-[12px] font-medium",
+                        active ? "text-navy-200" : "text-navy-500",
+                      )}
+                    >
+                      {sold ? "Sold out" : formatINR(date.price)}
+                    </span>
+                    <span
+                      className={cn(
+                        "mt-1 block text-xs font-bold",
+                        active
+                          ? "text-gold-400"
+                          : sold
+                            ? "text-navy-500"
+                            : low
+                              ? "text-danger"
+                              : "text-success",
+                      )}
+                    >
+                      {sold ? "Waitlist" : seatLabel(date.seatsLeft)}
                     </span>
                   </button>
                 );

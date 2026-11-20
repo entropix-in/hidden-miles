@@ -20,6 +20,7 @@ import { Stamp } from "@/components/site/stamp";
 import { site } from "@/data/site";
 import type { TourDeparture } from "@/lib/types";
 import type { TourCity } from "@/lib/tour-cities";
+import { fallbackDepartures } from "@/lib/tour-departures";
 import { cn, formatINR, imageUrl } from "@/lib/utils";
 
 const STEPS = ["Trip details", "Lead traveller", "Add-ons", "Payment"];
@@ -102,23 +103,7 @@ export function BookingFlow({
 }) {
   const router = useRouter();
   const fallback = useMemo(
-    () =>
-      Array.from({ length: 18 }).map((_, index) => {
-        const start = new Date();
-        start.setUTCDate(start.getUTCDate() + 10 + index * 3);
-        const seats = [6, 18, 3, 12, 0, 9][index % 6] ?? 10;
-        return {
-          _id: `fallback-${index}`,
-          tourSlug: tour.slug,
-          startDate: start.toISOString().slice(0, 10),
-          price: tour.price,
-          capacity: 26,
-          booked: 26 - seats,
-          seatsLeft: seats,
-          note: undefined,
-          createdAt: 0,
-        } satisfies TourDeparture;
-      }),
+    () => fallbackDepartures(tour.price, tour.slug),
     [tour.price, tour.slug],
   );
 
