@@ -9,7 +9,9 @@ import {
   Ticket,
   UserRound,
 } from "lucide-react";
-import { logoutAction } from "@/lib/user-actions";
+import { logoutAction, changePasswordAction, updateProfileAction } from "@/lib/user-actions";
+import { AuthError, AuthNotice } from "@/components/site/auth-card";
+import { PasswordInput } from "@/components/ui/password-input";
 import { requireUser } from "@/lib/user-auth";
 import { loadTours, loadUserBookings } from "@/lib/content";
 import { bookingStatusLabels } from "@/lib/booking-status";
@@ -48,7 +50,14 @@ function formatDate(value?: string) {
   return dateFormatter.format(new Date(`${value}T00:00:00Z`));
 }
 
-export default async function AccountPage() {
+export default async function AccountPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const params = await searchParams;
+  const notice = typeof params.notice === "string" ? params.notice : "";
+  const error = typeof params.error === "string" ? params.error : "";
   const user = await requireUser("/account");
   const [bookings, tours] = await Promise.all([
     loadUserBookings(user.id),
@@ -198,7 +207,10 @@ export default async function AccountPage() {
           )}
         </section>
 
-        <aside className="space-y-4 lg:sticky lg:top-28">
+        <aside className="space-y-4">
+          <AuthNotice message={notice} />
+          <AuthError message={error} />
+
           <div className="rounded-[24px] border border-sand-300 bg-paper p-6">
             <div className="flex items-center gap-4">
               <span className="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-ink text-lg font-extrabold uppercase text-gold-400">
@@ -240,6 +252,123 @@ export default async function AccountPage() {
             <form action={logoutAction} className="mt-5">
               <button type="submit" className="btn btn-outline w-full">
                 Sign out
+              </button>
+            </form>
+          </div>
+
+          <div className="rounded-[24px] border border-sand-300 bg-paper p-6">
+            <h2 className="type-title text-ink">Edit details</h2>
+            <p className="type-small mt-1.5 text-navy-600">
+              Keep your name, email and phone up to date. We use them for
+              booking confirmations and trip updates.
+            </p>
+            <form action={updateProfileAction} className="mt-4 space-y-4">
+              <div>
+                <label htmlFor="profile-name" className="field-label">
+                  Full name
+                </label>
+                <input
+                  id="profile-name"
+                  name="name"
+                  required
+                  minLength={2}
+                  maxLength={120}
+                  autoComplete="name"
+                  defaultValue={user.name}
+                  className="field"
+                />
+              </div>
+              <div>
+                <label htmlFor="profile-email" className="field-label">
+                  Email address
+                </label>
+                <input
+                  id="profile-email"
+                  name="email"
+                  type="email"
+                  required
+                  maxLength={190}
+                  autoComplete="email"
+                  defaultValue={user.email}
+                  className="field"
+                />
+              </div>
+              <div>
+                <label htmlFor="profile-phone" className="field-label">
+                  Phone <span className="font-medium text-navy-500">(optional)</span>
+                </label>
+                <input
+                  id="profile-phone"
+                  name="phone"
+                  maxLength={40}
+                  autoComplete="tel"
+                  defaultValue={user.phone}
+                  placeholder="+91"
+                  className="field"
+                />
+              </div>
+              <button type="submit" className="btn btn-primary w-full">
+                Save changes
+              </button>
+            </form>
+          </div>
+
+          <div className="rounded-[24px] border border-sand-300 bg-paper p-6">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <h2 className="type-title text-ink">Change password</h2>
+                <p className="type-small mt-1.5 text-navy-600">
+                  Enter your current password, then choose a new one.
+                </p>
+              </div>
+              <Link
+                href="/forgot-password"
+                className="shrink-0 text-xs font-bold text-blue-700 underline-offset-4 transition hover:text-blue-800 hover:underline"
+              >
+                Forgot it?
+              </Link>
+            </div>
+            <form action={changePasswordAction} className="mt-4 space-y-4">
+              <div>
+                <label htmlFor="current-password" className="field-label">
+                  Current password
+                </label>
+                <PasswordInput
+                  id="current-password"
+                  name="currentPassword"
+                  required
+                  autoComplete="current-password"
+                  placeholder="Your current password"
+                />
+              </div>
+              <div>
+                <label htmlFor="new-password" className="field-label">
+                  New password
+                </label>
+                <PasswordInput
+                  id="new-password"
+                  name="password"
+                  required
+                  minLength={8}
+                  autoComplete="new-password"
+                  placeholder="At least 8 characters"
+                />
+              </div>
+              <div>
+                <label htmlFor="confirm-password" className="field-label">
+                  Confirm new password
+                </label>
+                <PasswordInput
+                  id="confirm-password"
+                  name="confirmPassword"
+                  required
+                  minLength={8}
+                  autoComplete="new-password"
+                  placeholder="Type it once more"
+                />
+              </div>
+              <button type="submit" className="btn btn-outline w-full">
+                Update password
               </button>
             </form>
           </div>

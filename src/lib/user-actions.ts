@@ -16,6 +16,7 @@ import {
   destroyUserSession,
   isValidEmail,
   normalizeEmail,
+  requireUser,
   safeNext,
 } from "@/lib/user-auth";
 
@@ -168,6 +169,126 @@ export async function loginAction(formData: FormData) {
 export async function logoutAction() {
   await destroyUserSession();
   redirect("/");
+}
+
+function accountUrl(params: { notice?: string; error?: string }) {
+  const query = new URLSearchParams();
+  if (params.notice) query.set("notice", params.notice);
+  if (params.error) query.set("error", params.error);
+  const value = query.toString();
+  return value ? `/account?${value}` : "/account";
+}
+
+export async function updateProfileAction(formData: FormData) {
+  const user = await requireUser("/account");
+  const name = getString(formData, "name").slice(0, 120);
+  const email = normalizeEmail(getString(formData, "email").slice(0, 190));
+  const phone = getString(formData, "phone").slice(0, 40);
+
+  if (name.length < 2) {
+    redirect(accountUrl({ error: "Please enter your full name." }));
+  }
+  if (!isValidEmail(email)) {
+    redirect(accountUrl({ error: "Please enter a valid email address." }));
+  }
+
+  const db = getDb();
+  if (!db) {
+    redirect(
+      accountUrl({
+        error: "Accounts are not available right now. Please try again later.",
+      }),
+    );
+  }
+
+  try {
+    await db
+      .update(users)
+      .set({ name, email, phone })
+      .where(eq(users.id, user.id));
+  } catch (error) {
+    if (isDuplicate(error)) {
+      redirect(
+        accountUrl({
+          error: "That email address is already linked to another account.",
+        }),
+      );
+    }
+    console.error(
+      "[hidden-miles] failed to update profile",
+      dbErrorMessage(error),
+    );
+    redirect(
+      accountUrl({ error: "We could not save your details. Please try again." }),
+    );
+  }
+
+  redirect(accountUrl({ notice: "Your profile details have been updated." }));
+}
+
+export async function changePasswordAction(formData: FormData) {
+  const user = await requireUser("/account");
+  const currentPassword = String(formData.get("currentPassword") ?? "");
+  const password = String(formData.get("password") ?? "");
+  const confirm = String(formData.get("confirmPassword") ?? "");
+
+  if (!currentPassword) {
+    redirect(accountUrl({ error: "Enter your current password to make a change." }));
+  }
+  if (password.length < 8) {
+    redirect(accountUrl({ error: "Use at least 8 characters for your new password." }));
+  }
+  if (password !== confirm) {
+    redirect(accountUrl({ error: "Those new passwords do not match." }));
+  }
+
+  const db = getDb();
+  if (!db) {
+    redirect(
+      accountUrl({
+        error: "Accounts are not available right now. Please try again later.",
+      }),
+    );
+  }
+
+  let valid = false;
+  try {
+    const [row] = await db
+      .select({ passwordHash: users.passwordHash })
+      .from(users)
+      .where(eq(users.id, user.id))
+      .limit(1);
+    valid = row ? await verifyPassword(currentPassword, row.passwordHash) : false;
+  } catch (error) {
+    console.error(
+      "[hidden-miles] failed to verify password",
+      dbErrorMessage(error),
+    );
+    redirect(
+      accountUrl({ error: "We could not check that password. Please try again." }),
+    );
+  }
+
+  if (!valid) {
+    redirect(accountUrl({ error: "That current password is incorrect." }));
+  }
+
+  try {
+    await db
+      .update(users)
+      .set({ passwordHash: await hashPassword(password) })
+      .where(eq(users.id, user.id));
+  } catch (error) {
+    console.error(
+      "[hidden-miles] failed to change password",
+      dbErrorMessage(error),
+    );
+    redirect(
+      accountUrl({ error: "We could not update your password. Please try again." }),
+    );
+  }
+
+  redirect(accountUrl({ notice: "Your password has been updated." }));
 }
 
 export async function requestPasswordResetAction(formData: FormData) {
