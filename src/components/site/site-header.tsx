@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -46,6 +46,20 @@ export function SiteHeader({
   const [query, setQuery] = useState("");
   const [previewSlug, setPreviewSlug] = useState<string | null>(null);
   const firstName = user?.name.split(" ")[0] || "Account";
+
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMobileOpen(false);
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [mobileOpen]);
 
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname.startsWith(href);
@@ -344,7 +358,7 @@ export function SiteHeader({
             </form>
           </div>
 
-          <nav className="px-5 py-4" aria-label="Mobile">
+          <nav className="px-5 py-5" aria-label="Mobile">
             {[
               { label: "Home", href: "/" },
               { label: "Group Tours", href: "/tours" },
@@ -359,16 +373,18 @@ export function SiteHeader({
             ].map((item) => {
               const expandable = item.label === "Destinations";
               const isOpen = openGroup === item.label;
+              const active = isActive(item.href);
 
               return (
-                <div key={item.label} className="border-b border-sand-300">
-                  <div className="flex items-center justify-between gap-3 py-4">
+                <div key={item.label} className="border-b border-sand-200/80 last:border-b-0">
+                  <div className="flex items-center gap-1">
                     <Link
                       href={item.href}
                       onClick={() => setMobileOpen(false)}
+                      aria-current={active ? "page" : undefined}
                       className={cn(
-                        "type-h4 text-ink",
-                        isActive(item.href) && "text-gold-600",
+                        "flex-1 py-3.5 text-[16px] font-semibold transition",
+                        active ? "text-gold-600" : "text-ink hover:text-gold-600",
                       )}
                     >
                       {item.label}
@@ -379,33 +395,43 @@ export function SiteHeader({
                         onClick={() => setOpenGroup(isOpen ? null : item.label)}
                         aria-label={isOpen ? "Collapse destinations" : "Expand destinations"}
                         aria-expanded={isOpen}
-                        className="text-xl text-gold-600"
+                        className="grid h-10 w-10 place-items-center rounded-full text-navy-500 transition hover:bg-sand-100 hover:text-ink"
                       >
-                        {isOpen ? "−" : "›"}
+                        <ChevronDown
+                          className={cn("h-4 w-4 transition duration-200", isOpen && "rotate-180")}
+                          aria-hidden
+                        />
                       </button>
-                    ) : (
-                      <span className="text-xl text-navy-300">›</span>
-                    )}
+                    ) : null}
                   </div>
 
                   {expandable && isOpen ? (
-                    <div className="flex flex-wrap gap-2 pb-4">
-                      {destinations.slice(0, 8).map((destination) => (
-                        <Link
-                          key={destination.slug}
-                          href={`/destinations/${destination.slug}`}
-                          onClick={() => setMobileOpen(false)}
-                          className="chip"
-                        >
-                          {destination.name}
-                        </Link>
-                      ))}
+                    <div className="pb-5">
+                      <div className="grid gap-4">
+                        {groups.map((group) => (
+                          <div key={group.label}>
+                            <p className="type-label text-gold-600">{group.label}</p>
+                            <div className="mt-2 grid grid-cols-2 gap-1.5">
+                              {group.items.slice(0, 8).map((destination) => (
+                                <Link
+                                  key={destination.slug}
+                                  href={`/destinations/${destination.slug}`}
+                                  onClick={() => setMobileOpen(false)}
+                                  className="rounded-[10px] border border-sand-200 bg-sand-50 px-3 py-2 text-[13px] font-semibold text-ink transition hover:border-sand-300 hover:bg-sand-100"
+                                >
+                                  {destination.name}
+                                </Link>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                       <Link
                         href="/destinations"
                         onClick={() => setMobileOpen(false)}
-                        className="chip text-blue-700"
+                        className="mt-4 inline-flex items-center gap-1.5 text-[13px] font-bold text-blue-700"
                       >
-                        All destinations →
+                        All destinations <span aria-hidden>→</span>
                       </Link>
                     </div>
                   ) : null}
