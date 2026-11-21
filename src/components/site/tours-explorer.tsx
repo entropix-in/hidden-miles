@@ -684,7 +684,7 @@ export function ToursExplorer({
                     route.
                   </p>
                 </div>
-                <Link href="/contact" className="btn btn-ink btn-sm shrink-0">
+                <Link href="/contact" className="btn btn-ink btn-sm shrink-0 gap-2 px-3.5 text-[13px] [&_.btn-dot]:h-6 [&_.btn-dot]:w-6">
                   Ask a specialist
                   <span className="btn-dot">→</span>
                 </Link>
