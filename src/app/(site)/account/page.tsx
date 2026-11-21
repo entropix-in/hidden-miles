@@ -4,6 +4,7 @@ import Link from "next/link";
 import {
   CalendarDays,
   Compass,
+  LockKeyhole,
   Mail,
   Phone,
   Ticket,
@@ -113,7 +114,13 @@ export default async function AccountPage({
         </div>
       </div>
 
-      <div className="container-page grid gap-8 py-10 md:py-14 lg:grid-cols-[1fr_340px] lg:items-start">
+      <div className="container-page py-10 md:py-14">
+        <div className="mb-6 space-y-3 empty:mb-0">
+          <AuthNotice message={notice} />
+          <AuthError message={error} />
+        </div>
+
+        <div className="grid gap-8 lg:grid-cols-[1fr_340px] lg:items-start">
         <section aria-labelledby="my-trips">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 id="my-trips" className="type-h3 text-ink">
@@ -208,9 +215,6 @@ export default async function AccountPage({
         </section>
 
         <aside className="space-y-4">
-          <AuthNotice message={notice} />
-          <AuthError message={error} />
-
           <div className="rounded-[24px] border border-sand-300 bg-paper p-6">
             <div className="flex items-center gap-4">
               <span className="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-ink text-lg font-extrabold uppercase text-gold-400">
@@ -257,123 +261,6 @@ export default async function AccountPage({
           </div>
 
           <div className="rounded-[24px] border border-sand-300 bg-paper p-6">
-            <h2 className="type-title text-ink">Edit details</h2>
-            <p className="type-small mt-1.5 text-navy-600">
-              Keep your name, email and phone up to date. We use them for
-              booking confirmations and trip updates.
-            </p>
-            <form action={updateProfileAction} className="mt-4 space-y-4">
-              <div>
-                <label htmlFor="profile-name" className="field-label">
-                  Full name
-                </label>
-                <input
-                  id="profile-name"
-                  name="name"
-                  required
-                  minLength={2}
-                  maxLength={120}
-                  autoComplete="name"
-                  defaultValue={user.name}
-                  className="field"
-                />
-              </div>
-              <div>
-                <label htmlFor="profile-email" className="field-label">
-                  Email address
-                </label>
-                <input
-                  id="profile-email"
-                  name="email"
-                  type="email"
-                  required
-                  maxLength={190}
-                  autoComplete="email"
-                  defaultValue={user.email}
-                  className="field"
-                />
-              </div>
-              <div>
-                <label htmlFor="profile-phone" className="field-label">
-                  Phone <span className="font-medium text-navy-500">(optional)</span>
-                </label>
-                <input
-                  id="profile-phone"
-                  name="phone"
-                  maxLength={40}
-                  autoComplete="tel"
-                  defaultValue={user.phone}
-                  placeholder="+91"
-                  className="field"
-                />
-              </div>
-              <button type="submit" className="btn btn-primary w-full">
-                Save changes
-              </button>
-            </form>
-          </div>
-
-          <div className="rounded-[24px] border border-sand-300 bg-paper p-6">
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <h2 className="type-title text-ink">Change password</h2>
-                <p className="type-small mt-1.5 text-navy-600">
-                  Enter your current password, then choose a new one.
-                </p>
-              </div>
-              <Link
-                href="/forgot-password"
-                className="shrink-0 text-xs font-bold text-blue-700 underline-offset-4 transition hover:text-blue-800 hover:underline"
-              >
-                Forgot it?
-              </Link>
-            </div>
-            <form action={changePasswordAction} className="mt-4 space-y-4">
-              <div>
-                <label htmlFor="current-password" className="field-label">
-                  Current password
-                </label>
-                <PasswordInput
-                  id="current-password"
-                  name="currentPassword"
-                  required
-                  autoComplete="current-password"
-                  placeholder="Your current password"
-                />
-              </div>
-              <div>
-                <label htmlFor="new-password" className="field-label">
-                  New password
-                </label>
-                <PasswordInput
-                  id="new-password"
-                  name="password"
-                  required
-                  minLength={8}
-                  autoComplete="new-password"
-                  placeholder="At least 8 characters"
-                />
-              </div>
-              <div>
-                <label htmlFor="confirm-password" className="field-label">
-                  Confirm new password
-                </label>
-                <PasswordInput
-                  id="confirm-password"
-                  name="confirmPassword"
-                  required
-                  minLength={8}
-                  autoComplete="new-password"
-                  placeholder="Type it once more"
-                />
-              </div>
-              <button type="submit" className="btn btn-outline w-full">
-                Update password
-              </button>
-            </form>
-          </div>
-
-          <div className="rounded-[24px] border border-sand-300 bg-paper p-6">
             <p className="type-label text-gold-600">Need a hand?</p>
             <p className="type-small mt-2 text-navy-700">
               Plans changed or have a question about a booking? Talk to a real
@@ -385,6 +272,154 @@ export default async function AccountPage({
             </Link>
           </div>
         </aside>
+        </div>
+
+        <section className="mt-12 border-t border-sand-300 pt-10" aria-labelledby="account-settings">
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <p className="type-label text-gold-600">Account settings</p>
+              <h2 id="account-settings" className="type-h3 mt-1 text-ink">
+                Your details &amp; security
+              </h2>
+            </div>
+            <p className="max-w-sm text-[13px] font-medium leading-5 text-navy-600">
+              Update the details we use for bookings, or choose a new password.
+            </p>
+          </div>
+
+          <div className="mt-6 grid gap-6 lg:grid-cols-2 lg:items-start">
+            <div className="rounded-[24px] border border-sand-300 bg-paper p-6 md:p-7">
+              <div className="flex items-start gap-3 border-b border-sand-300 pb-5">
+                <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-sand-100 text-ink">
+                  <UserRound className="h-5 w-5" aria-hidden />
+                </span>
+                <div>
+                  <h3 className="type-title text-ink">Personal details</h3>
+                  <p className="type-small mt-1 text-navy-600">
+                    The name, email and phone we use for your bookings.
+                  </p>
+                </div>
+              </div>
+              <form action={updateProfileAction} className="mt-5 space-y-4">
+                <div>
+                  <label htmlFor="profile-name" className="field-label">
+                    Full name
+                  </label>
+                  <input
+                    id="profile-name"
+                    name="name"
+                    required
+                    minLength={2}
+                    maxLength={120}
+                    autoComplete="name"
+                    defaultValue={user.name}
+                    className="field"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="profile-email" className="field-label">
+                    Email address
+                  </label>
+                  <input
+                    id="profile-email"
+                    name="email"
+                    type="email"
+                    required
+                    maxLength={190}
+                    autoComplete="email"
+                    defaultValue={user.email}
+                    className="field"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="profile-phone" className="field-label">
+                    Phone <span className="font-medium text-navy-500">(optional)</span>
+                  </label>
+                  <input
+                    id="profile-phone"
+                    name="phone"
+                    maxLength={40}
+                    autoComplete="tel"
+                    defaultValue={user.phone}
+                    placeholder="+91"
+                    className="field"
+                  />
+                </div>
+                <button type="submit" className="btn btn-primary w-full">
+                  Save changes
+                </button>
+              </form>
+            </div>
+
+            <div className="rounded-[24px] border border-sand-300 bg-paper p-6 md:p-7">
+              <div className="flex items-start justify-between gap-4 border-b border-sand-300 pb-5">
+                <div className="flex items-start gap-3">
+                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-sand-100 text-ink">
+                    <LockKeyhole className="h-5 w-5" aria-hidden />
+                  </span>
+                  <div>
+                    <h3 className="type-title text-ink">Password &amp; security</h3>
+                    <p className="type-small mt-1 text-navy-600">
+                      Confirm your current password before setting a new one.
+                    </p>
+                  </div>
+                </div>
+                <Link
+                  href="/forgot-password"
+                  className="shrink-0 pt-1 text-xs font-bold text-blue-700 underline-offset-4 transition hover:text-blue-800 hover:underline"
+                >
+                  Forgot it?
+                </Link>
+              </div>
+              <form action={changePasswordAction} className="mt-5 space-y-4">
+                <div>
+                  <label htmlFor="current-password" className="field-label">
+                    Current password
+                  </label>
+                  <PasswordInput
+                    id="current-password"
+                    name="currentPassword"
+                    required
+                    autoComplete="current-password"
+                    placeholder="Your current password"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="new-password" className="field-label">
+                    New password
+                  </label>
+                  <PasswordInput
+                    id="new-password"
+                    name="password"
+                    required
+                    minLength={8}
+                    autoComplete="new-password"
+                    placeholder="At least 8 characters"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="confirm-password" className="field-label">
+                    Confirm new password
+                  </label>
+                  <PasswordInput
+                    id="confirm-password"
+                    name="confirmPassword"
+                    required
+                    minLength={8}
+                    autoComplete="new-password"
+                    placeholder="Type it once more"
+                  />
+                </div>
+                <button type="submit" className="btn btn-outline w-full">
+                  Update password
+                </button>
+                <p className="text-center text-xs font-medium text-navy-500">
+                  You&apos;ll stay signed in on this device after changing it.
+                </p>
+              </form>
+            </div>
+          </div>
+        </section>
       </div>
     </div>
   );
