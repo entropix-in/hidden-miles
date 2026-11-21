@@ -134,7 +134,7 @@ export default async function TourDetailPage({
               <span className="badge badge-blue">{tour.region} group tour</span>
               <span className="badge badge-success">Family friendly</span>
             </div>
-            <h1 className="type-h1 mt-4 text-ink">{tour.title}</h1>
+            <h1 className="type-h1 mt-4 text-[clamp(1.875rem,3.4vw,2.75rem)] text-ink">{tour.title}</h1>
             <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-[13px] font-medium text-navy-700">
               <span className="inline-flex items-center gap-1.5">
                 <Star className="h-3.5 w-3.5 fill-gold-400 text-gold-400" />

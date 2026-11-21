@@ -70,7 +70,7 @@ export default async function AccountPage() {
           <p className="type-label text-gold-400">My account</p>
           <div className="mt-2 flex flex-wrap items-end justify-between gap-5">
             <div>
-              <h1 className="type-h1 text-paper">Hello, {firstName}.</h1>
+              <h1 className="type-h1 text-[clamp(1.75rem,3vw,2.5rem)] text-paper">Hello, {firstName}.</h1>
               <p className="type-body mt-2 max-w-xl text-navy-200">
                 Your tours, traveller details and trip updates — all in one
                 place.
