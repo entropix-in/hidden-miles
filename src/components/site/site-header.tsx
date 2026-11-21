@@ -161,8 +161,10 @@ export function SiteHeader({
                   ) : null}
 
                   {link.label === "Destinations" ? (
+                    // The nav bar's backdrop blur makes this fixed panel relative to the bar,
+                    // so top-[50px] + pt-3 lines its panel up with the small nav dropdowns.
                     <div
-                      className="invisible fixed left-1/2 top-[80px] w-[min(1040px,calc(100vw-40px))] -translate-x-1/2 pt-5 opacity-0 transition duration-200 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100"
+                      className="invisible fixed left-1/2 top-[50px] w-[min(1040px,calc(100vw-40px))] -translate-x-1/2 pt-3 opacity-0 transition duration-200 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100"
                       onMouseLeave={() => setPreviewSlug(null)}
                     >
                       <div className="flex gap-8 rounded-[24px] border border-sand-300 bg-paper p-6 shadow-[0_32px_64px_-24px_rgba(11,39,53,0.25)]">

@@ -418,6 +418,8 @@ export default async function TourDetailPage({
                 tourSlug={tour.slug}
                 basePrice={tour.price}
                 oldPrice={tour.oldPrice}
+                childPrice={tour.childPrice}
+                infantPrice={tour.infantPrice}
                 departures={departures}
                 tourTitle={tour.title}
                 cities={resolveTourCities(tour.departureCities)}

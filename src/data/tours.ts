@@ -38,6 +38,10 @@ export type Tour = {
   nights: number;
   days: number;
   price: number;
+  /** Per-child price. Falls back to 75% of the adult price when unset. */
+  childPrice?: number;
+  /** Per-infant price. 0 (or unset) means infants travel free. */
+  infantPrice?: number;
   oldPrice?: number;
   rating: number;
   reviews: number;

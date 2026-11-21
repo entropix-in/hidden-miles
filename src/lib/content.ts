@@ -60,6 +60,8 @@ function mapTour(row: TourRow): AdminTour {
     nights: Number(row.nights),
     days: Number(row.days),
     price: Number(row.price),
+    childPrice: row.childPrice === null ? undefined : Number(row.childPrice),
+    infantPrice: row.infantPrice === null ? undefined : Number(row.infantPrice),
     oldPrice: row.oldPrice === null ? undefined : Number(row.oldPrice),
     rating: Number(row.rating),
     reviews: Number(row.reviews),

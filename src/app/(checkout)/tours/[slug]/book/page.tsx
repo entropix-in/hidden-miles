@@ -59,6 +59,8 @@ export default async function BookTourPage({
         title: tour.title,
         image: tour.image,
         price: tour.price,
+        childPrice: tour.childPrice,
+        infantPrice: tour.infantPrice,
         oldPrice: tour.oldPrice,
         nights: tour.nights,
         days: tour.days,
@@ -72,6 +74,7 @@ export default async function BookTourPage({
       initialCity={readParam("city")}
       initialAdults={readNumber("adults")}
       initialChildren={readNumber("children")}
+      initialInfants={readNumber("infants")}
       account={{
         name: user.name,
         email: user.email,

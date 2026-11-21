@@ -49,6 +49,8 @@ export const tours = mysqlTable(
     nights: int("nights", { unsigned: true }).notNull().default(0),
     days: int("days", { unsigned: true }).notNull().default(1),
     price: int("price", { unsigned: true }).notNull().default(0),
+    childPrice: int("child_price", { unsigned: true }),
+    infantPrice: int("infant_price", { unsigned: true }),
     oldPrice: int("old_price", { unsigned: true }),
     rating: decimal("rating", { precision: 2, scale: 1 })
       .notNull()

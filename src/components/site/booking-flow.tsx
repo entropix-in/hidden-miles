@@ -79,6 +79,7 @@ export function BookingFlow({
   initialCity,
   initialAdults,
   initialChildren,
+  initialInfants,
   account,
 }: {
   tour: {
@@ -86,6 +87,8 @@ export function BookingFlow({
     title: string;
     image: string;
     price: number;
+    childPrice?: number;
+    infantPrice?: number;
     oldPrice?: number;
     nights: number;
     days: number;
@@ -99,6 +102,7 @@ export function BookingFlow({
   initialCity?: string;
   initialAdults?: number;
   initialChildren?: number;
+  initialInfants?: number;
   account: { name: string; email: string; phone: string };
 }) {
   const router = useRouter();
@@ -135,6 +139,11 @@ export function BookingFlow({
       ? Math.min(10, Math.max(0, Math.round(initialChildren)))
       : 1,
   );
+  const [infants, setInfants] = useState(
+    initialInfants !== undefined
+      ? Math.min(10, Math.max(0, Math.round(initialInfants)))
+      : 0,
+  );
   const [lead, setLead] = useState({
     name: account.name,
     email: account.email,
@@ -158,16 +167,18 @@ export function BookingFlow({
   const cityOption =
     cities.find((item) => item.name === city) ??
     cities[0] ?? { name: "", note: "", priceDelta: 0 };
-  const travellers = adults + children;
+  const travellers = adults + children + infants;
   const adultPrice =
     (selectedDate?.price ?? tour.price) + cityOption.priceDelta;
-  const childPrice = Math.round(adultPrice * 0.75);
+  const childPrice = tour.childPrice ?? Math.round(adultPrice * 0.75);
+  const infantPrice = tour.infantPrice ?? 0;
   const addonTotal =
     ADDONS.filter((addon) => addons.includes(addon.id)).reduce(
       (sum, addon) => sum + addon.price * travellers,
       0,
     );
-  const baseTotal = adultPrice * adults + childPrice * children;
+  const baseTotal =
+    adultPrice * adults + childPrice * children + infantPrice * infants;
   const promoSaving = promoApplied ? Math.min(11200, Math.round(baseTotal * 0.1)) : 0;
   const subtotal = baseTotal + addonTotal - promoSaving;
   const gst = Math.round(subtotal * 0.05);
@@ -178,6 +189,11 @@ export function BookingFlow({
   const payNow =
     plan === "full" ? fullPayment : plan === "emi" ? emi : due;
   const balance = total - due;
+  const travellerSummary = [
+    `${adults} ${adults === 1 ? "adult" : "adults"}`,
+    children ? `${children} ${children === 1 ? "child" : "children"}` : "",
+    infants ? `${infants} ${infants === 1 ? "infant" : "infants"}` : "",
+  ].filter(Boolean).join(" · ");
 
   function toggleAddon(id: string) {
     setAddons((current) =>
@@ -205,6 +221,9 @@ export function BookingFlow({
             ? ""
             : selectedDate?._id,
           travellers,
+          adults,
+          children,
+          infants,
         }),
       });
       const data = (await response.json().catch(() => ({}))) as {
@@ -319,7 +338,7 @@ export function BookingFlow({
                 ["Booking ref", bookingRef],
                 ["Departure", selectedDate ? longDateFormatter.format(new Date(`${selectedDate.startDate}T00:00:00Z`)) : "—"],
                 ["From", city],
-                ["Travellers", `${adults} ${adults === 1 ? "adult" : "adults"}${children ? ` · ${children} ${children === 1 ? "child" : "children"}` : ""}`],
+                ["Travellers", travellerSummary],
                 ["Paid", `${formatINR(payNow)} of ${formatINR(total)}`],
               ].map(([key, value]) => (
                 <div key={key} className="flex items-center justify-between gap-4">
@@ -482,7 +501,11 @@ export function BookingFlow({
 
                 <SectionCard
                   title="3. Who's travelling?"
-                  subtitle="Children's prices apply to ages 5–11. Under 5 travel free on a parent's lap."
+                  subtitle={`Adults are 12+. Children are 5–11 at ${formatINR(childPrice)}. ${
+                    infantPrice > 0
+                      ? `Infants under 5 are ${formatINR(infantPrice)}.`
+                      : "Infants under 5 travel free."
+                  }`}
                 >
                   <div className="grid gap-3">
                     <Counter
@@ -501,10 +524,10 @@ export function BookingFlow({
                     />
                     <Counter
                       label="Infants"
-                      sub="Under 5 · free"
-                      value={0}
+                      sub={`Under 5 · ${infantPrice > 0 ? formatINR(infantPrice) : "free"}`}
+                      value={infants}
                       min={0}
-                      onChange={() => undefined}
+                      onChange={setInfants}
                     />
                   </div>
                   <p className="mt-4 rounded-[14px] bg-blue-50 px-4 py-3 text-[13px] font-medium text-blue-700">
@@ -989,7 +1012,7 @@ export function BookingFlow({
               {[
                 ["Departure", selectedDate ? longDateFormatter.format(new Date(`${selectedDate.startDate}T00:00:00Z`)) : "—"],
                 ["From", city],
-                ["Travellers", `${adults} ${adults === 1 ? "adult" : "adults"}${children ? ` · ${children} ${children === 1 ? "child" : "children"}` : ""}`],
+                ["Travellers", travellerSummary],
               ].map(([key, value]) => (
                 <div key={key} className="flex items-center justify-between gap-4">
                   <dt className="text-[13px] font-medium text-navy-500">{key}</dt>
@@ -1013,6 +1036,16 @@ export function BookingFlow({
                     Children · {formatINR(childPrice)} × {children}
                   </span>
                   <span className="font-bold text-ink">{formatINR(childPrice * children)}</span>
+                </div>
+              ) : null}
+              {infants ? (
+                <div className="flex items-center justify-between gap-4 text-[13px]">
+                  <span className="text-navy-700">
+                    Infants · {infantPrice > 0 ? formatINR(infantPrice) : "free"} × {infants}
+                  </span>
+                  <span className="font-bold text-ink">
+                    {infantPrice > 0 ? formatINR(infantPrice * infants) : "Free"}
+                  </span>
                 </div>
               ) : null}
               {addonTotal ? (

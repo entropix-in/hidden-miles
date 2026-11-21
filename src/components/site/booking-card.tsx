@@ -28,12 +28,16 @@ export function BookingCard({
   tourSlug,
   basePrice,
   oldPrice,
+  childPrice: childPriceSetting,
+  infantPrice: infantPriceSetting,
   departures,
   cities,
 }: {
   tourSlug: string;
   basePrice: number;
   oldPrice?: number;
+  childPrice?: number;
+  infantPrice?: number;
   departures: TourDeparture[];
   tourTitle: string;
   cities: TourCity[];
@@ -51,14 +55,18 @@ export function BookingCard({
   const [city, setCity] = useState(cities[0]?.name ?? "");
   const [adults, setAdults] = useState(2);
   const [children, setChildren] = useState(1);
+  const [infants, setInfants] = useState(0);
 
   const selected = allDates.find((date) => date._id === selectedId) ?? allDates[0];
   const cityOption =
     cities.find((item) => item.name === city) ??
     cities[0] ?? { name: "", note: "", priceDelta: 0 };
   const adultPrice = (selected?.price ?? basePrice) + cityOption.priceDelta;
-  const childPrice = Math.round(adultPrice * 0.75);
-  const total = adultPrice * adults + childPrice * children;
+  const childPrice = childPriceSetting ?? Math.round(adultPrice * 0.75);
+  const infantPrice = infantPriceSetting ?? 0;
+  const travellers = adults + children + infants;
+  const total =
+    adultPrice * adults + childPrice * children + infantPrice * infants;
 
   const landOnly = /tour only|no flight|land-only/i.test(cityOption.note);
   const cityHint = landOnly
@@ -72,6 +80,7 @@ export function BookingCard({
   if (cityOption.name) bookingParams.set("city", cityOption.name);
   bookingParams.set("adults", String(adults));
   bookingParams.set("children", String(children));
+  bookingParams.set("infants", String(infants));
   const bookingHref = `/tours/${tourSlug}/book?${bookingParams.toString()}`;
 
   return (
@@ -92,7 +101,7 @@ export function BookingCard({
         <span className="text-[32px] font-extrabold leading-none tracking-[-0.03em] text-ink">
           {formatINR(adultPrice)}
         </span>
-        <span className="type-small text-navy-500">per person</span>
+        <span className="type-small text-navy-500">per adult</span>
       </p>
 
       <div className="mt-6 flex items-baseline justify-between gap-3">
@@ -260,8 +269,9 @@ export function BookingCard({
         <p className="type-label text-navy-500">Travellers</p>
         <div className="mt-2 grid gap-2">
           {[
-            { label: "Adults", sub: "12+ years", value: adults, set: setAdults, min: 1 },
-            { label: "Children", sub: "5 – 11 years", value: children, set: setChildren, min: 0 },
+            { label: "Adults", sub: `12+ years · ${formatINR(adultPrice)}`, value: adults, set: setAdults, min: 1 },
+            { label: "Children", sub: `5 – 11 years · ${formatINR(childPrice)}`, value: children, set: setChildren, min: 0 },
+            { label: "Infants", sub: `Under 5 · ${infantPrice > 0 ? formatINR(infantPrice) : "Free"}`, value: infants, set: setInfants, min: 0 },
           ].map((traveller) => (
             <div
               key={traveller.label}
@@ -325,14 +335,25 @@ export function BookingCard({
               </span>
             </div>
           ) : null}
+          {infants ? (
+            <div className="flex items-center justify-between gap-3">
+              <span className="text-navy-700">
+                {infants} infant{infants === 1 ? "" : "s"} ×{" "}
+                {infantPrice > 0 ? formatINR(infantPrice) : "Free"}
+              </span>
+              <span className="font-bold tabular-nums text-ink">
+                {infantPrice > 0 ? formatINR(infantPrice * infants) : "Free"}
+              </span>
+            </div>
+          ) : null}
         </div>
 
         <div className="route-line my-3.5" />
 
         <div className="flex items-baseline justify-between gap-3">
           <span className="text-sm font-bold text-ink">
-            Tour price, {adults + children}{" "}
-            {adults + children === 1 ? "traveller" : "travellers"}
+            Tour price, {travellers}{" "}
+            {travellers === 1 ? "traveller" : "travellers"}
           </span>
           <span className="type-title tabular-nums text-ink">
             {formatINR(total)}

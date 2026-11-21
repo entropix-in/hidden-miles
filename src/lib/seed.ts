@@ -66,6 +66,8 @@ export function tourValues(tour: Tour) {
     nights: tour.nights,
     days: tour.days,
     price: tour.price,
+    childPrice: tour.childPrice ?? null,
+    infantPrice: tour.infantPrice ?? null,
     oldPrice: tour.oldPrice ?? null,
     rating: String(tour.rating),
     reviews: tour.reviews,

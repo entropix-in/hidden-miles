@@ -281,6 +281,10 @@ export async function saveTourAction(formData: FormData) {
 
     const oldPriceRaw = getString(formData, "oldPrice");
     const oldPrice = oldPriceRaw ? Number(oldPriceRaw) : undefined;
+    const childPriceRaw = getString(formData, "childPrice");
+    const childPrice = childPriceRaw ? Number(childPriceRaw) : undefined;
+    const infantPriceRaw = getString(formData, "infantPrice");
+    const infantPrice = infantPriceRaw ? Number(infantPriceRaw) : undefined;
     const badge = getString(formData, "badge");
     const departureCities = parseTourCities(
       getString(formData, "departureCities"),
@@ -315,6 +319,8 @@ export async function saveTourAction(formData: FormData) {
       nights: getNumber(formData, "nights"),
       days: getNumber(formData, "days"),
       price: getNumber(formData, "price"),
+      childPrice: Number.isFinite(childPrice) ? childPrice : undefined,
+      infantPrice: Number.isFinite(infantPrice) ? infantPrice : undefined,
       oldPrice: Number.isFinite(oldPrice) ? oldPrice : undefined,
       rating: getNumber(formData, "rating", 4.8),
       reviews: getNumber(formData, "reviews"),

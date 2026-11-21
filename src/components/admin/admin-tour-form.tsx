@@ -251,7 +251,7 @@ export function AdminTourForm({
           </div>
           <div>
             <label htmlFor="price" className="field-label">
-              Price (INR)
+              Adult price (INR)
             </label>
             <input
               id="price"
@@ -262,6 +262,38 @@ export function AdminTourForm({
               defaultValue={tour?.price ?? 0}
               className="field"
             />
+          </div>
+          <div>
+            <label htmlFor="childPrice" className="field-label">
+              Child price (INR)
+            </label>
+            <input
+              id="childPrice"
+              name="childPrice"
+              type="number"
+              min="0"
+              defaultValue={tour?.childPrice ?? (tour ? Math.round(tour.price * 0.75) : "")}
+              className="field"
+            />
+            <p className="mt-1 text-xs text-stone-600">
+              Ages 5–11. Leave blank to use 75% of the adult price.
+            </p>
+          </div>
+          <div>
+            <label htmlFor="infantPrice" className="field-label">
+              Infant price (INR)
+            </label>
+            <input
+              id="infantPrice"
+              name="infantPrice"
+              type="number"
+              min="0"
+              defaultValue={tour?.infantPrice ?? 0}
+              className="field"
+            />
+            <p className="mt-1 text-xs text-stone-600">
+              Under 5. Set 0 to keep infants free.
+            </p>
           </div>
           <div>
             <label htmlFor="oldPrice" className="field-label">
