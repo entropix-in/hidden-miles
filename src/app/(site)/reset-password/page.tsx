@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, KeyRound } from "lucide-react";
 import { AuthCard, AuthError } from "@/components/site/auth-card";
+import { PasswordInput } from "@/components/ui/password-input";
 import { findPasswordReset } from "@/lib/password-reset";
 import { resetPasswordAction } from "@/lib/user-actions";
 import { safeNext } from "@/lib/user-auth";
@@ -81,15 +82,13 @@ export default async function ResetPasswordPage({
           <label htmlFor="password" className="field-label">
             New password
           </label>
-          <input
+          <PasswordInput
             id="password"
             name="password"
-            type="password"
             required
             minLength={8}
             autoComplete="new-password"
             placeholder="At least 8 characters"
-            className="field"
           />
           <p className="field-hint">
             Mix letters, numbers and a symbol so it stays yours.
@@ -100,15 +99,13 @@ export default async function ResetPasswordPage({
           <label htmlFor="confirm-password" className="field-label">
             Confirm new password
           </label>
-          <input
+          <PasswordInput
             id="confirm-password"
             name="confirmPassword"
-            type="password"
             required
             minLength={8}
             autoComplete="new-password"
             placeholder="Type it once more"
-            className="field"
           />
         </div>
 

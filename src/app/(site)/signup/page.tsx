@@ -3,6 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { UserPlus } from "lucide-react";
 import { AuthCard, AuthError } from "@/components/site/auth-card";
+import { PasswordInput } from "@/components/ui/password-input";
 import { signupAction } from "@/lib/user-actions";
 import { accountsConfigured, getSessionUser, safeNext } from "@/lib/user-auth";
 
@@ -95,15 +96,13 @@ export default async function SignupPage({
           <label htmlFor="password" className="field-label">
             Password
           </label>
-          <input
+          <PasswordInput
             id="password"
             name="password"
-            type="password"
             required
             minLength={8}
             autoComplete="new-password"
             placeholder="At least 8 characters"
-            className="field"
           />
           <p className="field-hint">
             Mix letters, numbers and a symbol so it stays yours.
@@ -114,15 +113,13 @@ export default async function SignupPage({
           <label htmlFor="confirm-password" className="field-label">
             Confirm password
           </label>
-          <input
+          <PasswordInput
             id="confirm-password"
             name="confirmPassword"
-            type="password"
             required
             minLength={8}
             autoComplete="new-password"
             placeholder="Type it once more"
-            className="field"
           />
         </div>
 

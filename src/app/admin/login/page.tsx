@@ -3,6 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { AlertTriangle, ArrowLeft, LockKeyhole } from "lucide-react";
 import { adminConfigured, hasAdminSession } from "@/lib/admin-auth";
+import { PasswordInput } from "@/components/ui/password-input";
 import { loginAction } from "@/app/admin/actions";
 
 export const metadata: Metadata = {
@@ -57,14 +58,12 @@ export default async function AdminLoginPage({
                 <label htmlFor="password" className="field-label">
                   Admin password
                 </label>
-                <input
+                <PasswordInput
                   id="password"
                   name="password"
-                  type="password"
                   required
                   autoComplete="current-password"
                   placeholder="Enter your password"
-                  className="field"
                 />
               </div>
               <button type="submit" className="btn-primary w-full">

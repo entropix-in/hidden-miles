@@ -3,6 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { LockKeyhole } from "lucide-react";
 import { AuthCard, AuthError, AuthNotice } from "@/components/site/auth-card";
+import { PasswordInput } from "@/components/ui/password-input";
 import { loginAction } from "@/lib/user-actions";
 import { accountsConfigured, getSessionUser, safeNext } from "@/lib/user-auth";
 
@@ -79,14 +80,12 @@ export default async function LoginPage({
               Forgot password?
             </Link>
           </div>
-          <input
+          <PasswordInput
             id="password"
             name="password"
-            type="password"
             required
             autoComplete="current-password"
             placeholder="Your password"
-            className="field"
           />
         </div>
 
