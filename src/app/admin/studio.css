@@ -545,6 +545,21 @@
   border: 1px solid var(--studio-rule);
   border-radius: 0.5rem;
 }
+.admin-rich-list li[data-dragging],
+.admin-highlight-row[data-dragging] {
+  position: relative;
+  z-index: 2;
+  border-radius: 0.5rem;
+  outline: 2px solid var(--studio-pine);
+  background: var(--studio-paper);
+}
+.admin-rich-item-header {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem;
+}
+.admin-rich-item-header .admin-rich-item-toggle { flex: 1; min-width: 0; }
 .admin-rich-item-toggle {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
@@ -880,7 +895,7 @@ a.admin-page-number:hover { background: var(--studio-inset); border-color: var(-
 .admin-highlight-list { display: grid; gap: 0.375rem; }
 .admin-highlight-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
   gap: 0.375rem;
 }
