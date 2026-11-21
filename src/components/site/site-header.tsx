@@ -6,7 +6,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   ChevronDown,
-  MapPin,
   Menu,
   Phone,
   Search,
@@ -14,7 +13,6 @@ import {
   X,
 } from "lucide-react";
 import { Logo } from "@/components/site/logo";
-import { logoutAction } from "@/lib/user-actions";
 import { navLinks, site, type NavLink } from "@/data/site";
 import type { Destination } from "@/data/destinations";
 import { cn, imageUrl } from "@/lib/utils";
@@ -442,33 +440,19 @@ export function SiteHeader({
 
           <div className="border-t border-sand-300 px-5 py-5">
             {user ? (
-              <div className="space-y-3">
-                <Link
-                  href="/account"
-                  onClick={() => setMobileOpen(false)}
-                  className="flex items-center gap-3 rounded-[16px] border border-sand-300 bg-paper p-3 transition hover:border-navy-300"
-                >
-                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-ink text-sm font-extrabold uppercase text-gold-400">
-                    {user.name.slice(0, 1) || "H"}
-                  </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="block truncate text-sm font-bold text-ink">
-                      {user.name}
-                    </span>
-                    <span className="block truncate text-[12px] font-medium text-navy-500">
-                      {user.email}
-                    </span>
-                  </span>
-                  <span className="text-lg text-navy-300" aria-hidden="true">
-                    ›
-                  </span>
-                </Link>
-                <form action={logoutAction}>
-                  <button type="submit" className="btn btn-outline w-full">
-                    Sign out
-                  </button>
-                </form>
-              </div>
+              <Link
+                href="/account"
+                onClick={() => setMobileOpen(false)}
+                aria-label={`Open ${firstName}'s profile`}
+                className="flex w-fit items-center gap-2 rounded-full border border-sand-300 bg-paper py-1 pl-1 pr-3 transition hover:border-navy-300 hover:bg-sand-100"
+              >
+                <span className="grid h-7 w-7 place-items-center rounded-full bg-ink text-[12px] font-extrabold uppercase text-gold-400">
+                  {user.name.slice(0, 1) || "H"}
+                </span>
+                <span className="max-w-[92px] truncate text-[13px] font-bold text-ink">
+                  {firstName}
+                </span>
+              </Link>
             ) : (
               <div className="grid grid-cols-2 gap-3">
                 <Link
@@ -488,34 +472,6 @@ export function SiteHeader({
                 </Link>
               </div>
             )}
-          </div>
-
-          <div className="px-5 pb-10">
-            <Link
-              href="/contact"
-              onClick={() => setMobileOpen(false)}
-              className="btn btn-ink btn-lg w-full"
-            >
-              Plan my trip
-              <span className="btn-dot">→</span>
-            </Link>
-            <div className="mt-3 grid grid-cols-2 gap-3">
-              <a href={site.phoneHref} className="btn btn-light">
-                <Phone className="h-4 w-4" /> Call
-              </a>
-              <a
-                href={site.whatsappHref}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn btn-whatsapp"
-              >
-                WhatsApp
-              </a>
-            </div>
-            <p className="mt-4 flex items-center justify-center gap-2 text-[13px] font-medium text-navy-500">
-              <MapPin className="h-3.5 w-3.5" />
-              {site.address}
-            </p>
           </div>
         </div>
       ) : null}
