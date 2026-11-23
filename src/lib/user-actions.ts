@@ -176,11 +176,11 @@ function accountUrl(params: { notice?: string; error?: string }) {
   if (params.notice) query.set("notice", params.notice);
   if (params.error) query.set("error", params.error);
   const value = query.toString();
-  return value ? `/account?${value}` : "/account";
+  return value ? `/account/settings?${value}` : "/account/settings";
 }
 
 export async function updateProfileAction(formData: FormData) {
-  const user = await requireUser("/account");
+  const user = await requireUser("/account/settings");
   const name = getString(formData, "name").slice(0, 120);
   const email = normalizeEmail(getString(formData, "email").slice(0, 190));
   const phone = getString(formData, "phone").slice(0, 40);
@@ -227,7 +227,7 @@ export async function updateProfileAction(formData: FormData) {
 }
 
 export async function changePasswordAction(formData: FormData) {
-  const user = await requireUser("/account");
+  const user = await requireUser("/account/settings");
   const currentPassword = String(formData.get("currentPassword") ?? "");
   const password = String(formData.get("password") ?? "");
   const confirm = String(formData.get("confirmPassword") ?? "");
