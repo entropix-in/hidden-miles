@@ -1,7 +1,7 @@
 "use client";
 
 import { AdminHighlightsField } from "./admin-highlights-field";
-import { AdminRichField, AdminRichList } from "./admin-rich-fields";
+import { AdminRichField } from "./admin-rich-fields";
 import { AdminCheckbox } from "./admin-checkbox";
 import { AdminAuthoringForm } from "./admin-authoring-form";
 import { AdminContentEditor } from "./admin-content-editor";
@@ -16,6 +16,7 @@ import type { AdminTour } from "@/lib/types";
 import type { TourCity } from "@/lib/tour-cities";
 import { defaultTourCities } from "@/lib/tour-cities";
 import { AdminItineraryEditor } from "./admin-itinerary-editor";
+import { AdminTourAddons } from "./admin-tour-addons";
 import { AdminTourExperiences, type ExperienceOption } from "./admin-tour-experiences";
 
 function DepartureCitiesEditor({ initial }: { initial: TourCity[] }) {
@@ -309,6 +310,8 @@ export function AdminTourForm({
         />
       </section>
 
+      <AdminTourAddons initial={tour?.addons} />
+
       <section className="admin-form-panel">
         <h2 className="text-base font-medium text-(--studio-text)">
           Highlights & inclusions
@@ -319,12 +322,12 @@ export function AdminTourForm({
             <AdminHighlightsField initial={tour?.highlights} />
           </div>
           <div>
-            <AdminRichList name="inclusions" label="Inclusions" itemLabel="inclusion"
-              initial={tour?.inclusions} editors={tour?.richFields?.inclusions} />
+            <AdminHighlightsField name="inclusions" label="Inclusions" itemLabel="inclusion"
+              initial={tour?.inclusions} />
           </div>
           <div>
-            <AdminRichList name="exclusions" label="Exclusions" itemLabel="exclusion"
-              initial={tour?.exclusions} editors={tour?.richFields?.exclusions} />
+            <AdminHighlightsField name="exclusions" label="Exclusions" itemLabel="exclusion"
+              initial={tour?.exclusions} />
           </div>
         </div>
       </section>

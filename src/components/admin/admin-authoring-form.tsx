@@ -8,8 +8,9 @@ import { clearFieldErrors, showFieldError, validateFields } from "./admin-field-
 export const UploadActivity = createContext<(change: number) => void>(() => {});
 
 export function AdminAuthoringForm({
-  action, children, cancel, label, submitLabel = "Save changes",
+  action, children, cancel, label, submitLabel = "Save changes", requiresCover = true,
 }: {
+  requiresCover?: boolean;
   action: (data: FormData) => Promise<ActionResult>;
   children: ReactNode;
   cancel: ReactNode;
@@ -49,7 +50,7 @@ export function AdminAuthoringForm({
         setError("");
         if (!validateFields(form)) return;
         const data = new FormData(form);
-        if (!data.get("image")) {
+        if (requiresCover && !data.get("image")) {
           showFieldError(form, "image", "Upload a cover photo before saving.");
           return;
         }

@@ -54,6 +54,7 @@ export default async function AdminBookingDetailPage({ params, searchParams }: {
                   ) : booking.startDate ? dateLabel(booking.startDate) : "Date on request"}
                 </dd></div>
                 <div><dt>Guests</dt><dd>{booking.travellers}</dd></div>
+                {booking.city && <div><dt>Joining from</dt><dd>{booking.city}</dd></div>}
                 <div><dt>Amount</dt><dd>{booking.amount ? formatINR(booking.amount) : "On request"}</dd></div>
               </dl>
             </section>
@@ -68,6 +69,26 @@ export default async function AdminBookingDetailPage({ params, searchParams }: {
               </dl>
             </section>
           </div>
+
+          {(booking.addons?.length || booking.discountAmount > 0) && (
+            <section className="admin-data-panel admin-booking-detail-panel" aria-labelledby="booking-extras">
+              <h2 id="booking-extras">Add-ons & discount</h2>
+              <dl className="admin-booking-facts">
+                {booking.addons?.map((addon) => (
+                  <div key={addon.id}>
+                    <dt>{addon.title}{addon.quantity > 1 ? ` × ${addon.quantity}` : ""}</dt>
+                    <dd>{addon.total ? formatINR(addon.total) : "Free"}</dd>
+                  </div>
+                ))}
+                {booking.discountAmount > 0 && (
+                  <div>
+                    <dt>{booking.discountName}{booking.discountCode ? ` (${booking.discountCode})` : ""}</dt>
+                    <dd>– {formatINR(booking.discountAmount)}</dd>
+                  </div>
+                )}
+              </dl>
+            </section>
+          )}
 
           {booking.notes && (
             <section className="admin-data-panel admin-booking-detail-panel" aria-labelledby="booking-note">

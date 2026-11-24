@@ -71,6 +71,13 @@
       "when": 1795559358025,
       "tag": "0009_drop_legacy_auth",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "5",
+      "when": 1795562263051,
+      "tag": "0010_addons_discounts",
+      "breakpoints": true
     }
   ]
 }

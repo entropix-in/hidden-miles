@@ -92,6 +92,7 @@ async function main() {
     console.log(line("Destinations", summary.destinations));
     console.log(line("Experiences", summary.experiences));
     console.log(line("Reviews", summary.testimonials));
+    console.log(line("Discounts", activity.discounts));
     console.log(line("Departures", activity.departures));
     console.log(line("Bookings", activity.bookings));
     console.log(line("Enquiries", activity.enquiries));

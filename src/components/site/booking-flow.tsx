@@ -22,39 +22,12 @@ import type { TourDeparture } from "@/lib/types";
 import type { TourCity } from "@/lib/tour-cities";
 import { fallbackDepartures } from "@/lib/tour-departures";
 import { cn, formatINR, imageUrl } from "@/lib/utils";
+import { AddonIconView } from "@/components/site/addon-icon";
+import type { TourAddon } from "@/lib/addons";
+import { addonQuantity, quoteBooking, type DiscountRule } from "@/lib/pricing";
 
 const STEPS = ["Trip details", "Lead traveller", "Add-ons", "Payment"];
 
-const ADDONS = [
-  {
-    id: "insurance",
-    title: "Travel insurance",
-    description: "Medical cover up to ₹5 lakh, trip cancellation and lost baggage.",
-    price: 1450,
-    icon: "☂",
-  },
-  {
-    id: "gondola",
-    title: "Gondola phase 2",
-    description: "Ride on to the peak. Usually sells out on the day.",
-    price: 1800,
-    icon: "⛰",
-  },
-  {
-    id: "houseboat",
-    title: "Extra night on the houseboat",
-    description: "Arrive a day early and settle in slowly.",
-    price: 6200,
-    icon: "⛵",
-  },
-  {
-    id: "room",
-    title: "Private room upgrade",
-    description: "A room to yourselves instead of sharing.",
-    price: 9500,
-    icon: "✦",
-  },
-];
 
 const dateFormatter = new Intl.DateTimeFormat("en-IN", {
   weekday: "short",
@@ -74,6 +47,8 @@ const longDateFormatter = new Intl.DateTimeFormat("en-IN", {
 export function BookingFlow({
   tour,
   departures,
+  addons: tourAddons,
+  automaticDiscounts,
   cities,
   initialDate,
   initialCity,
@@ -97,6 +72,8 @@ export function BookingFlow({
     destinationName: string;
   };
   departures: TourDeparture[];
+  addons: TourAddon[];
+  automaticDiscounts: DiscountRule[];
   cities: TourCity[];
   initialDate?: string;
   initialCity?: string;
@@ -152,9 +129,13 @@ export function BookingFlow({
     requests: "",
     updates: true,
   });
-  const [addons, setAddons] = useState<string[]>(["insurance", "gondola"]);
+  const [addons, setAddons] = useState<string[]>(
+    () => tourAddons.filter((addon) => addon.preselected).map((addon) => addon.id),
+  );
   const [promo, setPromo] = useState("");
-  const [promoApplied, setPromoApplied] = useState(false);
+  const [promoRule, setPromoRule] = useState<DiscountRule | null>(null);
+  const [promoStatus, setPromoStatus] = useState<"idle" | "checking" | "error">("idle");
+  const [promoError, setPromoError] = useState("");
   const [plan, setPlan] = useState("25");
   const [method, setMethod] = useState("UPI");
   const [agree, setAgree] = useState(false);
@@ -172,17 +153,21 @@ export function BookingFlow({
     (selectedDate?.price ?? tour.price) + cityOption.priceDelta;
   const childPrice = tour.childPrice ?? Math.round(adultPrice * 0.75);
   const infantPrice = tour.infantPrice ?? 0;
-  const addonTotal =
-    ADDONS.filter((addon) => addons.includes(addon.id)).reduce(
-      (sum, addon) => sum + addon.price * travellers,
-      0,
-    );
-  const baseTotal =
-    adultPrice * adults + childPrice * children + infantPrice * infants;
-  const promoSaving = promoApplied ? Math.min(11200, Math.round(baseTotal * 0.1)) : 0;
-  const subtotal = baseTotal + addonTotal - promoSaving;
-  const gst = Math.round(subtotal * 0.05);
-  const total = subtotal + gst;
+  const quote = quoteBooking({
+    adultFare: adultPrice,
+    childFare: childPrice,
+    infantFare: infantPrice,
+    adults,
+    children,
+    infants,
+    addons: tourAddons,
+    selectedAddonIds: addons,
+    discounts: promoRule ? [...automaticDiscounts, promoRule] : automaticDiscounts,
+  });
+  const { gst, total } = quote;
+  const appliedDiscount = quote.discount;
+  const promoBeaten = Boolean(promoRule && appliedDiscount && appliedDiscount.rule.id !== promoRule.id);
+  const promoBelowMinimum = Boolean(promoRule && travellers < promoRule.minTravellers);
   const due = Math.round(total * 0.25);
   const fullPayment = Math.round(total * 0.98);
   const emi = Math.round(total / 6);
@@ -203,6 +188,35 @@ export function BookingFlow({
     );
   }
 
+  async function applyPromo() {
+    const code = promo.trim();
+    if (!code) return;
+    setPromoStatus("checking");
+    setPromoError("");
+    try {
+      const response = await fetch("/api/discounts/check", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tourSlug: tour.slug, code }),
+      });
+      const data = (await response.json().catch(() => ({}))) as { ok?: boolean; error?: string; discount?: DiscountRule };
+      if (!response.ok || !data.ok || !data.discount) throw new Error(data.error || "That code isn't valid for this tour.");
+      setPromoRule(data.discount);
+      setPromoStatus("idle");
+    } catch (error) {
+      setPromoRule(null);
+      setPromoError(error instanceof Error ? error.message : "That code isn't valid for this tour.");
+      setPromoStatus("error");
+    }
+  }
+
+  function removePromo() {
+    setPromoRule(null);
+    setPromo("");
+    setPromoStatus("idle");
+    setPromoError("");
+  }
+
   async function submitBooking() {
     setStatus("sending");
     setErrorMessage("");
@@ -214,7 +228,10 @@ export function BookingFlow({
           name: lead.name,
           email: lead.email,
           phone: lead.phone,
-          notes: `City: ${city}. Add-ons: ${addons.join(", ")}. ${lead.requests}`,
+          notes: lead.requests,
+          city,
+          addons: quote.addons.map((addon) => addon.id),
+          promoCode: promoRule?.code ?? "",
           tourSlug: tour.slug,
           tourTitle: tour.title,
           departureId: selectedDate?._id?.startsWith("fallback")
@@ -230,6 +247,7 @@ export function BookingFlow({
         ok?: boolean;
         error?: string;
         requiresAuth?: boolean;
+        bookingId?: number;
       };
 
       if (response.status === 401 || data.requiresAuth) {
@@ -245,7 +263,7 @@ export function BookingFlow({
         throw new Error(data.error || "We could not complete that booking.");
       }
 
-      setBookingRef(`HM-26-${Math.floor(10000 + Math.random() * 89999)}`);
+      setBookingRef(`HM-${String(data.bookingId ?? "").padStart(5, "0")}`);
       setStep(4);
       setStatus("idle");
     } catch (error) {
@@ -378,7 +396,7 @@ export function BookingFlow({
               : step === 1
                 ? "We only need the lead traveller's details now. We'll collect ID details for everyone 30 days before departure."
                 : step === 2
-                  ? "Optional extras chosen by past travellers on this tour. Added for all travellers."
+                  ? "Optional extras for this tour. Switch on anything you want and we will add it to your booking."
                   : `Pay ${formatINR(due)} now to confirm your seats. The balance is due 30 days before departure.`}
           </p>
 
@@ -697,17 +715,21 @@ export function BookingFlow({
 
             {step === 2 ? (
               <>
+                {tourAddons.length ? (
                 <SectionCard title="Recommended for this tour">
                   <div className="grid gap-3">
-                    {ADDONS.map((addon) => {
+                    {tourAddons.map((addon) => {
                       const active = addons.includes(addon.id);
+                      const quantity = addonQuantity(addon, adults, children);
                       return (
                         <button
                           key={addon.id}
                           type="button"
+                          role="switch"
+                          aria-checked={active}
                           onClick={() => toggleAddon(addon.id)}
                           className={cn(
-                            "flex items-center gap-5 rounded-[20px] border p-5 text-left transition",
+                            "flex items-center gap-4 rounded-[20px] border p-4 text-left transition sm:gap-5 sm:p-5",
                             active
                               ? "border-ink bg-paper"
                               : "border-sand-300 bg-paper",
@@ -715,33 +737,30 @@ export function BookingFlow({
                         >
                           <span
                             className={cn(
-                              "grid h-[52px] w-[52px] shrink-0 place-items-center rounded-[16px] text-xl",
+                              "grid h-[52px] w-[52px] shrink-0 place-items-center rounded-[16px]",
                               active
                                 ? "bg-gold-100 text-gold-600"
                                 : "bg-sand-200 text-ink",
                             )}
                           >
-                            {addon.icon}
+                            <AddonIconView icon={addon.icon} />
                           </span>
-                          <span className="flex-1">
-                            <span className="flex flex-wrap items-center gap-2">
-                              <span className="text-sm font-semibold text-ink">
-                                {addon.title}
+                          <span className="min-w-0 flex-1">
+                            <span className="block text-sm font-semibold text-ink">
+                              {addon.title}
+                            </span>
+                            {addon.description ? (
+                              <span className="mt-1 block text-[13px] font-medium text-navy-500">
+                                {addon.description}
                               </span>
-                              {active ? (
-                                <span className="badge badge-success">Popular</span>
-                              ) : null}
-                            </span>
-                            <span className="mt-1 block text-[13px] font-medium text-navy-500">
-                              {addon.description}
-                            </span>
+                            ) : null}
                           </span>
                           <span className="text-right">
                             <span className="block text-sm font-semibold text-ink">
-                              {formatINR(addon.price)}
+                              {addon.price ? formatINR(addon.price) : "Free"}
                             </span>
                             <span className="block text-xs font-medium text-navy-500">
-                              per person
+                              {addon.unit === "booking" ? "per booking" : `per person${quantity > 1 ? ` × ${quantity}` : ""}`}
                             </span>
                           </span>
                           <span
@@ -762,32 +781,71 @@ export function BookingFlow({
                     })}
                   </div>
                 </SectionCard>
+                ) : (
+                  <SectionCard title="No extras needed">
+                    <p className="type-small text-navy-700">
+                      Everything for this tour is already included. Add a promo code below if you have one.
+                    </p>
+                  </SectionCard>
+                )}
 
                 <SectionCard title="Have a promo code?">
-                  <div className="flex flex-wrap items-end gap-3">
-                    <div className="min-w-[200px] flex-1">
-                      <label htmlFor="promo-code" className="field-label">
-                        Code
-                      </label>
-                      <input
-                        id="promo-code"
-                        value={promo}
-                        onChange={(event) => setPromo(event.target.value.toUpperCase())}
-                        placeholder="EARLYBIRD"
-                        className="field"
-                      />
+                  {promoRule ? (
+                    <div className="flex flex-wrap items-center justify-between gap-3 rounded-[12px] bg-success-soft px-4 py-3">
+                      <p className="text-sm font-semibold text-success">
+                        {promoBelowMinimum
+                          ? `${promoRule.code} needs at least ${promoRule.minTravellers} travellers.`
+                          : promoBeaten
+                            ? `${promoRule.code} applied, but ${appliedDiscount?.rule.name} saves you more.`
+                            : `✓ ${promoRule.code} applied. You save ${formatINR(appliedDiscount?.amount ?? 0)}.`}
+                      </p>
+                      <button type="button" onClick={removePromo} className="text-sm font-semibold text-navy-700 underline">
+                        Remove
+                      </button>
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => setPromoApplied(promo.trim().length > 0)}
-                      className="btn btn-outline"
+                  ) : (
+                    <form
+                      className="flex flex-wrap items-end gap-3"
+                      onSubmit={(event) => {
+                        event.preventDefault();
+                        applyPromo();
+                      }}
                     >
-                      Apply
-                    </button>
-                  </div>
-                  {promoApplied ? (
-                    <p className="mt-4 rounded-[12px] bg-success-soft px-4 py-3 text-sm font-semibold text-success">
-                      ✓ {promo} applied — you save ₹11,200
+                      <div className="min-w-[200px] flex-1">
+                        <label htmlFor="promo-code" className="field-label">
+                          Code
+                        </label>
+                        <input
+                          id="promo-code"
+                          value={promo}
+                          onChange={(event) => {
+                            setPromo(event.target.value.toUpperCase());
+                            if (promoStatus === "error") setPromoStatus("idle");
+                          }}
+                          placeholder="EARLYBIRD"
+                          aria-invalid={promoStatus === "error"}
+                          aria-describedby={promoStatus === "error" ? "promo-error" : undefined}
+                          className="field"
+                        />
+                      </div>
+                      <button
+                        type="submit"
+                        disabled={!promo.trim() || promoStatus === "checking"}
+                        className="btn btn-outline disabled:opacity-50"
+                      >
+                        {promoStatus === "checking" ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+                        Apply
+                      </button>
+                    </form>
+                  )}
+                  {promoStatus === "error" ? (
+                    <p id="promo-error" className="mt-4 rounded-[12px] bg-danger-soft px-4 py-3 text-sm font-semibold text-danger">
+                      {promoError}
+                    </p>
+                  ) : null}
+                  {appliedDiscount && !appliedDiscount.rule.code ? (
+                    <p className="mt-4 text-sm font-semibold text-success">
+                      ✓ {appliedDiscount.rule.name} is applied automatically.
                     </p>
                   ) : null}
                 </SectionCard>
@@ -1048,19 +1106,21 @@ export function BookingFlow({
                   </span>
                 </div>
               ) : null}
-              {addonTotal ? (
-                <div className="flex items-center justify-between gap-4 text-[13px]">
-                  <span className="text-navy-700">Add-ons</span>
-                  <span className="font-semibold text-ink">{formatINR(addonTotal)}</span>
+              {quote.addons.map((addon) => (
+                <div key={addon.id} className="flex items-center justify-between gap-4 text-[13px]">
+                  <span className="text-navy-700">
+                    {addon.title}{addon.quantity > 1 ? ` × ${addon.quantity}` : ""}
+                  </span>
+                  <span className="font-semibold text-ink">{addon.total ? formatINR(addon.total) : "Free"}</span>
                 </div>
-              ) : null}
-              {promoApplied ? (
+              ))}
+              {appliedDiscount ? (
                 <div className="flex items-center justify-between gap-4 text-[13px]">
                   <span className="text-success">
-                    {promo || "Promo"} saving
+                    {appliedDiscount.rule.code ?? appliedDiscount.rule.name}
                   </span>
                   <span className="font-semibold text-success">
-                    – {formatINR(promoSaving)}
+                    – {formatINR(appliedDiscount.amount)}
                   </span>
                 </div>
               ) : null}

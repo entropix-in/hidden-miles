@@ -2,6 +2,7 @@ import type { RichFields } from "@/lib/rich-fields";
 import type { ContentBlock } from "@/lib/content-blocks";
 
 import type { TourCity } from "@/lib/tour-cities";
+import type { TourAddon } from "@/lib/addons";
 
 export type ItineraryBadgeKind =
   | "meal"
@@ -58,6 +59,8 @@ export type Tour = {
   itinerary: ItineraryDay[];
   /** Per-package departure cities. Falls back to defaultTourCities when unset. */
   departureCities?: TourCity[];
+  /** Optional extras offered at checkout for this package. */
+  addons?: TourAddon[];
   featured?: boolean;
 };
 

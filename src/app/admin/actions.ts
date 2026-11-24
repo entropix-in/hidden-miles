@@ -15,6 +15,8 @@ import { FieldError, fieldOf } from "@/lib/field-error";
 import {
   bookings as bookingsTable,
   destinations as destinationsTable,
+  discounts as discountsTable,
+  discountTours as discountToursTable,
   enquiries as enquiriesTable,
   photos,
   experiences as experiencesTable,
@@ -32,6 +34,8 @@ import type { Testimonial } from "@/data/site";
 import type { ItineraryBadge, ItineraryBadgeKind, Tour } from "@/data/tours";
 import type { EnquiryStatus } from "@/lib/types";
 import { parseTourCities } from "@/lib/tour-cities";
+import { parseTourAddons } from "@/lib/addons";
+import { normalizeCode } from "@/lib/discounts";
 import {
   ensureContentSeeded,
   markContentSeeded,
@@ -300,6 +304,7 @@ export async function saveTourAction(formData: FormData) {
     if (!departureCities.length) {
       throw new FieldError("departureCities", "Add at least one departure city.");
     }
+    const addons = parseTourAddons(getString(formData, "addons"));
 
     await ensureContentSeeded(db);
     const [existingPhoto] = id ? await db.select({ image: toursTable.image, destinationSlug: toursTable.destinationSlug, destinationName: toursTable.destinationName, region: toursTable.region })
@@ -340,6 +345,7 @@ export async function saveTourAction(formData: FormData) {
       exclusions: exclusions.text,
       itinerary,
       departureCities,
+      addons,
       featured: getBoolean(formData, "featured"),
       richFields: { summary: summary.editor, highlights: highlights.editors, inclusions: inclusions.editors, exclusions: exclusions.editors } satisfies RichFields,
     };
@@ -909,4 +915,130 @@ export async function deleteBookingAction(formData: FormData) {
   revalidatePath("/admin/bookings");
   revalidatePath("/admin/departures");
   succeed(backPath, "Booking deleted.");
+}
+
+function optionalWhole(formData: FormData, key: string, label: string, min = 0) {
+  const raw = getString(formData, key);
+  if (!raw) return null;
+  const value = Number(raw);
+  if (!Number.isInteger(value) || value < min) throw new FieldError(key, `${label} must be a whole number of at least ${min}.`);
+  return value;
+}
+
+function optionalDate(formData: FormData, key: string) {
+  const raw = getString(formData, key);
+  if (!raw) return null;
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(raw) || Number.isNaN(Date.parse(`${raw}T00:00:00Z`))) {
+    throw new FieldError(key, "Pick a valid date.");
+  }
+  return raw;
+}
+
+export async function saveDiscountAction(formData: FormData) {
+  await requireAdmin();
+
+  const id = getString(formData, "id");
+
+  try {
+    const db = requireDb();
+    const name = getString(formData, "name").slice(0, 120);
+    if (!name) throw new FieldError("name", "Give the discount a name.");
+
+    const code = normalizeCode(getString(formData, "code"));
+    if (code && !/^[A-Z0-9_-]{3,40}$/.test(code)) {
+      throw new FieldError("code", "Use 3–40 letters, numbers, hyphens or underscores.");
+    }
+
+    const kind = getString(formData, "kind") === "fixed" ? "fixed" : "percent";
+    const value = optionalWhole(formData, "value", "Amount", 1);
+    if (value === null) throw new FieldError("value", "Enter the discount amount.");
+    if (kind === "percent" && value > 100) throw new FieldError("value", "A percentage can be at most 100.");
+    const maxAmount = kind === "percent" ? optionalWhole(formData, "maxAmount", "Maximum saving", 1) : null;
+
+    const scope = getString(formData, "scope") === "selected" ? "selected" : "all";
+    const tourIds = [...new Set(getList(formData, "tourIds").map(Number))]
+      .filter((tourId) => Number.isSafeInteger(tourId) && tourId > 0);
+    if (scope === "selected" && !tourIds.length) throw new FieldError("tourIds", "Choose at least one package.");
+
+    const startsOn = optionalDate(formData, "startsOn");
+    const endsOn = optionalDate(formData, "endsOn");
+    if (startsOn && endsOn && endsOn < startsOn) throw new FieldError("endsOn", "The end date must be on or after the start date.");
+
+    const values = {
+      name,
+      code: code || null,
+      kind,
+      value,
+      maxAmount,
+      scope,
+      minTravellers: optionalWhole(formData, "minTravellers", "Minimum travellers", 1) ?? 1,
+      startsOn,
+      endsOn,
+      usageLimit: optionalWhole(formData, "usageLimit", "Usage limit", 1),
+      active: getBoolean(formData, "active"),
+    } satisfies typeof discountsTable.$inferInsert;
+
+    await db.transaction(async (tx) => {
+      if (code) {
+        const [taken] = await tx.select({ id: discountsTable.id }).from(discountsTable)
+          .where(id ? and(eq(discountsTable.code, code), ne(discountsTable.id, parseId(id))) : eq(discountsTable.code, code))
+          .limit(1);
+        if (taken) throw new FieldError("code", "Another discount already uses this code.");
+      }
+
+      let discountId: number;
+      if (id) {
+        discountId = parseId(id);
+        const [result] = await tx.update(discountsTable).set(values).where(eq(discountsTable.id, discountId));
+        if (!result.affectedRows) throw new Error("Discount not found.");
+        await tx.delete(discountToursTable).where(eq(discountToursTable.discountId, discountId));
+      } else {
+        const [result] = await tx.insert(discountsTable).values(values);
+        discountId = Number(result.insertId);
+      }
+
+      if (scope === "selected") {
+        const found = await tx.select({ id: toursTable.id }).from(toursTable).where(inArray(toursTable.id, tourIds));
+        if (!found.length) throw new FieldError("tourIds", "Choose at least one existing package.");
+        await tx.insert(discountToursTable).values(found.map((tour) => ({ discountId, tourId: Number(tour.id) })));
+      }
+    });
+  } catch (error) {
+    return { error: messageFor(error), field: errorField(error) };
+  }
+
+  revalidatePath("/admin/discounts");
+  succeed("/admin/discounts", id ? "Discount updated." : "Discount created.");
+}
+
+export async function toggleDiscountAction(formData: FormData) {
+  await requireAdmin();
+
+  try {
+    const db = requireDb();
+    const [result] = await db.update(discountsTable)
+      .set({ active: getString(formData, "active") === "true" })
+      .where(eq(discountsTable.id, parseId(getString(formData, "id"))));
+    if (!result.affectedRows) throw new Error("Discount not found.");
+  } catch (error) {
+    fail("/admin/discounts", error);
+  }
+
+  revalidatePath("/admin/discounts");
+  succeed("/admin/discounts", getString(formData, "active") === "true" ? "Discount switched on." : "Discount paused.");
+}
+
+export async function deleteDiscountAction(formData: FormData) {
+  await requireAdmin();
+
+  try {
+    const db = requireDb();
+    const [result] = await db.delete(discountsTable).where(eq(discountsTable.id, parseId(getString(formData, "id"))));
+    if (!result.affectedRows) throw new Error("Discount not found.");
+  } catch (error) {
+    fail("/admin/discounts", error);
+  }
+
+  revalidatePath("/admin/discounts");
+  succeed("/admin/discounts", "Discount deleted.");
 }

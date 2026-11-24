@@ -1,3 +1,4 @@
+import type { BookingAddon } from "@/lib/pricing";
 import type { Destination } from "@/data/destinations";
 import type { Experience } from "@/data/experiences";
 import type { Testimonial } from "@/data/site";
@@ -46,6 +47,24 @@ export type TourDeparture = {
   createdAt?: number;
 };
 
+export type AdminDiscount = {
+  _id: string;
+  name: string;
+  code?: string;
+  kind: "percent" | "fixed";
+  value: number;
+  maxAmount?: number;
+  scope: "all" | "selected";
+  tourIds: string[];
+  minTravellers: number;
+  startsOn?: string;
+  endsOn?: string;
+  usageLimit?: number;
+  used: number;
+  active: boolean;
+  createdAt: number;
+};
+
 export type TourBooking = {
   _id: string;
   departureId?: string;
@@ -57,6 +76,11 @@ export type TourBooking = {
   phone: string;
   travellers: number;
   amount: number;
+  city?: string;
+  addons?: BookingAddon[];
+  discountName?: string;
+  discountCode?: string;
+  discountAmount: number;
   notes?: string;
   status: BookingStatus;
   createdAt: number;

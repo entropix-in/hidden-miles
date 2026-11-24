@@ -4,6 +4,8 @@ import { dbErrorMessage, getDb, type AppDb } from "@/db";
 import {
   bookings as bookingsTable,
   destinations as destinationsTable,
+  discounts as discountsTable,
+  discountTours as discountToursTable,
   enquiries as enquiriesTable,
   experiences as experiencesTable,
   settings,
@@ -18,7 +20,10 @@ import {
   type TestimonialRow,
   type TourRow,
 } from "@/db/schema";
+import { availableDiscounts, discountUsage, toDiscountRule } from "@/lib/discounts";
+import type { DiscountRule } from "@/lib/pricing";
 import type {
+  AdminDiscount,
   AdminDestination,
   AdminEnquiry,
   AdminExperience,
@@ -74,6 +79,7 @@ function mapTour(row: TourRow): AdminTour {
     exclusions: row.exclusions,
     itinerary: row.itinerary,
     departureCities: row.departureCities ?? undefined,
+    addons: row.addons ?? [],
     featured: Boolean(row.featured),
   };
 }
@@ -380,6 +386,11 @@ function mapBooking(row: BookingRow): TourBooking {
     phone: row.phone,
     travellers: Number(row.travellers),
     amount: Number(row.amount),
+    city: row.city ?? undefined,
+    addons: row.addons ?? undefined,
+    discountName: row.discountName ?? undefined,
+    discountCode: row.discountCode ?? undefined,
+    discountAmount: Number(row.discountAmount ?? 0),
     notes: row.notes ?? undefined,
     status: row.status,
     createdAt: row.createdAt.getTime(),
@@ -568,4 +579,51 @@ export function loadAdminBooking(id: string): Promise<AdminResult<TourBooking>> 
       : Promise.resolve([]),
     mapBooking,
   );
+}
+
+export async function loadAdminDiscounts(): Promise<AdminResult<AdminDiscount>> {
+  return adminResult(async (db) => {
+    const [rows, links, usage] = await Promise.all([
+      db.select().from(discountsTable).orderBy(desc(discountsTable.createdAt)),
+      db.select().from(discountToursTable),
+      discountUsage(db),
+    ]);
+    return rows.map((row) => ({
+      row,
+      tourIds: links.filter((link) => link.discountId === row.id).map((link) => String(link.tourId)),
+      used: usage.get(Number(row.id)) ?? 0,
+    }));
+  }, ({ row, tourIds, used }) => ({
+    _id: String(row.id),
+    name: row.name,
+    code: row.code ?? undefined,
+    kind: row.kind,
+    value: Number(row.value),
+    maxAmount: row.maxAmount === null ? undefined : Number(row.maxAmount),
+    scope: row.scope,
+    tourIds,
+    minTravellers: Number(row.minTravellers),
+    startsOn: row.startsOn ?? undefined,
+    endsOn: row.endsOn ?? undefined,
+    usageLimit: row.usageLimit === null ? undefined : Number(row.usageLimit),
+    used,
+    active: Boolean(row.active),
+    createdAt: row.createdAt.getTime(),
+  }));
+}
+
+export async function loadAdminDiscount(id: string): Promise<AdminDiscount | undefined> {
+  const result = await loadAdminDiscounts();
+  return result.data.find((discount) => discount._id === id);
+}
+
+/** Automatic (code-free) discounts the checkout should apply for a package. */
+export async function loadAutomaticDiscounts(tourSlug: string): Promise<DiscountRule[]> {
+  const db = getDb();
+  if (!db) return [];
+  try {
+    return (await availableDiscounts(db, tourSlug)).map(toDiscountRule);
+  } catch {
+    return [];
+  }
 }

@@ -8,9 +8,11 @@ import { CSS } from "@dnd-kit/utilities";
 
 type Draft = { id: number; text: string };
 
-function SortableHighlight({ item, index, focusIdRef, onChange, onRemove }: {
+function SortableItem({ item, index, name, itemLabel, focusIdRef, onChange, onRemove }: {
   item: Draft;
   index: number;
+  name: string;
+  itemLabel: string;
   focusIdRef: RefObject<number | null>;
   onChange: (text: string) => void;
   onRemove: () => void;
@@ -23,10 +25,10 @@ function SortableHighlight({ item, index, focusIdRef, onChange, onRemove }: {
       style={{ transform: CSS.Translate.toString(transform), transition }}>
       <button type="button" ref={setActivatorNodeRef} className="admin-icon-button admin-drag-handle"
         {...attributes} {...listeners} title="Drag to reorder"
-        aria-label={`Drag highlight ${index + 1} to reorder`}><GripVertical size={15} aria-hidden /></button>
+        aria-label={`Drag ${itemLabel} ${index + 1} to reorder`}><GripVertical size={15} aria-hidden /></button>
       <label className="admin-highlight-input">
-        <span className="sr-only">Highlight {index + 1}</span>
-        <input name="highlights" className="field" value={item.text}
+        <span className="sr-only">{itemLabel} {index + 1}</span>
+        <input name={name} className="field" value={item.text}
           ref={(input) => {
             if (input && focusIdRef.current === item.id) {
               focusIdRef.current = null;
@@ -36,14 +38,24 @@ function SortableHighlight({ item, index, focusIdRef, onChange, onRemove }: {
           onChange={(event) => onChange(event.target.value)} />
       </label>
       <div className="admin-highlight-actions">
-        <button type="button" className="admin-icon-button admin-button-danger" title="Remove highlight"
-          aria-label={`Remove highlight ${index + 1}`} onClick={onRemove}><Trash2 size={15} aria-hidden /></button>
+        <button type="button" className="admin-icon-button admin-button-danger" title={`Remove ${itemLabel}`}
+          aria-label={`Remove ${itemLabel} ${index + 1}`} onClick={onRemove}><Trash2 size={15} aria-hidden /></button>
       </div>
     </li>
   );
 }
 
-export function AdminHighlightsField({ initial = [] }: { initial?: string[] }) {
+export function AdminHighlightsField({
+  initial = [],
+  name = "highlights",
+  label = "Highlights",
+  itemLabel = "highlight",
+}: {
+  initial?: string[];
+  name?: string;
+  label?: string;
+  itemLabel?: string;
+}) {
   const dndId = useId();
   const [items, setItems] = useState<Draft[]>(() => initial.map((text, id) => ({
     id, text: text.replace(/\r?\n/g, " "),
@@ -57,8 +69,15 @@ export function AdminHighlightsField({ initial = [] }: { initial?: string[] }) {
   );
 
   return (
-    <fieldset className="admin-highlights-field">
-      <legend className="field-label">Highlights</legend>
+    <div className="admin-rich-list admin-highlights-field">
+      <div className="admin-rich-list-heading">
+        <span className="field-label">{label}</span>
+        <button ref={add} type="button" className="btn-outline" onClick={() => {
+          const id = nextId.current++;
+          focusIdRef.current = id;
+          setItems((current) => [...current, { id, text: "" }]);
+        }}><Plus size={15} aria-hidden /> Add {itemLabel}</button>
+      </div>
       {items.length ? (
         <DndContext id={dndId} sensors={sensors} collisionDetection={closestCenter}
           onDragEnd={({ active, over }) => {
@@ -72,7 +91,7 @@ export function AdminHighlightsField({ initial = [] }: { initial?: string[] }) {
           <SortableContext items={items.map((item) => item.id)} strategy={verticalListSortingStrategy}>
             <ol className="admin-highlight-list">
               {items.map((item, index) => (
-                <SortableHighlight key={item.id} item={item} index={index}
+                <SortableItem key={item.id} item={item} index={index} name={name} itemLabel={itemLabel}
                   focusIdRef={focusIdRef}
                   onChange={(text) => setItems((current) => current.map((entry) =>
                     entry.id === item.id ? { ...entry, text } : entry))}
@@ -84,12 +103,7 @@ export function AdminHighlightsField({ initial = [] }: { initial?: string[] }) {
             </ol>
           </SortableContext>
         </DndContext>
-      ) : <p className="admin-editor-help">No highlights yet.</p>}
-      <button ref={add} type="button" className="btn-outline" onClick={() => {
-        const id = nextId.current++;
-        focusIdRef.current = id;
-        setItems((current) => [...current, { id, text: "" }]);
-      }}><Plus size={15} aria-hidden /> Add highlight</button>
-    </fieldset>
+      ) : <p className="admin-editor-help">No {label.toLowerCase()} yet.</p>}
+    </div>
   );
 }
