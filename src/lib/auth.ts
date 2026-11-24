@@ -56,7 +56,7 @@ function reject(message: string): never {
 
 function createAuth(db: AppDb) {
   // Without an email provider nobody could ever confirm an address, so only
-  // insist on verification when Resend is set up. Links are logged otherwise.
+  // insist on verification when Zoho email is set up. Links are logged otherwise.
   const requireVerification = mailConfigured();
 
   return betterAuth({

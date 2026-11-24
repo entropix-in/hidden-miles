@@ -8,11 +8,34 @@ function escapeHtml(value: string) {
     .replace(/"/g, "&quot;");
 }
 
+/** Zoho data centre host, e.g. cpaas.zoho.in (India) or cpaas.zoho.com. */
+function zohoEmailUrl() {
+  const host = (process.env.ZOHO_EMAIL_HOST?.trim() || "cpaas.zoho.in")
+    .replace(/^https?:\/\//, "")
+    .replace(/\/.*$/, "");
+  return `https://${host}/v1.1/email`;
+}
+
+/** Accepts the key with or without the "Zoho-enczapikey " prefix. */
+function zohoApiKey() {
+  return (process.env.ZOHO_EMAIL_API_KEY?.trim() || "").replace(/^Zoho-enczapikey\s+/i, "");
+}
+
+/** Email goes out once the Zoho key and a verified sender are set. */
 export function mailConfigured() {
-  return Boolean(process.env.RESEND_API_KEY?.trim());
+  return Boolean(zohoApiKey() && process.env.EMAIL_FROM?.trim());
+}
+
+/** Accepts `Name <address>` or a bare address. */
+function parseSender(value: string) {
+  const match = value.match(/^\s*(.*?)\s*<([^>]+)>\s*$/);
+  if (match) return { address: match[2].trim(), name: match[1].replace(/^"|"$/g, "") || site.name };
+  return { address: value.trim(), name: site.name };
 }
 
 type MailContent = {
+  /** Short tag sent to Zoho as client_reference. */
+  kind: "password-reset" | "verify-email" | "change-email";
   subject: string;
   heading: string;
   /** Paragraphs shown above the button. */
@@ -83,36 +106,50 @@ ${site.phone} · ${site.email}`;
 }
 
 /**
- * Send an account email through Resend when configured.
- * Without an API key the link is logged server-side (useful in local dev).
+ * Send an account email through Zoho (ZeptoMail CPaaS) when configured.
+ * Without it the link is logged server-side (useful in local dev).
  */
 async function sendAccountEmail(to: string, name: string, content: MailContent) {
-  const apiKey = process.env.RESEND_API_KEY?.trim();
-  if (!apiKey) {
+  const apiKey = zohoApiKey();
+  const sender = process.env.EMAIL_FROM?.trim();
+  if (!apiKey || !sender) {
     console.info(
-      `[hidden-miles] ${content.subject} — link for ${to}: ${content.url} (set RESEND_API_KEY to email it)`,
+      `[hidden-miles] ${content.subject} — link for ${to}: ${content.url} (set ZOHO_EMAIL_API_KEY and EMAIL_FROM to email it)`,
     );
     return false;
   }
 
-  const from =
-    process.env.EMAIL_FROM?.trim() || `${site.name} <onboarding@resend.dev>`;
   const { text, html } = render(content, name);
+  const bounceAddress = process.env.ZOHO_BOUNCE_ADDRESS?.trim();
+  const replyTo = process.env.EMAIL_REPLY_TO?.trim();
 
   try {
-    const response = await fetch("https://api.resend.com/emails", {
+    const response = await fetch(zohoEmailUrl(), {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${apiKey}`,
+        Authorization: `Zoho-enczapikey ${apiKey}`,
         "Content-Type": "application/json",
+        Accept: "application/json",
       },
-      body: JSON.stringify({ from, to: [to], subject: content.subject, text, html }),
+      body: JSON.stringify({
+        from: parseSender(sender),
+        to: [{ email_address: { address: to, name } }],
+        ...(replyTo ? { reply_to: [parseSender(replyTo)] } : {}),
+        ...(bounceAddress ? { bounce_address: bounceAddress } : {}),
+        subject: content.subject,
+        textbody: text,
+        htmlbody: html,
+        // Tracking rewrites links; account links must reach us untouched.
+        track_clicks: false,
+        track_opens: false,
+        client_reference: `account-${content.kind}`,
+      }),
     });
 
     if (!response.ok) {
       const detail = await response.text().catch(() => "");
       console.error(
-        `[hidden-miles] Resend rejected "${content.subject}" (${response.status}): ${detail.slice(0, 300)}`,
+        `[hidden-miles] Zoho rejected "${content.subject}" (${response.status}): ${detail.slice(0, 300)}`,
       );
       return false;
     }
@@ -130,6 +167,7 @@ type Recipient = { to: string; name: string; url: string };
 
 export function sendPasswordResetEmail({ to, name, url }: Recipient) {
   return sendAccountEmail(to, name, {
+    kind: "password-reset",
     subject: "Reset your Hidden Miles password",
     heading: "Reset your password",
     intro: [
@@ -145,6 +183,7 @@ export function sendPasswordResetEmail({ to, name, url }: Recipient) {
 
 export function sendVerificationEmail({ to, name, url }: Recipient) {
   return sendAccountEmail(to, name, {
+    kind: "verify-email",
     subject: "Confirm your email for Hidden Miles",
     heading: "Confirm your email",
     intro: [
@@ -165,6 +204,7 @@ export function sendChangeEmailConfirmation({
   newEmail,
 }: Recipient & { newEmail: string }) {
   return sendAccountEmail(to, name, {
+    kind: "change-email",
     subject: "Approve your new Hidden Miles email",
     heading: "Approve an email change",
     intro: [

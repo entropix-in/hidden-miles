@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { headers } from "next/headers";
-import { ArrowLeft } from "lucide-react";
 import { AuthNotice, param } from "@/components/site/auth-card";
 import { Breadcrumbs } from "@/components/site/breadcrumbs";
 import { SignOutButton } from "@/components/site/account/sign-out-button";
@@ -9,13 +7,13 @@ import { VerifyEmailBanner } from "@/components/site/account/verify-email-banner
 import {
   DeleteAccountPanel,
   EmailPanel,
-  GooglePanel,
+  Panel,
   PasswordPanel,
   ProfilePanel,
   SessionsPanel,
   type DeviceSession,
 } from "@/components/site/account/settings-panels";
-import { getAuth, googleConfigured } from "@/lib/auth";
+import { getAuth } from "@/lib/auth";
 import { loadUserBookings } from "@/lib/content";
 import { mailConfigured } from "@/lib/mail";
 import { requireUser } from "@/lib/user-auth";
@@ -114,7 +112,6 @@ export default async function AccountSettingsPage({
   );
   const providers = new Set((accounts ?? []).map((account) => account.providerId));
   const hasPassword = providers.has("credential");
-  const googleAccount = (accounts ?? []).find((account) => account.providerId === "google");
   const notice = notices[param(params.notice)] ?? "";
 
   return (
@@ -129,62 +126,27 @@ export default async function AccountSettingsPage({
       </div>
 
       <div className="container-page py-8 md:py-12">
-        <div className="flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <h1 className="type-h1 text-[clamp(1.5rem,2.6vw,2.1rem)] text-ink">
-              Your details &amp; security
-            </h1>
-            <p className="type-small mt-2 max-w-md text-navy-600">
-              Update the details we use for your bookings, manage where
-              you&apos;re signed in, or choose a new password.
-            </p>
-          </div>
-          <Link href="/account" className="btn btn-outline btn-sm">
-            <ArrowLeft className="h-4 w-4" aria-hidden />
-            Back to my account
-          </Link>
-        </div>
+        <h1 className="type-h1 text-[clamp(1.5rem,2.6vw,2.1rem)] text-ink">
+          Account settings
+        </h1>
 
         <div className="mt-6 space-y-3 empty:mt-0">
           {notice ? <AuthNotice message={notice} /> : null}
           {!user.emailVerified ? <VerifyEmailBanner email={user.email} /> : null}
         </div>
 
-        <div className="mt-6 grid gap-6 lg:grid-cols-2 lg:items-start">
-          <div className="grid gap-6">
-            <ProfilePanel name={user.name} phone={user.phone} />
-            <EmailPanel
-              email={user.email}
-              emailVerified={user.emailVerified}
-              needsApproval={mailConfigured()}
-            />
-          </div>
-          <div className="grid gap-6">
-            <PasswordPanel hasPassword={hasPassword} email={user.email} />
-            {googleConfigured() || googleAccount ? (
-              <GooglePanel
-                accountId={googleAccount?.accountId ?? null}
-                canUnlink={hasPassword}
-              />
-            ) : null}
-            <SessionsPanel sessions={sessions} />
-          </div>
-        </div>
-
-        <div className="mt-6 grid gap-6 lg:grid-cols-2 lg:items-start">
-          <section
-            aria-labelledby="sign-out"
-            className="rounded-[24px] border border-sand-300 bg-paper p-6 md:p-7"
-          >
-            <h2 id="sign-out" className="type-title text-ink">
-              Sign out
-            </h2>
-            <p className="type-small mt-1 text-navy-600">
-              Signing out removes this browser&apos;s access to your account.
-              Your trips stay safe.
-            </p>
-            <SignOutButton className="mt-4" label="Sign out of this device" />
-          </section>
+        <div className="mt-8 rounded-[24px] border border-sand-300 bg-paper p-6 md:p-10">
+          <ProfilePanel name={user.name} phone={user.phone} />
+          <EmailPanel
+            email={user.email}
+            emailVerified={user.emailVerified}
+            needsApproval={mailConfigured()}
+          />
+          <PasswordPanel hasPassword={hasPassword} email={user.email} />
+          <SessionsPanel sessions={sessions} />
+          <Panel title="Sign out">
+            <SignOutButton label="Sign out of this device" />
+          </Panel>
           <DeleteAccountPanel hasUpcomingTrips={hasUpcomingTrips} hasPassword={hasPassword} />
         </div>
       </div>

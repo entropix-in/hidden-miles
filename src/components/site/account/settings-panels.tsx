@@ -2,16 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent, type ReactNode } from "react";
-import {
-  Link2,
-  LoaderCircle,
-  LockKeyhole,
-  Mail,
-  Monitor,
-  Smartphone,
-  Trash2,
-  UserRound,
-} from "lucide-react";
+import { LoaderCircle, Monitor, Smartphone } from "lucide-react";
 import { AuthError, AuthNotice } from "@/components/site/auth-card";
 import { FieldError, PasswordStrength } from "@/components/site/auth/form-parts";
 import { PasswordInput } from "@/components/ui/password-input";
@@ -24,46 +15,34 @@ import {
 } from "@/lib/auth-rules";
 import { cn } from "@/lib/utils";
 
-function Panel({
-  icon,
+export function Panel({
   title,
   description,
   aside,
   children,
   tone = "default",
 }: {
-  icon: ReactNode;
+  icon?: ReactNode;
   title: string;
-  description: string;
+  description?: string;
   aside?: ReactNode;
   children: ReactNode;
   tone?: "default" | "danger";
 }) {
   return (
-    <section
-      className={cn(
-        "rounded-[24px] border bg-paper p-6 md:p-7",
-        tone === "danger" ? "border-danger/30" : "border-sand-300",
-      )}
-    >
-      <div className="flex items-start justify-between gap-4 border-b border-sand-300 pb-5">
-        <div className="flex items-start gap-3">
-          <span
-            className={cn(
-              "grid h-11 w-11 shrink-0 place-items-center rounded-full",
-              tone === "danger" ? "bg-danger-soft text-danger" : "bg-sand-100 text-ink",
-            )}
-          >
-            {icon}
-          </span>
-          <div>
-            <h2 className="type-title text-ink">{title}</h2>
-            <p className="type-small mt-1 text-navy-600">{description}</p>
-          </div>
+    <section className="grid gap-4 border-t border-sand-300 py-8 first:border-t-0 first:pt-0 last:pb-0 md:grid-cols-[280px_minmax(0,1fr)] md:gap-16">
+      <div>
+        <div className="flex items-baseline justify-between gap-4">
+          <h2 className={cn("type-title", tone === "danger" ? "text-danger" : "text-ink")}>
+            {title}
+          </h2>
+          {aside}
         </div>
-        {aside}
+        {description ? (
+          <p className="type-small mt-1 text-navy-600">{description}</p>
+        ) : null}
       </div>
-      <div className="mt-5">{children}</div>
+      <div className="min-w-0">{children}</div>
     </section>
   );
 }
@@ -78,7 +57,7 @@ function SaveButton({
   variant?: string;
 }) {
   return (
-    <button type="submit" disabled={pending} aria-busy={pending} className={cn("btn w-full", variant)}>
+    <button type="submit" disabled={pending} aria-busy={pending} className={cn("btn", variant)}>
       {pending ? <LoaderCircle className="h-4 w-4 animate-spin" aria-hidden /> : null}
       {pending ? "Saving…" : children}
     </button>
@@ -122,13 +101,12 @@ export function ProfilePanel({ name, phone }: { name: string; phone: string }) {
 
   return (
     <Panel
-      icon={<UserRound className="h-5 w-5" aria-hidden />}
       title="Personal details"
-      description="The name and phone we use for your bookings."
+      description="Used on your bookings"
     >
       <AuthNotice message={notice} />
       <AuthError message={error} />
-      <form onSubmit={onSubmit} className="space-y-4" noValidate>
+      <form onSubmit={onSubmit} className="grid gap-4 sm:grid-cols-2" noValidate>
         <div>
           <label htmlFor="profile-name" className="field-label">
             Full name
@@ -161,7 +139,11 @@ export function ProfilePanel({ name, phone }: { name: string; phone: string }) {
           />
           <FieldError id="profile-phone-error" message={phoneError} />
         </div>
-        <SaveButton pending={pending}>{dirty ? "Save changes" : "Saved"}</SaveButton>
+        <div className="flex justify-end sm:col-span-2">
+          <SaveButton pending={pending} variant={dirty ? "btn-primary" : "btn-light"}>
+            {dirty ? "Save changes" : "Saved"}
+          </SaveButton>
+        </div>
       </form>
     </Panel>
   );
@@ -226,11 +208,10 @@ export function EmailPanel({
 
   return (
     <Panel
-      icon={<Mail className="h-5 w-5" aria-hidden />}
-      title="Email address"
-      description="Where we send booking confirmations and trip updates."
+      title="Email"
+      description="For confirmations and trip updates"
     >
-      <div className="mb-5 flex flex-wrap items-center justify-between gap-2 rounded-[14px] bg-sand-100 px-4 py-3">
+      <div className="mb-5 flex flex-wrap items-center gap-2">
         <span className="min-w-0 truncate text-sm font-semibold text-ink">{email}</span>
         <span className={emailVerified ? "badge badge-success" : "badge badge-gold"}>
           {emailVerified ? "Confirmed" : "Not confirmed"}
@@ -238,11 +219,11 @@ export function EmailPanel({
       </div>
       <AuthNotice message={notice} />
       <AuthError message={error} />
-      <form onSubmit={onSubmit} className="space-y-4" noValidate>
-        <div>
-          <label htmlFor="new-email" className="field-label">
-            New email address
-          </label>
+      <form onSubmit={onSubmit} noValidate>
+        <label htmlFor="new-email" className="field-label">
+          Change email
+        </label>
+        <div className="flex flex-col gap-3 sm:flex-row">
           <input
             id="new-email"
             type="email"
@@ -250,17 +231,15 @@ export function EmailPanel({
             placeholder="you@email.com"
             value={newEmail}
             onChange={(event) => setNewEmail(event.target.value)}
-            className="field"
+            className="field flex-1"
           />
-          {needsApproval ? (
-            <p className="field-hint">
-              For your security, we&apos;ll ask you to confirm by email first.
-            </p>
-          ) : null}
+          <SaveButton pending={pending} variant="btn-outline">
+            Send link
+          </SaveButton>
         </div>
-        <SaveButton pending={pending} variant="btn-outline">
-          Change email
-        </SaveButton>
+        {needsApproval ? (
+          <p className="field-hint">We&apos;ll ask you to confirm by email first</p>
+        ) : null}
       </form>
     </Panel>
   );
@@ -289,9 +268,8 @@ function SetPasswordByEmail({ email }: { email: string }) {
 
   return (
     <Panel
-      icon={<LockKeyhole className="h-5 w-5" aria-hidden />}
       title="Password"
-      description="You sign in with Google. Add a password to also sign in with your email."
+      description="Add one to sign in with email too"
     >
       <AuthError message={error} />
       {state === "sent" ? (
@@ -303,12 +281,12 @@ function SetPasswordByEmail({ email }: { email: string }) {
           type="button"
           onClick={send}
           disabled={state === "sending"}
-          className="btn btn-outline w-full"
+          className="btn btn-outline"
         >
           {state === "sending" ? (
             <LoaderCircle className="h-4 w-4 animate-spin" aria-hidden />
           ) : null}
-          {state === "sending" ? "Sending…" : "Email me a link to set a password"}
+          {state === "sending" ? "Sending…" : "Email me a set-password link"}
         </button>
       )}
     </Panel>
@@ -374,9 +352,7 @@ function ChangePasswordPanel() {
 
   return (
     <Panel
-      icon={<LockKeyhole className="h-5 w-5" aria-hidden />}
       title="Password"
-      description="Confirm your current password before setting a new one."
       aside={
         <a
           href="/forgot-password"
@@ -388,7 +364,7 @@ function ChangePasswordPanel() {
     >
       <AuthNotice message={notice} />
       <AuthError message={error} />
-      <form onSubmit={onSubmit} className="space-y-4" noValidate>
+      <form onSubmit={onSubmit} className="max-w-md space-y-4" noValidate>
         <div>
           <label htmlFor="current-password" className="field-label">
             Current password
@@ -438,9 +414,11 @@ function ChangePasswordPanel() {
           />
           Sign out of every other device. You&apos;ll stay signed in here.
         </label>
-        <SaveButton pending={pending} variant="btn-outline">
-          Update password
-        </SaveButton>
+        <div>
+          <SaveButton pending={pending} variant="btn-outline">
+            Update password
+          </SaveButton>
+        </div>
       </form>
     </Panel>
   );
@@ -489,9 +467,8 @@ export function SessionsPanel({ sessions }: { sessions: DeviceSession[] }) {
 
   return (
     <Panel
-      icon={<Monitor className="h-5 w-5" aria-hidden />}
-      title="Signed-in devices"
-      description="Anywhere your account is signed in right now. Remove any you don't recognise."
+      title="Devices"
+      description="Sign out any you don't recognise"
     >
       <AuthError message={error} />
       <ul className="divide-y divide-sand-300">
@@ -516,7 +493,7 @@ export function SessionsPanel({ sessions }: { sessions: DeviceSession[] }) {
                   type="button"
                   onClick={() => revoke(session.token)}
                   disabled={Boolean(busy)}
-                  className="btn btn-light btn-sm"
+                  className="btn btn-light"
                 >
                   {busy === session.token ? "Removing…" : "Sign out"}
                 </button>
@@ -530,17 +507,13 @@ export function SessionsPanel({ sessions }: { sessions: DeviceSession[] }) {
           type="button"
           onClick={revokeOthers}
           disabled={Boolean(busy)}
-          className="btn btn-outline mt-5 w-full"
+          className="btn btn-outline mt-5"
         >
           {busy === "others"
             ? "Signing out…"
             : `Sign out of ${others.length === 1 ? "the other device" : `all ${others.length} other devices`}`}
         </button>
-      ) : (
-        <p className="mt-4 text-[13px] font-medium text-navy-500">
-          You&apos;re only signed in on this device.
-        </p>
-      )}
+      ) : null}
     </Panel>
   );
 }
@@ -582,9 +555,8 @@ export function DeleteAccountPanel({
   return (
     <Panel
       tone="danger"
-      icon={<Trash2 className="h-5 w-5" aria-hidden />}
       title="Delete account"
-      description="Permanently remove your account, saved details and sign-ins. This can't be undone."
+      description="Permanent. This can't be undone"
     >
       {hasUpcomingTrips ? (
         <p className="mb-4 rounded-[14px] border border-gold-300 bg-gold-50 px-4 py-3 text-sm font-medium text-navy-700">
@@ -595,7 +567,7 @@ export function DeleteAccountPanel({
       ) : null}
 
       {open ? (
-        <form onSubmit={onSubmit} className="space-y-4" noValidate>
+        <form onSubmit={onSubmit} className="max-w-md space-y-4" noValidate>
           <AuthError message={error} />
           {hasPassword ? (
             <div>
@@ -620,7 +592,7 @@ export function DeleteAccountPanel({
             <button
               type="submit"
               disabled={pending}
-              className="btn flex-1 bg-danger text-paper hover:bg-danger/90"
+              className="btn bg-danger text-paper hover:bg-danger/90"
             >
               {pending ? <LoaderCircle className="h-4 w-4 animate-spin" aria-hidden /> : null}
               {pending ? "Deleting…" : "Delete my account"}
@@ -632,7 +604,7 @@ export function DeleteAccountPanel({
                 setPassword("");
                 setError("");
               }}
-              className="btn btn-light flex-1"
+              className="btn btn-light"
             >
               Keep my account
             </button>
@@ -644,95 +616,9 @@ export function DeleteAccountPanel({
           onClick={() => setOpen(true)}
           className="btn btn-light text-danger"
         >
-          Delete my account…
+          Delete my account
         </button>
       )}
-    </Panel>
-  );
-}
-
-/* ------------------------------------------------------------ google */
-
-export function GooglePanel({
-  accountId,
-  canUnlink,
-}: {
-  /** Google's account id when connected. */
-  accountId: string | null;
-  canUnlink: boolean;
-}) {
-  const linked = Boolean(accountId);
-  const router = useRouter();
-  const [pending, setPending] = useState(false);
-  const [error, setError] = useState("");
-
-  async function connect() {
-    setPending(true);
-    setError("");
-    const { error } = await authClient.linkSocial({
-      provider: "google",
-      callbackURL: "/account/settings?notice=google",
-      errorCallbackURL: "/account/settings",
-    });
-    if (error) {
-      setPending(false);
-      setError(authErrorMessage(error, "We could not reach Google. Please try again."));
-    }
-  }
-
-  async function disconnect() {
-    setPending(true);
-    setError("");
-    const { error } = await authClient.unlinkAccount({ accountId: accountId ?? "" });
-    setPending(false);
-    if (error) {
-      setError(authErrorMessage(error));
-      return;
-    }
-    router.refresh();
-  }
-
-  return (
-    <Panel
-      icon={<Link2 className="h-5 w-5" aria-hidden />}
-      title="Google sign-in"
-      description={
-        linked
-          ? "You can sign in with your Google account."
-          : "Connect Google to sign in with one tap. It must use the same email."
-      }
-    >
-      <AuthError message={error} />
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <span className={linked ? "badge badge-success" : "badge"}>
-          {linked ? "Connected" : "Not connected"}
-        </span>
-        {linked ? (
-          canUnlink ? (
-            <button
-              type="button"
-              onClick={disconnect}
-              disabled={pending}
-              className="btn btn-light btn-sm"
-            >
-              {pending ? "Disconnecting…" : "Disconnect Google"}
-            </button>
-          ) : (
-            <span className="text-[13px] font-medium text-navy-500">
-              Set a password before disconnecting.
-            </span>
-          )
-        ) : (
-          <button
-            type="button"
-            onClick={connect}
-            disabled={pending}
-            className="btn btn-outline btn-sm"
-          >
-            {pending ? "Opening Google…" : "Connect Google"}
-          </button>
-        )}
-      </div>
     </Panel>
   );
 }

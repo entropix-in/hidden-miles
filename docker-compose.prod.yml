@@ -27,10 +27,14 @@ services:
       # Google sign-in; the button shows once both are set.
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
-      # Without RESEND_API_KEY, email confirmation is skipped and account
+      # Account emails via Zoho. Without ZOHO_EMAIL_API_KEY and EMAIL_FROM,
+      # email confirmation is skipped and account
       # links (password reset etc.) are only written to the container logs.
-      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      ZOHO_EMAIL_HOST: ${ZOHO_EMAIL_HOST:-cpaas.zoho.in}
+      ZOHO_EMAIL_API_KEY: ${ZOHO_EMAIL_API_KEY:-}
       EMAIL_FROM: ${EMAIL_FROM:-}
+      EMAIL_REPLY_TO: ${EMAIL_REPLY_TO:-}
+      ZOHO_BOUNCE_ADDRESS: ${ZOHO_BOUNCE_ADDRESS:-}
     healthcheck:
       test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/api/health').then(r => { if (!r.ok) process.exit(1) }).catch(() => process.exit(1))"]
       interval: 10s
