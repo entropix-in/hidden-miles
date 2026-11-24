@@ -146,18 +146,19 @@ export function TourListCard({
   const seatsLow = /left|filling|sold/i.test(tour.departure);
 
   return (
-    <article className="card-lift group flex flex-col overflow-hidden rounded-[28px] border border-sand-300 bg-paper p-2 sm:flex-row">
+    <article className="card-lift group @container overflow-hidden rounded-[28px] border border-sand-300 bg-paper">
+      <div className="flex flex-col p-2 sm:flex-row">
       <Link
         href={`/tours/${tour.slug}`}
         aria-label={`View ${tour.title}`}
-        className="relative block aspect-[280/200] w-full shrink-0 overflow-hidden rounded-[20px] bg-ink sm:w-[280px]"
+        className="relative block aspect-[280/200] w-full shrink-0 overflow-hidden rounded-[20px] bg-ink sm:w-[280px] @3xl:aspect-[16/10] @3xl:w-[44%]"
       >
         <Image
           src={imageUrl(tour.image, 800)}
           alt={tour.title}
           fill
           priority={priority}
-          sizes="(max-width: 640px) 100vw, 280px"
+          sizes="(max-width: 640px) 100vw, (min-width: 1024px) 560px, 280px"
           className="object-cover transition duration-700 group-hover:scale-[1.04]"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-ink/60 via-transparent to-ink/10" />
@@ -214,6 +215,7 @@ export function TourListCard({
             <span className="btn-dot">→</span>
           </Link>
         </div>
+      </div>
       </div>
     </article>
   );
