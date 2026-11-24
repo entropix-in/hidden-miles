@@ -1043,7 +1043,7 @@ export function BookingFlow({
           </div>
         </div>
 
-        <aside className="lg:sticky lg:top-32">
+        <aside className="lg:sticky lg:top-24">
           <div className="rounded-[28px] border border-sand-300 bg-paper p-7 shadow-[0_16px_40px_-32px_rgba(11,39,53,0.3)]">
             <div className="flex items-center gap-4">
               <div className="relative h-[88px] w-[88px] shrink-0 overflow-hidden rounded-[16px] bg-ink">
@@ -1170,7 +1170,7 @@ export function BookingFlow({
 
 function CheckoutHeader({ step, email }: { step: number; email: string }) {
   return (
-    <div className="border-b border-sand-300 bg-paper">
+    <div className="sticky top-0 z-40 border-b border-sand-300 bg-paper/90 backdrop-blur-xl">
       <div className="container-page flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-wrap items-center gap-2.5">
           {STEPS.map((label, index) => {
