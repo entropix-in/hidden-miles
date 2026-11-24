@@ -1,12 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   ChevronDown,
-  MapPin,
   Menu,
   Phone,
   Search,
@@ -14,7 +13,6 @@ import {
   X,
 } from "lucide-react";
 import { Logo } from "@/components/site/logo";
-import { logoutAction } from "@/lib/user-actions";
 import { navLinks, site, type NavLink } from "@/data/site";
 import type { Destination } from "@/data/destinations";
 import { cn, imageUrl } from "@/lib/utils";
@@ -45,7 +43,93 @@ export function SiteHeader({
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [previewSlug, setPreviewSlug] = useState<string | null>(null);
+  const [desktopMenu, setDesktopMenu] = useState<string | null>(null);
+  const closeTimer = useRef<number | null>(null);
+  const navRef = useRef<HTMLElement>(null);
   const firstName = user?.name.split(" ")[0] || "Account";
+
+  const cancelClose = useCallback(() => {
+    if (closeTimer.current !== null) {
+      window.clearTimeout(closeTimer.current);
+      closeTimer.current = null;
+    }
+  }, []);
+
+  const openMenu = useCallback(
+    (label: string) => {
+      cancelClose();
+      setDesktopMenu(label);
+    },
+    [cancelClose],
+  );
+
+  const closeMenu = useCallback(() => {
+    cancelClose();
+    setDesktopMenu(null);
+    setPreviewSlug(null);
+  }, [cancelClose]);
+
+  // A short delay lets the pointer cross the gap between the bar and the panel.
+  const scheduleClose = useCallback(() => {
+    cancelClose();
+    closeTimer.current = window.setTimeout(() => {
+      setDesktopMenu(null);
+      setPreviewSlug(null);
+    }, 150);
+  }, [cancelClose]);
+
+  // Any navigation closes every menu.
+  const [lastPathname, setLastPathname] = useState(pathname);
+  if (pathname !== lastPathname) {
+    setLastPathname(pathname);
+    setDesktopMenu(null);
+    setPreviewSlug(null);
+    setMobileOpen(false);
+    setOpenGroup(null);
+    setSearchOpen(false);
+  }
+
+  useEffect(() => cancelClose, [cancelClose]);
+
+  useEffect(() => {
+    if (!desktopMenu) return;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      const trigger = navRef.current?.querySelector<HTMLElement>(
+        `[data-menu-trigger="${desktopMenu}"]`,
+      );
+      closeMenu();
+      trigger?.focus();
+    };
+    const handlePointerDown = (event: PointerEvent) => {
+      if (!navRef.current?.contains(event.target as Node)) closeMenu();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("pointerdown", handlePointerDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("pointerdown", handlePointerDown);
+    };
+  }, [desktopMenu, closeMenu]);
+
+  // Close after a link inside a panel is chosen, even when it points at the current page.
+  const closeOnLinkClick = (event: React.MouseEvent<HTMLElement>) => {
+    if ((event.target as HTMLElement).closest("a")) closeMenu();
+  };
+
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMobileOpen(false);
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [mobileOpen]);
 
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname.startsWith(href);
@@ -94,7 +178,7 @@ export function SiteHeader({
       {/* Utility bar */}
       <div className="hidden bg-ink text-paper lg:block">
         <div className="container-page flex h-9 items-center justify-between text-[13px]">
-          <span className="font-medium text-navy-200">Hosting travellers since 1984</span>
+          <span className="font-medium text-navy-200">Offbeat journeys, thoughtfully planned</span>
           <div className="flex items-center gap-6 font-medium text-navy-100">
             <a
               href={site.phoneHref}
@@ -120,7 +204,11 @@ export function SiteHeader({
         <div className="container-page flex h-16 items-center justify-between gap-6">
           <Logo compact />
 
-          <nav className="hidden flex-1 items-center justify-center gap-1 lg:flex" aria-label="Main">
+          <nav
+            ref={navRef}
+            className="hidden flex-1 items-center justify-center gap-1 lg:flex"
+            aria-label="Main"
+          >
             {navItems.map((link) => {
               const hasChildren = Boolean(link.children?.length);
               const active =
@@ -129,23 +217,71 @@ export function SiteHeader({
                       link.children?.some((child) => isActive(child.href)),
                     )
                   : isActive(link.href);
+              const menuOpen = hasChildren && desktopMenu === link.label;
+              const panelState = menuOpen
+                ? "visible translate-y-0 opacity-100 duration-200"
+                : "pointer-events-none invisible -translate-y-1 opacity-0 duration-150";
 
               return (
-                <div key={link.label} className="group relative">
+                <div
+                  key={link.label}
+                  className="relative"
+                  onMouseEnter={hasChildren ? () => openMenu(link.label) : undefined}
+                  onMouseLeave={hasChildren ? scheduleClose : undefined}
+                  onBlur={
+                    hasChildren
+                      ? (event) => {
+                          if (!event.currentTarget.contains(event.relatedTarget as Node)) {
+                            closeMenu();
+                          }
+                        }
+                      : undefined
+                  }
+                >
                   <Link
                     href={link.href}
+                    data-menu-trigger={hasChildren ? link.label : undefined}
+                    aria-haspopup={hasChildren ? "true" : undefined}
+                    aria-expanded={hasChildren ? menuOpen : undefined}
+                    onClick={hasChildren ? closeMenu : undefined}
+                    onKeyDown={
+                      hasChildren
+                        ? (event) => {
+                            if (event.key !== "ArrowDown") return;
+                            event.preventDefault();
+                            openMenu(link.label);
+                            requestAnimationFrame(() => {
+                              event.currentTarget.parentElement
+                                ?.querySelector<HTMLElement>("[data-menu-panel] a")
+                                ?.focus();
+                            });
+                          }
+                        : undefined
+                    }
                     className={cn("nav-link", active && "nav-link-active")}
                   >
                     <span className="flex items-center gap-1.5 whitespace-nowrap">
                       {link.label}
                       {hasChildren ? (
-                        <ChevronDown className="h-3.5 w-3.5 text-navy-500 transition duration-300 group-hover:rotate-180" />
+                        <ChevronDown
+                          className={cn(
+                            "h-3.5 w-3.5 text-navy-500 transition-transform duration-200",
+                            menuOpen && "rotate-180",
+                          )}
+                        />
                       ) : null}
                     </span>
                   </Link>
 
                   {hasChildren && link.label !== "Destinations" ? (
-                    <div className="invisible absolute left-1/2 top-full w-[260px] -translate-x-1/2 pt-3 opacity-0 transition duration-200 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+                    <div
+                      data-menu-panel
+                      onClick={closeOnLinkClick}
+                      className={cn(
+                        "absolute left-1/2 top-full w-[260px] -translate-x-1/2 pt-3 transition-[opacity,translate,visibility] ease-[cubic-bezier(0.2,0,0,1)] motion-reduce:transition-none",
+                        panelState,
+                      )}
+                    >
                       <div className="rounded-[20px] border border-sand-300 bg-paper p-2 shadow-[0_24px_64px_-28px_rgba(11,39,53,0.3)]">
                         {link.children?.map((child) => (
                           <Link
@@ -161,9 +297,15 @@ export function SiteHeader({
                   ) : null}
 
                   {link.label === "Destinations" ? (
+                    // The nav bar's backdrop blur makes this fixed panel relative to the bar,
+                    // so top-[50px] + pt-3 lines its panel up with the small nav dropdowns.
                     <div
-                      className="invisible fixed left-1/2 top-[80px] w-[min(1040px,calc(100vw-40px))] -translate-x-1/2 pt-5 opacity-0 transition duration-200 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100"
-                      onMouseLeave={() => setPreviewSlug(null)}
+                      data-menu-panel
+                      onClick={closeOnLinkClick}
+                      className={cn(
+                        "fixed left-1/2 top-[50px] w-[min(1040px,calc(100vw-40px))] -translate-x-1/2 pt-3 transition-[opacity,translate,visibility] ease-[cubic-bezier(0.2,0,0,1)] motion-reduce:transition-none",
+                        panelState,
+                      )}
                     >
                       <div className="flex gap-8 rounded-[24px] border border-sand-300 bg-paper p-6 shadow-[0_32px_64px_-24px_rgba(11,39,53,0.25)]">
                         {groups.map((group) => (
@@ -197,7 +339,7 @@ export function SiteHeader({
                             </div>
                             <Link
                               href="/destinations"
-                              className="mt-auto inline-flex pt-4 text-sm font-bold text-blue-700 hover:text-blue-800"
+                              className="mt-auto inline-flex pt-4 text-sm font-semibold text-blue-700 hover:text-blue-800"
                             >
                               All {group.label} destinations →
                             </Link>
@@ -206,14 +348,28 @@ export function SiteHeader({
 
                         {previewDestination ? (
                           <div className="relative hidden min-h-[360px] flex-1 overflow-hidden rounded-[20px] bg-ink xl:block">
-                            <Image
-                              key={previewDestination.slug}
-                              src={imageUrl(previewDestination.image, 1100)}
-                              alt={previewDestination.name}
-                              fill
-                              sizes="520px"
-                              className="object-cover"
-                            />
+                            {destinations.map((destination) => (
+                              <Image
+                                key={destination.slug}
+                                src={imageUrl(destination.image, 1100)}
+                                alt={
+                                  destination.slug === previewDestination.slug
+                                    ? destination.name
+                                    : ""
+                                }
+                                aria-hidden={
+                                  destination.slug !== previewDestination.slug
+                                }
+                                fill
+                                sizes="520px"
+                                className={cn(
+                                  "object-cover transition-opacity duration-500 ease-out",
+                                  destination.slug === previewDestination.slug
+                                    ? "opacity-100"
+                                    : "opacity-0",
+                                )}
+                              />
+                            ))}
                             <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-transparent" />
                             <div className="absolute inset-x-8 bottom-8">
                               <p className="type-h3 text-paper">
@@ -224,7 +380,7 @@ export function SiteHeader({
                               </p>
                               <Link
                                 href={`/destinations/${previewDestination.slug}`}
-                                className="mt-4 inline-flex items-center gap-2 text-sm font-bold text-gold-400"
+                                className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-gold-400"
                               >
                                 Explore {previewDestination.name} →
                               </Link>
@@ -261,17 +417,17 @@ export function SiteHeader({
                 className="hidden items-center gap-2 rounded-full border border-sand-300 bg-paper py-1 pl-1 pr-3 transition hover:border-navy-300 hover:bg-sand-100 sm:flex"
                 aria-label="My account"
               >
-                <span className="grid h-7 w-7 place-items-center rounded-full bg-ink text-[12px] font-extrabold uppercase text-gold-400">
+                <span className="grid h-7 w-7 place-items-center rounded-full bg-ink text-[12px] font-semibold uppercase text-gold-400">
                   {user.name.slice(0, 1) || "H"}
                 </span>
-                <span className="max-w-[92px] truncate text-[13px] font-bold text-ink">
+                <span className="max-w-[92px] truncate text-[13px] font-semibold text-ink">
                   {firstName}
                 </span>
               </Link>
             ) : (
               <Link
                 href="/login"
-                className="hidden items-center gap-1.5 rounded-full px-3 py-2 text-[13px] font-bold text-ink transition hover:bg-sand-100 sm:inline-flex"
+                className="hidden items-center gap-1.5 rounded-full px-3 py-2 text-[13px] font-semibold text-ink transition hover:bg-sand-100 sm:inline-flex"
               >
                 <UserRound className="h-4 w-4" />
                 Sign in
@@ -342,7 +498,7 @@ export function SiteHeader({
             </form>
           </div>
 
-          <nav className="px-5 py-4" aria-label="Mobile">
+          <nav className="px-5 py-5" aria-label="Mobile">
             {[
               { label: "Home", href: "/" },
               { label: "Group Tours", href: "/tours" },
@@ -357,16 +513,18 @@ export function SiteHeader({
             ].map((item) => {
               const expandable = item.label === "Destinations";
               const isOpen = openGroup === item.label;
+              const active = isActive(item.href);
 
               return (
-                <div key={item.label} className="border-b border-sand-300">
-                  <div className="flex items-center justify-between gap-3 py-4">
+                <div key={item.label} className="border-b border-sand-200/80 last:border-b-0">
+                  <div className="flex items-center gap-1">
                     <Link
                       href={item.href}
                       onClick={() => setMobileOpen(false)}
+                      aria-current={active ? "page" : undefined}
                       className={cn(
-                        "type-h4 text-ink",
-                        isActive(item.href) && "text-gold-600",
+                        "flex-1 py-3.5 text-[16px] font-semibold transition",
+                        active ? "text-gold-600" : "text-ink hover:text-gold-600",
                       )}
                     >
                       {item.label}
@@ -377,33 +535,43 @@ export function SiteHeader({
                         onClick={() => setOpenGroup(isOpen ? null : item.label)}
                         aria-label={isOpen ? "Collapse destinations" : "Expand destinations"}
                         aria-expanded={isOpen}
-                        className="text-xl text-gold-600"
+                        className="grid h-10 w-10 place-items-center rounded-full text-navy-500 transition hover:bg-sand-100 hover:text-ink"
                       >
-                        {isOpen ? "−" : "›"}
+                        <ChevronDown
+                          className={cn("h-4 w-4 transition duration-200", isOpen && "rotate-180")}
+                          aria-hidden
+                        />
                       </button>
-                    ) : (
-                      <span className="text-xl text-navy-300">›</span>
-                    )}
+                    ) : null}
                   </div>
 
                   {expandable && isOpen ? (
-                    <div className="flex flex-wrap gap-2 pb-4">
-                      {destinations.slice(0, 8).map((destination) => (
-                        <Link
-                          key={destination.slug}
-                          href={`/destinations/${destination.slug}`}
-                          onClick={() => setMobileOpen(false)}
-                          className="chip"
-                        >
-                          {destination.name}
-                        </Link>
-                      ))}
+                    <div className="pb-5">
+                      <div className="grid gap-4">
+                        {groups.map((group) => (
+                          <div key={group.label}>
+                            <p className="type-label text-gold-600">{group.label}</p>
+                            <div className="mt-2 grid grid-cols-2 gap-1.5">
+                              {group.items.slice(0, 8).map((destination) => (
+                                <Link
+                                  key={destination.slug}
+                                  href={`/destinations/${destination.slug}`}
+                                  onClick={() => setMobileOpen(false)}
+                                  className="rounded-[10px] border border-sand-200 bg-sand-50 px-3 py-2 text-[13px] font-semibold text-ink transition hover:border-sand-300 hover:bg-sand-100"
+                                >
+                                  {destination.name}
+                                </Link>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                       <Link
                         href="/destinations"
                         onClick={() => setMobileOpen(false)}
-                        className="chip text-blue-700"
+                        className="mt-4 inline-flex items-center gap-1.5 text-[13px] font-semibold text-blue-700"
                       >
-                        All destinations →
+                        All destinations <span aria-hidden>→</span>
                       </Link>
                     </div>
                   ) : null}
@@ -414,33 +582,19 @@ export function SiteHeader({
 
           <div className="border-t border-sand-300 px-5 py-5">
             {user ? (
-              <div className="space-y-3">
-                <Link
-                  href="/account"
-                  onClick={() => setMobileOpen(false)}
-                  className="flex items-center gap-3 rounded-[16px] border border-sand-300 bg-paper p-3 transition hover:border-navy-300"
-                >
-                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-ink text-sm font-extrabold uppercase text-gold-400">
-                    {user.name.slice(0, 1) || "H"}
-                  </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="block truncate text-sm font-bold text-ink">
-                      {user.name}
-                    </span>
-                    <span className="block truncate text-[12px] font-medium text-navy-500">
-                      {user.email}
-                    </span>
-                  </span>
-                  <span className="text-lg text-navy-300" aria-hidden="true">
-                    ›
-                  </span>
-                </Link>
-                <form action={logoutAction}>
-                  <button type="submit" className="btn btn-outline w-full">
-                    Sign out
-                  </button>
-                </form>
-              </div>
+              <Link
+                href="/account"
+                onClick={() => setMobileOpen(false)}
+                aria-label={`Open ${firstName}'s profile`}
+                className="flex w-fit items-center gap-2 rounded-full border border-sand-300 bg-paper py-1 pl-1 pr-3 transition hover:border-navy-300 hover:bg-sand-100"
+              >
+                <span className="grid h-7 w-7 place-items-center rounded-full bg-ink text-[12px] font-semibold uppercase text-gold-400">
+                  {user.name.slice(0, 1) || "H"}
+                </span>
+                <span className="max-w-[92px] truncate text-[13px] font-semibold text-ink">
+                  {firstName}
+                </span>
+              </Link>
             ) : (
               <div className="grid grid-cols-2 gap-3">
                 <Link
@@ -460,34 +614,6 @@ export function SiteHeader({
                 </Link>
               </div>
             )}
-          </div>
-
-          <div className="px-5 pb-10">
-            <Link
-              href="/contact"
-              onClick={() => setMobileOpen(false)}
-              className="btn btn-ink btn-lg w-full"
-            >
-              Plan my trip
-              <span className="btn-dot">→</span>
-            </Link>
-            <div className="mt-3 grid grid-cols-2 gap-3">
-              <a href={site.phoneHref} className="btn btn-light">
-                <Phone className="h-4 w-4" /> Call
-              </a>
-              <a
-                href={site.whatsappHref}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn btn-whatsapp"
-              >
-                WhatsApp
-              </a>
-            </div>
-            <p className="mt-4 flex items-center justify-center gap-2 text-[13px] font-medium text-navy-500">
-              <MapPin className="h-3.5 w-3.5" />
-              {site.address}
-            </p>
           </div>
         </div>
       ) : null}

@@ -37,7 +37,7 @@ function TourCardContent({
   compact: boolean;
 }) {
   const route = `${tour.destinationName} · ${tour.region}`;
-  const seatsLow = /left|filling|sold/i.test(tour.departure);
+  const seatsLow = !tour.departure || /left|filling|sold/i.test(tour.departure);
 
   return (
     <article
@@ -77,7 +77,7 @@ function TourCardContent({
       </Link>
 
       <div className="flex flex-1 flex-col gap-4 px-4 pb-4 pt-5">
-        <div className="flex flex-wrap items-center gap-3 text-[13px] font-bold text-navy-500">
+        <div className="flex flex-wrap items-center gap-3 text-[13px] font-semibold text-navy-500">
           <span>
             {tour.days}D / {tour.nights}N
           </span>
@@ -104,7 +104,7 @@ function TourCardContent({
               seatsLow ? "bg-danger" : "bg-success",
             )}
           />
-          Next: {tour.departure}
+          {!tour.departure ? "Dates on request" : tour.departure === "Sold out" ? "Sold out" : `Next: ${tour.departure}`}
         </p>
 
         <div className="route-line mt-auto" />
@@ -143,21 +143,22 @@ export function TourListCard({
   priority?: boolean;
 }) {
   const route = `${tour.destinationName} · ${tour.region}`;
-  const seatsLow = /left|filling|sold/i.test(tour.departure);
+  const seatsLow = !tour.departure || /left|filling|sold/i.test(tour.departure);
 
   return (
-    <article className="card-lift group flex flex-col overflow-hidden rounded-[28px] border border-sand-300 bg-paper p-2 sm:flex-row">
+    <article className="card-lift group @container overflow-hidden rounded-[28px] border border-sand-300 bg-paper">
+      <div className="flex flex-col p-2 sm:flex-row">
       <Link
         href={`/tours/${tour.slug}`}
         aria-label={`View ${tour.title}`}
-        className="relative block aspect-[280/200] w-full shrink-0 overflow-hidden rounded-[20px] bg-ink sm:w-[280px]"
+        className="relative block aspect-[280/200] w-full shrink-0 overflow-hidden rounded-[20px] bg-ink sm:w-[280px] @3xl:aspect-[16/10] @3xl:w-[44%]"
       >
         <Image
           src={imageUrl(tour.image, 800)}
           alt={tour.title}
           fill
           priority={priority}
-          sizes="(max-width: 640px) 100vw, 280px"
+          sizes="(max-width: 640px) 100vw, (min-width: 1024px) 560px, 280px"
           className="object-cover transition duration-700 group-hover:scale-[1.04]"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-ink/60 via-transparent to-ink/10" />
@@ -174,7 +175,7 @@ export function TourListCard({
       </Link>
 
       <div className="flex flex-1 flex-col gap-3 px-4 pb-4 pt-5 sm:p-5">
-        <div className="flex flex-wrap items-center gap-3 text-[13px] font-bold text-navy-500">
+        <div className="flex flex-wrap items-center gap-3 text-[13px] font-semibold text-navy-500">
           <span>
             {tour.days}D / {tour.nights}N
           </span>
@@ -188,12 +189,17 @@ export function TourListCard({
             </Link>
           </h3>
           <p className="type-small mt-1 text-navy-500">{route}</p>
+          {tour.summary ? (
+            <p className="type-body mt-3 hidden max-w-[60ch] text-navy-700 @3xl:line-clamp-2">
+              {tour.summary}
+            </p>
+          ) : null}
         </div>
         <p className="inline-flex w-fit items-center gap-2 rounded-[10px] bg-sand-100 px-3 py-2 text-[13px] font-medium text-navy-700">
           <span
             className={cn("h-2 w-2 rounded-full", seatsLow ? "bg-danger" : "bg-success")}
           />
-          Next: {tour.departure}
+          {!tour.departure ? "Dates on request" : tour.departure === "Sold out" ? "Sold out" : `Next: ${tour.departure}`}
         </p>
         <div className="mt-auto flex flex-wrap items-end justify-between gap-3 border-t border-dashed border-sand-300 pt-3">
           <div>
@@ -214,6 +220,7 @@ export function TourListCard({
             <span className="btn-dot">→</span>
           </Link>
         </div>
+      </div>
       </div>
     </article>
   );

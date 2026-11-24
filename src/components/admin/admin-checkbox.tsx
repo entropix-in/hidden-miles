@@ -4,9 +4,11 @@ import { useId } from "react";
 import { Checkbox } from "@base-ui/react/checkbox";
 import { Check } from "lucide-react";
 
-export function AdminCheckbox({ label, name, value, defaultChecked, variant = "plain" }: {
+export function AdminCheckbox({ label, name, value, defaultChecked, checked, onCheckedChange, variant = "plain" }: {
   label: string;
-  name: string;
+  name?: string;
+  checked?: boolean;
+  onCheckedChange?: (checked: boolean) => void;
   value?: string;
   defaultChecked?: boolean;
   variant?: "plain" | "option";
@@ -15,6 +17,7 @@ export function AdminCheckbox({ label, name, value, defaultChecked, variant = "p
 
   return (
     <Checkbox.Root name={name} value={value} defaultChecked={defaultChecked}
+      checked={checked} onCheckedChange={onCheckedChange ? (next) => onCheckedChange(next) : undefined}
       aria-labelledby={labelId} className="admin-checkbox" data-variant={variant}>
       <span className="admin-checkbox-box" aria-hidden>
         <Checkbox.Indicator className="admin-checkbox-indicator">

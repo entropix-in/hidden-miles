@@ -2,6 +2,7 @@ import type { RichFields } from "@/lib/rich-fields";
 import type { ContentBlock } from "@/lib/content-blocks";
 
 import type { TourCity } from "@/lib/tour-cities";
+import type { TourAddon } from "@/lib/addons";
 
 export type ItineraryBadgeKind =
   | "meal"
@@ -38,11 +39,18 @@ export type Tour = {
   nights: number;
   days: number;
   price: number;
+  /** Per-child price. Falls back to 75% of the adult price when unset. */
+  childPrice?: number;
+  /** Per-infant price. 0 (or unset) means infants travel free. */
+  infantPrice?: number;
   oldPrice?: number;
   rating: number;
   reviews: number;
   badge?: string;
+  /** Card label for the next departure, e.g. "Sat, 9 Jan · Only 3 left". Built from departure dates. */
   departure: string;
+  /** Upcoming departure dates (YYYY-MM-DD) that still have seats. Set when loaded from the database. */
+  departureDates?: string[];
   groupSize: string;
   summary: string;
   highlights: string[];
@@ -51,6 +59,8 @@ export type Tour = {
   itinerary: ItineraryDay[];
   /** Per-package departure cities. Falls back to defaultTourCities when unset. */
   departureCities?: TourCity[];
+  /** Optional extras offered at checkout for this package. */
+  addons?: TourAddon[];
   featured?: boolean;
 };
 

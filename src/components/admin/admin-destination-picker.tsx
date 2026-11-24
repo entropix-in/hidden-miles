@@ -32,7 +32,7 @@ export function DestinationPicker({ options, initial }: {
   const destination = all.find(({ slug }) => slug === selected);
 
   return (
-    <div className="min-w-0 sm:col-span-2">
+    <div className="min-w-0 sm:col-span-2" data-field="destinationSlug" data-required>
       <label className="field-label" htmlFor={id}>Destination</label>
       <div className="admin-destination-row">
         <Select.Root items={items} name="destinationSlug" required value={selected} onValueChange={setSelected}>
@@ -84,7 +84,7 @@ function DestinationDraft({ nameField, onSave }: {
       action={async (formData) => {
         const result = await persistDestinationAction(formData);
         if (result.destination) onSave(result.destination);
-        return { error: result.error ?? "" };
+        return { error: result.error ?? "", field: result.field };
       }}
       cancel={<Dialog.Close className="btn-outline">Cancel</Dialog.Close>}>
       <div>

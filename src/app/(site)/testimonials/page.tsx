@@ -65,7 +65,7 @@ export default async function TestimonialsPage() {
           <div className="on-ink flex w-full shrink-0 items-center gap-6 rounded-[24px] bg-ink p-6 sm:gap-8 sm:p-8 lg:w-auto">
             <div>
               <p className="font-display text-[56px] leading-none text-paper">4.9</p>
-              <p className="mt-2 text-sm font-bold tracking-[0.1em] text-gold-400">
+              <p className="mt-2 text-sm font-semibold tracking-[0.1em] text-gold-400">
                 ★★★★★
               </p>
               <p className="mt-1 whitespace-nowrap text-[13px] font-medium text-navy-200">
@@ -75,7 +75,7 @@ export default async function TestimonialsPage() {
             <div className="min-w-0 flex-1 space-y-2.5 sm:w-[220px] sm:flex-none">
               {bars.map((bar) => (
                 <div key={bar.star} className="flex items-center gap-2.5">
-                  <span className="w-6 text-xs font-bold text-navy-200">
+                  <span className="w-6 text-xs font-semibold text-navy-200">
                     {bar.star}★
                   </span>
                   <span className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/10">
@@ -139,7 +139,7 @@ export default async function TestimonialsPage() {
                     ) : null}
 
                     <div className="flex items-center justify-between gap-3">
-                      <span className="text-sm font-bold tracking-[0.1em] text-gold-400">
+                      <span className="text-sm font-semibold tracking-[0.1em] text-gold-400">
                         {"★".repeat(testimonial.rating)}
                       </span>
                     </div>
@@ -153,7 +153,7 @@ export default async function TestimonialsPage() {
 
                     <div className="flex items-center gap-3.5">
                       <span
-                        className={`grid h-11 w-11 place-items-center rounded-full text-xs font-bold text-white ${
+                        className={`grid h-11 w-11 place-items-center rounded-full text-xs font-semibold text-white ${
                           avatarColours[
                             (columnIndex + index) % avatarColours.length
                           ]
@@ -167,7 +167,7 @@ export default async function TestimonialsPage() {
                           .slice(0, 2)}
                       </span>
                       <span>
-                        <span className="block text-[15px] font-bold text-ink">
+                        <span className="block text-[15px] font-semibold text-ink">
                           {testimonial.name}
                         </span>
                         <span className="block text-[13px] font-medium leading-5 text-navy-500">

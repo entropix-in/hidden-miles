@@ -19,7 +19,7 @@ export function ItineraryTimeline({ days }: { days: ItineraryDay[] }) {
             <div className="flex flex-col items-center">
               <span
                 className={cn(
-                  "grid h-12 w-12 shrink-0 place-items-center rounded-full text-sm font-bold",
+                  "grid h-12 w-12 shrink-0 place-items-center rounded-full text-sm font-semibold",
                   index === 0
                     ? "bg-ink text-gold-400"
                     : "border-[1.5px] border-sand-300 bg-paper text-navy-700",

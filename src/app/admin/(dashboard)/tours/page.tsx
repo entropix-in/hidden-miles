@@ -107,7 +107,7 @@ export default async function AdminToursPage({ searchParams }: {
               key={tour._id}
               className="flex flex-col gap-3 rounded-xl border border-stone-200 bg-white p-3 sm:flex-row sm:items-center"
             >
-              <div className="relative h-28 w-full shrink-0 overflow-hidden rounded-lg sm:h-16 sm:w-24">
+              <div className="relative aspect-[16/9] w-full shrink-0 overflow-hidden rounded-[8px] sm:aspect-[4/3] sm:h-[72px] sm:w-24">
                 {tour.image ? (
                   <Image
                     src={imageUrl(tour.image, 300)}

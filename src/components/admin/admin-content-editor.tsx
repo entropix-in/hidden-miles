@@ -218,7 +218,7 @@ export function AdminContentEditor({ initialBlocks = [] }: { initialBlocks?: Con
     const blockId = `${id}-${nextId.current++}`;
     const block: DraftBlock = type === "text"
       ? { type, id: blockId, editor: template ? presetState(template) : null }
-      : { type, id: blockId, photos: [] };
+      : { type, id: blockId, photos: [], columns: 3, display: "grid" };
     setBlocks((current) => [...current, block]);
     setAnnouncement(`${template ? presets[template] : type === "text" ? "Rich text" : "Photo gallery"} block added.`);
   }
@@ -271,7 +271,10 @@ export function AdminContentEditor({ initialBlocks = [] }: { initialBlocks?: Con
                 <AdminGalleryEditor photos={block.photos} onChange={(change) =>
                   setBlocks((current) => current.map((item) =>
                     item.id === block.id && item.type === "gallery"
-                      ? { ...item, photos: change(item.photos) } : item))} />
+                      ? { ...item, photos: change(item.photos) } : item))}
+                  layout={{ columns: block.columns ?? 3, display: block.display ?? "grid" }}
+                  onLayoutChange={(layout) => setBlocks((current) => current.map((item) =>
+                    item.id === block.id && item.type === "gallery" ? { ...item, ...layout } : item))} />
               )}
             </SortableBlock>
           );

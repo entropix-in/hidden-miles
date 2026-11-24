@@ -1,3 +1,4 @@
+import { TourSectionTabs } from "@/components/site/tour-section-tabs";
 import { PageContentBlocks, RichFieldText } from "@/components/site/page-content-blocks";
 import type { Metadata } from "next";
 import Image from "next/image";
@@ -17,7 +18,7 @@ import {
   Sun,
   X,
 } from "lucide-react";
-import { BookingCard } from "@/components/site/booking-card";
+import { BookingCard, BookingCardDock } from "@/components/site/booking-card";
 import { Breadcrumbs } from "@/components/site/breadcrumbs";
 import { ItineraryTimeline } from "@/components/site/itinerary-timeline";
 import { SectionHeading } from "@/components/site/section-heading";
@@ -105,7 +106,6 @@ export default async function TourDetailPage({
     { label: "Overview", href: "#overview" },
     { label: "Itinerary", href: "#itinerary" },
     { label: "Inclusions", href: "#inclusions" },
-    { label: "Dates & prices", href: "#book" },
     { label: "Reviews", href: "#reviews" },
     { label: "FAQs", href: "#faqs" },
   ];
@@ -134,11 +134,11 @@ export default async function TourDetailPage({
               <span className="badge badge-blue">{tour.region} group tour</span>
               <span className="badge badge-success">Family friendly</span>
             </div>
-            <h1 className="type-h1 mt-4 text-ink">{tour.title}</h1>
+            <h1 className="type-h1 mt-4 text-[clamp(1.875rem,3.4vw,2.75rem)] text-ink">{tour.title}</h1>
             <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-[13px] font-medium text-navy-700">
               <span className="inline-flex items-center gap-1.5">
                 <Star className="h-3.5 w-3.5 fill-gold-400 text-gold-400" />
-                <span className="font-bold text-ink">
+                <span className="font-semibold text-ink">
                   {tour.rating.toFixed(1)}
                 </span>
                 <span className="text-navy-500">({tour.reviews} reviews)</span>
@@ -218,22 +218,7 @@ export default async function TourDetailPage({
       <div className="container-page mt-14 pb-20 md:pb-28">
         <div className="grid gap-12 lg:grid-cols-[1fr_392px] lg:items-start">
           <main className="min-w-0">
-            <nav className="-mx-5 flex overflow-x-auto whitespace-nowrap border-b border-sand-300 px-5 [mask-image:linear-gradient(to_right,black_80%,transparent)] [scrollbar-width:none] sm:mx-0 sm:px-0 sm:[mask-image:none]">
-              {tabs.map((tab, index) => (
-                <a
-                  key={tab.label}
-                  href={tab.href}
-                  className={`relative px-4 py-3 text-sm font-bold transition ${
-                    index === 0 ? "text-ink" : "text-navy-500 hover:text-ink"
-                  }`}
-                >
-                  {tab.label}
-                  {index === 0 ? (
-                    <span className="absolute inset-x-4 -bottom-px h-[3px] rounded-full bg-gold-400" />
-                  ) : null}
-                </a>
-              ))}
-            </nav>
+            <TourSectionTabs tabs={tabs} />
 
             <div className="mt-8 grid grid-cols-2 gap-0 rounded-[20px] border border-sand-300 bg-paper py-6 md:grid-cols-4">
               {[
@@ -271,7 +256,7 @@ export default async function TourDetailPage({
                     <span className="type-label block text-navy-500">
                       {fact.label}
                     </span>
-                    <span className="mt-0.5 block text-sm font-bold text-ink">
+                    <span className="mt-0.5 block text-sm font-semibold text-ink">
                       {fact.value}
                     </span>
                   </span>
@@ -279,7 +264,7 @@ export default async function TourDetailPage({
               ))}
             </div>
 
-            <section id="overview" className="scroll-mt-32 pt-14">
+            <section id="overview" className="scroll-mt-40 pt-14">
               <h2 className="type-h3 text-ink">Why you&apos;ll love it</h2>
               <p className="type-body mt-3 text-navy-700"><RichFieldText editor={tour.richFields?.summary} fallback={tour.summary} /></p>
               <PageContentBlocks blocks={tour.contentBlocks} />
@@ -298,12 +283,12 @@ export default async function TourDetailPage({
               </div>
             </section>
 
-            <section id="itinerary" className="scroll-mt-32 pt-16">
+            <section id="itinerary" className="scroll-mt-40 pt-16">
               <h2 className="type-h3 text-ink">Day by day</h2>
               <ItineraryTimeline days={tour.itinerary} />
             </section>
 
-            <section id="inclusions" className="scroll-mt-32 pt-14">
+            <section id="inclusions" className="scroll-mt-40 pt-14">
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="rounded-[20px] border border-sand-300 bg-paper p-7">
                   <h2 className="type-title text-ink">What&apos;s included</h2>
@@ -339,12 +324,12 @@ export default async function TourDetailPage({
             </section>
 
             {quote ? (
-              <section id="reviews" className="scroll-mt-32 pt-14">
+              <section id="reviews" className="scroll-mt-40 pt-14">
                 <div className="on-ink relative overflow-hidden rounded-[24px] bg-ink p-8">
                   <div className="grid items-center gap-8 sm:grid-cols-[auto_1fr]">
                     <div>
                       <p className="type-h1 text-paper">4.9</p>
-                      <p className="text-sm font-bold tracking-[0.1em] text-gold-400">
+                      <p className="text-sm font-semibold tracking-[0.1em] text-gold-400">
                         ★★★★★
                       </p>
                       <p className="mt-1 text-[13px] font-medium text-navy-200">
@@ -355,7 +340,7 @@ export default async function TourDetailPage({
                       <p className="font-display text-[19px] leading-[1.55] text-paper">
                         “<RichFieldText editor={quote.richFields?.quote} fallback={quote.quote} />”
                       </p>
-                      <p className="mt-3 text-sm font-bold text-gold-400">
+                      <p className="mt-3 text-sm font-semibold text-gold-400">
                         {quote.name} · {quote.city}
                       </p>
                     </div>
@@ -364,7 +349,7 @@ export default async function TourDetailPage({
               </section>
             ) : null}
 
-            <section id="faqs" className="scroll-mt-32 pt-14">
+            <section id="faqs" className="scroll-mt-40 pt-14">
               <h2 className="type-h3 text-ink">Good to know</h2>
               <div className="mt-6 border-t border-sand-300">
                 {[
@@ -412,15 +397,19 @@ export default async function TourDetailPage({
             </section>
           </main>
 
-          <aside id="book" className="scroll-mt-32 lg:sticky lg:top-32">
-            <BookingCard
-              tourSlug={tour.slug}
-              basePrice={tour.price}
-              oldPrice={tour.oldPrice}
-              departures={departures}
-              tourTitle={tour.title}
-              cities={resolveTourCities(tour.departureCities)}
-            />
+          <aside id="book" className="scroll-mt-40 lg:self-stretch">
+            <BookingCardDock>
+              <BookingCard
+                tourSlug={tour.slug}
+                basePrice={tour.price}
+                oldPrice={tour.oldPrice}
+                childPrice={tour.childPrice}
+                infantPrice={tour.infantPrice}
+                departures={departures}
+                tourTitle={tour.title}
+                cities={resolveTourCities(tour.departureCities)}
+              />
+            </BookingCardDock>
           </aside>
         </div>
       </div>

@@ -1,11 +1,22 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import Link from "next/link";
-import { Check, ChevronDown, Minus, Phone, Plus, ShieldCheck } from "lucide-react";
+import { Dialog } from "@base-ui/react/dialog";
+import {
+  CalendarDays,
+  ChevronDown,
+  Minus,
+  Phone,
+  Plus,
+  ShieldCheck,
+  X,
+} from "lucide-react";
 import type { TourDeparture } from "@/lib/types";
+import { fallbackDepartures } from "@/lib/tour-departures";
 import { site } from "@/data/site";
 import { cn, formatINR } from "@/lib/utils";
+import { useScrollingSticky } from "@/lib/use-scrolling-sticky";
 import type { TourCity } from "@/lib/tour-cities";
 import { Select } from "@/components/ui/select";
 
@@ -16,68 +27,61 @@ const dateFormatter = new Intl.DateTimeFormat("en-IN", {
   timeZone: "UTC",
 });
 
-const VISIBLE_DATES = 4;
+function seatLabel(seatsLeft: number) {
+  if (seatsLeft <= 0) return "Sold out";
+  if (seatsLeft <= 5) return `Only ${seatsLeft} left`;
+  return `${seatsLeft} seats left`;
+}
 
 export function BookingCard({
   tourSlug,
   basePrice,
   oldPrice,
+  childPrice: childPriceSetting,
+  infantPrice: infantPriceSetting,
   departures,
   cities,
 }: {
   tourSlug: string;
   basePrice: number;
   oldPrice?: number;
+  childPrice?: number;
+  infantPrice?: number;
   departures: TourDeparture[];
   tourTitle: string;
   cities: TourCity[];
 }) {
   const fallback = useMemo(
-    () =>
-      Array.from({ length: 4 }).map((_, index) => {
-        const start = new Date();
-        start.setUTCDate(start.getUTCDate() + 14 + index * 7);
-        const seats = [6, 18, 3, 12][index] ?? 10;
-        return {
-          _id: `fallback-${index}`,
-          tourSlug: "",
-          startDate: start.toISOString().slice(0, 10),
-          price: basePrice,
-          capacity: 24,
-          booked: 24 - seats,
-          seatsLeft: seats,
-          note: seats <= 5 ? "filling fast" : "available",
-          createdAt: 0,
-        } satisfies TourDeparture;
-      }),
-    [basePrice],
+    () => fallbackDepartures(basePrice, tourSlug),
+    [basePrice, tourSlug],
   );
 
   const allDates = departures.length ? departures : fallback;
-  const [selectedId, setSelectedId] = useState(allDates[0]?._id ?? "");
-  const [showAllDates, setShowAllDates] = useState(false);
+  const [selectedId, setSelectedId] = useState(
+    allDates.find((date) => date.seatsLeft > 0)?._id ?? allDates[0]?._id ?? "",
+  );
+  const [pickerOpen, setPickerOpen] = useState(false);
   const [city, setCity] = useState(cities[0]?.name ?? "");
   const [adults, setAdults] = useState(2);
   const [children, setChildren] = useState(1);
-
-  const visibleDates = showAllDates
-    ? allDates
-    : allDates.slice(0, VISIBLE_DATES);
-  const hasMoreDates = allDates.length > VISIBLE_DATES;
+  const [infants, setInfants] = useState(0);
 
   const selected = allDates.find((date) => date._id === selectedId) ?? allDates[0];
   const cityOption =
     cities.find((item) => item.name === city) ??
     cities[0] ?? { name: "", note: "", priceDelta: 0 };
   const adultPrice = (selected?.price ?? basePrice) + cityOption.priceDelta;
-  const childPrice = Math.round(adultPrice * 0.75);
-  const total = adultPrice * adults + childPrice * children;
+  const childPrice = childPriceSetting ?? Math.round(adultPrice * 0.75);
+  const infantPrice = infantPriceSetting ?? 0;
+  const travellers = adults + children + infants;
+  const total =
+    adultPrice * adults + childPrice * children + infantPrice * infants;
 
   const landOnly = /tour only|no flight|land-only/i.test(cityOption.note);
   const cityHint = landOnly
     ? "Land-only package · no flights included"
     : cityOption.priceDelta === 0
-      ? "Base fare · return flights included"
+      ? null
       : `${cityOption.priceDelta > 0 ? "Add" : "Less"} ${formatINR(Math.abs(cityOption.priceDelta))} · return flights included`;
 
   const bookingParams = new URLSearchParams();
@@ -85,6 +89,7 @@ export function BookingCard({
   if (cityOption.name) bookingParams.set("city", cityOption.name);
   bookingParams.set("adults", String(adults));
   bookingParams.set("children", String(children));
+  bookingParams.set("infants", String(infants));
   const bookingHref = `/tours/${tourSlug}/book?${bookingParams.toString()}`;
 
   return (
@@ -102,132 +107,136 @@ export function BookingCard({
         ) : null}
       </div>
       <p className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-1">
-        <span className="text-[32px] font-extrabold leading-none tracking-[-0.03em] text-ink">
+        <span className="text-[32px] font-semibold leading-none tracking-[-0.03em] text-ink">
           {formatINR(adultPrice)}
         </span>
-        <span className="type-small text-navy-500">per person</span>
-      </p>
-      <p className="mt-2 text-[13px] font-medium text-navy-500">
-        Twin sharing · plus 5% GST
       </p>
 
-      <div className="route-line my-6" />
+      <p id="departure-date-label" className="type-label mt-6 text-navy-500">
+        Departure date
+      </p>
 
-      <div className="flex items-baseline justify-between gap-3">
-        <p className="type-label text-navy-500">Departure date</p>
-        <span className="text-[12px] font-semibold text-navy-500">
-          {allDates.length} {allDates.length === 1 ? "date" : "dates"}
-        </span>
-      </div>
-
-      <div
-        role="radiogroup"
-        aria-label="Departure date"
-        className="mt-3 grid gap-2"
-      >
-        {visibleDates.map((date) => {
-          const sold = date.seatsLeft <= 0;
-          const low = !sold && date.seatsLeft <= 5;
-          const active = selected?._id === date._id;
-
-          return (
-            <button
-              key={date._id}
-              type="button"
-              role="radio"
-              aria-checked={active}
-              disabled={sold}
-              onClick={() => setSelectedId(date._id)}
-              className={cn(
-                "group flex w-full items-center gap-3 rounded-[14px] border-[1.5px] px-3.5 py-3 text-left transition",
-                active
-                  ? "border-ink bg-ink text-paper shadow-[0_12px_28px_-18px_rgba(11,39,53,0.7)]"
-                  : sold
-                    ? "cursor-not-allowed border-sand-300 bg-sand-100 text-navy-500"
-                    : "border-sand-300 bg-paper text-ink hover:border-navy-300 hover:bg-sand-100",
-              )}
-            >
-              <span
-                aria-hidden="true"
-                className={cn(
-                  "grid h-[18px] w-[18px] shrink-0 place-items-center rounded-full border-[1.5px] transition",
-                  active
-                    ? "border-gold-400 bg-gold-400 text-ink"
-                    : "border-sand-300 bg-paper text-transparent",
-                )}
-              >
-                <Check className="h-3 w-3" strokeWidth={3} />
-              </span>
-
-              <span className="min-w-0 flex-1">
-                <span
-                  className={cn(
-                    "block truncate text-[13.5px] font-bold",
-                    sold && "line-through",
-                  )}
-                >
-                  {dateFormatter.format(new Date(`${date.startDate}T00:00:00Z`))}
-                </span>
-                <span
-                  className={cn(
-                    "mt-1 inline-flex rounded-full px-2 py-0.5 text-[11px] font-bold",
-                    active
-                      ? "bg-gold-400 text-ink"
-                      : sold
-                        ? "bg-sand-200 text-navy-500"
-                        : low
-                          ? "bg-gold-100 text-gold-700"
-                          : "bg-success-soft text-success",
-                  )}
-                >
-                  {sold
-                    ? "Sold out"
-                    : low
-                      ? `Only ${date.seatsLeft} left`
-                      : `${date.seatsLeft} seats left`}
-                </span>
-              </span>
-
-              <span
-                className={cn(
-                  "shrink-0 text-right text-sm font-bold",
-                  active ? "text-paper" : sold ? "text-navy-500" : "text-ink",
-                )}
-              >
-                {formatINR(date.price)}
-                <span
-                  className={cn(
-                    "mt-0.5 block text-[10px] font-medium normal-case tracking-normal",
-                    active ? "text-navy-200" : "text-navy-500",
-                  )}
-                >
-                  per person
-                </span>
-              </span>
-            </button>
-          );
-        })}
-      </div>
-
-      {hasMoreDates ? (
+      {selected ? (
         <button
           type="button"
-          onClick={() => setShowAllDates((current) => !current)}
-          className="mt-2.5 inline-flex w-full items-center justify-center gap-1.5 rounded-full border border-sand-300 bg-paper px-3 py-2 text-[13px] font-bold text-navy-700 transition hover:border-navy-300 hover:text-ink"
-          aria-expanded={showAllDates}
+          onClick={() => setPickerOpen(true)}
+          aria-labelledby="departure-date-label departure-date-value"
+          aria-haspopup="dialog"
+          className="field mt-3 flex cursor-pointer items-center gap-3 text-left hover:border-navy-300"
         >
-          {showAllDates
-            ? "Show fewer dates"
-            : `View all ${allDates.length} departures`}
-          <ChevronDown
+          <CalendarDays aria-hidden="true" className="h-[18px] w-[18px] shrink-0 text-navy-500" />
+          <span id="departure-date-value" className="min-w-0 flex-1 truncate font-medium">
+            {dateFormatter.format(new Date(`${selected.startDate}T00:00:00Z`))}
+          </span>
+          <span
             className={cn(
-              "h-3.5 w-3.5 transition-transform duration-200",
-              showAllDates && "rotate-180",
+              "shrink-0 text-[13px] font-medium tabular-nums",
+              selected.seatsLeft > 0 && selected.seatsLeft <= 5
+                ? "text-gold-700"
+                : "text-navy-500",
             )}
-            aria-hidden="true"
-          />
+          >
+            {seatLabel(selected.seatsLeft)}
+          </span>
+          <ChevronDown aria-hidden="true" className="h-4 w-4 shrink-0 text-navy-500" />
         </button>
-      ) : null}
+      ) : (
+        <p className="mt-3 rounded-[16px] border border-dashed border-sand-300 bg-sand-100 px-4 py-3 text-[13px] font-medium text-navy-700">
+          New dates are being finalised. Ask us for the next departure.
+        </p>
+      )}
+
+      <Dialog.Root open={pickerOpen} onOpenChange={setPickerOpen}>
+        <Dialog.Portal>
+          <Dialog.Backdrop className="fixed inset-0 z-[80] bg-ink/45 backdrop-blur-[2px]" />
+          <Dialog.Popup className="fixed left-1/2 top-1/2 z-[81] max-h-[85dvh] w-[min(94vw,560px)] -translate-x-1/2 -translate-y-1/2 overflow-y-auto overscroll-contain rounded-[24px] border border-sand-300 bg-paper p-5 shadow-[0_40px_80px_-40px_rgba(11,39,53,0.55)] sm:p-6">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <Dialog.Title className="type-title text-ink">
+                  Choose a departure
+                </Dialog.Title>
+                <Dialog.Description className="mt-1 text-[13px] font-medium text-navy-500">
+                  {allDates.length} departure
+                  {allDates.length === 1 ? "" : "s"} · prices per person
+                </Dialog.Description>
+              </div>
+              <Dialog.Close
+                className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-sand-300 bg-paper text-ink transition hover:border-navy-300 hover:bg-sand-100"
+                aria-label="Close date picker"
+              >
+                <X className="h-4 w-4" aria-hidden="true" />
+              </Dialog.Close>
+            </div>
+
+            <div
+              role="radiogroup"
+              aria-label="Departure date"
+              className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3"
+            >
+              {allDates.map((date) => {
+                const sold = date.seatsLeft <= 0;
+                const low = !sold && date.seatsLeft <= 5;
+                const active = selected?._id === date._id;
+
+                return (
+                  <button
+                    key={date._id}
+                    type="button"
+                    role="radio"
+                    aria-checked={active}
+                    disabled={sold}
+                    onClick={() => {
+                      setSelectedId(date._id);
+                      setPickerOpen(false);
+                    }}
+                    className={cn(
+                      "rounded-[12px] border-[1.5px] px-3 py-2.5 text-left transition",
+                      active
+                        ? "border-ink bg-ink text-paper"
+                        : sold
+                          ? "border-sand-300 bg-sand-100 text-navy-500"
+                          : "border-sand-300 bg-paper text-ink hover:border-navy-300",
+                    )}
+                  >
+                    <span
+                      className={cn(
+                        "block text-[13px] font-semibold",
+                        sold && "line-through",
+                      )}
+                    >
+                      {dateFormatter.format(
+                        new Date(`${date.startDate}T00:00:00Z`),
+                      )}
+                    </span>
+                    <span
+                      className={cn(
+                        "mt-0.5 block text-[12px] font-medium",
+                        active ? "text-navy-200" : "text-navy-500",
+                      )}
+                    >
+                      {sold ? "Sold out" : formatINR(date.price)}
+                    </span>
+                    <span
+                      className={cn(
+                        "mt-1 block text-xs font-semibold",
+                        active
+                          ? "text-gold-400"
+                          : sold
+                            ? "text-navy-500"
+                            : low
+                              ? "text-danger"
+                              : "text-success",
+                      )}
+                    >
+                      {sold ? "Waitlist" : seatLabel(date.seatsLeft)}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </Dialog.Popup>
+        </Dialog.Portal>
+      </Dialog.Root>
 
       <div className="mt-6">
         <label
@@ -240,7 +249,7 @@ export function BookingCard({
           id="departure-city"
           value={city}
           onValueChange={setCity}
-          className="mt-2 py-3 font-bold"
+          className="mt-2 py-3 font-semibold"
         >
           {cities.map((item) => (
             <option key={item.name} value={item.name}>
@@ -248,22 +257,25 @@ export function BookingCard({
             </option>
           ))}
         </Select>
-        <p className="mt-1.5 text-xs font-medium text-navy-500">{cityHint}</p>
+        {cityHint ? (
+          <p className="mt-1.5 text-xs font-medium text-navy-500">{cityHint}</p>
+        ) : null}
       </div>
 
       <div className="mt-6">
         <p className="type-label text-navy-500">Travellers</p>
         <div className="mt-2 grid gap-2">
           {[
-            { label: "Adults", sub: "12+ years", value: adults, set: setAdults, min: 1 },
-            { label: "Children", sub: "5 – 11 years", value: children, set: setChildren, min: 0 },
+            { label: "Adults", sub: `12+ years · ${formatINR(adultPrice)}`, value: adults, set: setAdults, min: 1 },
+            { label: "Children", sub: `5 – 11 years · ${formatINR(childPrice)}`, value: children, set: setChildren, min: 0 },
+            { label: "Infants", sub: `Under 5 · ${infantPrice > 0 ? formatINR(infantPrice) : "Free"}`, value: infants, set: setInfants, min: 0 },
           ].map((traveller) => (
             <div
               key={traveller.label}
               className="flex items-center justify-between rounded-[14px] border border-sand-300 bg-paper px-4 py-2.5"
             >
               <span>
-                <span className="block text-sm font-bold text-ink">
+                <span className="block text-sm font-semibold text-ink">
                   {traveller.label}
                 </span>
                 <span className="block text-xs font-medium text-navy-500">
@@ -282,7 +294,7 @@ export function BookingCard({
                 >
                   <Minus className="h-3.5 w-3.5" />
                 </button>
-                <span className="w-5 text-center text-sm font-bold tabular-nums text-ink">
+                <span className="w-5 text-center text-sm font-semibold tabular-nums text-ink">
                   {traveller.value}
                 </span>
                 <button
@@ -305,7 +317,7 @@ export function BookingCard({
             <span className="text-navy-700">
               {adults} adult{adults === 1 ? "" : "s"} × {formatINR(adultPrice)}
             </span>
-            <span className="font-bold tabular-nums text-ink">
+            <span className="font-semibold tabular-nums text-ink">
               {formatINR(adultPrice * adults)}
             </span>
           </div>
@@ -315,8 +327,19 @@ export function BookingCard({
                 {children} child{children === 1 ? "" : "ren"} ×{" "}
                 {formatINR(childPrice)}
               </span>
-              <span className="font-bold tabular-nums text-ink">
+              <span className="font-semibold tabular-nums text-ink">
                 {formatINR(childPrice * children)}
+              </span>
+            </div>
+          ) : null}
+          {infants ? (
+            <div className="flex items-center justify-between gap-3">
+              <span className="text-navy-700">
+                {infants} infant{infants === 1 ? "" : "s"} ×{" "}
+                {infantPrice > 0 ? formatINR(infantPrice) : "Free"}
+              </span>
+              <span className="font-semibold tabular-nums text-ink">
+                {infantPrice > 0 ? formatINR(infantPrice * infants) : "Free"}
               </span>
             </div>
           ) : null}
@@ -325,17 +348,14 @@ export function BookingCard({
         <div className="route-line my-3.5" />
 
         <div className="flex items-baseline justify-between gap-3">
-          <span className="text-sm font-bold text-ink">
-            Tour price, {adults + children}{" "}
-            {adults + children === 1 ? "traveller" : "travellers"}
+          <span className="text-sm font-semibold text-ink">
+            Tour price, {travellers}{" "}
+            {travellers === 1 ? "traveller" : "travellers"}
           </span>
           <span className="type-title tabular-nums text-ink">
             {formatINR(total)}
           </span>
         </div>
-        <p className="mt-1.5 text-xs font-medium text-navy-500">
-          Plus 5% GST and any add-ons you pick at checkout.
-        </p>
       </div>
 
       <Link
@@ -369,11 +389,11 @@ export function BookingCard({
         href={site.phoneHref}
         className="mt-5 flex items-center gap-3 rounded-[14px] border border-sand-300 bg-sand-50 p-3.5 transition hover:border-navy-300 hover:bg-sand-100"
       >
-        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-navy-500 text-xs font-bold text-white">
+        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-navy-500 text-xs font-semibold text-white">
           NK
         </span>
         <span className="min-w-0 flex-1">
-          <span className="block text-[13px] font-bold text-ink">
+          <span className="block text-[13px] font-semibold text-ink">
             Talk to Nisha, our expert
           </span>
           <span className="block text-xs font-medium text-navy-500">
@@ -384,6 +404,21 @@ export function BookingCard({
           <Phone className="h-4 w-4" />
         </span>
       </a>
+    </div>
+  );
+}
+
+/**
+ * Keeps the booking card in view on desktop. When the card is taller than the
+ * viewport it scrolls with the page until its end is visible, and back up
+ * until its top is visible, then sticks.
+ */
+export function BookingCardDock({ children }: { children: ReactNode }) {
+  const node = useScrollingSticky<HTMLDivElement>();
+
+  return (
+    <div ref={node} className="lg:sticky">
+      {children}
     </div>
   );
 }

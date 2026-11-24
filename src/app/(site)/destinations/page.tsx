@@ -124,7 +124,7 @@ export default async function DestinationsPage({
             aria-label="Search a destination"
             className="min-w-0 flex-1 bg-transparent text-[15px] font-medium text-ink outline-none placeholder:text-navy-500"
           />
-          <button type="submit" className="text-sm font-bold text-blue-700">
+          <button type="submit" className="text-sm font-semibold text-blue-700">
             Search
           </button>
         </form>
@@ -187,7 +187,7 @@ export default async function DestinationsPage({
       <CtaBand
         className="pt-14 md:pt-20"
         title="Two places,"
-        accent="one seamless trip."
+        accent="one connected trip"
         description="Combine destinations into one itinerary."
       />
     </>

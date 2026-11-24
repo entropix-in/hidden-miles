@@ -10,6 +10,7 @@ import {
   MapPin,
   MessageSquareQuote,
   Package,
+  Percent,
   Sparkles,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -19,6 +20,7 @@ const links = [
   { href: "/admin/tours", label: "Packages", icon: Package },
   { href: "/admin/departures", label: "Departures", icon: CalendarCheck },
   { href: "/admin/bookings", label: "Booking requests", icon: Ticket },
+  { href: "/admin/discounts", label: "Discounts", icon: Percent },
   { href: "/admin/destinations", label: "Destinations", icon: MapPin },
   { href: "/admin/experiences", label: "Experiences", icon: Sparkles },
   {

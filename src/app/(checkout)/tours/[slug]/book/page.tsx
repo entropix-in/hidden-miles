@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { BookingFlow } from "@/components/site/booking-flow";
-import { loadDepartures, loadTour } from "@/lib/content";
+import { loadAutomaticDiscounts, loadDepartures, loadTour } from "@/lib/content";
 import { resolveTourCities } from "@/lib/tour-cities";
 import { requireUser } from "@/lib/user-auth";
 
@@ -39,7 +39,10 @@ export default async function BookTourPage({
   const nextPath = `/tours/${slug}/book${nextParams.size ? `?${nextParams}` : ""}`;
   const user = await requireUser(nextPath);
 
-  const departures = await loadDepartures(tour.slug);
+  const [departures, automaticDiscounts] = await Promise.all([
+    loadDepartures(tour.slug),
+    loadAutomaticDiscounts(tour.slug),
+  ]);
 
   const readParam = (key: string) => {
     const value = query[key];
@@ -59,6 +62,8 @@ export default async function BookTourPage({
         title: tour.title,
         image: tour.image,
         price: tour.price,
+        childPrice: tour.childPrice,
+        infantPrice: tour.infantPrice,
         oldPrice: tour.oldPrice,
         nights: tour.nights,
         days: tour.days,
@@ -67,11 +72,14 @@ export default async function BookTourPage({
         destinationName: tour.destinationName,
       }}
       departures={departures}
+      addons={tour.addons ?? []}
+      automaticDiscounts={automaticDiscounts}
       cities={resolveTourCities(tour.departureCities)}
       initialDate={readParam("date")}
       initialCity={readParam("city")}
       initialAdults={readNumber("adults")}
       initialChildren={readNumber("children")}
+      initialInfants={readNumber("infants")}
       account={{
         name: user.name,
         email: user.email,

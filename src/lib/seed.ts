@@ -1,8 +1,10 @@
-import { eq } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 import type { AppDb } from "@/db";
 import {
   bookings as bookingsTable,
   destinations as destinationsTable,
+  discounts as discountsTable,
+  discountTours as discountToursTable,
   enquiries as enquiriesTable,
   experiences as experiencesTable,
   settings,
@@ -24,6 +26,8 @@ import type { Testimonial } from "@/data/site";
 import { tours as staticTours } from "@/data/tours";
 import type { Tour } from "@/data/tours";
 import { defaultTourCities } from "@/lib/tour-cities";
+import { seedAddonsFor } from "@/data/seed-addons";
+import { seedDiscounts } from "@/data/seed-discounts";
 
 export type SeedCount = {
   added: number;
@@ -39,6 +43,7 @@ export type SeedSummary = {
 };
 
 export type SeedActivitySummary = {
+  discounts: SeedCount;
   departures: SeedCount;
   bookings: SeedCount;
   enquiries: SeedCount;
@@ -66,6 +71,8 @@ export function tourValues(tour: Tour) {
     nights: tour.nights,
     days: tour.days,
     price: tour.price,
+    childPrice: tour.childPrice ?? null,
+    infantPrice: tour.infantPrice ?? null,
     oldPrice: tour.oldPrice ?? null,
     rating: String(tour.rating),
     reviews: tour.reviews,
@@ -79,6 +86,7 @@ export function tourValues(tour: Tour) {
     exclusions: tour.exclusions,
     itinerary: tour.itinerary,
     departureCities: tour.departureCities ?? defaultTourCities,
+    addons: tour.addons ?? seedAddonsFor(tour.slug),
     featured: tour.featured ? 1 : 0,
   } satisfies typeof toursTable.$inferInsert;
 }
@@ -165,7 +173,13 @@ export async function seedStaticContent(
           .where(eq(toursTable.slug, tour.slug));
         summary.tours.updated += 1;
       } else {
-        summary.tours.skipped += 1;
+        // Tours created before add-ons existed have none set; give them the starter list.
+        const [result] = await db
+          .update(toursTable)
+          .set({ addons: seedAddonsFor(tour.slug) })
+          .where(and(eq(toursTable.slug, tour.slug), isNull(toursTable.addons)));
+        if (result.affectedRows) summary.tours.updated += 1;
+        else summary.tours.skipped += 1;
       }
     } else {
       await db.insert(toursTable).values(tourValues(tour));
@@ -241,10 +255,53 @@ export async function seedSampleActivity(
   { force = false }: SeedOptions = {},
 ): Promise<SeedActivitySummary> {
   const summary: SeedActivitySummary = {
+    discounts: emptyCount(),
     departures: emptyCount(),
     bookings: emptyCount(),
     enquiries: emptyCount(),
   };
+
+  const [existingDiscounts, tourIds] = await Promise.all([
+    db.select({ id: discountsTable.id, name: discountsTable.name, code: discountsTable.code }).from(discountsTable),
+    db.select({ id: toursTable.id, slug: toursTable.slug }).from(toursTable),
+  ]);
+  for (const discount of seedDiscounts) {
+    const existing = existingDiscounts.find((row) => row.name === discount.name);
+    const codeTaken = discount.code && existingDiscounts.some((row) => row.code === discount.code && row.id !== existing?.id);
+    if ((existing && !force) || codeTaken) {
+      summary.discounts.skipped += 1;
+      continue;
+    }
+    const linked = tourIds.filter((tour) => discount.tourSlugs?.includes(tour.slug)).map((tour) => Number(tour.id));
+    const values = {
+      name: discount.name,
+      code: discount.code ?? null,
+      kind: discount.kind,
+      value: discount.value,
+      maxAmount: discount.maxAmount ?? null,
+      scope: discount.tourSlugs ? "selected" : "all",
+      minTravellers: discount.minTravellers ?? 1,
+      startsOn: discount.startsOn ?? null,
+      endsOn: discount.endsOn ?? null,
+      usageLimit: discount.usageLimit ?? null,
+      active: true,
+    } satisfies typeof discountsTable.$inferInsert;
+
+    await db.transaction(async (tx) => {
+      let id: number;
+      if (existing) {
+        id = Number(existing.id);
+        await tx.update(discountsTable).set(values).where(eq(discountsTable.id, id));
+        await tx.delete(discountToursTable).where(eq(discountToursTable.discountId, id));
+      } else {
+        const [result] = await tx.insert(discountsTable).values(values);
+        id = Number(result.insertId);
+      }
+      if (linked.length) await tx.insert(discountToursTable).values(linked.map((tourId) => ({ discountId: id, tourId })));
+    });
+    if (existing) summary.discounts.updated += 1;
+    else summary.discounts.added += 1;
+  }
 
   const existingDepartures = await db
     .select({

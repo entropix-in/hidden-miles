@@ -134,7 +134,7 @@ export default async function DestinationDetailPage({
                 <span className="block text-xs font-medium text-navy-500">
                   {fact.label}
                 </span>
-                <span className="mt-0.5 block text-sm font-bold text-ink">
+                <span className="mt-0.5 block text-sm font-semibold text-ink">
                   {fact.value}
                 </span>
               </span>
@@ -163,7 +163,7 @@ export default async function DestinationDetailPage({
                   index ? "border-t border-sand-300" : ""
                 }`}
               >
-                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-sand-200 text-sm font-bold text-ink">
+                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-sand-200 text-sm font-semibold text-ink">
                   {index + 1}
                 </span>
                 <span className="type-title text-ink"><RichFieldText editor={destination.richFields?.highlights?.[index]} fallback={highlight} /></span>

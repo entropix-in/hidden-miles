@@ -6,10 +6,12 @@ import {
   Compass,
   Mail,
   Phone,
+  Settings,
   Ticket,
   UserRound,
 } from "lucide-react";
-import { logoutAction } from "@/lib/user-actions";
+import { SignOutButton } from "@/components/site/account/sign-out-button";
+import { VerifyEmailBanner } from "@/components/site/account/verify-email-banner";
 import { requireUser } from "@/lib/user-auth";
 import { loadTours, loadUserBookings } from "@/lib/content";
 import { bookingStatusLabels } from "@/lib/booking-status";
@@ -70,7 +72,7 @@ export default async function AccountPage() {
           <p className="type-label text-gold-400">My account</p>
           <div className="mt-2 flex flex-wrap items-end justify-between gap-5">
             <div>
-              <h1 className="type-h1 text-paper">Hello, {firstName}.</h1>
+              <h1 className="type-h1 text-[clamp(1.75rem,3vw,2.5rem)] text-paper">Hello, {firstName}.</h1>
               <p className="type-body mt-2 max-w-xl text-navy-200">
                 Your tours, traveller details and trip updates — all in one
                 place.
@@ -92,10 +94,10 @@ export default async function AccountPage() {
                 key={label}
                 className="rounded-[16px] border border-white/10 bg-white/5 px-5 py-4"
               >
-                <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-navy-300">
+                <p className="text-[12px] font-semibold text-navy-300">
                   {label}
                 </p>
-                <p className="mt-1 truncate text-xl font-extrabold tracking-[-0.02em] text-paper">
+                <p className="mt-1 truncate text-xl font-semibold tracking-[-0.02em] text-paper">
                   {value}
                 </p>
               </div>
@@ -104,7 +106,13 @@ export default async function AccountPage() {
         </div>
       </div>
 
-      <div className="container-page grid gap-8 py-10 md:py-14 lg:grid-cols-[1fr_340px] lg:items-start">
+      <div className="container-page py-10 md:py-14">
+        {!user.emailVerified ? (
+          <div className="mb-8">
+            <VerifyEmailBanner email={user.email} />
+          </div>
+        ) : null}
+        <div className="grid gap-8 lg:grid-cols-[1fr_340px] lg:items-start">
         <section aria-labelledby="my-trips">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 id="my-trips" className="type-h3 text-ink">
@@ -175,7 +183,7 @@ export default async function AccountPage() {
                             {booking.travellers}{" "}
                             {booking.travellers === 1 ? "traveller" : "travellers"}
                           </span>
-                          <span className="font-bold text-ink">
+                          <span className="font-semibold text-ink">
                             {formatINR(booking.amount)}
                           </span>
                         </div>
@@ -198,14 +206,14 @@ export default async function AccountPage() {
           )}
         </section>
 
-        <aside className="space-y-4 lg:sticky lg:top-28">
+        <aside className="space-y-4">
           <div className="rounded-[24px] border border-sand-300 bg-paper p-6">
             <div className="flex items-center gap-4">
-              <span className="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-ink text-lg font-extrabold uppercase text-gold-400">
+              <span className="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-ink text-lg font-semibold uppercase text-gold-400">
                 {user.name.slice(0, 1) || "H"}
               </span>
               <div className="min-w-0">
-                <p className="truncate text-sm font-bold text-ink">{user.name}</p>
+                <p className="truncate text-sm font-semibold text-ink">{user.name}</p>
                 <p className="text-[12px] font-medium text-navy-500">
                   Member since {monthFormatter.format(user.createdAt)}
                 </p>
@@ -216,7 +224,7 @@ export default async function AccountPage() {
               <div className="flex items-start gap-2.5">
                 <Mail className="mt-0.5 h-4 w-4 shrink-0 text-navy-500" />
                 <div className="min-w-0">
-                  <dt className="text-[11px] font-bold uppercase tracking-[0.1em] text-navy-500">
+                  <dt className="text-[11px] font-semibold text-navy-500">
                     Email
                   </dt>
                   <dd className="break-all text-sm font-semibold text-ink">
@@ -227,7 +235,7 @@ export default async function AccountPage() {
               <div className="flex items-start gap-2.5">
                 <Phone className="mt-0.5 h-4 w-4 shrink-0 text-navy-500" />
                 <div>
-                  <dt className="text-[11px] font-bold uppercase tracking-[0.1em] text-navy-500">
+                  <dt className="text-[11px] font-semibold text-navy-500">
                     Phone
                   </dt>
                   <dd className="text-sm font-semibold text-ink">
@@ -237,11 +245,13 @@ export default async function AccountPage() {
               </div>
             </dl>
 
-            <form action={logoutAction} className="mt-5">
-              <button type="submit" className="btn btn-outline w-full">
-                Sign out
-              </button>
-            </form>
+            <div className="mt-5 grid gap-2">
+              <Link href="/account/settings" className="btn btn-ink w-full">
+                <Settings className="h-4 w-4" aria-hidden />
+                Account settings
+              </Link>
+              <SignOutButton className="w-full" />
+            </div>
           </div>
 
           <div className="rounded-[24px] border border-sand-300 bg-paper p-6">
@@ -256,6 +266,7 @@ export default async function AccountPage() {
             </Link>
           </div>
         </aside>
+        </div>
       </div>
     </div>
   );

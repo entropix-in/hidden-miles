@@ -1,5 +1,6 @@
 import { AdminRichField } from "./admin-rich-fields";
 import Link from "next/link";
+import { AdminValidatedForm } from "./admin-validated-form";
 import { Save } from "lucide-react";
 import { saveTestimonialAction } from "@/app/admin/actions";
 import { AdminStarRating } from "@/components/admin/admin-star-rating";
@@ -11,7 +12,7 @@ export function AdminTestimonialForm({
   testimonial?: AdminTestimonial;
 }) {
   return (
-    <form action={saveTestimonialAction} className="space-y-4">
+    <AdminValidatedForm action={saveTestimonialAction} className="space-y-4">
       <input type="hidden" name="id" value={testimonial?._id ?? ""} />
 
       <section className="admin-form-panel">
@@ -76,6 +77,6 @@ export function AdminTestimonialForm({
           {testimonial ? "Save changes" : "Create testimonial"}
         </button>
       </div>
-    </form>
+    </AdminValidatedForm>
   );
 }

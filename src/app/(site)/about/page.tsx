@@ -139,7 +139,7 @@ export default async function AboutPage() {
                   />
                 </div>
                 <p
-                  className={`mt-4 font-display text-[26px] italic leading-8 ${
+                  className={`mt-4 font-display text-[26px] leading-8 ${
                     index === 4 ? "text-gold-700" : "text-ink"
                   }`}
                 >

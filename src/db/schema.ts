@@ -1,7 +1,10 @@
 import type { RichFields } from "@/lib/rich-fields";
 import type { ItineraryDay } from "@/data/tours";
+import type { TourAddon } from "@/lib/addons";
+import type { BookingAddon } from "@/lib/pricing";
 import {
   bigint,
+  boolean,
   date,
   customType,
   decimal,
@@ -10,6 +13,7 @@ import {
   json,
   mysqlEnum,
   mysqlTable,
+  primaryKey,
   text,
   timestamp,
   tinyint,
@@ -49,6 +53,8 @@ export const tours = mysqlTable(
     nights: int("nights", { unsigned: true }).notNull().default(0),
     days: int("days", { unsigned: true }).notNull().default(1),
     price: int("price", { unsigned: true }).notNull().default(0),
+    childPrice: int("child_price", { unsigned: true }),
+    infantPrice: int("infant_price", { unsigned: true }),
     oldPrice: int("old_price", { unsigned: true }),
     rating: decimal("rating", { precision: 2, scale: 1 })
       .notNull()
@@ -65,6 +71,7 @@ export const tours = mysqlTable(
     departureCities: json("departure_cities").$type<
       Array<{ name: string; note: string; priceDelta: number }>
     >(),
+    addons: json("addons").$type<TourAddon[]>(),
     featured: tinyint("featured").notNull().default(0),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at")
@@ -173,6 +180,9 @@ export const enquiries = mysqlTable(
   ],
 );
 
+// ── Traveller accounts (managed by Better Auth, see src/lib/auth.ts) ──
+// Ids stay numeric (`generateId: "serial"`) so bookings.user_id keeps working.
+
 export const users = mysqlTable(
   "users",
   {
@@ -181,8 +191,9 @@ export const users = mysqlTable(
       .primaryKey(),
     name: varchar("name", { length: 120 }).notNull(),
     email: varchar("email", { length: 190 }).notNull(),
+    emailVerified: boolean("email_verified").notNull().default(false),
+    image: text("image"),
     phone: varchar("phone", { length: 40 }).notNull().default(""),
-    passwordHash: varchar("password_hash", { length: 255 }).notNull(),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at")
       .notNull()
@@ -192,35 +203,84 @@ export const users = mysqlTable(
   (table) => [uniqueIndex("uniq_users_email").on(table.email)],
 );
 
-export const userSessions = mysqlTable(
-  "user_sessions",
+export const authSessions = mysqlTable(
+  "auth_sessions",
   {
-    // SHA-256 of the cookie token — the raw token is never stored.
-    id: varchar("id", { length: 64 }).primaryKey(),
-    userId: bigint("user_id", { mode: "number", unsigned: true }).notNull(),
+    id: bigint("id", { mode: "number", unsigned: true })
+      .autoincrement()
+      .primaryKey(),
+    token: varchar("token", { length: 255 }).notNull(),
+    userId: bigint("user_id", { mode: "number", unsigned: true })
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
     expiresAt: timestamp("expires_at").notNull(),
+    ipAddress: varchar("ip_address", { length: 64 }),
+    userAgent: text("user_agent"),
     createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at")
+      .notNull()
+      .defaultNow()
+      .onUpdateNow(),
   },
   (table) => [
-    index("idx_user_sessions_user").on(table.userId),
-    index("idx_user_sessions_expiry").on(table.expiresAt),
+    uniqueIndex("uniq_auth_sessions_token").on(table.token),
+    index("idx_auth_sessions_user").on(table.userId),
   ],
 );
 
-export const passwordResets = mysqlTable(
-  "password_resets",
+export const authAccounts = mysqlTable(
+  "auth_accounts",
   {
-    // SHA-256 of the emailed token — the raw token is never stored.
-    id: varchar("id", { length: 64 }).primaryKey(),
-    userId: bigint("user_id", { mode: "number", unsigned: true }).notNull(),
+    id: bigint("id", { mode: "number", unsigned: true })
+      .autoincrement()
+      .primaryKey(),
+    accountId: varchar("account_id", { length: 190 }).notNull(),
+    providerId: varchar("provider_id", { length: 64 }).notNull(),
+    userId: bigint("user_id", { mode: "number", unsigned: true })
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    accessToken: text("access_token"),
+    refreshToken: text("refresh_token"),
+    idToken: text("id_token"),
+    accessTokenExpiresAt: timestamp("access_token_expires_at"),
+    refreshTokenExpiresAt: timestamp("refresh_token_expires_at"),
+    scope: text("scope"),
+    password: varchar("password", { length: 255 }),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at")
+      .notNull()
+      .defaultNow()
+      .onUpdateNow(),
+  },
+  (table) => [index("idx_auth_accounts_user").on(table.userId)],
+);
+
+export const authVerifications = mysqlTable(
+  "auth_verifications",
+  {
+    id: bigint("id", { mode: "number", unsigned: true })
+      .autoincrement()
+      .primaryKey(),
+    identifier: varchar("identifier", { length: 255 }).notNull(),
+    value: text("value").notNull(),
     expiresAt: timestamp("expires_at").notNull(),
     createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at")
+      .notNull()
+      .defaultNow()
+      .onUpdateNow(),
   },
-  (table) => [
-    index("idx_password_resets_user").on(table.userId),
-    index("idx_password_resets_expiry").on(table.expiresAt),
-  ],
+  (table) => [index("idx_auth_verifications_identifier").on(table.identifier)],
 );
+
+export const authRateLimits = mysqlTable("auth_rate_limits", {
+  id: bigint("id", { mode: "number", unsigned: true })
+    .autoincrement()
+    .primaryKey(),
+  key: varchar("key", { length: 255 }).notNull().unique(),
+  count: int("count").notNull(),
+  lastRequest: bigint("last_request", { mode: "number" }).notNull(),
+});
 
 export const settings = mysqlTable("settings", {
   settingKey: varchar("setting_key", { length: 64 }).primaryKey(),
@@ -270,6 +330,12 @@ export const bookings = mysqlTable(
     phone: varchar("phone", { length: 40 }).notNull().default(""),
     travellers: int("travellers", { unsigned: true }).notNull().default(1),
     amount: int("amount", { unsigned: true }).notNull().default(0),
+    city: varchar("city", { length: 120 }),
+    addons: json("addons").$type<BookingAddon[]>(),
+    discountId: bigint("discount_id", { mode: "number", unsigned: true }),
+    discountName: varchar("discount_name", { length: 120 }),
+    discountCode: varchar("discount_code", { length: 40 }),
+    discountAmount: int("discount_amount", { unsigned: true }).notNull().default(0),
     notes: text("notes"),
     status: mysqlEnum("status", ["pending", "confirmed", "cancelled"])
       .notNull()
@@ -281,6 +347,52 @@ export const bookings = mysqlTable(
     index("idx_bookings_departure").on(table.departureId),
     index("idx_bookings_user").on(table.userId),
     index("idx_bookings_status").on(table.status),
+    index("idx_bookings_discount").on(table.discountId),
+  ],
+);
+
+export const discounts = mysqlTable(
+  "discounts",
+  {
+    id: bigint("id", { mode: "number", unsigned: true })
+      .autoincrement()
+      .primaryKey(),
+    name: varchar("name", { length: 120 }).notNull(),
+    /** Null means the discount applies automatically, without a code. */
+    code: varchar("code", { length: 40 }),
+    kind: mysqlEnum("kind", ["percent", "fixed"]).notNull().default("percent"),
+    /** Percent (1–100) or rupees per booking, depending on kind. */
+    value: int("value", { unsigned: true }).notNull(),
+    /** Upper limit in rupees for percent discounts. */
+    maxAmount: int("max_amount", { unsigned: true }),
+    scope: mysqlEnum("scope", ["all", "selected"]).notNull().default("all"),
+    minTravellers: int("min_travellers", { unsigned: true }).notNull().default(1),
+    startsOn: date("starts_on", { mode: "string" }),
+    endsOn: date("ends_on", { mode: "string" }),
+    usageLimit: int("usage_limit", { unsigned: true }),
+    active: boolean("active").notNull().default(true),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at")
+      .notNull()
+      .defaultNow()
+      .onUpdateNow(),
+  },
+  (table) => [uniqueIndex("uniq_discounts_code").on(table.code)],
+);
+
+export const discountTours = mysqlTable(
+  "discount_tours",
+  {
+    discountId: bigint("discount_id", { mode: "number", unsigned: true })
+      .notNull()
+      .references(() => discounts.id, { onDelete: "cascade" }),
+    tourId: bigint("tour_id", { mode: "number", unsigned: true })
+      .notNull()
+      .references(() => tours.id, { onDelete: "cascade" }),
+  },
+  (table) => [
+    primaryKey({ columns: [table.discountId, table.tourId] }),
+    index("idx_discount_tours_tour").on(table.tourId),
   ],
 );
 
@@ -291,5 +403,6 @@ export type TestimonialRow = typeof testimonials.$inferSelect;
 export type EnquiryRow = typeof enquiries.$inferSelect;
 export type DepartureRow = typeof tourDepartures.$inferSelect;
 export type BookingRow = typeof bookings.$inferSelect;
+export type DiscountRow = typeof discounts.$inferSelect;
 export type UserRow = typeof users.$inferSelect;
-export type UserSessionRow = typeof userSessions.$inferSelect;
+export type AuthSessionRow = typeof authSessions.$inferSelect;

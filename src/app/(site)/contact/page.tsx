@@ -96,7 +96,7 @@ export default function ContactPage() {
               </span>
               <p className="type-small mt-4 text-navy-500">{channel.label}</p>
               <p className="type-title mt-1 text-ink">{channel.value}</p>
-              <p className="mt-4 text-sm font-bold text-blue-700 group-hover:text-blue-800">
+              <p className="mt-4 text-sm font-semibold text-blue-700 group-hover:text-blue-800">
                 {channel.cta} →
               </p>
             </a>
@@ -117,7 +117,7 @@ export default function ContactPage() {
                 cy={0.5}
                 seed={2.4}
               />
-              <span className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center gap-2.5 rounded-full bg-ink py-2.5 pl-2.5 pr-4 text-[13px] font-bold text-paper shadow-lg">
+              <span className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center gap-2.5 rounded-full bg-ink py-2.5 pl-2.5 pr-4 text-[13px] font-semibold text-paper shadow-lg">
                 <span className="grid h-7 w-7 place-items-center rounded-full bg-gold-400 text-ink">
                   <MapPin className="h-3.5 w-3.5" />
                 </span>
@@ -135,7 +135,7 @@ export default function ContactPage() {
                 href="https://maps.google.com/?q=Meridian+House+Andheri+East+Mumbai"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-5 inline-flex text-sm font-bold text-gold-400 hover:text-gold-300"
+                className="mt-5 inline-flex text-sm font-semibold text-gold-400 hover:text-gold-300"
               >
                 Get directions ↗
               </a>

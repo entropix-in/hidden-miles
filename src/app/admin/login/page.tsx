@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
+import { AdminValidatedForm } from "@/components/admin/admin-validated-form";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { AlertTriangle, ArrowLeft, LockKeyhole } from "lucide-react";
 import { adminConfigured, hasAdminSession } from "@/lib/admin-auth";
+import { PasswordInput } from "@/components/ui/password-input";
 import { loginAction } from "@/app/admin/actions";
 
 export const metadata: Metadata = {
@@ -52,26 +54,24 @@ export default async function AdminLoginPage({
               </div>
             ) : null}
 
-            <form action={loginAction} className="mt-6 space-y-4">
+            <AdminValidatedForm action={loginAction} className="mt-6 space-y-4">
               <div>
                 <label htmlFor="password" className="field-label">
                   Admin password
                 </label>
-                <input
+                <PasswordInput
                   id="password"
                   name="password"
-                  type="password"
                   required
                   autoComplete="current-password"
                   placeholder="Enter your password"
-                  className="field"
                 />
               </div>
               <button type="submit" className="btn-primary w-full">
                 <LockKeyhole className="h-4 w-4" />
                 Sign in to admin
               </button>
-            </form>
+            </AdminValidatedForm>
           </div>
 
         </div>

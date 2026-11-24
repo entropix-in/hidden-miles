@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
@@ -13,7 +14,7 @@ export function Logo({
   className?: string;
 }) {
   const scale = compact ? 0.82 : size;
-  const mark = Math.round(42 * scale);
+  const dimension = Math.round(56 * scale);
 
   return (
     <Link
@@ -21,42 +22,23 @@ export function Logo({
       aria-label="Hidden Miles home"
       className={cn("group inline-flex shrink-0 items-center gap-3", className)}
     >
+      <Image
+        src="/logo.png"
+        alt=""
+        width={dimension}
+        height={dimension}
+        priority={compact}
+        className="transition duration-500 group-hover:rotate-[-3deg]"
+        style={{ width: dimension, height: dimension }}
+      />
       <span
         className={cn(
-          "grid shrink-0 place-items-center rounded-[12px] transition duration-500 group-hover:rotate-[-3deg]",
-          light ? "bg-gold-400" : "bg-ink",
+          "whitespace-nowrap font-display font-semibold leading-none tracking-[-0.02em]",
+          light ? "text-paper" : "text-ink",
         )}
-        style={{ width: mark, height: mark }}
+        style={{ fontSize: Math.round(22 * scale) }}
       >
-        <span
-          className={cn(
-            "font-display font-semibold leading-none",
-            light ? "text-ink" : "text-gold-400",
-          )}
-          style={{ fontSize: Math.round(22 * scale) }}
-        >
-          H
-        </span>
-      </span>
-      <span className="leading-none">
-        <span
-          className={cn(
-            "block whitespace-nowrap font-display font-semibold leading-none tracking-[-0.02em]",
-            light ? "text-paper" : "text-ink",
-          )}
-          style={{ fontSize: Math.round(22 * scale) }}
-        >
-          Hidden Miles
-        </span>
-        <span
-          className={cn(
-            "mt-1 block whitespace-nowrap font-semibold leading-none tracking-[0.02em]",
-            light ? "text-gold-400" : "text-gold-600",
-          )}
-          style={{ fontSize: Math.max(10, Math.round(11 * scale)) }}
-        >
-          Est. 1984 · Mumbai
-        </span>
+        Hidden Miles
       </span>
     </Link>
   );

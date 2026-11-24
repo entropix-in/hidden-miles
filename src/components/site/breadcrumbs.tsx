@@ -38,7 +38,7 @@ export function Breadcrumbs({
             {last || !item.href ? (
               <span
                 className={cn(
-                  "text-[13px] font-bold",
+                  "text-[13px] font-semibold",
                   dark ? "text-paper" : "text-ink",
                 )}
               >

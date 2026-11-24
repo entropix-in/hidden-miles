@@ -1,7 +1,7 @@
 "use client";
 
 import { AdminHighlightsField } from "./admin-highlights-field";
-import { AdminRichField, AdminRichList } from "./admin-rich-fields";
+import { AdminRichField } from "./admin-rich-fields";
 import { AdminCheckbox } from "./admin-checkbox";
 import { AdminAuthoringForm } from "./admin-authoring-form";
 import { AdminContentEditor } from "./admin-content-editor";
@@ -16,6 +16,7 @@ import type { AdminTour } from "@/lib/types";
 import type { TourCity } from "@/lib/tour-cities";
 import { defaultTourCities } from "@/lib/tour-cities";
 import { AdminItineraryEditor } from "./admin-itinerary-editor";
+import { AdminTourAddons } from "./admin-tour-addons";
 import { AdminTourExperiences, type ExperienceOption } from "./admin-tour-experiences";
 
 function DepartureCitiesEditor({ initial }: { initial: TourCity[] }) {
@@ -219,120 +220,80 @@ export function AdminTourForm({
 
       <section className="admin-form-panel">
         <h2 className="text-base font-medium text-(--studio-text)">
-          Numbers & details
+          Trip details & pricing
         </h2>
 
-        <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <div>
-            <label htmlFor="nights" className="field-label">
-              Nights
-            </label>
-            <input
-              id="nights"
-              name="nights"
-              type="number"
-              min="0"
-              defaultValue={tour?.nights ?? 5}
-              className="field"
-            />
+        <div className="admin-detail-groups">
+          <div className="admin-detail-group">
+            <div className="grid gap-4 sm:grid-cols-3">
+              <div>
+                <label htmlFor="nights" className="field-label">Nights</label>
+                <input id="nights" name="nights" type="number" min="0"
+                  defaultValue={tour?.nights ?? 5} className="field" />
+              </div>
+              <div>
+                <label htmlFor="days" className="field-label">Days</label>
+                <input id="days" name="days" type="number" min="1"
+                  defaultValue={tour?.days ?? 6} className="field" />
+              </div>
+              <div>
+                <label htmlFor="groupSize" className="field-label">Group size</label>
+                <input id="groupSize" name="groupSize" defaultValue={tour?.groupSize ?? ""}
+                  placeholder="16–26 guests" className="field" />
+              </div>
+            </div>
           </div>
-          <div>
-            <label htmlFor="days" className="field-label">
-              Days
-            </label>
-            <input
-              id="days"
-              name="days"
-              type="number"
-              min="1"
-              defaultValue={tour?.days ?? 6}
-              className="field"
-            />
-          </div>
-          <div>
-            <label htmlFor="price" className="field-label">
-              Price (INR)
-            </label>
-            <input
-              id="price"
-              name="price"
-              type="number"
-              min="0"
-              required
-              defaultValue={tour?.price ?? 0}
-              className="field"
-            />
-          </div>
-          <div>
-            <label htmlFor="oldPrice" className="field-label">
-              Old price
-            </label>
-            <input
-              id="oldPrice"
-              name="oldPrice"
-              type="number"
-              min="0"
-              defaultValue={tour?.oldPrice ?? ""}
-              className="field"
-            />
-          </div>
-          <div>
-            <label htmlFor="rating" className="field-label">
-              Rating
-            </label>
-            <input
-              id="rating"
-              name="rating"
-              type="number"
-              min="0"
-              max="5"
-              step="0.1"
-              defaultValue={tour?.rating ?? 4.8}
-              className="field"
-            />
-          </div>
-          <div>
-            <label htmlFor="reviews" className="field-label">
-              Reviews
-            </label>
-            <input
-              id="reviews"
-              name="reviews"
-              type="number"
-              min="0"
-              defaultValue={tour?.reviews ?? 0}
-              className="field"
-            />
-          </div>
-          <div>
-            <label htmlFor="departure" className="field-label">
-              Departure
-            </label>
-            <input
-              id="departure"
-              name="departure"
-              defaultValue={tour?.departure ?? ""}
-              placeholder="Every Saturday"
-              className="field"
-            />
-          </div>
-          <div>
-            <label htmlFor="groupSize" className="field-label">
-              Group size
-            </label>
-            <input
-              id="groupSize"
-              name="groupSize"
-              defaultValue={tour?.groupSize ?? ""}
-              placeholder="16–26 guests"
-              className="field"
-            />
-          </div>
-        </div>
 
-        <div className="mt-4">
-          <AdminCheckbox name="featured" defaultChecked={Boolean(tour?.featured)}
-            label="Feature this package on the home page" />
+          <div className="admin-detail-group">
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <div>
+                <label htmlFor="price" className="field-label">Adult price (INR)</label>
+                <input id="price" name="price" type="number" min="0" required
+                  defaultValue={tour?.price ?? 0} className="field" />
+                <p className="admin-field-hint">12 years and up.</p>
+              </div>
+              <div>
+                <label htmlFor="childPrice" className="field-label">Child price (INR)</label>
+                <input id="childPrice" name="childPrice" type="number" min="0"
+                  defaultValue={tour?.childPrice ?? (tour ? Math.round(tour.price * 0.75) : "")}
+                  className="field" />
+                <p className="admin-field-hint">Ages 5–11. Blank uses 75% of adult.</p>
+              </div>
+              <div>
+                <label htmlFor="infantPrice" className="field-label">Infant price (INR)</label>
+                <input id="infantPrice" name="infantPrice" type="number" min="0"
+                  defaultValue={tour?.infantPrice ?? 0} className="field" />
+                <p className="admin-field-hint">Under 5. 0 keeps infants free.</p>
+              </div>
+              <div>
+                <label htmlFor="oldPrice" className="field-label">Old price (INR)</label>
+                <input id="oldPrice" name="oldPrice" type="number" min="0"
+                  defaultValue={tour?.oldPrice ?? ""} className="field" />
+                <p className="admin-field-hint">Shown struck through. Optional.</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="admin-detail-group">
+            <div className="grid gap-4 sm:grid-cols-3">
+              <div>
+                <label htmlFor="rating" className="field-label">Rating</label>
+                <input id="rating" name="rating" type="number" min="0" max="5" step="0.1"
+                  defaultValue={tour?.rating ?? 4.8} className="field" />
+                <p className="admin-field-hint">Out of 5.</p>
+              </div>
+              <div>
+                <label htmlFor="reviews" className="field-label">Reviews</label>
+                <input id="reviews" name="reviews" type="number" min="0"
+                  defaultValue={tour?.reviews ?? 0} className="field" />
+                <p className="admin-field-hint">Number of reviews.</p>
+              </div>
+              <div className="sm:pt-7">
+                <AdminCheckbox name="featured" defaultChecked={Boolean(tour?.featured)}
+                  label="Feature on the home page" />
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -349,6 +310,8 @@ export function AdminTourForm({
         />
       </section>
 
+      <AdminTourAddons initial={tour?.addons} />
+
       <section className="admin-form-panel">
         <h2 className="text-base font-medium text-(--studio-text)">
           Highlights & inclusions
@@ -359,12 +322,12 @@ export function AdminTourForm({
             <AdminHighlightsField initial={tour?.highlights} />
           </div>
           <div>
-            <AdminRichList name="inclusions" label="Inclusions" itemLabel="inclusion"
-              initial={tour?.inclusions} editors={tour?.richFields?.inclusions} />
+            <AdminHighlightsField name="inclusions" label="Inclusions" itemLabel="inclusion"
+              initial={tour?.inclusions} />
           </div>
           <div>
-            <AdminRichList name="exclusions" label="Exclusions" itemLabel="exclusion"
-              initial={tour?.exclusions} editors={tour?.richFields?.exclusions} />
+            <AdminHighlightsField name="exclusions" label="Exclusions" itemLabel="exclusion"
+              initial={tour?.exclusions} />
           </div>
         </div>
       </section>

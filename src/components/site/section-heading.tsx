@@ -94,7 +94,7 @@ export function SectionHeading({
           <Link
             href={href}
             className={cn(
-              "group inline-flex shrink-0 items-center gap-2 text-sm font-bold transition",
+              "group inline-flex shrink-0 items-center gap-2 text-sm font-semibold transition",
               dark
                 ? "text-gold-400 hover:text-gold-300"
                 : "text-blue-700 hover:text-blue-800",

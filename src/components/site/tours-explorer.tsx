@@ -2,6 +2,7 @@
 
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { useScrollingSticky } from "@/lib/use-scrolling-sticky";
 import {
   ArrowLeft,
   ArrowRight,
@@ -137,6 +138,7 @@ export function ToursExplorer({
   initialQuery?: string;
   initialPriceMax?: number;
 }) {
+  const filterAsideRef = useScrollingSticky<HTMLElement>();
   const [destination, setDestination] = useState(initialDestination);
   const [experience, setExperience] = useState(initialExperience);
   const [region, setRegion] = useState<Region>(initialRegion);
@@ -181,8 +183,13 @@ export function ToursExplorer({
     }
     if (month !== "Any month") {
       list = list.filter(
-        (tour) =>
-          tour.departure.includes(month) || /every|daily/i.test(tour.departure),
+        (tour) => {
+          if (tour.departureDates) {
+            const index = months.indexOf(month);
+            return tour.departureDates.some((date) => Number(date.slice(5, 7)) === index);
+          }
+          return tour.departure.includes(month.slice(0, 3)) || /every|daily/i.test(tour.departure);
+        },
       );
     }
 
@@ -348,7 +355,7 @@ export function ToursExplorer({
           <button
             type="button"
             onClick={resetFilters}
-            className="text-sm font-bold text-blue-700 transition hover:text-blue-800"
+            className="text-sm font-semibold text-blue-700 transition hover:text-blue-800"
           >
             Reset
           </button>
@@ -393,7 +400,7 @@ export function ToursExplorer({
                   >
                     <span
                       className={cn(
-                        "grid h-5 w-5 shrink-0 place-items-center rounded-[6px] border-[1.5px] text-[11px] font-bold",
+                        "grid h-5 w-5 shrink-0 place-items-center rounded-[6px] border-[1.5px] text-[11px] font-semibold",
                         checked
                           ? "border-ink bg-ink text-gold-400"
                           : "border-sand-300 bg-paper text-transparent",
@@ -511,7 +518,7 @@ export function ToursExplorer({
   return (
     <section className="container-page pt-8 pb-16 md:pt-10 md:pb-24">
       <div className="grid gap-8 lg:grid-cols-[280px_1fr] lg:items-start lg:gap-10">
-        <aside className="hidden lg:sticky lg:top-32 lg:block">
+        <aside ref={filterAsideRef} className="hidden lg:sticky lg:top-32 lg:block">
           {renderFilterPanel("desktop")}
         </aside>
 
@@ -548,7 +555,7 @@ export function ToursExplorer({
                   id="tour-sort"
                   value={sort}
                   onValueChange={setSort}
-                  triggerClassName="flex cursor-pointer items-center gap-1.5 bg-transparent text-sm font-bold text-ink outline-none"
+                  triggerClassName="flex cursor-pointer items-center gap-1.5 bg-transparent text-sm font-semibold text-ink outline-none"
                   menuMinWidth={190}
                 >
                   {sortOptions.map((option) => (
@@ -565,7 +572,7 @@ export function ToursExplorer({
                   onClick={() => setView("grid")}
                   aria-pressed={view === "grid"}
                   className={cn(
-                    "flex items-center gap-1.5 rounded-full px-3.5 py-2 text-[13px] font-bold transition",
+                    "flex items-center gap-1.5 rounded-full px-3.5 py-2 text-[13px] font-semibold transition",
                     view === "grid"
                       ? "bg-ink text-paper"
                       : "text-navy-700 hover:text-ink",
@@ -579,7 +586,7 @@ export function ToursExplorer({
                   onClick={() => setView("list")}
                   aria-pressed={view === "list"}
                   className={cn(
-                    "flex items-center gap-1.5 rounded-full px-3.5 py-2 text-[13px] font-bold transition",
+                    "flex items-center gap-1.5 rounded-full px-3.5 py-2 text-[13px] font-semibold transition",
                     view === "list"
                       ? "bg-ink text-paper"
                       : "text-navy-700 hover:text-ink",
@@ -614,7 +621,7 @@ export function ToursExplorer({
               <button
                 type="button"
                 onClick={resetFilters}
-                className="text-[13px] font-bold text-navy-500 transition hover:text-ink"
+                className="text-[13px] font-semibold text-navy-500 transition hover:text-ink"
               >
                 Clear all
               </button>
@@ -684,7 +691,7 @@ export function ToursExplorer({
                     route.
                   </p>
                 </div>
-                <Link href="/contact" className="btn btn-ink btn-sm shrink-0">
+                <Link href="/contact" className="btn btn-ink btn-sm shrink-0 gap-2 px-3.5 text-[13px] [&_.btn-dot]:h-6 [&_.btn-dot]:w-6">
                   Ask a specialist
                   <span className="btn-dot">→</span>
                 </Link>
@@ -716,7 +723,7 @@ export function ToursExplorer({
                             pageNumber === currentPage ? "page" : undefined
                           }
                           className={cn(
-                            "grid h-11 w-11 cursor-pointer place-items-center rounded-full border text-sm font-bold transition",
+                            "grid h-11 w-11 cursor-pointer place-items-center rounded-full border text-sm font-semibold transition",
                             pageNumber === currentPage
                               ? "border-ink bg-ink text-gold-400"
                               : "border-sand-300 bg-paper text-ink hover:border-ink",

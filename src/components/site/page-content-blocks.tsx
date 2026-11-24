@@ -1,7 +1,8 @@
 import type { ReactNode } from "react";
 import Image from "next/image";
 import { type SerializedEditorState, IS_BOLD, IS_CODE, IS_HIGHLIGHT, IS_ITALIC, IS_STRIKETHROUGH, IS_SUBSCRIPT, IS_SUPERSCRIPT, IS_UNDERLINE } from "lexical";
-import { isContentLink, type ContentBlock } from "@/lib/content-blocks";
+import { isContentLink, type ContentBlock, type GalleryBlock } from "@/lib/content-blocks";
+import { GalleryCarousel } from "./gallery-carousel";
 import { mediaPathPattern } from "@/lib/media-path";
 
 type RichNode = {
@@ -40,7 +41,7 @@ function richNode(node: RichNode, key: number, depth: number, inline = false): R
     case "listitem":
       return <li key={key}>
         {typeof node.checked === "boolean" && <>
-          <span aria-hidden="true">{node.checked ? "✓" : "○"}</span>
+          <span className="content-check" data-checked={node.checked || undefined} aria-hidden="true">✓</span>
           <span className="sr-only">{node.checked ? "Checked: " : "Unchecked: "}</span>
         </>}
         {children}
@@ -69,6 +70,23 @@ function richNode(node: RichNode, key: number, depth: number, inline = false): R
   }
 }
 
+function GalleryBlockView({ block }: { block: GalleryBlock }) {
+  const photos = block.photos.filter((photo) => mediaPathPattern.test(photo.url));
+  if (!photos.length) return null;
+  const columns = block.columns;
+  if (block.display === "carousel") return <GalleryCarousel photos={photos} columns={columns ?? 1} />;
+  const full = columns === 1;
+  return (
+    <div className="page-content-gallery" data-columns={columns}>
+      {photos.map((photo, position) => (
+        <Image key={position} src={photo.url} alt={photo.alt} width={full ? 1280 : 640} height={full ? 720 : 480}
+          sizes={full ? "(min-width: 1024px) 720px, 90vw"
+            : columns ? `(min-width: 640px) ${Math.round(70 / columns)}vw, 45vw` : "(min-width: 640px) 40vw, 90vw"} />
+      ))}
+    </div>
+  );
+}
+
 export function PageContentBlocks({ blocks }: { blocks?: ContentBlock[] }) {
   if (!blocks?.length) return null;
 
@@ -78,12 +96,7 @@ export function PageContentBlocks({ blocks }: { blocks?: ContentBlock[] }) {
         ? <div className="page-rich-text" key={index}>
             {block.editor.root.children.map((node, position) => richNode(node, position, 0))}
           </div>
-        : <div className="page-content-gallery" key={index}>
-            {block.photos.filter((photo) => mediaPathPattern.test(photo.url)).map((photo, position) => (
-              <Image key={position} src={photo.url} alt={photo.alt} width={640} height={480}
-                sizes="(min-width: 640px) 40vw, 90vw" />
-            ))}
-          </div>)}
+        : <GalleryBlockView key={index} block={block} />)}
     </div>
   );
 }

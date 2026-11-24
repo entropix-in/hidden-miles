@@ -20,40 +20,14 @@ import { Stamp } from "@/components/site/stamp";
 import { site } from "@/data/site";
 import type { TourDeparture } from "@/lib/types";
 import type { TourCity } from "@/lib/tour-cities";
+import { fallbackDepartures } from "@/lib/tour-departures";
 import { cn, formatINR, imageUrl } from "@/lib/utils";
+import { AddonIconView } from "@/components/site/addon-icon";
+import type { TourAddon } from "@/lib/addons";
+import { addonQuantity, quoteBooking, type DiscountRule } from "@/lib/pricing";
 
 const STEPS = ["Trip details", "Lead traveller", "Add-ons", "Payment"];
 
-const ADDONS = [
-  {
-    id: "insurance",
-    title: "Travel insurance",
-    description: "Medical cover up to ₹5 lakh, trip cancellation and lost baggage.",
-    price: 1450,
-    icon: "☂",
-  },
-  {
-    id: "gondola",
-    title: "Gondola phase 2",
-    description: "Ride on to the peak. Usually sells out on the day.",
-    price: 1800,
-    icon: "⛰",
-  },
-  {
-    id: "houseboat",
-    title: "Extra night on the houseboat",
-    description: "Arrive a day early and settle in slowly.",
-    price: 6200,
-    icon: "⛵",
-  },
-  {
-    id: "room",
-    title: "Private room upgrade",
-    description: "A room to yourselves instead of sharing.",
-    price: 9500,
-    icon: "✦",
-  },
-];
 
 const dateFormatter = new Intl.DateTimeFormat("en-IN", {
   weekday: "short",
@@ -73,11 +47,14 @@ const longDateFormatter = new Intl.DateTimeFormat("en-IN", {
 export function BookingFlow({
   tour,
   departures,
+  addons: tourAddons,
+  automaticDiscounts,
   cities,
   initialDate,
   initialCity,
   initialAdults,
   initialChildren,
+  initialInfants,
   account,
 }: {
   tour: {
@@ -85,6 +62,8 @@ export function BookingFlow({
     title: string;
     image: string;
     price: number;
+    childPrice?: number;
+    infantPrice?: number;
     oldPrice?: number;
     nights: number;
     days: number;
@@ -93,32 +72,19 @@ export function BookingFlow({
     destinationName: string;
   };
   departures: TourDeparture[];
+  addons: TourAddon[];
+  automaticDiscounts: DiscountRule[];
   cities: TourCity[];
   initialDate?: string;
   initialCity?: string;
   initialAdults?: number;
   initialChildren?: number;
+  initialInfants?: number;
   account: { name: string; email: string; phone: string };
 }) {
   const router = useRouter();
   const fallback = useMemo(
-    () =>
-      Array.from({ length: 18 }).map((_, index) => {
-        const start = new Date();
-        start.setUTCDate(start.getUTCDate() + 10 + index * 3);
-        const seats = [6, 18, 3, 12, 0, 9][index % 6] ?? 10;
-        return {
-          _id: `fallback-${index}`,
-          tourSlug: tour.slug,
-          startDate: start.toISOString().slice(0, 10),
-          price: tour.price,
-          capacity: 26,
-          booked: 26 - seats,
-          seatsLeft: seats,
-          note: undefined,
-          createdAt: 0,
-        } satisfies TourDeparture;
-      }),
+    () => fallbackDepartures(tour.price, tour.slug),
     [tour.price, tour.slug],
   );
 
@@ -150,6 +116,11 @@ export function BookingFlow({
       ? Math.min(10, Math.max(0, Math.round(initialChildren)))
       : 1,
   );
+  const [infants, setInfants] = useState(
+    initialInfants !== undefined
+      ? Math.min(10, Math.max(0, Math.round(initialInfants)))
+      : 0,
+  );
   const [lead, setLead] = useState({
     name: account.name,
     email: account.email,
@@ -158,9 +129,13 @@ export function BookingFlow({
     requests: "",
     updates: true,
   });
-  const [addons, setAddons] = useState<string[]>(["insurance", "gondola"]);
+  const [addons, setAddons] = useState<string[]>(
+    () => tourAddons.filter((addon) => addon.preselected).map((addon) => addon.id),
+  );
   const [promo, setPromo] = useState("");
-  const [promoApplied, setPromoApplied] = useState(false);
+  const [promoRule, setPromoRule] = useState<DiscountRule | null>(null);
+  const [promoStatus, setPromoStatus] = useState<"idle" | "checking" | "error">("idle");
+  const [promoError, setPromoError] = useState("");
   const [plan, setPlan] = useState("25");
   const [method, setMethod] = useState("UPI");
   const [agree, setAgree] = useState(false);
@@ -173,26 +148,37 @@ export function BookingFlow({
   const cityOption =
     cities.find((item) => item.name === city) ??
     cities[0] ?? { name: "", note: "", priceDelta: 0 };
-  const travellers = adults + children;
+  const travellers = adults + children + infants;
   const adultPrice =
     (selectedDate?.price ?? tour.price) + cityOption.priceDelta;
-  const childPrice = Math.round(adultPrice * 0.75);
-  const addonTotal =
-    ADDONS.filter((addon) => addons.includes(addon.id)).reduce(
-      (sum, addon) => sum + addon.price * travellers,
-      0,
-    );
-  const baseTotal = adultPrice * adults + childPrice * children;
-  const promoSaving = promoApplied ? Math.min(11200, Math.round(baseTotal * 0.1)) : 0;
-  const subtotal = baseTotal + addonTotal - promoSaving;
-  const gst = Math.round(subtotal * 0.05);
-  const total = subtotal + gst;
+  const childPrice = tour.childPrice ?? Math.round(adultPrice * 0.75);
+  const infantPrice = tour.infantPrice ?? 0;
+  const quote = quoteBooking({
+    adultFare: adultPrice,
+    childFare: childPrice,
+    infantFare: infantPrice,
+    adults,
+    children,
+    infants,
+    addons: tourAddons,
+    selectedAddonIds: addons,
+    discounts: promoRule ? [...automaticDiscounts, promoRule] : automaticDiscounts,
+  });
+  const { gst, total } = quote;
+  const appliedDiscount = quote.discount;
+  const promoBeaten = Boolean(promoRule && appliedDiscount && appliedDiscount.rule.id !== promoRule.id);
+  const promoBelowMinimum = Boolean(promoRule && travellers < promoRule.minTravellers);
   const due = Math.round(total * 0.25);
   const fullPayment = Math.round(total * 0.98);
   const emi = Math.round(total / 6);
   const payNow =
     plan === "full" ? fullPayment : plan === "emi" ? emi : due;
   const balance = total - due;
+  const travellerSummary = [
+    `${adults} ${adults === 1 ? "adult" : "adults"}`,
+    children ? `${children} ${children === 1 ? "child" : "children"}` : "",
+    infants ? `${infants} ${infants === 1 ? "infant" : "infants"}` : "",
+  ].filter(Boolean).join(" · ");
 
   function toggleAddon(id: string) {
     setAddons((current) =>
@@ -200,6 +186,35 @@ export function BookingFlow({
         ? current.filter((item) => item !== id)
         : [...current, id],
     );
+  }
+
+  async function applyPromo() {
+    const code = promo.trim();
+    if (!code) return;
+    setPromoStatus("checking");
+    setPromoError("");
+    try {
+      const response = await fetch("/api/discounts/check", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tourSlug: tour.slug, code }),
+      });
+      const data = (await response.json().catch(() => ({}))) as { ok?: boolean; error?: string; discount?: DiscountRule };
+      if (!response.ok || !data.ok || !data.discount) throw new Error(data.error || "That code isn't valid for this tour.");
+      setPromoRule(data.discount);
+      setPromoStatus("idle");
+    } catch (error) {
+      setPromoRule(null);
+      setPromoError(error instanceof Error ? error.message : "That code isn't valid for this tour.");
+      setPromoStatus("error");
+    }
+  }
+
+  function removePromo() {
+    setPromoRule(null);
+    setPromo("");
+    setPromoStatus("idle");
+    setPromoError("");
   }
 
   async function submitBooking() {
@@ -213,19 +228,26 @@ export function BookingFlow({
           name: lead.name,
           email: lead.email,
           phone: lead.phone,
-          notes: `City: ${city}. Add-ons: ${addons.join(", ")}. ${lead.requests}`,
+          notes: lead.requests,
+          city,
+          addons: quote.addons.map((addon) => addon.id),
+          promoCode: promoRule?.code ?? "",
           tourSlug: tour.slug,
           tourTitle: tour.title,
           departureId: selectedDate?._id?.startsWith("fallback")
             ? ""
             : selectedDate?._id,
           travellers,
+          adults,
+          children,
+          infants,
         }),
       });
       const data = (await response.json().catch(() => ({}))) as {
         ok?: boolean;
         error?: string;
         requiresAuth?: boolean;
+        bookingId?: number;
       };
 
       if (response.status === 401 || data.requiresAuth) {
@@ -241,7 +263,7 @@ export function BookingFlow({
         throw new Error(data.error || "We could not complete that booking.");
       }
 
-      setBookingRef(`HM-26-${Math.floor(10000 + Math.random() * 89999)}`);
+      setBookingRef(`HM-${String(data.bookingId ?? "").padStart(5, "0")}`);
       setStep(4);
       setStatus("idle");
     } catch (error) {
@@ -261,7 +283,7 @@ export function BookingFlow({
           <div className="container-page flex flex-col items-center gap-6 py-20 text-center md:py-24">
             <Stamp size={140} text="BOOKED · SEE YOU THERE · WANDER WELL · " />
             <h1 className="type-h1 text-paper">
-              You&apos;re going to {tour.destinationName}!
+              You&apos;re going to {tour.destinationName}
             </h1>
             <p className="type-lead max-w-2xl text-navy-200">
               Booking {bookingRef} is confirmed for {travellers}{" "}
@@ -296,7 +318,7 @@ export function BookingFlow({
                   <div className="flex flex-col items-center">
                     <span
                       className={cn(
-                        "grid h-10 w-10 shrink-0 place-items-center rounded-full text-sm font-bold",
+                        "grid h-10 w-10 shrink-0 place-items-center rounded-full text-sm font-semibold",
                         done
                           ? "bg-gold-400 text-ink"
                           : "border border-sand-300 bg-paper text-navy-500",
@@ -334,12 +356,12 @@ export function BookingFlow({
                 ["Booking ref", bookingRef],
                 ["Departure", selectedDate ? longDateFormatter.format(new Date(`${selectedDate.startDate}T00:00:00Z`)) : "—"],
                 ["From", city],
-                ["Travellers", `${adults} ${adults === 1 ? "adult" : "adults"}${children ? ` · ${children} ${children === 1 ? "child" : "children"}` : ""}`],
+                ["Travellers", travellerSummary],
                 ["Paid", `${formatINR(payNow)} of ${formatINR(total)}`],
               ].map(([key, value]) => (
                 <div key={key} className="flex items-center justify-between gap-4">
                   <dt className="text-[13px] font-medium text-navy-500">{key}</dt>
-                  <dd className="text-[13px] font-bold text-ink">{value}</dd>
+                  <dd className="text-[13px] font-semibold text-ink">{value}</dd>
                 </div>
               ))}
             </dl>
@@ -374,17 +396,17 @@ export function BookingFlow({
               : step === 1
                 ? "We only need the lead traveller's details now. We'll collect ID details for everyone 30 days before departure."
                 : step === 2
-                  ? "Optional extras chosen by past travellers on this tour. Added for all travellers."
+                  ? "Optional extras for this tour. Switch on anything you want and we will add it to your booking."
                   : `Pay ${formatINR(due)} now to confirm your seats. The balance is due 30 days before departure.`}
           </p>
 
           {step === 3 ? (
             <div className="mt-6 flex flex-wrap items-center gap-3 rounded-[14px] border border-sand-300 bg-paper px-5 py-3.5">
               <Clock className="h-4 w-4 text-gold-600" />
-              <span className="text-sm font-bold text-ink">
+              <span className="text-sm font-semibold text-ink">
                 We&apos;re holding {travellers} seats for you
               </span>
-              <span className="ml-auto text-sm font-bold text-danger">
+              <span className="ml-auto text-sm font-semibold text-danger">
                 18:42 left
               </span>
             </div>
@@ -417,7 +439,7 @@ export function BookingFlow({
                                 : "border-sand-300 bg-paper text-ink hover:border-navy-300",
                           )}
                         >
-                          <span className={cn("block text-[13px] font-bold", sold && "line-through")}>
+                          <span className={cn("block text-[13px] font-semibold", sold && "line-through")}>
                             {dateFormatter.format(new Date(`${date.startDate}T00:00:00Z`))}
                           </span>
                           <span className={cn("mt-0.5 block text-[12px] font-medium", active ? "text-navy-200" : "text-navy-500")}>
@@ -425,7 +447,7 @@ export function BookingFlow({
                           </span>
                           <span
                             className={cn(
-                              "mt-1 block text-xs font-bold",
+                              "mt-1 block text-xs font-semibold",
                               active
                                 ? "text-gold-400"
                                 : sold
@@ -473,7 +495,7 @@ export function BookingFlow({
                           ) : null}
                         </span>
                         <span className="flex-1">
-                          <span className="block text-sm font-bold text-ink">
+                          <span className="block text-sm font-semibold text-ink">
                             {option.name}
                           </span>
                           <span className="block text-[13px] font-medium leading-5 text-navy-500">
@@ -482,7 +504,7 @@ export function BookingFlow({
                         </span>
                         <span
                           className={cn(
-                            "text-sm font-bold",
+                            "text-sm font-semibold",
                             option.priceDelta < 0 ? "text-success" : "text-ink",
                           )}
                         >
@@ -497,7 +519,11 @@ export function BookingFlow({
 
                 <SectionCard
                   title="3. Who's travelling?"
-                  subtitle="Children's prices apply to ages 5–11. Under 5 travel free on a parent's lap."
+                  subtitle={`Adults are 12+. Children are 5–11 at ${formatINR(childPrice)}. ${
+                    infantPrice > 0
+                      ? `Infants under 5 are ${formatINR(infantPrice)}.`
+                      : "Infants under 5 travel free."
+                  }`}
                 >
                   <div className="grid gap-3">
                     <Counter
@@ -516,10 +542,10 @@ export function BookingFlow({
                     />
                     <Counter
                       label="Infants"
-                      sub="Under 5 · free"
-                      value={0}
+                      sub={`Under 5 · ${infantPrice > 0 ? formatINR(infantPrice) : "free"}`}
+                      value={infants}
                       min={0}
-                      onChange={() => undefined}
+                      onChange={setInfants}
                     />
                   </div>
                   <p className="mt-4 rounded-[14px] bg-blue-50 px-4 py-3 text-[13px] font-medium text-blue-700">
@@ -602,7 +628,7 @@ export function BookingFlow({
                               setLead((current) => ({ ...current, nationality: option }))
                             }
                             className={cn(
-                              "flex items-center gap-3 rounded-[14px] border-[1.5px] px-4 py-3.5 text-left text-sm font-bold",
+                              "flex items-center gap-3 rounded-[14px] border-[1.5px] px-4 py-3.5 text-left text-sm font-semibold",
                               lead.nationality === option
                                 ? "border-blue-500 bg-blue-50 text-ink"
                                 : "border-sand-300 bg-paper text-navy-700",
@@ -660,7 +686,7 @@ export function BookingFlow({
                 </label>
 
                 {leadError ? (
-                  <p className="rounded-[12px] bg-danger-soft px-4 py-3 text-sm font-bold text-danger">
+                  <p className="rounded-[12px] bg-danger-soft px-4 py-3 text-sm font-semibold text-danger">
                     {leadError}
                   </p>
                 ) : null}
@@ -689,17 +715,21 @@ export function BookingFlow({
 
             {step === 2 ? (
               <>
+                {tourAddons.length ? (
                 <SectionCard title="Recommended for this tour">
                   <div className="grid gap-3">
-                    {ADDONS.map((addon) => {
+                    {tourAddons.map((addon) => {
                       const active = addons.includes(addon.id);
+                      const quantity = addonQuantity(addon, adults, children);
                       return (
                         <button
                           key={addon.id}
                           type="button"
+                          role="switch"
+                          aria-checked={active}
                           onClick={() => toggleAddon(addon.id)}
                           className={cn(
-                            "flex items-center gap-5 rounded-[20px] border p-5 text-left transition",
+                            "flex items-center gap-4 rounded-[20px] border p-4 text-left transition sm:gap-5 sm:p-5",
                             active
                               ? "border-ink bg-paper"
                               : "border-sand-300 bg-paper",
@@ -707,33 +737,30 @@ export function BookingFlow({
                         >
                           <span
                             className={cn(
-                              "grid h-[52px] w-[52px] shrink-0 place-items-center rounded-[16px] text-xl",
+                              "grid h-[52px] w-[52px] shrink-0 place-items-center rounded-[16px]",
                               active
                                 ? "bg-gold-100 text-gold-600"
                                 : "bg-sand-200 text-ink",
                             )}
                           >
-                            {addon.icon}
+                            <AddonIconView icon={addon.icon} />
                           </span>
-                          <span className="flex-1">
-                            <span className="flex flex-wrap items-center gap-2">
-                              <span className="text-sm font-bold text-ink">
-                                {addon.title}
+                          <span className="min-w-0 flex-1">
+                            <span className="block text-sm font-semibold text-ink">
+                              {addon.title}
+                            </span>
+                            {addon.description ? (
+                              <span className="mt-1 block text-[13px] font-medium text-navy-500">
+                                {addon.description}
                               </span>
-                              {active ? (
-                                <span className="badge badge-success">Popular</span>
-                              ) : null}
-                            </span>
-                            <span className="mt-1 block text-[13px] font-medium text-navy-500">
-                              {addon.description}
-                            </span>
+                            ) : null}
                           </span>
                           <span className="text-right">
-                            <span className="block text-sm font-bold text-ink">
-                              {formatINR(addon.price)}
+                            <span className="block text-sm font-semibold text-ink">
+                              {addon.price ? formatINR(addon.price) : "Free"}
                             </span>
                             <span className="block text-xs font-medium text-navy-500">
-                              per person
+                              {addon.unit === "booking" ? "per booking" : `per person${quantity > 1 ? ` × ${quantity}` : ""}`}
                             </span>
                           </span>
                           <span
@@ -754,32 +781,71 @@ export function BookingFlow({
                     })}
                   </div>
                 </SectionCard>
+                ) : (
+                  <SectionCard title="No extras needed">
+                    <p className="type-small text-navy-700">
+                      Everything for this tour is already included. Add a promo code below if you have one.
+                    </p>
+                  </SectionCard>
+                )}
 
                 <SectionCard title="Have a promo code?">
-                  <div className="flex flex-wrap items-end gap-3">
-                    <div className="min-w-[200px] flex-1">
-                      <label htmlFor="promo-code" className="field-label">
-                        Code
-                      </label>
-                      <input
-                        id="promo-code"
-                        value={promo}
-                        onChange={(event) => setPromo(event.target.value.toUpperCase())}
-                        placeholder="EARLYBIRD"
-                        className="field"
-                      />
+                  {promoRule ? (
+                    <div className="flex flex-wrap items-center justify-between gap-3 rounded-[12px] bg-success-soft px-4 py-3">
+                      <p className="text-sm font-semibold text-success">
+                        {promoBelowMinimum
+                          ? `${promoRule.code} needs at least ${promoRule.minTravellers} travellers.`
+                          : promoBeaten
+                            ? `${promoRule.code} applied, but ${appliedDiscount?.rule.name} saves you more.`
+                            : `✓ ${promoRule.code} applied. You save ${formatINR(appliedDiscount?.amount ?? 0)}.`}
+                      </p>
+                      <button type="button" onClick={removePromo} className="text-sm font-semibold text-navy-700 underline">
+                        Remove
+                      </button>
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => setPromoApplied(promo.trim().length > 0)}
-                      className="btn btn-outline"
+                  ) : (
+                    <form
+                      className="flex flex-wrap items-end gap-3"
+                      onSubmit={(event) => {
+                        event.preventDefault();
+                        applyPromo();
+                      }}
                     >
-                      Apply
-                    </button>
-                  </div>
-                  {promoApplied ? (
-                    <p className="mt-4 rounded-[12px] bg-success-soft px-4 py-3 text-sm font-bold text-success">
-                      ✓ {promo} applied — you save ₹11,200
+                      <div className="min-w-[200px] flex-1">
+                        <label htmlFor="promo-code" className="field-label">
+                          Code
+                        </label>
+                        <input
+                          id="promo-code"
+                          value={promo}
+                          onChange={(event) => {
+                            setPromo(event.target.value.toUpperCase());
+                            if (promoStatus === "error") setPromoStatus("idle");
+                          }}
+                          placeholder="EARLYBIRD"
+                          aria-invalid={promoStatus === "error"}
+                          aria-describedby={promoStatus === "error" ? "promo-error" : undefined}
+                          className="field"
+                        />
+                      </div>
+                      <button
+                        type="submit"
+                        disabled={!promo.trim() || promoStatus === "checking"}
+                        className="btn btn-outline disabled:opacity-50"
+                      >
+                        {promoStatus === "checking" ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+                        Apply
+                      </button>
+                    </form>
+                  )}
+                  {promoStatus === "error" ? (
+                    <p id="promo-error" className="mt-4 rounded-[12px] bg-danger-soft px-4 py-3 text-sm font-semibold text-danger">
+                      {promoError}
+                    </p>
+                  ) : null}
+                  {appliedDiscount && !appliedDiscount.rule.code ? (
+                    <p className="mt-4 text-sm font-semibold text-success">
+                      ✓ {appliedDiscount.rule.name} is applied automatically.
                     </p>
                   ) : null}
                 </SectionCard>
@@ -839,14 +905,14 @@ export function BookingFlow({
                           ) : null}
                         </span>
                         <span className="flex-1">
-                          <span className="block text-sm font-bold text-ink">
+                          <span className="block text-sm font-semibold text-ink">
                             {option.title}
                           </span>
                           <span className="block text-[13px] font-medium text-navy-500">
                             {option.description}
                           </span>
                         </span>
-                        <span className="text-sm font-bold text-ink">
+                        <span className="text-sm font-semibold text-ink">
                           {formatINR(option.price)}
                         </span>
                       </button>
@@ -862,7 +928,7 @@ export function BookingFlow({
                         type="button"
                         onClick={() => setMethod(item)}
                         className={cn(
-                          "rounded-[14px] border-[1.5px] px-5 py-3 text-sm font-bold transition",
+                          "rounded-[14px] border-[1.5px] px-5 py-3 text-sm font-semibold transition",
                           method === item
                             ? "border-ink bg-ink text-paper"
                             : "border-sand-300 bg-paper text-ink",
@@ -938,7 +1004,7 @@ export function BookingFlow({
                 </label>
 
                 {status === "error" ? (
-                  <p className="rounded-[12px] bg-danger-soft px-4 py-3 text-sm font-bold text-danger">
+                  <p className="rounded-[12px] bg-danger-soft px-4 py-3 text-sm font-semibold text-danger">
                     {errorMessage ||
                       `We could not complete that payment. Please try again or call ${site.phone}.`}
                   </p>
@@ -948,7 +1014,7 @@ export function BookingFlow({
                   <button
                     type="button"
                     onClick={() => setStep(2)}
-                    className="text-sm font-bold text-navy-700"
+                    className="text-sm font-semibold text-navy-700"
                   >
                     ← Back to add-ons
                   </button>
@@ -966,7 +1032,7 @@ export function BookingFlow({
                   </button>
                 </div>
 
-                <div className="flex flex-wrap items-center justify-center gap-5 pb-4 text-[13px] font-bold text-navy-500">
+                <div className="flex flex-wrap items-center justify-center gap-5 pb-4 text-[13px] font-semibold text-navy-500">
                   <span>🔒 256-bit SSL</span>
                   <span>PCI-DSS compliant</span>
                   <span>Razorpay secured</span>
@@ -977,7 +1043,7 @@ export function BookingFlow({
           </div>
         </div>
 
-        <aside className="lg:sticky lg:top-32">
+        <aside className="lg:sticky lg:top-24">
           <div className="rounded-[28px] border border-sand-300 bg-paper p-7 shadow-[0_16px_40px_-32px_rgba(11,39,53,0.3)]">
             <div className="flex items-center gap-4">
               <div className="relative h-[88px] w-[88px] shrink-0 overflow-hidden rounded-[16px] bg-ink">
@@ -1004,11 +1070,11 @@ export function BookingFlow({
               {[
                 ["Departure", selectedDate ? longDateFormatter.format(new Date(`${selectedDate.startDate}T00:00:00Z`)) : "—"],
                 ["From", city],
-                ["Travellers", `${adults} ${adults === 1 ? "adult" : "adults"}${children ? ` · ${children} ${children === 1 ? "child" : "children"}` : ""}`],
+                ["Travellers", travellerSummary],
               ].map(([key, value]) => (
                 <div key={key} className="flex items-center justify-between gap-4">
                   <dt className="text-[13px] font-medium text-navy-500">{key}</dt>
-                  <dd className="text-[13px] font-bold text-ink">{value}</dd>
+                  <dd className="text-[13px] font-semibold text-ink">{value}</dd>
                 </div>
               ))}
             </dl>
@@ -1020,35 +1086,47 @@ export function BookingFlow({
                 <span className="text-navy-700">
                   Adults · {formatINR(adultPrice)} × {adults}
                 </span>
-                <span className="font-bold text-ink">{formatINR(adultPrice * adults)}</span>
+                <span className="font-semibold text-ink">{formatINR(adultPrice * adults)}</span>
               </div>
               {children ? (
                 <div className="flex items-center justify-between gap-4 text-[13px]">
                   <span className="text-navy-700">
                     Children · {formatINR(childPrice)} × {children}
                   </span>
-                  <span className="font-bold text-ink">{formatINR(childPrice * children)}</span>
+                  <span className="font-semibold text-ink">{formatINR(childPrice * children)}</span>
                 </div>
               ) : null}
-              {addonTotal ? (
+              {infants ? (
                 <div className="flex items-center justify-between gap-4 text-[13px]">
-                  <span className="text-navy-700">Add-ons</span>
-                  <span className="font-bold text-ink">{formatINR(addonTotal)}</span>
+                  <span className="text-navy-700">
+                    Infants · {infantPrice > 0 ? formatINR(infantPrice) : "free"} × {infants}
+                  </span>
+                  <span className="font-semibold text-ink">
+                    {infantPrice > 0 ? formatINR(infantPrice * infants) : "Free"}
+                  </span>
                 </div>
               ) : null}
-              {promoApplied ? (
+              {quote.addons.map((addon) => (
+                <div key={addon.id} className="flex items-center justify-between gap-4 text-[13px]">
+                  <span className="text-navy-700">
+                    {addon.title}{addon.quantity > 1 ? ` × ${addon.quantity}` : ""}
+                  </span>
+                  <span className="font-semibold text-ink">{addon.total ? formatINR(addon.total) : "Free"}</span>
+                </div>
+              ))}
+              {appliedDiscount ? (
                 <div className="flex items-center justify-between gap-4 text-[13px]">
                   <span className="text-success">
-                    {promo || "Promo"} saving
+                    {appliedDiscount.rule.code ?? appliedDiscount.rule.name}
                   </span>
-                  <span className="font-bold text-success">
-                    – {formatINR(promoSaving)}
+                  <span className="font-semibold text-success">
+                    – {formatINR(appliedDiscount.amount)}
                   </span>
                 </div>
               ) : null}
               <div className="flex items-center justify-between gap-4 text-[13px]">
                 <span className="text-navy-700">GST (5%)</span>
-                <span className="font-bold text-ink">{formatINR(gst)}</span>
+                <span className="font-semibold text-ink">{formatINR(gst)}</span>
               </div>
             </div>
 
@@ -1059,14 +1137,14 @@ export function BookingFlow({
                   {travellers} travellers · incl. taxes
                 </p>
               </div>
-              <p className="text-2xl font-extrabold tracking-[-0.02em] text-ink">
+              <p className="text-2xl font-semibold tracking-[-0.02em] text-ink">
                 {formatINR(total)}
               </p>
             </div>
 
             {step === 3 ? (
               <div className="mt-4 flex items-center justify-between gap-4 rounded-[14px] bg-gold-100 px-4 py-3">
-                <span className="text-sm font-bold text-ink">Due today (25%)</span>
+                <span className="text-sm font-semibold text-ink">Due today (25%)</span>
                 <span className="type-title text-ink">{formatINR(payNow)}</span>
               </div>
             ) : null}
@@ -1092,7 +1170,7 @@ export function BookingFlow({
 
 function CheckoutHeader({ step, email }: { step: number; email: string }) {
   return (
-    <div className="border-b border-sand-300 bg-paper">
+    <div className="sticky top-0 z-40 border-b border-sand-300 bg-paper/90 backdrop-blur-xl">
       <div className="container-page flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-wrap items-center gap-2.5">
           {STEPS.map((label, index) => {
@@ -1110,7 +1188,7 @@ function CheckoutHeader({ step, email }: { step: number; email: string }) {
                 ) : null}
                 <span
                   className={cn(
-                    "grid h-8 w-8 place-items-center rounded-full text-xs font-bold",
+                    "grid h-8 w-8 place-items-center rounded-full text-xs font-semibold",
                     done
                       ? "bg-gold-400 text-ink"
                       : current
@@ -1122,7 +1200,7 @@ function CheckoutHeader({ step, email }: { step: number; email: string }) {
                 </span>
                 <span
                   className={cn(
-                    "text-[13px] font-bold sm:block",
+                    "text-[13px] font-semibold sm:block",
                     !current && "hidden",
                     done || current ? "text-ink" : "text-navy-500",
                   )}
@@ -1136,12 +1214,12 @@ function CheckoutHeader({ step, email }: { step: number; email: string }) {
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5">
           <Link
             href="/account"
-            className="flex items-center gap-1.5 text-[13px] font-bold text-navy-600 transition hover:text-ink"
+            className="flex items-center gap-1.5 text-[13px] font-semibold text-navy-600 transition hover:text-ink"
           >
             <UserRound className="h-3.5 w-3.5" />
             <span className="max-w-[210px] truncate">{email}</span>
           </Link>
-          <p className="flex items-center gap-1.5 text-[13px] font-bold text-success">
+          <p className="flex items-center gap-1.5 text-[13px] font-semibold text-success">
             <Lock className="h-3.5 w-3.5" /> Secure checkout
           </p>
         </div>
@@ -1186,7 +1264,7 @@ function Counter({
   return (
     <div className="flex items-center justify-between gap-3 rounded-[16px] border border-sand-300 bg-paper px-4 py-3.5 sm:px-5 sm:py-4">
       <div>
-        <p className="text-sm font-bold text-ink">{label}</p>
+        <p className="text-sm font-semibold text-ink">{label}</p>
         <p className="mt-0.5 text-[13px] font-medium leading-5 text-navy-500">{sub}</p>
       </div>
       <div className="flex shrink-0 items-center gap-3">
@@ -1198,7 +1276,7 @@ function Counter({
         >
           <Minus className="h-4 w-4" />
         </button>
-        <span className="w-5 text-center text-sm font-bold text-ink">{value}</span>
+        <span className="w-5 text-center text-sm font-semibold text-ink">{value}</span>
         <button
           type="button"
           onClick={() => onChange(value + 1)}
@@ -1228,7 +1306,7 @@ function StepActions({
   return (
     <div className="flex flex-wrap items-center justify-between gap-4">
       {backHref ? (
-        <Link href={backHref} className="inline-flex items-center gap-2 text-sm font-bold text-navy-700">
+        <Link href={backHref} className="inline-flex items-center gap-2 text-sm font-semibold text-navy-700">
           <ArrowLeft className="h-4 w-4" />
           {backLabel}
         </Link>
@@ -1236,7 +1314,7 @@ function StepActions({
         <button
           type="button"
           onClick={back}
-          className="inline-flex items-center gap-2 text-sm font-bold text-navy-700"
+          className="inline-flex items-center gap-2 text-sm font-semibold text-navy-700"
         >
           <ArrowLeft className="h-4 w-4" />
           {backLabel}
