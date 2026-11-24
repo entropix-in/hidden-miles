@@ -93,25 +93,10 @@ export default async function HomePage() {
             </div>
 
             <div className="mt-8 flex flex-wrap items-center gap-4">
-              <div className="flex -space-x-3">
-                {[
-                  ["A", "bg-blue-600"],
-                  ["R", "bg-gold-700"],
-                  ["M", "bg-navy-500"],
-                  ["S", "bg-danger"],
-                ].map(([initial, color]) => (
-                  <span
-                    key={initial}
-                    className={`grid h-10 w-10 place-items-center rounded-full border-[3px] border-paper text-[13px] font-bold text-white ${color}`}
-                  >
-                    {initial}
-                  </span>
-                ))}
-              </div>
               <div>
                 <Rating score="4.9" count="12,400+ reviews" />
                 <p className="mt-0.5 text-[13px] font-medium text-navy-500">
-                  Loved by 1.2 million travellers
+                  1.2 million travellers hosted
                 </p>
               </div>
             </div>
@@ -164,7 +149,7 @@ export default async function HomePage() {
                 <MapPin className="h-4 w-4" />
               </span>
               <span>
-                <span className="block text-[13px] font-bold text-ink">
+                <span className="block text-[13px] font-semibold text-ink">
                   Sonamarg, Kashmir
                 </span>
                 <span className="block text-xs font-medium text-navy-500">
@@ -184,7 +169,7 @@ export default async function HomePage() {
         </div>
 
         <div className="mt-6 flex flex-wrap items-center gap-2">
-          <span className="w-full text-sm font-bold text-navy-500 sm:w-auto">Popular:</span>
+          <span className="w-full text-sm font-semibold text-navy-500 sm:w-auto">Popular:</span>
           {[
             { label: "Kashmir in spring", href: "/tours?destination=kashmir" },
             { label: "Women's Special", href: "/tours?experience=women" },

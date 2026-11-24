@@ -31,7 +31,7 @@ export function CtaBand({
           count={7}
         />
         <div className={cn("grid", image && "xl:grid-cols-[1fr_520px]")}>
-          <div className="relative flex flex-col justify-center gap-6 px-[25px] py-12 sm:px-12 md:px-16 md:py-16">
+          <div className="relative flex flex-col justify-center gap-6 px-6 py-12 sm:px-12 md:px-16 md:py-16">
             <h2 className="type-h2 max-w-xl text-paper">
               {title}
               <br />

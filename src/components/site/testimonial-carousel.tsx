@@ -50,7 +50,7 @@ export function TestimonialCarousel({
         <div className="mt-6 flex items-center gap-3.5">
           <span
             className={cn(
-              "grid h-[52px] w-[52px] place-items-center rounded-full text-sm font-bold text-white",
+              "grid h-[52px] w-[52px] place-items-center rounded-full text-sm font-semibold text-white",
               avatarColours[index % avatarColours.length],
             )}
             aria-hidden="true"
@@ -58,7 +58,7 @@ export function TestimonialCarousel({
             {initials(active.name)}
           </span>
           <span>
-            <span className="block text-[15px] font-bold text-ink">
+            <span className="block text-[15px] font-semibold text-ink">
               {active.name}
             </span>
             <span className="block text-sm font-medium text-navy-500">

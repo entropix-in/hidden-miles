@@ -37,7 +37,7 @@ export default async function LoginPage({
 
   return (
     <AuthCard
-      eyebrow="Welcome back"
+      eyebrow="Sign in"
       title="Sign in to book your tour"
       subtitle="Your bookings, traveller details and trip updates live in one account."
     >
@@ -47,7 +47,7 @@ export default async function LoginPage({
       {!configured ? (
         <div className="mb-5 rounded-[14px] border border-sand-300 bg-sand-100 px-4 py-3 text-sm font-medium text-navy-700">
           Accounts need the MySQL database. Start it with{" "}
-          <code className="font-bold">docker compose up -d</code>, then try again.
+          <code className="font-semibold">docker compose up -d</code>, then try again.
         </div>
       ) : null}
 
@@ -75,7 +75,7 @@ export default async function LoginPage({
             </label>
             <Link
               href={forgotHref}
-              className="text-xs font-bold text-blue-700 underline-offset-4 transition hover:text-blue-800 hover:underline"
+              className="text-xs font-semibold text-blue-700 underline-offset-4 transition hover:text-blue-800 hover:underline"
             >
               Forgot password?
             </Link>
@@ -97,7 +97,7 @@ export default async function LoginPage({
 
       <div className="my-6 flex items-center gap-3">
         <span className="h-px flex-1 bg-sand-300" />
-        <span className="text-xs font-bold uppercase tracking-[0.14em] text-navy-500">
+        <span className="text-xs font-semibold text-navy-500">
           New here?
         </span>
         <span className="h-px flex-1 bg-sand-300" />

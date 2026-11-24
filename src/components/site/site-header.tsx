@@ -211,7 +211,7 @@ export function SiteHeader({
                             </div>
                             <Link
                               href="/destinations"
-                              className="mt-auto inline-flex pt-4 text-sm font-bold text-blue-700 hover:text-blue-800"
+                              className="mt-auto inline-flex pt-4 text-sm font-semibold text-blue-700 hover:text-blue-800"
                             >
                               All {group.label} destinations →
                             </Link>
@@ -238,7 +238,7 @@ export function SiteHeader({
                               </p>
                               <Link
                                 href={`/destinations/${previewDestination.slug}`}
-                                className="mt-4 inline-flex items-center gap-2 text-sm font-bold text-gold-400"
+                                className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-gold-400"
                               >
                                 Explore {previewDestination.name} →
                               </Link>
@@ -275,17 +275,17 @@ export function SiteHeader({
                 className="hidden items-center gap-2 rounded-full border border-sand-300 bg-paper py-1 pl-1 pr-3 transition hover:border-navy-300 hover:bg-sand-100 sm:flex"
                 aria-label="My account"
               >
-                <span className="grid h-7 w-7 place-items-center rounded-full bg-ink text-[12px] font-extrabold uppercase text-gold-400">
+                <span className="grid h-7 w-7 place-items-center rounded-full bg-ink text-[12px] font-semibold uppercase text-gold-400">
                   {user.name.slice(0, 1) || "H"}
                 </span>
-                <span className="max-w-[92px] truncate text-[13px] font-bold text-ink">
+                <span className="max-w-[92px] truncate text-[13px] font-semibold text-ink">
                   {firstName}
                 </span>
               </Link>
             ) : (
               <Link
                 href="/login"
-                className="hidden items-center gap-1.5 rounded-full px-3 py-2 text-[13px] font-bold text-ink transition hover:bg-sand-100 sm:inline-flex"
+                className="hidden items-center gap-1.5 rounded-full px-3 py-2 text-[13px] font-semibold text-ink transition hover:bg-sand-100 sm:inline-flex"
               >
                 <UserRound className="h-4 w-4" />
                 Sign in
@@ -427,7 +427,7 @@ export function SiteHeader({
                       <Link
                         href="/destinations"
                         onClick={() => setMobileOpen(false)}
-                        className="mt-4 inline-flex items-center gap-1.5 text-[13px] font-bold text-blue-700"
+                        className="mt-4 inline-flex items-center gap-1.5 text-[13px] font-semibold text-blue-700"
                       >
                         All destinations <span aria-hidden>→</span>
                       </Link>
@@ -446,10 +446,10 @@ export function SiteHeader({
                 aria-label={`Open ${firstName}'s profile`}
                 className="flex w-fit items-center gap-2 rounded-full border border-sand-300 bg-paper py-1 pl-1 pr-3 transition hover:border-navy-300 hover:bg-sand-100"
               >
-                <span className="grid h-7 w-7 place-items-center rounded-full bg-ink text-[12px] font-extrabold uppercase text-gold-400">
+                <span className="grid h-7 w-7 place-items-center rounded-full bg-ink text-[12px] font-semibold uppercase text-gold-400">
                   {user.name.slice(0, 1) || "H"}
                 </span>
-                <span className="max-w-[92px] truncate text-[13px] font-bold text-ink">
+                <span className="max-w-[92px] truncate text-[13px] font-semibold text-ink">
                   {firstName}
                 </span>
               </Link>

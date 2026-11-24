@@ -90,7 +90,7 @@ export default async function CorporatePage() {
             <FeatureTile
               icon={<Layers className="h-5 w-5" />}
               title="Multi-city programmes"
-              description="Several cities, one seamless itinerary."
+              description="Several cities, one itinerary, one team."
             />
           </div>
         </div>

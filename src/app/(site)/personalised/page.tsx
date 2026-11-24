@@ -74,7 +74,7 @@ export default function PersonalisedPage() {
                   },
                 ].map((step, index) => (
                   <li key={step.title} className="flex gap-4">
-                    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-ink text-sm font-bold text-gold-400">
+                    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-ink text-sm font-semibold text-gold-400">
                       {index + 1}
                     </span>
                     <span>

@@ -80,7 +80,7 @@ export default async function SpecialityToursPage() {
                 <p className="type-small mt-1.5 line-clamp-2 text-navy-500">
                   {experience.description}
                 </p>
-                <span className="mt-3 inline-flex items-center gap-1.5 text-sm font-bold text-blue-700">
+                <span className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-blue-700">
                   Explore
                   <span className="transition group-hover:translate-x-1">→</span>
                 </span>

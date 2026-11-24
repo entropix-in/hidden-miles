@@ -235,7 +235,7 @@
     font-family: var(--font-sans);
     font-size: 22px;
     line-height: 28px;
-    font-weight: 800;
+    font-weight: 600;
     letter-spacing: -0.01em;
   }
 
@@ -275,9 +275,8 @@
   .kicker-label {
     font-size: 12px;
     line-height: 16px;
-    font-weight: 800;
-    letter-spacing: 0.1667em;
-    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0;
   }
 
   .on-ink .kicker,
@@ -313,7 +312,7 @@
     font-family: var(--font-sans);
     font-size: 15px;
     line-height: 20px;
-    font-weight: 700;
+    font-weight: 600;
     letter-spacing: 0.005em;
     text-align: center;
     white-space: nowrap;
@@ -410,7 +409,7 @@
     border-radius: 999px;
     font-size: 0;
     line-height: 0;
-    font-weight: 700;
+    font-weight: 600;
     transition: transform 240ms ease;
   }
 
@@ -483,7 +482,7 @@
     color: var(--color-navy-700);
     font-size: 14px;
     line-height: 20px;
-    font-weight: 700;
+    font-weight: 600;
     white-space: nowrap;
     transition:
       background-color 180ms ease,
@@ -531,7 +530,7 @@
     padding: 5px 11px;
     font-size: 12px;
     line-height: 16px;
-    font-weight: 700;
+    font-weight: 600;
     letter-spacing: 0;
     white-space: nowrap;
   }
@@ -687,9 +686,8 @@
     color: var(--color-navy-500);
     font-size: 11px;
     line-height: 14px;
-    font-weight: 800;
-    letter-spacing: 0.1667em;
-    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0;
   }
 
   .coord-dark {
@@ -704,9 +702,8 @@
     color: var(--color-blue-700);
     font-size: 12px;
     line-height: 16px;
-    font-weight: 800;
-    letter-spacing: 0.1667em;
-    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0;
   }
 
   .prose-narrow p {
@@ -728,7 +725,7 @@
     color: var(--color-blue-700);
     font-size: 14px;
     line-height: 20px;
-    font-weight: 700;
+    font-weight: 600;
     transition: gap 200ms ease;
   }
 

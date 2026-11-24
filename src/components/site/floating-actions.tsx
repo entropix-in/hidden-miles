@@ -18,7 +18,7 @@ export function FloatingActions() {
         className="group flex items-center gap-2 rounded-full bg-[#1faa59] py-3 pl-4 pr-4 text-white shadow-xl shadow-emerald-950/20 transition hover:-translate-y-0.5 hover:bg-[#188f4a]"
       >
         <MessageCircle className="h-5 w-5" />
-        <span className="max-w-0 overflow-hidden whitespace-nowrap text-sm font-bold transition-all duration-300 group-hover:max-w-[130px]">
+        <span className="max-w-0 overflow-hidden whitespace-nowrap text-sm font-semibold transition-all duration-300 group-hover:max-w-[130px]">
           Chat with us
         </span>
       </a>

@@ -54,7 +54,7 @@ export default async function ForgotPasswordPage({
               Nothing arrived? Check spam, then{" "}
               <Link
                 href={loginHref}
-                className="font-bold text-blue-700 hover:text-blue-800"
+                className="font-semibold text-blue-700 hover:text-blue-800"
               >
                 try again
               </Link>
@@ -64,18 +64,18 @@ export default async function ForgotPasswordPage({
 
           {devLink ? (
             <div className="mt-4 rounded-[16px] border border-dashed border-gold-300 bg-gold-50 p-4">
-              <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-gold-700">
+              <p className="text-[11px] font-semibold text-gold-700">
                 Development only · email not configured
               </p>
               <a
                 href={devLink}
-                className="mt-2 block break-all text-[13px] font-bold text-blue-700 underline-offset-4 hover:underline"
+                className="mt-2 block break-all text-[13px] font-semibold text-blue-700 underline-offset-4 hover:underline"
               >
                 {devLink}
               </a>
               <p className="mt-2 text-[12px] font-medium leading-5 text-navy-600">
-                Set <code className="font-bold">RESEND_API_KEY</code> and{" "}
-                <code className="font-bold">EMAIL_FROM</code> to send real
+                Set <code className="font-semibold">RESEND_API_KEY</code> and{" "}
+                <code className="font-semibold">EMAIL_FROM</code> to send real
                 emails.
               </p>
             </div>
@@ -93,7 +93,7 @@ export default async function ForgotPasswordPage({
           {!configured ? (
             <div className="mb-5 rounded-[14px] border border-sand-300 bg-sand-100 px-4 py-3 text-sm font-medium text-navy-700">
               Accounts need the MySQL database. Start it with{" "}
-              <code className="font-bold">docker compose up -d</code>, then try
+              <code className="font-semibold">docker compose up -d</code>, then try
               again.
             </div>
           ) : null}
@@ -123,7 +123,7 @@ export default async function ForgotPasswordPage({
 
           <Link
             href={loginHref}
-            className="mt-5 inline-flex items-center gap-1.5 text-sm font-bold text-blue-700 transition hover:text-blue-800"
+            className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-blue-700 transition hover:text-blue-800"
           >
             Back to sign in
             <ArrowRight className="h-4 w-4" />

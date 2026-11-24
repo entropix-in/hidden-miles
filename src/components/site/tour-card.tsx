@@ -77,7 +77,7 @@ function TourCardContent({
       </Link>
 
       <div className="flex flex-1 flex-col gap-4 px-4 pb-4 pt-5">
-        <div className="flex flex-wrap items-center gap-3 text-[13px] font-bold text-navy-500">
+        <div className="flex flex-wrap items-center gap-3 text-[13px] font-semibold text-navy-500">
           <span>
             {tour.days}D / {tour.nights}N
           </span>
@@ -174,7 +174,7 @@ export function TourListCard({
       </Link>
 
       <div className="flex flex-1 flex-col gap-3 px-4 pb-4 pt-5 sm:p-5">
-        <div className="flex flex-wrap items-center gap-3 text-[13px] font-bold text-navy-500">
+        <div className="flex flex-wrap items-center gap-3 text-[13px] font-semibold text-navy-500">
           <span>
             {tour.days}D / {tour.nights}N
           </span>

@@ -137,7 +137,7 @@ export default async function AccountSettingsPage({
               </div>
               <Link
                 href="/forgot-password"
-                className="shrink-0 pt-1 text-xs font-bold text-blue-700 underline-offset-4 transition hover:text-blue-800 hover:underline"
+                className="shrink-0 pt-1 text-xs font-semibold text-blue-700 underline-offset-4 transition hover:text-blue-800 hover:underline"
               >
                 Forgot it?
               </Link>

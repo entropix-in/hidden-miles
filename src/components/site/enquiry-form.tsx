@@ -278,7 +278,7 @@ export function EnquiryForm({
         </p>
       ) : null}
 
-      <p className="mt-4 text-center text-sm leading-5 text-stone-400">
+      <p className="mt-4 text-center text-sm leading-5 text-navy-500">
         By submitting, you agree to be contacted by a Hidden Miles travel expert.
         We never share your details.
       </p>

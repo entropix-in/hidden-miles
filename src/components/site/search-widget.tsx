@@ -25,7 +25,7 @@ const months = [
 ];
 
 const inlineTriggerClassName =
-  "flex w-full cursor-pointer items-center justify-between gap-2 bg-transparent text-left text-[15px] font-bold text-ink outline-none";
+  "flex w-full cursor-pointer items-center justify-between gap-2 bg-transparent text-left text-[15px] font-semibold text-ink outline-none";
 
 export function SearchWidget({
   destinations,

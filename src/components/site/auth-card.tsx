@@ -48,7 +48,7 @@ export function AuthCard({
                       <Check className="h-3.5 w-3.5" strokeWidth={3} />
                     </span>
                     <span>
-                      <span className="block text-sm font-bold text-paper">
+                      <span className="block text-sm font-semibold text-paper">
                         {heading}
                       </span>
                       <span className="mt-0.5 block text-[13px] font-medium leading-5 text-navy-200">
@@ -67,7 +67,7 @@ export function AuthCard({
               </p>
               <a
                 href={site.phoneHref}
-                className="flex items-center gap-2 text-[13px] font-bold text-gold-400 transition hover:text-gold-300"
+                className="flex items-center gap-2 text-[13px] font-semibold text-gold-400 transition hover:text-gold-300"
               >
                 <Phone className="h-4 w-4" />
                 Need help? {site.phone}

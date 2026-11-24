@@ -180,7 +180,7 @@ export function TourBooking({
                       className="sr-only"
                     />
                     <span className="min-w-0 flex-1">
-                      <span className="block text-sm font-bold text-ink">
+                      <span className="block text-sm font-semibold text-ink">
                         {formatRange(departure.startDate, nights)}
                       </span>
                       <span className="mt-0.5 block text-[13px] font-medium text-navy-500">
@@ -189,12 +189,12 @@ export function TourBooking({
                       </span>
                     </span>
                     <span className="shrink-0 text-right">
-                      <span className="block text-sm font-bold text-ink">
+                      <span className="block text-sm font-semibold text-ink">
                         {formatINR(departure.price)}
                       </span>
                       <span
                         className={cn(
-                          "mt-1 inline-flex rounded-full px-2 py-0.5 text-[11px] font-bold",
+                          "mt-1 inline-flex rounded-full px-2 py-0.5 text-[11px] font-semibold",
                           soldOut
                             ? "bg-danger-soft text-danger"
                             : low
@@ -228,7 +228,7 @@ export function TourBooking({
                 <button
                   type="button"
                   onClick={() => setTravellers((current) => Math.max(1, current - 1))}
-                  className="grid h-10 w-10 place-items-center text-lg font-bold text-ink transition hover:text-gold-600"
+                  className="grid h-10 w-10 place-items-center text-lg font-semibold text-ink transition hover:text-gold-600"
                   aria-label="Remove one traveller"
                 >
                   −
@@ -247,14 +247,14 @@ export function TourBooking({
                       ),
                     )
                   }
-                  className="h-10 w-12 border-x border-sand-300 bg-paper text-center text-sm font-bold text-ink outline-none"
+                  className="h-10 w-12 border-x border-sand-300 bg-paper text-center text-sm font-semibold text-ink outline-none"
                 />
                 <button
                   type="button"
                   onClick={() =>
                     setTravellers((current) => Math.min(maxTravellers, current + 1))
                   }
-                  className="grid h-10 w-10 place-items-center text-lg font-bold text-ink transition hover:text-gold-600"
+                  className="grid h-10 w-10 place-items-center text-lg font-semibold text-ink transition hover:text-gold-600"
                   aria-label="Add one traveller"
                 >
                   +

@@ -98,7 +98,7 @@ export function BookingCard({
         ) : null}
       </div>
       <p className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-1">
-        <span className="text-[32px] font-extrabold leading-none tracking-[-0.03em] text-ink">
+        <span className="text-[32px] font-semibold leading-none tracking-[-0.03em] text-ink">
           {formatINR(adultPrice)}
         </span>
         <span className="type-small text-navy-500">per adult</span>
@@ -110,7 +110,7 @@ export function BookingCard({
           <button
             type="button"
             onClick={() => setPickerOpen(true)}
-            className="text-[12px] font-bold text-navy-700 underline decoration-sand-300 decoration-1.5 underline-offset-4 transition hover:text-ink hover:decoration-ink"
+            className="text-[12px] font-semibold text-navy-700 underline decoration-sand-300 decoration-1.5 underline-offset-4 transition hover:text-ink hover:decoration-ink"
           >
             Change
           </button>
@@ -126,14 +126,14 @@ export function BookingCard({
             <Check className="h-3 w-3" strokeWidth={3} />
           </span>
           <span className="min-w-0 flex-1">
-            <span className="block truncate text-[13.5px] font-bold">
+            <span className="block truncate text-[13.5px] font-semibold">
               {dateFormatter.format(
                 new Date(`${selected.startDate}T00:00:00Z`),
               )}
             </span>
             <span
               className={cn(
-                "mt-1 inline-flex rounded-full px-2 py-0.5 text-[11px] font-bold",
+                "mt-1 inline-flex rounded-full px-2 py-0.5 text-[11px] font-semibold",
                 selected.seatsLeft <= 0
                   ? "bg-sand-200 text-navy-500"
                   : "bg-gold-400 text-ink",
@@ -203,7 +203,7 @@ export function BookingCard({
                   >
                     <span
                       className={cn(
-                        "block text-[13px] font-bold",
+                        "block text-[13px] font-semibold",
                         sold && "line-through",
                       )}
                     >
@@ -221,7 +221,7 @@ export function BookingCard({
                     </span>
                     <span
                       className={cn(
-                        "mt-1 block text-xs font-bold",
+                        "mt-1 block text-xs font-semibold",
                         active
                           ? "text-gold-400"
                           : sold
@@ -252,7 +252,7 @@ export function BookingCard({
           id="departure-city"
           value={city}
           onValueChange={setCity}
-          className="mt-2 py-3 font-bold"
+          className="mt-2 py-3 font-semibold"
         >
           {cities.map((item) => (
             <option key={item.name} value={item.name}>
@@ -278,7 +278,7 @@ export function BookingCard({
               className="flex items-center justify-between rounded-[14px] border border-sand-300 bg-paper px-4 py-2.5"
             >
               <span>
-                <span className="block text-sm font-bold text-ink">
+                <span className="block text-sm font-semibold text-ink">
                   {traveller.label}
                 </span>
                 <span className="block text-xs font-medium text-navy-500">
@@ -297,7 +297,7 @@ export function BookingCard({
                 >
                   <Minus className="h-3.5 w-3.5" />
                 </button>
-                <span className="w-5 text-center text-sm font-bold tabular-nums text-ink">
+                <span className="w-5 text-center text-sm font-semibold tabular-nums text-ink">
                   {traveller.value}
                 </span>
                 <button
@@ -320,7 +320,7 @@ export function BookingCard({
             <span className="text-navy-700">
               {adults} adult{adults === 1 ? "" : "s"} × {formatINR(adultPrice)}
             </span>
-            <span className="font-bold tabular-nums text-ink">
+            <span className="font-semibold tabular-nums text-ink">
               {formatINR(adultPrice * adults)}
             </span>
           </div>
@@ -330,7 +330,7 @@ export function BookingCard({
                 {children} child{children === 1 ? "" : "ren"} ×{" "}
                 {formatINR(childPrice)}
               </span>
-              <span className="font-bold tabular-nums text-ink">
+              <span className="font-semibold tabular-nums text-ink">
                 {formatINR(childPrice * children)}
               </span>
             </div>
@@ -341,7 +341,7 @@ export function BookingCard({
                 {infants} infant{infants === 1 ? "" : "s"} ×{" "}
                 {infantPrice > 0 ? formatINR(infantPrice) : "Free"}
               </span>
-              <span className="font-bold tabular-nums text-ink">
+              <span className="font-semibold tabular-nums text-ink">
                 {infantPrice > 0 ? formatINR(infantPrice * infants) : "Free"}
               </span>
             </div>
@@ -351,7 +351,7 @@ export function BookingCard({
         <div className="route-line my-3.5" />
 
         <div className="flex items-baseline justify-between gap-3">
-          <span className="text-sm font-bold text-ink">
+          <span className="text-sm font-semibold text-ink">
             Tour price, {travellers}{" "}
             {travellers === 1 ? "traveller" : "travellers"}
           </span>
@@ -392,11 +392,11 @@ export function BookingCard({
         href={site.phoneHref}
         className="mt-5 flex items-center gap-3 rounded-[14px] border border-sand-300 bg-sand-50 p-3.5 transition hover:border-navy-300 hover:bg-sand-100"
       >
-        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-navy-500 text-xs font-bold text-white">
+        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-navy-500 text-xs font-semibold text-white">
           NK
         </span>
         <span className="min-w-0 flex-1">
-          <span className="block text-[13px] font-bold text-ink">
+          <span className="block text-[13px] font-semibold text-ink">
             Talk to Nisha, our expert
           </span>
           <span className="block text-xs font-medium text-navy-500">

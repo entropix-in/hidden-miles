@@ -93,10 +93,10 @@ export default async function AccountPage() {
                 key={label}
                 className="rounded-[16px] border border-white/10 bg-white/5 px-5 py-4"
               >
-                <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-navy-300">
+                <p className="text-[12px] font-semibold text-navy-300">
                   {label}
                 </p>
-                <p className="mt-1 truncate text-xl font-extrabold tracking-[-0.02em] text-paper">
+                <p className="mt-1 truncate text-xl font-semibold tracking-[-0.02em] text-paper">
                   {value}
                 </p>
               </div>
@@ -177,7 +177,7 @@ export default async function AccountPage() {
                             {booking.travellers}{" "}
                             {booking.travellers === 1 ? "traveller" : "travellers"}
                           </span>
-                          <span className="font-bold text-ink">
+                          <span className="font-semibold text-ink">
                             {formatINR(booking.amount)}
                           </span>
                         </div>
@@ -203,11 +203,11 @@ export default async function AccountPage() {
         <aside className="space-y-4">
           <div className="rounded-[24px] border border-sand-300 bg-paper p-6">
             <div className="flex items-center gap-4">
-              <span className="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-ink text-lg font-extrabold uppercase text-gold-400">
+              <span className="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-ink text-lg font-semibold uppercase text-gold-400">
                 {user.name.slice(0, 1) || "H"}
               </span>
               <div className="min-w-0">
-                <p className="truncate text-sm font-bold text-ink">{user.name}</p>
+                <p className="truncate text-sm font-semibold text-ink">{user.name}</p>
                 <p className="text-[12px] font-medium text-navy-500">
                   Member since {monthFormatter.format(user.createdAt)}
                 </p>
@@ -218,7 +218,7 @@ export default async function AccountPage() {
               <div className="flex items-start gap-2.5">
                 <Mail className="mt-0.5 h-4 w-4 shrink-0 text-navy-500" />
                 <div className="min-w-0">
-                  <dt className="text-[11px] font-bold uppercase tracking-[0.1em] text-navy-500">
+                  <dt className="text-[11px] font-semibold text-navy-500">
                     Email
                   </dt>
                   <dd className="break-all text-sm font-semibold text-ink">
@@ -229,7 +229,7 @@ export default async function AccountPage() {
               <div className="flex items-start gap-2.5">
                 <Phone className="mt-0.5 h-4 w-4 shrink-0 text-navy-500" />
                 <div>
-                  <dt className="text-[11px] font-bold uppercase tracking-[0.1em] text-navy-500">
+                  <dt className="text-[11px] font-semibold text-navy-500">
                     Phone
                   </dt>
                   <dd className="text-sm font-semibold text-ink">

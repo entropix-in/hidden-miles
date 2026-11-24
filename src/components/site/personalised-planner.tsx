@@ -88,7 +88,7 @@ export function PersonalisedPlanner() {
       <div className="flex items-center justify-between gap-3">
         <h2 className="type-h3 text-ink">Start planning</h2>
         {step < 3 ? (
-          <span className="text-sm font-bold text-navy-500">
+          <span className="text-sm font-semibold text-navy-500">
             Step {step + 1} of 3
           </span>
         ) : null}
@@ -136,7 +136,7 @@ export function PersonalisedPlanner() {
                 setTrip((current) => ({ ...current, destination: event.target.value }))
               }
               placeholder="Kerala, Bali, Japan…"
-              className="field h-[60px] py-[15px] leading-[27px]"
+              className="field h-[60px] py-4 leading-[27px]"
             />
             <p className="field-hint">
               Not sure yet? Leave it blank.
@@ -157,7 +157,7 @@ export function PersonalisedPlanner() {
                     when: next,
                   }))
                 }
-                className="h-[60px] py-[15px] pr-12 leading-[27px]"
+                className="h-[60px] py-4 pr-12 leading-[27px]"
               >
                 {monthOptions.map((month) => (
                   <option key={month} value={month}>
@@ -180,7 +180,7 @@ export function PersonalisedPlanner() {
                     duration: next,
                   }))
                 }
-                className="h-[60px] py-[15px] pr-12 leading-[27px]"
+                className="h-[60px] py-4 pr-12 leading-[27px]"
               >
                 {durationOptions.map((duration) => (
                   <option key={duration} value={duration}>
@@ -200,7 +200,7 @@ export function PersonalisedPlanner() {
                   type="button"
                   onClick={() => setTrip((current) => ({ ...current, style }))}
                   className={cn(
-                    "chip px-[18px] py-2.5",
+                    "chip px-5 py-2.5",
                     trip.style === style && "chip-active",
                   )}
                 >

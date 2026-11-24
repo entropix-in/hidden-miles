@@ -138,7 +138,7 @@ export default async function TourDetailPage({
             <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-[13px] font-medium text-navy-700">
               <span className="inline-flex items-center gap-1.5">
                 <Star className="h-3.5 w-3.5 fill-gold-400 text-gold-400" />
-                <span className="font-bold text-ink">
+                <span className="font-semibold text-ink">
                   {tour.rating.toFixed(1)}
                 </span>
                 <span className="text-navy-500">({tour.reviews} reviews)</span>
@@ -223,7 +223,7 @@ export default async function TourDetailPage({
                 <a
                   key={tab.label}
                   href={tab.href}
-                  className={`relative px-4 py-3 text-sm font-bold transition ${
+                  className={`relative px-4 py-3 text-sm font-semibold transition ${
                     index === 0 ? "text-ink" : "text-navy-500 hover:text-ink"
                   }`}
                 >
@@ -271,7 +271,7 @@ export default async function TourDetailPage({
                     <span className="type-label block text-navy-500">
                       {fact.label}
                     </span>
-                    <span className="mt-0.5 block text-sm font-bold text-ink">
+                    <span className="mt-0.5 block text-sm font-semibold text-ink">
                       {fact.value}
                     </span>
                   </span>
@@ -344,7 +344,7 @@ export default async function TourDetailPage({
                   <div className="grid items-center gap-8 sm:grid-cols-[auto_1fr]">
                     <div>
                       <p className="type-h1 text-paper">4.9</p>
-                      <p className="text-sm font-bold tracking-[0.1em] text-gold-400">
+                      <p className="text-sm font-semibold tracking-[0.1em] text-gold-400">
                         ★★★★★
                       </p>
                       <p className="mt-1 text-[13px] font-medium text-navy-200">
@@ -355,7 +355,7 @@ export default async function TourDetailPage({
                       <p className="font-display text-[19px] leading-[1.55] text-paper">
                         “<RichFieldText editor={quote.richFields?.quote} fallback={quote.quote} />”
                       </p>
-                      <p className="mt-3 text-sm font-bold text-gold-400">
+                      <p className="mt-3 text-sm font-semibold text-gold-400">
                         {quote.name} · {quote.city}
                       </p>
                     </div>

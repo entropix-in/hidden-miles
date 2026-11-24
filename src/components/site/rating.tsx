@@ -22,7 +22,7 @@ export function Rating({
       />
       <span
         className={cn(
-          "text-sm font-bold",
+          "text-sm font-semibold",
           dark ? "text-paper" : "text-ink",
         )}
       >

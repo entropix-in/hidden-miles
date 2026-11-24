@@ -57,7 +57,7 @@ export default async function ResetPasswordPage({
         </Link>
         <Link
           href={loginHref}
-          className="mt-4 inline-flex items-center gap-1.5 text-sm font-bold text-blue-700 transition hover:text-blue-800"
+          className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-blue-700 transition hover:text-blue-800"
         >
           Back to sign in
           <ArrowRight className="h-4 w-4" />
@@ -117,7 +117,7 @@ export default async function ResetPasswordPage({
 
       <Link
         href={loginHref}
-        className="mt-5 inline-flex items-center gap-1.5 text-sm font-bold text-blue-700 transition hover:text-blue-800"
+        className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-blue-700 transition hover:text-blue-800"
       >
         Back to sign in
         <ArrowRight className="h-4 w-4" />

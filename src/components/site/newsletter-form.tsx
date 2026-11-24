@@ -37,7 +37,7 @@ export function NewsletterForm() {
     return (
       <div className="flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-5 py-3.5 text-sm font-semibold text-paper">
         <Check className="h-4 w-4 text-gold-400" />
-        You&apos;re on the list. Happy travels!
+        You&apos;re on the list. We&apos;ll write when there&apos;s something worth reading.
       </div>
     );
   }

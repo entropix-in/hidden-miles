@@ -265,7 +265,7 @@ export function BookingFlow({
           <div className="container-page flex flex-col items-center gap-6 py-20 text-center md:py-24">
             <Stamp size={140} text="BOOKED · SEE YOU THERE · WANDER WELL · " />
             <h1 className="type-h1 text-paper">
-              You&apos;re going to {tour.destinationName}!
+              You&apos;re going to {tour.destinationName}
             </h1>
             <p className="type-lead max-w-2xl text-navy-200">
               Booking {bookingRef} is confirmed for {travellers}{" "}
@@ -300,7 +300,7 @@ export function BookingFlow({
                   <div className="flex flex-col items-center">
                     <span
                       className={cn(
-                        "grid h-10 w-10 shrink-0 place-items-center rounded-full text-sm font-bold",
+                        "grid h-10 w-10 shrink-0 place-items-center rounded-full text-sm font-semibold",
                         done
                           ? "bg-gold-400 text-ink"
                           : "border border-sand-300 bg-paper text-navy-500",
@@ -343,7 +343,7 @@ export function BookingFlow({
               ].map(([key, value]) => (
                 <div key={key} className="flex items-center justify-between gap-4">
                   <dt className="text-[13px] font-medium text-navy-500">{key}</dt>
-                  <dd className="text-[13px] font-bold text-ink">{value}</dd>
+                  <dd className="text-[13px] font-semibold text-ink">{value}</dd>
                 </div>
               ))}
             </dl>
@@ -385,10 +385,10 @@ export function BookingFlow({
           {step === 3 ? (
             <div className="mt-6 flex flex-wrap items-center gap-3 rounded-[14px] border border-sand-300 bg-paper px-5 py-3.5">
               <Clock className="h-4 w-4 text-gold-600" />
-              <span className="text-sm font-bold text-ink">
+              <span className="text-sm font-semibold text-ink">
                 We&apos;re holding {travellers} seats for you
               </span>
-              <span className="ml-auto text-sm font-bold text-danger">
+              <span className="ml-auto text-sm font-semibold text-danger">
                 18:42 left
               </span>
             </div>
@@ -421,7 +421,7 @@ export function BookingFlow({
                                 : "border-sand-300 bg-paper text-ink hover:border-navy-300",
                           )}
                         >
-                          <span className={cn("block text-[13px] font-bold", sold && "line-through")}>
+                          <span className={cn("block text-[13px] font-semibold", sold && "line-through")}>
                             {dateFormatter.format(new Date(`${date.startDate}T00:00:00Z`))}
                           </span>
                           <span className={cn("mt-0.5 block text-[12px] font-medium", active ? "text-navy-200" : "text-navy-500")}>
@@ -429,7 +429,7 @@ export function BookingFlow({
                           </span>
                           <span
                             className={cn(
-                              "mt-1 block text-xs font-bold",
+                              "mt-1 block text-xs font-semibold",
                               active
                                 ? "text-gold-400"
                                 : sold
@@ -477,7 +477,7 @@ export function BookingFlow({
                           ) : null}
                         </span>
                         <span className="flex-1">
-                          <span className="block text-sm font-bold text-ink">
+                          <span className="block text-sm font-semibold text-ink">
                             {option.name}
                           </span>
                           <span className="block text-[13px] font-medium leading-5 text-navy-500">
@@ -486,7 +486,7 @@ export function BookingFlow({
                         </span>
                         <span
                           className={cn(
-                            "text-sm font-bold",
+                            "text-sm font-semibold",
                             option.priceDelta < 0 ? "text-success" : "text-ink",
                           )}
                         >
@@ -610,7 +610,7 @@ export function BookingFlow({
                               setLead((current) => ({ ...current, nationality: option }))
                             }
                             className={cn(
-                              "flex items-center gap-3 rounded-[14px] border-[1.5px] px-4 py-3.5 text-left text-sm font-bold",
+                              "flex items-center gap-3 rounded-[14px] border-[1.5px] px-4 py-3.5 text-left text-sm font-semibold",
                               lead.nationality === option
                                 ? "border-blue-500 bg-blue-50 text-ink"
                                 : "border-sand-300 bg-paper text-navy-700",
@@ -668,7 +668,7 @@ export function BookingFlow({
                 </label>
 
                 {leadError ? (
-                  <p className="rounded-[12px] bg-danger-soft px-4 py-3 text-sm font-bold text-danger">
+                  <p className="rounded-[12px] bg-danger-soft px-4 py-3 text-sm font-semibold text-danger">
                     {leadError}
                   </p>
                 ) : null}
@@ -725,7 +725,7 @@ export function BookingFlow({
                           </span>
                           <span className="flex-1">
                             <span className="flex flex-wrap items-center gap-2">
-                              <span className="text-sm font-bold text-ink">
+                              <span className="text-sm font-semibold text-ink">
                                 {addon.title}
                               </span>
                               {active ? (
@@ -737,7 +737,7 @@ export function BookingFlow({
                             </span>
                           </span>
                           <span className="text-right">
-                            <span className="block text-sm font-bold text-ink">
+                            <span className="block text-sm font-semibold text-ink">
                               {formatINR(addon.price)}
                             </span>
                             <span className="block text-xs font-medium text-navy-500">
@@ -786,7 +786,7 @@ export function BookingFlow({
                     </button>
                   </div>
                   {promoApplied ? (
-                    <p className="mt-4 rounded-[12px] bg-success-soft px-4 py-3 text-sm font-bold text-success">
+                    <p className="mt-4 rounded-[12px] bg-success-soft px-4 py-3 text-sm font-semibold text-success">
                       ✓ {promo} applied — you save ₹11,200
                     </p>
                   ) : null}
@@ -847,14 +847,14 @@ export function BookingFlow({
                           ) : null}
                         </span>
                         <span className="flex-1">
-                          <span className="block text-sm font-bold text-ink">
+                          <span className="block text-sm font-semibold text-ink">
                             {option.title}
                           </span>
                           <span className="block text-[13px] font-medium text-navy-500">
                             {option.description}
                           </span>
                         </span>
-                        <span className="text-sm font-bold text-ink">
+                        <span className="text-sm font-semibold text-ink">
                           {formatINR(option.price)}
                         </span>
                       </button>
@@ -870,7 +870,7 @@ export function BookingFlow({
                         type="button"
                         onClick={() => setMethod(item)}
                         className={cn(
-                          "rounded-[14px] border-[1.5px] px-5 py-3 text-sm font-bold transition",
+                          "rounded-[14px] border-[1.5px] px-5 py-3 text-sm font-semibold transition",
                           method === item
                             ? "border-ink bg-ink text-paper"
                             : "border-sand-300 bg-paper text-ink",
@@ -946,7 +946,7 @@ export function BookingFlow({
                 </label>
 
                 {status === "error" ? (
-                  <p className="rounded-[12px] bg-danger-soft px-4 py-3 text-sm font-bold text-danger">
+                  <p className="rounded-[12px] bg-danger-soft px-4 py-3 text-sm font-semibold text-danger">
                     {errorMessage ||
                       `We could not complete that payment. Please try again or call ${site.phone}.`}
                   </p>
@@ -956,7 +956,7 @@ export function BookingFlow({
                   <button
                     type="button"
                     onClick={() => setStep(2)}
-                    className="text-sm font-bold text-navy-700"
+                    className="text-sm font-semibold text-navy-700"
                   >
                     ← Back to add-ons
                   </button>
@@ -974,7 +974,7 @@ export function BookingFlow({
                   </button>
                 </div>
 
-                <div className="flex flex-wrap items-center justify-center gap-5 pb-4 text-[13px] font-bold text-navy-500">
+                <div className="flex flex-wrap items-center justify-center gap-5 pb-4 text-[13px] font-semibold text-navy-500">
                   <span>🔒 256-bit SSL</span>
                   <span>PCI-DSS compliant</span>
                   <span>Razorpay secured</span>
@@ -1016,7 +1016,7 @@ export function BookingFlow({
               ].map(([key, value]) => (
                 <div key={key} className="flex items-center justify-between gap-4">
                   <dt className="text-[13px] font-medium text-navy-500">{key}</dt>
-                  <dd className="text-[13px] font-bold text-ink">{value}</dd>
+                  <dd className="text-[13px] font-semibold text-ink">{value}</dd>
                 </div>
               ))}
             </dl>
@@ -1028,14 +1028,14 @@ export function BookingFlow({
                 <span className="text-navy-700">
                   Adults · {formatINR(adultPrice)} × {adults}
                 </span>
-                <span className="font-bold text-ink">{formatINR(adultPrice * adults)}</span>
+                <span className="font-semibold text-ink">{formatINR(adultPrice * adults)}</span>
               </div>
               {children ? (
                 <div className="flex items-center justify-between gap-4 text-[13px]">
                   <span className="text-navy-700">
                     Children · {formatINR(childPrice)} × {children}
                   </span>
-                  <span className="font-bold text-ink">{formatINR(childPrice * children)}</span>
+                  <span className="font-semibold text-ink">{formatINR(childPrice * children)}</span>
                 </div>
               ) : null}
               {infants ? (
@@ -1043,7 +1043,7 @@ export function BookingFlow({
                   <span className="text-navy-700">
                     Infants · {infantPrice > 0 ? formatINR(infantPrice) : "free"} × {infants}
                   </span>
-                  <span className="font-bold text-ink">
+                  <span className="font-semibold text-ink">
                     {infantPrice > 0 ? formatINR(infantPrice * infants) : "Free"}
                   </span>
                 </div>
@@ -1051,7 +1051,7 @@ export function BookingFlow({
               {addonTotal ? (
                 <div className="flex items-center justify-between gap-4 text-[13px]">
                   <span className="text-navy-700">Add-ons</span>
-                  <span className="font-bold text-ink">{formatINR(addonTotal)}</span>
+                  <span className="font-semibold text-ink">{formatINR(addonTotal)}</span>
                 </div>
               ) : null}
               {promoApplied ? (
@@ -1059,14 +1059,14 @@ export function BookingFlow({
                   <span className="text-success">
                     {promo || "Promo"} saving
                   </span>
-                  <span className="font-bold text-success">
+                  <span className="font-semibold text-success">
                     – {formatINR(promoSaving)}
                   </span>
                 </div>
               ) : null}
               <div className="flex items-center justify-between gap-4 text-[13px]">
                 <span className="text-navy-700">GST (5%)</span>
-                <span className="font-bold text-ink">{formatINR(gst)}</span>
+                <span className="font-semibold text-ink">{formatINR(gst)}</span>
               </div>
             </div>
 
@@ -1077,14 +1077,14 @@ export function BookingFlow({
                   {travellers} travellers · incl. taxes
                 </p>
               </div>
-              <p className="text-2xl font-extrabold tracking-[-0.02em] text-ink">
+              <p className="text-2xl font-semibold tracking-[-0.02em] text-ink">
                 {formatINR(total)}
               </p>
             </div>
 
             {step === 3 ? (
               <div className="mt-4 flex items-center justify-between gap-4 rounded-[14px] bg-gold-100 px-4 py-3">
-                <span className="text-sm font-bold text-ink">Due today (25%)</span>
+                <span className="text-sm font-semibold text-ink">Due today (25%)</span>
                 <span className="type-title text-ink">{formatINR(payNow)}</span>
               </div>
             ) : null}
@@ -1128,7 +1128,7 @@ function CheckoutHeader({ step, email }: { step: number; email: string }) {
                 ) : null}
                 <span
                   className={cn(
-                    "grid h-8 w-8 place-items-center rounded-full text-xs font-bold",
+                    "grid h-8 w-8 place-items-center rounded-full text-xs font-semibold",
                     done
                       ? "bg-gold-400 text-ink"
                       : current
@@ -1140,7 +1140,7 @@ function CheckoutHeader({ step, email }: { step: number; email: string }) {
                 </span>
                 <span
                   className={cn(
-                    "text-[13px] font-bold sm:block",
+                    "text-[13px] font-semibold sm:block",
                     !current && "hidden",
                     done || current ? "text-ink" : "text-navy-500",
                   )}
@@ -1154,12 +1154,12 @@ function CheckoutHeader({ step, email }: { step: number; email: string }) {
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5">
           <Link
             href="/account"
-            className="flex items-center gap-1.5 text-[13px] font-bold text-navy-600 transition hover:text-ink"
+            className="flex items-center gap-1.5 text-[13px] font-semibold text-navy-600 transition hover:text-ink"
           >
             <UserRound className="h-3.5 w-3.5" />
             <span className="max-w-[210px] truncate">{email}</span>
           </Link>
-          <p className="flex items-center gap-1.5 text-[13px] font-bold text-success">
+          <p className="flex items-center gap-1.5 text-[13px] font-semibold text-success">
             <Lock className="h-3.5 w-3.5" /> Secure checkout
           </p>
         </div>
@@ -1204,7 +1204,7 @@ function Counter({
   return (
     <div className="flex items-center justify-between gap-3 rounded-[16px] border border-sand-300 bg-paper px-4 py-3.5 sm:px-5 sm:py-4">
       <div>
-        <p className="text-sm font-bold text-ink">{label}</p>
+        <p className="text-sm font-semibold text-ink">{label}</p>
         <p className="mt-0.5 text-[13px] font-medium leading-5 text-navy-500">{sub}</p>
       </div>
       <div className="flex shrink-0 items-center gap-3">
@@ -1216,7 +1216,7 @@ function Counter({
         >
           <Minus className="h-4 w-4" />
         </button>
-        <span className="w-5 text-center text-sm font-bold text-ink">{value}</span>
+        <span className="w-5 text-center text-sm font-semibold text-ink">{value}</span>
         <button
           type="button"
           onClick={() => onChange(value + 1)}
@@ -1246,7 +1246,7 @@ function StepActions({
   return (
     <div className="flex flex-wrap items-center justify-between gap-4">
       {backHref ? (
-        <Link href={backHref} className="inline-flex items-center gap-2 text-sm font-bold text-navy-700">
+        <Link href={backHref} className="inline-flex items-center gap-2 text-sm font-semibold text-navy-700">
           <ArrowLeft className="h-4 w-4" />
           {backLabel}
         </Link>
@@ -1254,7 +1254,7 @@ function StepActions({
         <button
           type="button"
           onClick={back}
-          className="inline-flex items-center gap-2 text-sm font-bold text-navy-700"
+          className="inline-flex items-center gap-2 text-sm font-semibold text-navy-700"
         >
           <ArrowLeft className="h-4 w-4" />
           {backLabel}
