@@ -27,7 +27,8 @@ const photoData = customType<{ data: Buffer; driverData: Buffer }>({
   dataType: () => "mediumblob",
 });
 
-export const photos = mysqlTable("photos", {
+/** Legacy: photos now live on disk (see src/lib/media.ts). Read only to migrate old uploads. */
+export const legacyPhotos = mysqlTable("photos", {
   id: varchar("id", { length: 64 }).primaryKey(),
   data: photoData("data").notNull(),
 });

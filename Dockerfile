@@ -15,7 +15,8 @@ WORKDIR /app
 ENV NODE_ENV=production \
     NEXT_TELEMETRY_DISABLED=1 \
     HOSTNAME=0.0.0.0 \
-    PORT=3000
+    PORT=3000 \
+    MEDIA_DIR=/app/storage/media
 
 COPY --from=build --chown=node:node /app/.next/standalone ./www
 COPY --from=build --chown=node:node /app/.next/static ./www/.next/static
@@ -23,6 +24,7 @@ COPY --from=build --chown=node:node /app/public ./www/public
 COPY --from=build /app/node_modules ./node_modules
 COPY drizzle.config.ts ./
 COPY drizzle ./drizzle
+RUN mkdir -p /app/storage/media && chown -R node:node /app/storage
 
 USER node
 EXPOSE 3000

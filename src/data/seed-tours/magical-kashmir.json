@@ -1,0 +1,1244 @@
+{
+  "slug": "magical-kashmir",
+  "title": "Magical Kashmir",
+  "destinationSlug": "kashmir",
+  "destinationName": "Kashmir",
+  "region": "India",
+  "experiences": [
+    "honeymoon",
+    "family",
+    "women"
+  ],
+  "image": "https://images.unsplash.com/photo-1593181629936-11c609b8db9b",
+  "nights": 5,
+  "days": 6,
+  "price": 36990,
+  "childPrice": 27743,
+  "infantPrice": 0,
+  "oldPrice": 42990,
+  "rating": 4.9,
+  "reviews": 214,
+  "badge": "Best Seller",
+  "departure": "",
+  "groupSize": "16–26 guests",
+  "summary": "Six days in the Vale of Kashmir: a night on Dal Lake, the meadows of Gulmarg, the pine forests of Pahalgam and the gardens of Srinagar. A gentle, beautiful introduction to Kashmir for families and couples alike.",
+  "richFields": {
+    "summary": {
+      "root": {
+        "type": "root",
+        "format": "",
+        "indent": 0,
+        "version": 1,
+        "children": [
+          {
+            "type": "paragraph",
+            "format": "",
+            "indent": 0,
+            "version": 1,
+            "children": [
+              {
+                "mode": "normal",
+                "text": "Six days in the Vale of Kashmir: a night on Dal Lake, the meadows of Gulmarg, the pine forests of Pahalgam and the gardens of Srinagar. A gentle, beautiful introduction to Kashmir for families and couples alike.",
+                "type": "text",
+                "style": "",
+                "detail": 0,
+                "format": 0,
+                "version": 1
+              }
+            ],
+            "direction": null,
+            "textStyle": "",
+            "textFormat": 0
+          }
+        ],
+        "direction": null
+      }
+    },
+    "exclusions": [
+      {
+        "root": {
+          "type": "root",
+          "format": "",
+          "indent": 0,
+          "version": 1,
+          "children": [
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "Visa fees unless mentioned in inclusions",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": null,
+              "textStyle": "",
+              "textFormat": 0
+            }
+          ],
+          "direction": null
+        }
+      },
+      {
+        "root": {
+          "type": "root",
+          "format": "",
+          "indent": 0,
+          "version": 1,
+          "children": [
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "Lunches, dinners and personal expenses",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": null,
+              "textStyle": "",
+              "textFormat": 0
+            }
+          ],
+          "direction": null
+        }
+      },
+      {
+        "root": {
+          "type": "root",
+          "format": "",
+          "indent": 0,
+          "version": 1,
+          "children": [
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "Optional activities and upgrades",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": null,
+              "textStyle": "",
+              "textFormat": 0
+            }
+          ],
+          "direction": null
+        }
+      },
+      {
+        "root": {
+          "type": "root",
+          "format": "",
+          "indent": 0,
+          "version": 1,
+          "children": [
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "Anything not listed under inclusions",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": null,
+              "textStyle": "",
+              "textFormat": 0
+            }
+          ],
+          "direction": null
+        }
+      }
+    ],
+    "inclusions": [
+      {
+        "root": {
+          "type": "root",
+          "format": "",
+          "indent": 0,
+          "version": 1,
+          "children": [
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "Handpicked 4-star stays with daily breakfast",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": null,
+              "textStyle": "",
+              "textFormat": 0
+            }
+          ],
+          "direction": null
+        }
+      },
+      {
+        "root": {
+          "type": "root",
+          "format": "",
+          "indent": 0,
+          "version": 1,
+          "children": [
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "All airport and inter-city transfers",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": null,
+              "textStyle": "",
+              "textFormat": 0
+            }
+          ],
+          "direction": null
+        }
+      },
+      {
+        "root": {
+          "type": "root",
+          "format": "",
+          "indent": 0,
+          "version": 1,
+          "children": [
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "Private air-conditioned vehicle for sightseeing",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": null,
+              "textStyle": "",
+              "textFormat": 0
+            }
+          ],
+          "direction": null
+        }
+      },
+      {
+        "root": {
+          "type": "root",
+          "format": "",
+          "indent": 0,
+          "version": 1,
+          "children": [
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "Experienced English-speaking tour leader",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": null,
+              "textStyle": "",
+              "textFormat": 0
+            }
+          ],
+          "direction": null
+        }
+      },
+      {
+        "root": {
+          "type": "root",
+          "format": "",
+          "indent": 0,
+          "version": 1,
+          "children": [
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "Monument fees and listed experiences",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": null,
+              "textStyle": "",
+              "textFormat": 0
+            }
+          ],
+          "direction": null
+        }
+      },
+      {
+        "root": {
+          "type": "root",
+          "format": "",
+          "indent": 0,
+          "version": 1,
+          "children": [
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "Daily bottled water and onboard assistance",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": null,
+              "textStyle": "",
+              "textFormat": 0
+            }
+          ],
+          "direction": null
+        }
+      },
+      {
+        "root": {
+          "type": "root",
+          "format": "",
+          "indent": 0,
+          "version": 1,
+          "children": [
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "24×7 on-trip support team",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": null,
+              "textStyle": "",
+              "textFormat": 0
+            }
+          ],
+          "direction": null
+        }
+      }
+    ]
+  },
+  "urlAliases": [],
+  "contentBlocks": [
+    {
+      "type": "text",
+      "editor": {
+        "root": {
+          "type": "root",
+          "format": "",
+          "indent": 0,
+          "version": 1,
+          "children": [
+            {
+              "tag": "h3",
+              "type": "heading",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "Why you'll love this journey",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": null
+            },
+            {
+              "type": "paragraph",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "Six days across the valley's most loved corners: a night on a carved cedar houseboat, Mughal gardens in full bloom, the Gulmarg Gondola up to Kongdori and quiet pine meadows around Pahalgam. Every transfer, stay and permit is handled, so you only need to look out of the window.",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": null,
+              "textStyle": "",
+              "textFormat": 0
+            },
+            {
+              "type": "quote",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "The houseboat stay and the shikara ride at sunrise were the highlight of our trip. Everything ran like clockwork. - Ananya & Rahul, Bengaluru",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": null
+            },
+            {
+              "tag": "h3",
+              "type": "heading",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "Good to know",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": null
+            },
+            {
+              "tag": "ul",
+              "type": "list",
+              "start": 1,
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "type": "listitem",
+                  "value": 1,
+                  "format": "",
+                  "indent": 0,
+                  "version": 1,
+                  "children": [
+                    {
+                      "mode": "normal",
+                      "text": "Best time to visit: April to October for meadows, December to February for snow",
+                      "type": "text",
+                      "style": "",
+                      "detail": 0,
+                      "format": 0,
+                      "version": 1
+                    }
+                  ],
+                  "direction": null
+                },
+                {
+                  "type": "listitem",
+                  "value": 2,
+                  "format": "",
+                  "indent": 0,
+                  "version": 1,
+                  "children": [
+                    {
+                      "mode": "normal",
+                      "text": "Srinagar sits at about 1,585 m; Gulmarg rises to 2,650 m",
+                      "type": "text",
+                      "style": "",
+                      "detail": 0,
+                      "format": 0,
+                      "version": 1
+                    }
+                  ],
+                  "direction": null
+                },
+                {
+                  "type": "listitem",
+                  "value": 3,
+                  "format": "",
+                  "indent": 0,
+                  "version": 1,
+                  "children": [
+                    {
+                      "mode": "normal",
+                      "text": "Carry a valid government photo ID for checkpoints",
+                      "type": "text",
+                      "style": "",
+                      "detail": 0,
+                      "format": 0,
+                      "version": 1
+                    }
+                  ],
+                  "direction": null
+                },
+                {
+                  "type": "listitem",
+                  "value": 4,
+                  "format": "",
+                  "indent": 0,
+                  "version": 1,
+                  "children": [
+                    {
+                      "mode": "normal",
+                      "text": "Postpaid mobile connections work best across the region",
+                      "type": "text",
+                      "style": "",
+                      "detail": 0,
+                      "format": 0,
+                      "version": 1
+                    }
+                  ],
+                  "direction": null
+                }
+              ],
+              "listType": "bullet",
+              "direction": null
+            },
+            {
+              "tag": "h3",
+              "type": "heading",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "How booking works",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": null
+            },
+            {
+              "tag": "ol",
+              "type": "list",
+              "start": 1,
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "type": "listitem",
+                  "value": 1,
+                  "format": "",
+                  "indent": 0,
+                  "version": 1,
+                  "children": [
+                    {
+                      "mode": "normal",
+                      "text": "Pick a departure date and city",
+                      "type": "text",
+                      "style": "",
+                      "detail": 0,
+                      "format": 0,
+                      "version": 1
+                    }
+                  ],
+                  "direction": null
+                },
+                {
+                  "type": "listitem",
+                  "value": 2,
+                  "format": "",
+                  "indent": 0,
+                  "version": 1,
+                  "children": [
+                    {
+                      "mode": "normal",
+                      "text": "Send a booking request with traveller details",
+                      "type": "text",
+                      "style": "",
+                      "detail": 0,
+                      "format": 0,
+                      "version": 1
+                    }
+                  ],
+                  "direction": null
+                },
+                {
+                  "type": "listitem",
+                  "value": 3,
+                  "format": "",
+                  "indent": 0,
+                  "version": 1,
+                  "children": [
+                    {
+                      "mode": "normal",
+                      "text": "Our team confirms availability within 24 hours",
+                      "type": "text",
+                      "style": "",
+                      "detail": 0,
+                      "format": 0,
+                      "version": 1
+                    }
+                  ],
+                  "direction": null
+                },
+                {
+                  "type": "listitem",
+                  "value": 4,
+                  "format": "",
+                  "indent": 0,
+                  "version": 1,
+                  "children": [
+                    {
+                      "mode": "normal",
+                      "text": "Pay the deposit to lock in your stays",
+                      "type": "text",
+                      "style": "",
+                      "detail": 0,
+                      "format": 0,
+                      "version": 1
+                    }
+                  ],
+                  "direction": null
+                }
+              ],
+              "listType": "number",
+              "direction": null
+            },
+            {
+              "tag": "h3",
+              "type": "heading",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "mode": "normal",
+                  "text": "What to pack",
+                  "type": "text",
+                  "style": "",
+                  "detail": 0,
+                  "format": 0,
+                  "version": 1
+                }
+              ],
+              "direction": null
+            },
+            {
+              "tag": "ul",
+              "type": "list",
+              "start": 1,
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "type": "listitem",
+                  "value": 1,
+                  "format": "",
+                  "indent": 0,
+                  "checked": false,
+                  "version": 1,
+                  "children": [
+                    {
+                      "mode": "normal",
+                      "text": "Warm jacket and thermal layers",
+                      "type": "text",
+                      "style": "",
+                      "detail": 0,
+                      "format": 0,
+                      "version": 1
+                    }
+                  ],
+                  "direction": null
+                },
+                {
+                  "type": "listitem",
+                  "value": 2,
+                  "format": "",
+                  "indent": 0,
+                  "checked": false,
+                  "version": 1,
+                  "children": [
+                    {
+                      "mode": "normal",
+                      "text": "Comfortable walking shoes",
+                      "type": "text",
+                      "style": "",
+                      "detail": 0,
+                      "format": 0,
+                      "version": 1
+                    }
+                  ],
+                  "direction": null
+                },
+                {
+                  "type": "listitem",
+                  "value": 3,
+                  "format": "",
+                  "indent": 0,
+                  "checked": false,
+                  "version": 1,
+                  "children": [
+                    {
+                      "mode": "normal",
+                      "text": "Sunscreen and sunglasses",
+                      "type": "text",
+                      "style": "",
+                      "detail": 0,
+                      "format": 0,
+                      "version": 1
+                    }
+                  ],
+                  "direction": null
+                },
+                {
+                  "type": "listitem",
+                  "value": 4,
+                  "format": "",
+                  "indent": 0,
+                  "checked": false,
+                  "version": 1,
+                  "children": [
+                    {
+                      "mode": "normal",
+                      "text": "Power bank and universal adapter",
+                      "type": "text",
+                      "style": "",
+                      "detail": 0,
+                      "format": 0,
+                      "version": 1
+                    }
+                  ],
+                  "direction": null
+                },
+                {
+                  "type": "listitem",
+                  "value": 5,
+                  "format": "",
+                  "indent": 0,
+                  "checked": false,
+                  "version": 1,
+                  "children": [
+                    {
+                      "mode": "normal",
+                      "text": "Personal medication",
+                      "type": "text",
+                      "style": "",
+                      "detail": 0,
+                      "format": 0,
+                      "version": 1
+                    }
+                  ],
+                  "direction": null
+                }
+              ],
+              "listType": "check",
+              "direction": null
+            }
+          ],
+          "direction": null
+        }
+      }
+    },
+    {
+      "type": "gallery",
+      "photos": [
+        {
+          "alt": "Dal Lake, Srinagar",
+          "url": "/api/media/c29de4169351941264af7a1e6575a2259467579dc0b23ec9a7cd8928c85a9349"
+        },
+        {
+          "alt": "Shikara on Dal Lake",
+          "url": "/api/media/dbce1a8c94cfa8fd1b65d2eb5dd3d9fb940a62452a5b5b7e6c8c891a1fe8bc2d"
+        },
+        {
+          "alt": "Scenic bench at Doodhpathri",
+          "url": "/api/media/3f369e5d320e4f2caabdcefa44ef296e9083dc788ffdf04e2f25bf57e16946e5"
+        }
+      ],
+      "columns": 2,
+      "display": "carousel"
+    }
+  ],
+  "highlights": [
+    "Overnight stay on a traditional Dal Lake houseboat",
+    "Gondola ride to Apharwat Peak in Gulmarg",
+    "Betaab Valley and Aru Valley excursion in Pahalgam",
+    "Mughal gardens of Nishat and Shalimar Bagh",
+    "Kashmiri wazwan dinner with a local family"
+  ],
+  "inclusions": [
+    "Handpicked 4-star stays with daily breakfast",
+    "All airport and inter-city transfers",
+    "Private air-conditioned vehicle for sightseeing",
+    "Experienced English-speaking tour leader",
+    "Monument fees and listed experiences",
+    "Daily bottled water and onboard assistance",
+    "24×7 on-trip support team"
+  ],
+  "exclusions": [
+    "Visa fees unless mentioned in inclusions",
+    "Lunches, dinners and personal expenses",
+    "Optional activities and upgrades",
+    "Anything not listed under inclusions"
+  ],
+  "itinerary": [
+    {
+      "day": 1,
+      "title": "Arrive Srinagar - Dal Lake",
+      "badges": [],
+      "description": "Meet your tour leader at Srinagar airport, transfer to a heritage houseboat and spend the evening on a shikara ride through the floating gardens.",
+      "manualBadges": false,
+      "contentBlocks": [
+        {
+          "type": "text",
+          "editor": {
+            "root": {
+              "type": "root",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "type": "paragraph",
+                  "format": "",
+                  "indent": 0,
+                  "version": 1,
+                  "children": [
+                    {
+                      "mode": "normal",
+                      "text": "Meet your tour leader at Srinagar airport, transfer to a heritage houseboat and spend the evening on a shikara ride through the floating gardens.",
+                      "type": "text",
+                      "style": "",
+                      "detail": 0,
+                      "format": 0,
+                      "version": 1
+                    }
+                  ],
+                  "direction": null,
+                  "textStyle": "",
+                  "textFormat": 0
+                }
+              ],
+              "direction": null
+            }
+          }
+        },
+        {
+          "type": "gallery",
+          "photos": [
+            {
+              "alt": "Houseboat on Dal Lake, Srinagar",
+              "url": "/api/media/988d9144e2c4e76fb2a52ffba863493f407d14cd7fa909e658dbc39d571020bc"
+            }
+          ],
+          "columns": 3,
+          "display": "grid"
+        }
+      ]
+    },
+    {
+      "day": 2,
+      "title": "Srinagar - Mughal Gardens",
+      "badges": [],
+      "description": "Explore Nishat Bagh, Shalimar Bagh and the old city, with time for papier-mâché and pashmina workshops in the afternoon.",
+      "manualBadges": false,
+      "contentBlocks": [
+        {
+          "type": "text",
+          "editor": {
+            "root": {
+              "type": "root",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "type": "paragraph",
+                  "format": "",
+                  "indent": 0,
+                  "version": 1,
+                  "children": [
+                    {
+                      "mode": "normal",
+                      "text": "Explore Nishat Bagh, Shalimar Bagh and the old city, with time for papier-mâché and pashmina workshops in the afternoon.",
+                      "type": "text",
+                      "style": "",
+                      "detail": 0,
+                      "format": 0,
+                      "version": 1
+                    }
+                  ],
+                  "direction": null,
+                  "textStyle": "",
+                  "textFormat": 0
+                }
+              ],
+              "direction": null
+            }
+          }
+        },
+        {
+          "type": "gallery",
+          "photos": [
+            {
+              "alt": "Shalimar Bagh Mughal garden, Srinagar",
+              "url": "/api/media/9b83f2d864984276b0e9f09c2d47a4f44358d92a5648ee86ca93603521ac7653"
+            }
+          ],
+          "columns": 3,
+          "display": "grid"
+        }
+      ]
+    },
+    {
+      "day": 3,
+      "title": "Gulmarg - Gondola Ride",
+      "badges": [],
+      "description": "Drive through rice fields to Gulmarg and ride the gondola to Apharwat for views across the Pir Panjal range. Return to Srinagar for a relaxed evening.",
+      "manualBadges": false,
+      "contentBlocks": [
+        {
+          "type": "text",
+          "editor": {
+            "root": {
+              "type": "root",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "type": "paragraph",
+                  "format": "",
+                  "indent": 0,
+                  "version": 1,
+                  "children": [
+                    {
+                      "mode": "normal",
+                      "text": "Drive through rice fields to Gulmarg and ride the gondola to Apharwat for views across the Pir Panjal range. Return to Srinagar for a relaxed evening.",
+                      "type": "text",
+                      "style": "",
+                      "detail": 0,
+                      "format": 0,
+                      "version": 1
+                    }
+                  ],
+                  "direction": null,
+                  "textStyle": "",
+                  "textFormat": 0
+                }
+              ],
+              "direction": null
+            }
+          }
+        },
+        {
+          "type": "gallery",
+          "photos": [
+            {
+              "alt": "Gulmarg Gondola cable car",
+              "url": "/api/media/3b32823aa119802a15cd92b6da07dbe83f82512481775bccf03c064a92305842"
+            },
+            {
+              "alt": "Green meadows of Gulmarg",
+              "url": "/api/media/c32bb1cf352bb278c0706908820d2873778a787cf8011370834f125fd0832367"
+            },
+            {
+              "alt": "Snow-clad hut in Gulmarg",
+              "url": "/api/media/506f7942f23b488b5a5fdbf2dc19f507b6bc40067c4872a203c714cb4db71b2b"
+            }
+          ],
+          "columns": 3,
+          "display": "grid"
+        }
+      ]
+    },
+    {
+      "day": 4,
+      "title": "Pahalgam - Betaab & Aru Valley",
+      "badges": [],
+      "description": "A full day among the pines and rivers of Pahalgam, with stops at Betaab Valley and Aru Valley. Evening at leisure in Srinagar.",
+      "manualBadges": false,
+      "contentBlocks": [
+        {
+          "type": "text",
+          "editor": {
+            "root": {
+              "type": "root",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "type": "paragraph",
+                  "format": "",
+                  "indent": 0,
+                  "version": 1,
+                  "children": [
+                    {
+                      "mode": "normal",
+                      "text": "A full day among the pines and rivers of Pahalgam, with stops at Betaab Valley and Aru Valley. Evening at leisure in Srinagar.",
+                      "type": "text",
+                      "style": "",
+                      "detail": 0,
+                      "format": 0,
+                      "version": 1
+                    }
+                  ],
+                  "direction": null,
+                  "textStyle": "",
+                  "textFormat": 0
+                }
+              ],
+              "direction": null
+            }
+          }
+        },
+        {
+          "type": "gallery",
+          "photos": [
+            {
+              "alt": "Betaab Valley, Pahalgam",
+              "url": "/api/media/247814b75e892f59db677bf9d8585d3df832cf2e9118f87891139a4f5f5da247"
+            },
+            {
+              "alt": "Aru Valley, Pahalgam",
+              "url": "/api/media/88c89517c034aeb997353e83fb52ae6d67396f6fc123bd27978b14ef4959fe3a"
+            },
+            {
+              "alt": "Lidder river through Pahalgam valley",
+              "url": "/api/media/17902b97aae7140d74f822f05afa5816e7a2a5ad5d0c584ca866a3980051244b"
+            },
+            {
+              "alt": "Pine forest in Pahalgam valley",
+              "url": "/api/media/f44f415f97eafd3aca86d5b501a47e82bb7434cdc650bf632ed6d93d26f70424"
+            }
+          ],
+          "columns": 3,
+          "display": "carousel"
+        }
+      ]
+    },
+    {
+      "day": 5,
+      "title": "Doodhpathri - Wazwan Dinner",
+      "badges": [],
+      "description": "Visit the quiet meadows of Doodhpathri before a farewell Kashmiri wazwan dinner hosted by a local family.",
+      "manualBadges": false,
+      "contentBlocks": [
+        {
+          "type": "text",
+          "editor": {
+            "root": {
+              "type": "root",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "type": "paragraph",
+                  "format": "",
+                  "indent": 0,
+                  "version": 1,
+                  "children": [
+                    {
+                      "mode": "normal",
+                      "text": "Visit the quiet meadows of Doodhpathri before a farewell Kashmiri wazwan dinner hosted by a local family.",
+                      "type": "text",
+                      "style": "",
+                      "detail": 0,
+                      "format": 0,
+                      "version": 1
+                    }
+                  ],
+                  "direction": null,
+                  "textStyle": "",
+                  "textFormat": 0
+                }
+              ],
+              "direction": null
+            }
+          }
+        }
+      ]
+    },
+    {
+      "day": 6,
+      "title": "Depart Srinagar",
+      "badges": [],
+      "description": "A leisurely breakfast, last-minute shopping at the floating market and transfer to the airport for your flight home.",
+      "manualBadges": false,
+      "contentBlocks": [
+        {
+          "type": "text",
+          "editor": {
+            "root": {
+              "type": "root",
+              "format": "",
+              "indent": 0,
+              "version": 1,
+              "children": [
+                {
+                  "type": "paragraph",
+                  "format": "",
+                  "indent": 0,
+                  "version": 1,
+                  "children": [
+                    {
+                      "mode": "normal",
+                      "text": "A leisurely breakfast, last-minute shopping at the floating market and transfer to the airport for your flight home.",
+                      "type": "text",
+                      "style": "",
+                      "detail": 0,
+                      "format": 0,
+                      "version": 1
+                    }
+                  ],
+                  "direction": null,
+                  "textStyle": "",
+                  "textFormat": 0
+                }
+              ],
+              "direction": null
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "departureCities": [
+    {
+      "name": "Mumbai",
+      "note": "Flight included",
+      "priceDelta": 0
+    },
+    {
+      "name": "Delhi",
+      "note": "Flight included",
+      "priceDelta": -2400
+    },
+    {
+      "name": "Bengaluru",
+      "note": "Flight included",
+      "priceDelta": 3800
+    },
+    {
+      "name": "Pune",
+      "note": "Flight via Mumbai",
+      "priceDelta": 1900
+    },
+    {
+      "name": "Join at destination",
+      "note": "Tour only · book your own flights",
+      "priceDelta": -9500
+    }
+  ],
+  "addons": [
+    {
+      "id": "seed-magical-kashmir-1",
+      "icon": "shield",
+      "unit": "person",
+      "price": 1450,
+      "title": "Travel insurance",
+      "description": "Medical cover up to ₹5 lakh, trip cancellation and lost baggage.",
+      "preselected": true
+    },
+    {
+      "id": "seed-magical-kashmir-2",
+      "icon": "mountain",
+      "unit": "person",
+      "price": 1800,
+      "title": "Gondola phase 2",
+      "description": "Ride on to Apharwat peak. Usually sells out on the day.",
+      "preselected": false
+    },
+    {
+      "id": "seed-magical-kashmir-3",
+      "icon": "sailboat",
+      "unit": "person",
+      "price": 1200,
+      "title": "Shikara sunset ride",
+      "description": "An hour on Dal Lake with kahwa as the light goes.",
+      "preselected": false
+    }
+  ],
+  "featured": true
+}

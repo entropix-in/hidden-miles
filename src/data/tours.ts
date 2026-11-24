@@ -3,6 +3,7 @@ import type { ContentBlock } from "@/lib/content-blocks";
 
 import type { TourCity } from "@/lib/tour-cities";
 import type { TourAddon } from "@/lib/addons";
+import magicalKashmir from "./seed-tours/magical-kashmir.json";
 
 export type ItineraryBadgeKind =
   | "meal"
@@ -91,7 +92,16 @@ const standardExclusions = [
   "Anything not listed under inclusions",
 ];
 
-export const tours: Tour[] = [
+// Tours finished in the admin, exported verbatim so seeding reproduces them exactly.
+// Their uploaded photos live in src/data/seed-media.
+const curatedTours = [magicalKashmir as Tour];
+
+function withCuratedTours(list: Tour[]) {
+  const bySlug = new Map(curatedTours.map((tour) => [tour.slug, tour]));
+  return list.map((tour) => bySlug.get(tour.slug) ?? tour);
+}
+
+export const tours: Tour[] = withCuratedTours([
   {
     slug: "magical-kashmir",
     title: "Magical Kashmir",
@@ -1284,7 +1294,7 @@ export const tours: Tour[] = [
       },
     ],
   },
-];
+]);
 
 export const featuredTours = tours.filter((tour) => tour.featured);
 
