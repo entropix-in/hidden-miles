@@ -2,6 +2,7 @@
 
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { useScrollingSticky } from "@/lib/use-scrolling-sticky";
 import {
   ArrowLeft,
   ArrowRight,
@@ -137,6 +138,7 @@ export function ToursExplorer({
   initialQuery?: string;
   initialPriceMax?: number;
 }) {
+  const filterAsideRef = useScrollingSticky<HTMLElement>();
   const [destination, setDestination] = useState(initialDestination);
   const [experience, setExperience] = useState(initialExperience);
   const [region, setRegion] = useState<Region>(initialRegion);
@@ -511,7 +513,7 @@ export function ToursExplorer({
   return (
     <section className="container-page pt-8 pb-16 md:pt-10 md:pb-24">
       <div className="grid gap-8 lg:grid-cols-[280px_1fr] lg:items-start lg:gap-10">
-        <aside className="hidden lg:sticky lg:top-32 lg:block">
+        <aside ref={filterAsideRef} className="hidden lg:sticky lg:top-32 lg:block">
           {renderFilterPanel("desktop")}
         </aside>
 

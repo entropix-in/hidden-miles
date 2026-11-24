@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { Dialog } from "@base-ui/react/dialog";
 import { Check, Minus, Phone, Plus, ShieldCheck, X } from "lucide-react";
@@ -8,6 +8,7 @@ import type { TourDeparture } from "@/lib/types";
 import { fallbackDepartures } from "@/lib/tour-departures";
 import { site } from "@/data/site";
 import { cn, formatINR } from "@/lib/utils";
+import { useScrollingSticky } from "@/lib/use-scrolling-sticky";
 import type { TourCity } from "@/lib/tour-cities";
 import { Select } from "@/components/ui/select";
 
@@ -412,40 +413,15 @@ export function BookingCard({
 }
 
 /**
- * Keeps the booking card docked to the bottom of the viewport on desktop.
- * The sticky top offset is the card's own height, so the card stays pinned to
- * the bottom edge while the itinerary scrolls and releases at the end of the
- * column.
+ * Keeps the booking card in view on desktop. When the card is taller than the
+ * viewport it scrolls with the page until its end is visible, and back up
+ * until its top is visible, then sticks.
  */
 export function BookingCardDock({ children }: { children: ReactNode }) {
-  const node = useRef<HTMLDivElement>(null);
-  const [top, setTop] = useState<number | null>(null);
-
-  useEffect(() => {
-    const element = node.current;
-    if (!element) return;
-
-    const update = () => {
-      if (!window.matchMedia("(min-width: 1024px)").matches) {
-        setTop(null);
-        return;
-      }
-      setTop(Math.round(window.innerHeight - element.offsetHeight - 24));
-    };
-
-    update();
-    const observer = new ResizeObserver(update);
-    observer.observe(element);
-    window.addEventListener("resize", update);
-
-    return () => {
-      observer.disconnect();
-      window.removeEventListener("resize", update);
-    };
-  }, []);
+  const node = useScrollingSticky<HTMLDivElement>();
 
   return (
-    <div ref={node} className="lg:sticky" style={top === null ? undefined : { top }}>
+    <div ref={node} className="lg:sticky">
       {children}
     </div>
   );
