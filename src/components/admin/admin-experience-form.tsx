@@ -29,7 +29,7 @@ export function AdminExperienceForm({
       action={onCreate ? async (formData) => {
         const result = await persistExperienceAction(formData);
         if (result.experience) onCreate(result.experience);
-        return { error: result.error ?? "" };
+        return { error: result.error ?? "", field: result.field };
       } : saveExperienceAction}
       cancel={onCreate ? <Dialog.Close className="btn-outline">Cancel</Dialog.Close>
         : <Link href="/admin/experiences" className="btn-outline">Cancel</Link>}>

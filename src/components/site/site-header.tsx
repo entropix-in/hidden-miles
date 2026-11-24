@@ -106,7 +106,7 @@ export function SiteHeader({
       {/* Utility bar */}
       <div className="hidden bg-ink text-paper lg:block">
         <div className="container-page flex h-9 items-center justify-between text-[13px]">
-          <span className="font-medium text-navy-200">Hosting travellers since 1984</span>
+          <span className="font-medium text-navy-200">Offbeat journeys, thoughtfully planned</span>
           <div className="flex items-center gap-6 font-medium text-navy-100">
             <a
               href={site.phoneHref}

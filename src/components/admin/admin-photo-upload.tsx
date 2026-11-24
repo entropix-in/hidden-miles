@@ -100,7 +100,7 @@ export function AdminPhotoUpload({
 export function CoverPhotoField({ initialValue }: { initialValue?: string }) {
   const [value, setValue] = useState(initialValue ?? "");
   return (
-    <div data-cover-photo>
+    <div data-cover-photo data-field="image" data-required>
       <input type="hidden" name="image" value={value} />
       <AdminPhotoUpload label="Cover photo" value={value} onUpload={([url]) => setValue(url)} />
     </div>

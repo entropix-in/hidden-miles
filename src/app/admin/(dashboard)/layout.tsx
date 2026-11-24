@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import Link from "next/link";
-import { Compass, ExternalLink, LogOut } from "lucide-react";
+import Image from "next/image";
+import { ExternalLink, LogOut } from "lucide-react";
 import { AdminSidebar } from "@/components/admin/admin-sidebar";
 import { AdminSnackbar } from "@/components/admin/admin-snackbar";
 import { logoutAction } from "@/app/admin/actions";
@@ -22,7 +23,7 @@ export default async function AdminDashboardLayout({
   return (
     <div className="admin-studio admin-dashboard min-h-screen lg:grid lg:grid-cols-[208px_minmax(0,1fr)]">
       <a href="#admin-main" className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:bg-white focus:p-3">Skip to content</a>
-      <AdminSidebar brand={<Link className="admin-brand" href="/admin"><span><Compass size={19} aria-hidden /></span> Hidden Miles</Link>} actions={
+      <AdminSidebar brand={<Link className="admin-brand" href="/admin"><Image src="/logo.png" alt="" width={40} height={40} className="h-10 w-10" /> Hidden Miles</Link>} actions={
         <>
           <Link
             href="/"

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { AdminValidatedForm } from "@/components/admin/admin-validated-form";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { AlertTriangle, ArrowLeft, LockKeyhole } from "lucide-react";
@@ -53,7 +54,7 @@ export default async function AdminLoginPage({
               </div>
             ) : null}
 
-            <form action={loginAction} className="mt-6 space-y-4">
+            <AdminValidatedForm action={loginAction} className="mt-6 space-y-4">
               <div>
                 <label htmlFor="password" className="field-label">
                   Admin password
@@ -70,7 +71,7 @@ export default async function AdminLoginPage({
                 <LockKeyhole className="h-4 w-4" />
                 Sign in to admin
               </button>
-            </form>
+            </AdminValidatedForm>
           </div>
 
         </div>

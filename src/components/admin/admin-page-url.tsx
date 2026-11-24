@@ -46,7 +46,7 @@ export function AdminPageUrl({ prefix, title, savedSlug }: {
   }
 
   return (
-    <div className="admin-url">
+    <div className="admin-url" data-field="slug">
       <label className="field-label" htmlFor={draft === null ? undefined : id}>Page URL</label>
       {draft !== null ? (
         <div className="admin-url-edit">
@@ -74,7 +74,7 @@ export function AdminPageUrl({ prefix, title, savedSlug }: {
             {error || (proposed ? prefix + proposed : "Enter an ending or paste the full page URL.")}
           </p>
           <div className="admin-url-actions">
-            <button type="button" className="btn-outline" onClick={() => close()}>Cancel URL edit</button>
+            <button type="button" className="btn-outline" onClick={() => close()}>Cancel</button>
             <button type="button" className="btn-outline" onClick={apply}>Apply URL</button>
           </div>
         </div>

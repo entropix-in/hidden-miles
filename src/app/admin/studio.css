@@ -1292,3 +1292,55 @@ th[aria-sort] .admin-sort-link svg { color: var(--studio-pine); }
 .admin-studio :is(th, td):last-child { padding-inline-end: 1.25rem; }
 .admin-studio th { font-size: 0.875rem; font-weight: 600; }
 .admin-studio td { font-size: 0.875rem; }
+
+/* Required fields: red asterisk after the label. Native controls mark themselves
+   with `required`; custom widgets opt in with `data-required`. */
+.admin-studio :is(
+  [data-required],
+  div:has(> :is(input, select, textarea)[required]),
+  label:has(> :is(input, select, textarea)[required])
+) > .field-label::after,
+.admin-studio [data-required] > div > .field-label:first-child::after {
+  content: " *";
+  color: #c2261d;
+  font-weight: 600;
+}
+
+/* Inline field errors (see admin-field-errors.ts). */
+.admin-studio .field-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.375rem;
+  margin-top: 0.375rem;
+  color: #b42318;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.35;
+  animation: admin-field-error-in 160ms ease-out;
+}
+.admin-studio .field-error::before {
+  content: "!";
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 1rem;
+  height: 1rem;
+  margin-top: 0.0625rem;
+  border-radius: 999px;
+  background: #b42318;
+  color: #fff;
+  font-size: 0.6875rem;
+  font-weight: 700;
+}
+.admin-studio [data-invalid-field] .field,
+.admin-studio [data-invalid-field] [aria-invalid="true"],
+.admin-studio [data-invalid-field] .admin-photo-zone {
+  border-color: #d92d20;
+  box-shadow: 0 0 0 3px rgb(217 45 32 / 12%);
+}
+@keyframes admin-field-error-in {
+  from { opacity: 0; transform: translateY(-2px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .admin-studio .field-error { animation: none; }
+}

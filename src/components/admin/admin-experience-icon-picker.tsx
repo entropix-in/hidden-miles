@@ -15,7 +15,7 @@ export function AdminExperienceIconPicker({ initialIcon = "sparkles" }: {
   const id = useId();
 
   return (
-    <div className="min-w-0">
+    <div className="min-w-0" data-field="icon" data-required>
       <span className="field-label" id={id}>Icon</span>
       <RadioGroup name="icon" defaultValue={initialIcon} aria-labelledby={id} className="admin-experience-icons">
         {options.map(([icon, label]) => (

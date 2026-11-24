@@ -10,7 +10,7 @@ function pathId(text: string, size: number) {
 
 export function Stamp({
   size = 140,
-  text = "HIDDEN MILES · SINCE 1984 · WANDER WELL · ",
+  text = "HIDDEN MILES · WANDER WELL · OFFBEAT JOURNEYS · ",
   className,
 }: {
   size?: number;

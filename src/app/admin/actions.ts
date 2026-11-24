@@ -11,6 +11,7 @@ import {
   requireAdmin,
 } from "@/lib/admin-auth";
 import { dbErrorMessage, getDb, type AppDb } from "@/db";
+import { FieldError, fieldOf } from "@/lib/field-error";
 import {
   bookings as bookingsTable,
   destinations as destinationsTable,
@@ -50,7 +51,7 @@ function getString(formData: FormData, key: string) {
 function coverPhoto(formData: FormData, existing?: string) {
   const image = getString(formData, "image");
   if (mediaPathPattern.test(image) || (image && image === existing)) return image;
-  throw new Error("Upload a cover photo.");
+  throw new FieldError("image", "Upload a cover photo.");
 }
 
 async function requireSavedPhotos(db: AppDb, cover: string, blocks: ContentBlock[] = []) {
@@ -60,7 +61,7 @@ async function requireSavedPhotos(db: AppDb, cover: string, blocks: ContentBlock
   if (!ids.length) return;
 
   const found = await db.select({ id: photos.id }).from(photos).where(inArray(photos.id, ids));
-  if (found.length !== ids.length) throw new Error("A photo is missing. Upload it again before saving.");
+  if (found.length !== ids.length) throw new FieldError("image", "A photo is missing. Upload it again before saving.");
 }
 
 function getNumber(formData: FormData, key: string, fallback = 0) {
@@ -160,6 +161,12 @@ function messageFor(error: unknown) {
   return dbErrorMessage(error);
 }
 
+function errorField(error: unknown) {
+  const code = (error as { code?: string; cause?: { code?: string } }).code
+    ?? (error as { cause?: { code?: string } }).cause?.code;
+  return fieldOf(error) ?? (code === "ER_DUP_ENTRY" ? "slug" : undefined);
+}
+
 function withParam(path: string, key: string, value: string) {
   const separator = path.includes("?") ? "&" : "?";
   return `${path}${separator}${key}=${encodeURIComponent(value)}`;
@@ -198,7 +205,7 @@ function requireDb(): AppDb {
 function pageSlug(formData: FormData, title: string) {
   const slug = getString(formData, "slug") || slugify(title);
   if (slug.length > 190 || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) {
-    throw new Error("Edit the page URL to use lowercase letters, numbers, and single hyphens.");
+    throw new FieldError("slug", "Edit the page URL to use lowercase letters, numbers, and single hyphens.");
   }
   return slug;
 }
@@ -249,9 +256,9 @@ export async function saveTourAction(formData: FormData) {
     const db = requireDb();
     const title = getString(formData, "title");
 
-    if (!title) throw new Error("Package title is required.");
+    if (!title) throw new FieldError("title", "Package title is required.");
     const destinationSlug = getString(formData, "destinationSlug");
-    if (!destinationSlug) throw new Error("Choose a destination.");
+    if (!destinationSlug) throw new FieldError("destinationSlug", "Choose a destination.");
 
     const days = formData.getAll("itineraryDay").map(String);
     const itineraryTitles = formData.getAll("itineraryTitle").map(String);
@@ -265,7 +272,7 @@ export async function saveTourAction(formData: FormData) {
       const contentBlocks = parseContentBlocks(itineraryContent[index] ?? "");
       const badges = parseItineraryBadges(itineraryBadges[index] ?? "");
       if (!title) {
-        if (contentBlocks.length || badges.length) throw new Error(`Add a title for itinerary day ${index + 1}.`);
+        if (contentBlocks.length || badges.length) throw new FieldError("itineraryTitle", `Add a title for itinerary day ${index + 1}.`);
         return [];
       }
       return [{
@@ -291,7 +298,7 @@ export async function saveTourAction(formData: FormData) {
     );
 
     if (!departureCities.length) {
-      throw new Error("Add at least one departure city.");
+      throw new FieldError("departureCities", "Add at least one departure city.");
     }
 
     await ensureContentSeeded(db);
@@ -302,7 +309,7 @@ export async function saveTourAction(formData: FormData) {
       name: destinationsTable.name, region: destinationsTable.region,
     }).from(destinationsTable).where(eq(destinationsTable.slug, destinationSlug)).limit(1);
     const legacyDestination = existingPhoto?.destinationSlug === destinationSlug ? existingPhoto : undefined;
-    if (!destination && !legacyDestination) throw new Error("Choose an existing destination.");
+    if (!destination && !legacyDestination) throw new FieldError("destinationSlug", "Choose an existing destination.");
     const summary = richText(formData, "summary");
     const highlights = richList(formData, "highlights");
     const inclusions = richList(formData, "inclusions");
@@ -354,7 +361,7 @@ export async function saveTourAction(formData: FormData) {
       await db.insert(toursTable).values(tourValues(data));
     }
   } catch (error) {
-    return { error: messageFor(error) };
+    return { error: messageFor(error), field: errorField(error) };
   }
 
   revalidateContent();
@@ -386,7 +393,7 @@ export async function persistDestinationAction(formData: FormData) {
   try {
     const db = requireDb();
     const name = getString(formData, "name");
-    if (!name) throw new Error("Destination name is required.");
+    if (!name) throw new FieldError("name", "Destination name is required.");
 
     const [existingPhoto] = id ? await db.select({ image: destinationsTable.image })
       .from(destinationsTable).where(eq(destinationsTable.id, parseId(id))).limit(1) : [];
@@ -429,14 +436,14 @@ export async function persistDestinationAction(formData: FormData) {
     revalidateContent();
     return { destination: { slug: data.slug, name: data.name, region: data.region } };
   } catch (error) {
-    return { error: messageFor(error) };
+    return { error: messageFor(error), field: errorField(error) };
   }
 
 }
 
 export async function saveDestinationAction(formData: FormData) {
   const result = await persistDestinationAction(formData);
-  if (result.error) return { error: result.error };
+  if (result.error) return { error: result.error, field: result.field };
   succeed("/admin/destinations", getString(formData, "id") ? "Destination updated." : "Destination added.");
 }
 
@@ -484,10 +491,10 @@ export async function persistExperienceAction(formData: FormData) {
   try {
     const db = requireDb();
     const title = getString(formData, "title");
-    if (!title) throw new Error("Experience title is required.");
+    if (!title) throw new FieldError("title", "Experience title is required.");
 
     const icon = getString(formData, "icon");
-    if (!Object.hasOwn(experienceIconLabels, icon)) throw new Error("Choose a valid icon.");
+    if (!Object.hasOwn(experienceIconLabels, icon)) throw new FieldError("icon", "Choose a valid icon.");
 
     const [existingPhoto] = id ? await db.select({ image: experiencesTable.image })
       .from(experiencesTable).where(eq(experiencesTable.id, parseId(id))).limit(1) : [];
@@ -529,13 +536,13 @@ export async function persistExperienceAction(formData: FormData) {
     revalidateContent();
     return { experience: { slug: data.slug, title: data.title, shortTitle: data.shortTitle } };
   } catch (error) {
-    return { error: messageFor(error) };
+    return { error: messageFor(error), field: errorField(error) };
   }
 }
 
 export async function saveExperienceAction(formData: FormData) {
   const result = await persistExperienceAction(formData);
-  if (result.error) return { error: result.error };
+  if (result.error) return { error: result.error, field: result.field };
   succeed("/admin/experiences", getString(formData, "id") ? "Experience updated." : "Experience added.");
 }
 
@@ -709,17 +716,17 @@ export async function saveDepartureAction(formData: FormData) {
     const capacity = getNumber(formData, "capacity", 20);
     const note = getString(formData, "note");
 
-    if (!tourSlug) throw new Error("Choose a tour package first.");
-    if (!dates.length) throw new Error("Choose at least one departure date.");
+    if (!tourSlug) throw new FieldError("tourSlug", "Choose a tour package first.");
+    if (!dates.length) throw new FieldError("startDate", "Choose at least one departure date.");
     if (dates.some((startDate) => {
       const date = new Date(`${startDate}T00:00:00Z`);
       return !/^\d{4}-\d{2}-\d{2}$/.test(startDate)
         || !Number.isFinite(date.getTime()) || date.toISOString().slice(0, 10) !== startDate;
     })) {
-      throw new Error("Choose valid departure dates.");
+      throw new FieldError("startDate", "Choose valid departure dates.");
     }
-    if (price <= 0) throw new Error("Price must be greater than zero.");
-    if (capacity <= 0) throw new Error("Travellers allowed must be at least 1.");
+    if (price <= 0) throw new FieldError("price", "Price must be greater than zero.");
+    if (capacity <= 0) throw new FieldError("capacity", "Seats per date must be at least 1.");
 
     await ensureContentSeeded(db);
 
@@ -734,7 +741,7 @@ export async function saveDepartureAction(formData: FormData) {
       if (existing.startDate !== dates[0]) {
         const [duplicate] = await db.select({ id: tourDeparturesTable.id }).from(tourDeparturesTable)
           .where(and(eq(tourDeparturesTable.tourSlug, tourSlug), eq(tourDeparturesTable.startDate, dates[0]))).limit(1);
-        if (duplicate) throw new Error("That date is already scheduled for this package.");
+        if (duplicate) throw new FieldError("startDate", "That date is already scheduled for this package.");
       }
 
       await db
@@ -751,7 +758,7 @@ export async function saveDepartureAction(formData: FormData) {
       message = "Departure updated.";
     } else {
       const [tour] = await db.select({ id: toursTable.id }).from(toursTable).where(eq(toursTable.slug, tourSlug)).limit(1);
-      if (!tour) throw new Error("Choose an existing package.");
+      if (!tour) throw new FieldError("tourSlug", "Choose an existing package.");
       const existingRows = await db
         .select({ startDate: tourDeparturesTable.startDate })
         .from(tourDeparturesTable)
@@ -764,7 +771,7 @@ export async function saveDepartureAction(formData: FormData) {
       );
 
       if (!datesToAdd.length) {
-        throw new Error("Those dates already exist for this tour.");
+        throw new FieldError("startDate", "Those dates already exist for this tour.");
       }
 
       await db.insert(tourDeparturesTable).values(
@@ -791,7 +798,7 @@ export async function saveDepartureAction(formData: FormData) {
       }`;
     }
   } catch (error) {
-    return { error: messageFor(error) };
+    return { error: messageFor(error), field: errorField(error) };
   }
 
   revalidatePath(`/tours/${tourSlug}`);
