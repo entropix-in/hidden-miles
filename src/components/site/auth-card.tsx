@@ -1,4 +1,4 @@
-import { Check, Phone, ShieldCheck, Sparkles } from "lucide-react";
+import { Check, Phone, ShieldCheck } from "lucide-react";
 import { site } from "@/data/site";
 
 export function AuthCard({
@@ -76,11 +76,7 @@ export function AuthCard({
           </aside>
 
           <div className="p-6 sm:p-9 md:p-10">
-            <p className="type-label flex items-center gap-2 text-gold-600">
-              <Sparkles className="h-3.5 w-3.5" />
-              {eyebrow}
-            </p>
-            <h1 className="type-h2 mt-2 text-ink">{title}</h1>
+            <h1 className="type-h2 text-ink">{title}</h1>
             <p className="type-small mt-2 max-w-md text-navy-600">{subtitle}</p>
             <div className="mt-7">{children}</div>
           </div>

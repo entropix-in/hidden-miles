@@ -1,0 +1,5 @@
+{
+  "$schema": "https://openship.io/openship.schema.json",
+  "runtime": "docker",
+  "composePath": "docker-compose.prod.yml"
+}
