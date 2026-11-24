@@ -10,7 +10,8 @@ import {
   Ticket,
   UserRound,
 } from "lucide-react";
-import { logoutAction } from "@/lib/user-actions";
+import { SignOutButton } from "@/components/site/account/sign-out-button";
+import { VerifyEmailBanner } from "@/components/site/account/verify-email-banner";
 import { requireUser } from "@/lib/user-auth";
 import { loadTours, loadUserBookings } from "@/lib/content";
 import { bookingStatusLabels } from "@/lib/booking-status";
@@ -106,6 +107,11 @@ export default async function AccountPage() {
       </div>
 
       <div className="container-page py-10 md:py-14">
+        {!user.emailVerified ? (
+          <div className="mb-8">
+            <VerifyEmailBanner email={user.email} />
+          </div>
+        ) : null}
         <div className="grid gap-8 lg:grid-cols-[1fr_340px] lg:items-start">
         <section aria-labelledby="my-trips">
           <div className="flex flex-wrap items-center justify-between gap-3">
@@ -244,11 +250,7 @@ export default async function AccountPage() {
                 <Settings className="h-4 w-4" aria-hidden />
                 Account settings
               </Link>
-              <form action={logoutAction}>
-                <button type="submit" className="btn btn-outline w-full">
-                  Sign out
-                </button>
-              </form>
+              <SignOutButton className="w-full" />
             </div>
           </div>
 

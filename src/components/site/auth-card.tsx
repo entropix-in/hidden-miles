@@ -1,13 +1,11 @@
-import { Check, Phone, ShieldCheck } from "lucide-react";
+import { Check, CircleAlert, CircleCheck, Phone, ShieldCheck } from "lucide-react";
 import { site } from "@/data/site";
 
 export function AuthCard({
-  eyebrow,
   title,
   subtitle,
   children,
 }: {
-  eyebrow: string;
   title: string;
   subtitle: string;
   children: React.ReactNode;
@@ -26,8 +24,7 @@ export function AuthCard({
               className="absolute -bottom-28 -left-16 h-72 w-72 rounded-full border border-white/10"
             />
             <div className="relative">
-              <p className="type-label text-gold-400">{eyebrow}</p>
-              <h2 className="type-h2 mt-3 text-paper">
+              <h2 className="type-h2 text-paper">
                 One account.
                 <br />
                 Every journey.
@@ -86,32 +83,62 @@ export function AuthCard({
   );
 }
 
-export function AuthError({ message }: { message: string }) {
+export function AuthError({ message }: { message?: string | null }) {
   if (!message) return null;
   return (
     <div
       role="alert"
       className="mb-5 flex items-start gap-2 rounded-[14px] border border-danger/30 bg-danger-soft px-4 py-3 text-sm font-semibold text-danger"
     >
-      <span aria-hidden="true" className="mt-px">
-        ⚠
-      </span>
+      <CircleAlert aria-hidden className="mt-0.5 h-4 w-4 shrink-0" />
       {message}
     </div>
   );
 }
 
-export function AuthNotice({ message }: { message: string }) {
+export function AuthNotice({ message }: { message?: string | null }) {
   if (!message) return null;
   return (
     <div
       role="status"
       className="mb-5 flex items-start gap-2 rounded-[14px] border border-success/30 bg-success-soft px-4 py-3 text-sm font-semibold text-success"
     >
-      <span aria-hidden="true" className="mt-px">
-        ✓
-      </span>
+      <CircleCheck aria-hidden className="mt-0.5 h-4 w-4 shrink-0" />
       {message}
     </div>
   );
+}
+
+export function AccountsUnavailable() {
+  return (
+    <div className="mb-5 rounded-[14px] border border-sand-300 bg-sand-100 px-4 py-3 text-sm font-medium text-navy-700">
+      Accounts need the MySQL database. Start it with{" "}
+      <code className="font-semibold">docker compose up -d</code>, then try again.
+    </div>
+  );
+}
+
+export function param(value: string | string[] | undefined) {
+  return typeof value === "string" ? value : "";
+}
+
+const oauthErrors: Record<string, string> = {
+  access_denied: "Google sign-in was cancelled. You can try again or use your email.",
+  account_not_linked:
+    "This email already has an account. Sign in with your password, then connect Google in account settings.",
+  unable_to_link_account:
+    "We could not connect that Google account. Sign in with your password instead.",
+  email_not_found: "Google did not share an email address, so we could not sign you in.",
+  signup_disabled: "New accounts can't be created right now.",
+};
+
+/**
+ * Better Auth sends OAuth failures back as ?error=<code>. Our own pages pass
+ * plain sentences. Turn codes into something a traveller can act on.
+ */
+export function authPageError(value: string) {
+  if (!value) return "";
+  if (oauthErrors[value]) return oauthErrors[value];
+  if (/^[a-z_]+$/.test(value)) return "Google sign-in didn't work. Please try again or use your email.";
+  return value;
 }

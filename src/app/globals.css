@@ -606,6 +606,22 @@
     box-shadow: 0 0 0 4px rgb(38 152 189 / 0.1);
   }
 
+  .field[aria-invalid="true"] {
+    border-color: var(--color-danger);
+  }
+
+  .field[aria-invalid="true"]:focus {
+    box-shadow: 0 0 0 4px rgb(180 72 61 / 0.12);
+  }
+
+  .field-error {
+    margin-top: 8px;
+    color: var(--color-danger);
+    font-size: 13px;
+    line-height: 20px;
+    font-weight: 600;
+  }
+
   .field-hint {
     margin-top: 8px;
     color: var(--color-navy-500);

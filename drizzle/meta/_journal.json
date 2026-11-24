@@ -57,6 +57,20 @@
       "when": 1795241997645,
       "tag": "0007_handy_captain_universe",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "5",
+      "when": 1795559352208,
+      "tag": "0008_better_auth",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "5",
+      "when": 1795559358025,
+      "tag": "0009_drop_legacy_auth",
+      "breakpoints": true
     }
   ]
 }
