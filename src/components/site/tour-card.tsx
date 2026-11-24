@@ -37,7 +37,7 @@ function TourCardContent({
   compact: boolean;
 }) {
   const route = `${tour.destinationName} · ${tour.region}`;
-  const seatsLow = /left|filling|sold/i.test(tour.departure);
+  const seatsLow = !tour.departure || /left|filling|sold/i.test(tour.departure);
 
   return (
     <article
@@ -104,7 +104,7 @@ function TourCardContent({
               seatsLow ? "bg-danger" : "bg-success",
             )}
           />
-          Next: {tour.departure}
+          {!tour.departure ? "Dates on request" : tour.departure === "Sold out" ? "Sold out" : `Next: ${tour.departure}`}
         </p>
 
         <div className="route-line mt-auto" />
@@ -143,7 +143,7 @@ export function TourListCard({
   priority?: boolean;
 }) {
   const route = `${tour.destinationName} · ${tour.region}`;
-  const seatsLow = /left|filling|sold/i.test(tour.departure);
+  const seatsLow = !tour.departure || /left|filling|sold/i.test(tour.departure);
 
   return (
     <article className="card-lift group @container overflow-hidden rounded-[28px] border border-sand-300 bg-paper">
@@ -189,12 +189,17 @@ export function TourListCard({
             </Link>
           </h3>
           <p className="type-small mt-1 text-navy-500">{route}</p>
+          {tour.summary ? (
+            <p className="type-body mt-3 hidden max-w-[60ch] text-navy-700 @3xl:line-clamp-2">
+              {tour.summary}
+            </p>
+          ) : null}
         </div>
         <p className="inline-flex w-fit items-center gap-2 rounded-[10px] bg-sand-100 px-3 py-2 text-[13px] font-medium text-navy-700">
           <span
             className={cn("h-2 w-2 rounded-full", seatsLow ? "bg-danger" : "bg-success")}
           />
-          Next: {tour.departure}
+          {!tour.departure ? "Dates on request" : tour.departure === "Sold out" ? "Sold out" : `Next: ${tour.departure}`}
         </p>
         <div className="mt-auto flex flex-wrap items-end justify-between gap-3 border-t border-dashed border-sand-300 pt-3">
           <div>

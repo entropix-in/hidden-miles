@@ -46,7 +46,10 @@ export type Tour = {
   rating: number;
   reviews: number;
   badge?: string;
+  /** Card label for the next departure, e.g. "Sat, 9 Jan · Only 3 left". Built from departure dates. */
   departure: string;
+  /** Upcoming departure dates (YYYY-MM-DD) that still have seats. Set when loaded from the database. */
+  departureDates?: string[];
   groupSize: string;
   summary: string;
   highlights: string[];

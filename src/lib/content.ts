@@ -180,10 +180,42 @@ export async function loadTours(): Promise<Tour[]> {
         desc(toursTable.rating),
         asc(toursTable.id),
       );
-    return rows.map(mapTour);
+    const departures = await loadDepartureSummaries(db);
+    return rows.map((row) => {
+      const tour = mapTour(row);
+      const dates = departures.get(tour.slug) ?? [];
+      return { ...tour, departure: departureLabel(dates), departureDates: dates.filter((date) => date.seatsLeft > 0).map((date) => date.startDate) };
+    });
   } catch {
     return staticTours;
   }
+}
+
+const nextDateFormatter = new Intl.DateTimeFormat("en-IN", { weekday: "short", day: "numeric", month: "short", timeZone: "UTC" });
+
+/** "Sat, 9 Jan", plus a seat warning when few remain; "Sold out" or "" when nothing is bookable. */
+function departureLabel(dates: { startDate: string; seatsLeft: number }[]) {
+  const next = dates.find((date) => date.seatsLeft > 0);
+  if (!next) return dates.length ? "Sold out" : "";
+  const label = nextDateFormatter.format(new Date(`${next.startDate}T00:00:00Z`));
+  return next.seatsLeft <= 5 ? `${label} · Only ${next.seatsLeft} left` : label;
+}
+
+/** Upcoming departures for every tour, earliest first, with seats left. */
+async function loadDepartureSummaries(db: AppDb) {
+  const today = new Date().toISOString().slice(0, 10);
+  const [rows, booked] = await Promise.all([
+    db.select().from(tourDeparturesTable)
+      .where(gte(tourDeparturesTable.startDate, today))
+      .orderBy(asc(tourDeparturesTable.startDate)),
+    bookedSeatsByDeparture(db),
+  ]);
+  const byTour = new Map<string, { startDate: string; seatsLeft: number }[]>();
+  for (const row of rows) {
+    const { startDate, seatsLeft } = mapDeparture(row, booked.get(Number(row.id)) ?? 0);
+    byTour.set(row.tourSlug, [...(byTour.get(row.tourSlug) ?? []), { startDate, seatsLeft }]);
+  }
+  return byTour;
 }
 
 export async function loadTour(slug: string): Promise<Tour | undefined> {

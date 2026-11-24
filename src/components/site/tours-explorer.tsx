@@ -183,8 +183,13 @@ export function ToursExplorer({
     }
     if (month !== "Any month") {
       list = list.filter(
-        (tour) =>
-          tour.departure.includes(month) || /every|daily/i.test(tour.departure),
+        (tour) => {
+          if (tour.departureDates) {
+            const index = months.indexOf(month);
+            return tour.departureDates.some((date) => Number(date.slice(5, 7)) === index);
+          }
+          return tour.departure.includes(month.slice(0, 3)) || /every|daily/i.test(tour.departure);
+        },
       );
     }
 

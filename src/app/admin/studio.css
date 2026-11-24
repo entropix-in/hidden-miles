@@ -1344,3 +1344,32 @@ th[aria-sort] .admin-sort-link svg { color: var(--studio-pine); }
 @media (prefers-reduced-motion: reduce) {
   .admin-studio .field-error { animation: none; }
 }
+
+.admin-detail-groups {
+  display: grid;
+  margin-top: 1rem;
+}
+
+.admin-detail-group {
+  min-width: 0;
+  padding: 1.25rem 0;
+}
+
+.admin-detail-group:first-child {
+  padding-top: 0.25rem;
+}
+
+.admin-detail-group:last-child {
+  padding-bottom: 0;
+}
+
+.admin-detail-group + .admin-detail-group {
+  border-top: 1px solid var(--color-stone-200);
+}
+
+
+.admin-field-hint {
+  margin-top: 0.25rem;
+  color: var(--color-stone-600);
+  font-size: 0.75rem;
+}

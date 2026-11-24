@@ -332,7 +332,7 @@ export async function saveTourAction(formData: FormData) {
       rating: getNumber(formData, "rating", 4.8),
       reviews: getNumber(formData, "reviews"),
       badge: badge || undefined,
-      departure: getString(formData, "departure"),
+      departure: "", // Shown on cards from departure dates (see loadTours), not edited here.
       groupSize: getString(formData, "groupSize"),
       summary: summary.text,
       highlights: highlights.text,
