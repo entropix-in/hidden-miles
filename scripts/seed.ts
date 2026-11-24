@@ -9,8 +9,11 @@ import {
   seedStaticContent,
   type SeedCount,
 } from "@/lib/seed";
+import { destinations } from "@/data/destinations";
 import { experiences } from "@/data/experiences";
 import { tours } from "@/data/tours";
+import { mediaDir } from "@/lib/media";
+import { localiseSeedPhotos } from "@/lib/seed-photos";
 
 function loadEnv() {
   try {
@@ -82,6 +85,12 @@ async function main() {
       force
         ? "Mode: force — existing starter rows will be overwritten.\n"
         : "Mode: safe — only missing rows will be added.\n",
+    );
+
+    console.log(`Downloading starter photos into ${mediaDir()}`);
+    const photos = await localiseSeedPhotos(tours, destinations, experiences);
+    console.log(
+      `Photos: ${photos.bundled} bundled, ${photos.downloaded} downloaded, ${photos.cached} cached, ${photos.failed} failed (of ${photos.total}).\n`,
     );
 
     const summary = await seedStaticContent(db, { force });

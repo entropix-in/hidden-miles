@@ -18,7 +18,6 @@ import {
   discounts as discountsTable,
   discountTours as discountToursTable,
   enquiries as enquiriesTable,
-  photos,
   experiences as experiencesTable,
   testimonials as testimonialsTable,
   tourDepartures as tourDeparturesTable,
@@ -27,6 +26,7 @@ import {
 import { readRichValues, type RichFields } from "@/lib/rich-fields";
 import { parseContentBlocks, readContentText, type ContentBlock } from "@/lib/content-blocks";
 import { mediaPathPattern } from "@/lib/media-path";
+import { photoExists } from "@/lib/media";
 import { slugify } from "@/lib/utils";
 import type { Destination } from "@/data/destinations";
 import { experienceIconLabels, type Experience } from "@/data/experiences";
@@ -58,14 +58,14 @@ function coverPhoto(formData: FormData, existing?: string) {
   throw new FieldError("image", "Upload a cover photo.");
 }
 
-async function requireSavedPhotos(db: AppDb, cover: string, blocks: ContentBlock[] = []) {
+async function requireSavedPhotos(cover: string, blocks: ContentBlock[] = []) {
   const urls = [cover, ...blocks.flatMap((block) =>
     block.type === "gallery" ? block.photos.map((photo) => photo.url) : [])];
   const ids = [...new Set(urls.filter((url) => mediaPathPattern.test(url)).map((url) => url.split("/").at(-1)!))];
   if (!ids.length) return;
 
-  const found = await db.select({ id: photos.id }).from(photos).where(inArray(photos.id, ids));
-  if (found.length !== ids.length) throw new FieldError("image", "A photo is missing. Upload it again before saving.");
+  const found = await Promise.all(ids.map(photoExists));
+  if (found.includes(false)) throw new FieldError("image", "A photo is missing. Upload it again before saving.");
 }
 
 function getNumber(formData: FormData, key: string, fallback = 0) {
@@ -350,7 +350,7 @@ export async function saveTourAction(formData: FormData) {
       richFields: { summary: summary.editor, highlights: highlights.editors, inclusions: inclusions.editors, exclusions: exclusions.editors } satisfies RichFields,
     };
 
-    await requireSavedPhotos(db, data.image, [...(data.contentBlocks ?? []), ...itinerary.flatMap((day) => day.contentBlocks)]);
+    await requireSavedPhotos(data.image, [...(data.contentBlocks ?? []), ...itinerary.flatMap((day) => day.contentBlocks)]);
     if (id) {
       const numericId = parseId(id);
       await db.transaction(async (tx) => {
@@ -422,7 +422,7 @@ export async function persistDestinationAction(formData: FormData) {
       richFields: { description: description.editor, highlights: highlights.editors } satisfies RichFields,
     };
 
-    await requireSavedPhotos(db, data.image, data.contentBlocks);
+    await requireSavedPhotos(data.image, data.contentBlocks);
     await ensureContentSeeded(db);
 
     if (id) {
@@ -519,7 +519,7 @@ export async function persistExperienceAction(formData: FormData) {
       richFields: { description: description.editor, highlights: highlights.editors } satisfies RichFields,
     };
 
-    await requireSavedPhotos(db, data.image, data.contentBlocks);
+    await requireSavedPhotos(data.image, data.contentBlocks);
     await ensureContentSeeded(db);
 
     if (id) {
