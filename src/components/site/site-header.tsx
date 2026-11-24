@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -43,7 +43,79 @@ export function SiteHeader({
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [previewSlug, setPreviewSlug] = useState<string | null>(null);
+  const [desktopMenu, setDesktopMenu] = useState<string | null>(null);
+  const closeTimer = useRef<number | null>(null);
+  const navRef = useRef<HTMLElement>(null);
   const firstName = user?.name.split(" ")[0] || "Account";
+
+  const cancelClose = useCallback(() => {
+    if (closeTimer.current !== null) {
+      window.clearTimeout(closeTimer.current);
+      closeTimer.current = null;
+    }
+  }, []);
+
+  const openMenu = useCallback(
+    (label: string) => {
+      cancelClose();
+      setDesktopMenu(label);
+    },
+    [cancelClose],
+  );
+
+  const closeMenu = useCallback(() => {
+    cancelClose();
+    setDesktopMenu(null);
+    setPreviewSlug(null);
+  }, [cancelClose]);
+
+  // A short delay lets the pointer cross the gap between the bar and the panel.
+  const scheduleClose = useCallback(() => {
+    cancelClose();
+    closeTimer.current = window.setTimeout(() => {
+      setDesktopMenu(null);
+      setPreviewSlug(null);
+    }, 150);
+  }, [cancelClose]);
+
+  // Any navigation closes every menu.
+  const [lastPathname, setLastPathname] = useState(pathname);
+  if (pathname !== lastPathname) {
+    setLastPathname(pathname);
+    setDesktopMenu(null);
+    setPreviewSlug(null);
+    setMobileOpen(false);
+    setOpenGroup(null);
+    setSearchOpen(false);
+  }
+
+  useEffect(() => cancelClose, [cancelClose]);
+
+  useEffect(() => {
+    if (!desktopMenu) return;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      const trigger = navRef.current?.querySelector<HTMLElement>(
+        `[data-menu-trigger="${desktopMenu}"]`,
+      );
+      closeMenu();
+      trigger?.focus();
+    };
+    const handlePointerDown = (event: PointerEvent) => {
+      if (!navRef.current?.contains(event.target as Node)) closeMenu();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("pointerdown", handlePointerDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("pointerdown", handlePointerDown);
+    };
+  }, [desktopMenu, closeMenu]);
+
+  // Close after a link inside a panel is chosen, even when it points at the current page.
+  const closeOnLinkClick = (event: React.MouseEvent<HTMLElement>) => {
+    if ((event.target as HTMLElement).closest("a")) closeMenu();
+  };
 
   useEffect(() => {
     if (!mobileOpen) return;
@@ -132,7 +204,11 @@ export function SiteHeader({
         <div className="container-page flex h-16 items-center justify-between gap-6">
           <Logo compact />
 
-          <nav className="hidden flex-1 items-center justify-center gap-1 lg:flex" aria-label="Main">
+          <nav
+            ref={navRef}
+            className="hidden flex-1 items-center justify-center gap-1 lg:flex"
+            aria-label="Main"
+          >
             {navItems.map((link) => {
               const hasChildren = Boolean(link.children?.length);
               const active =
@@ -141,23 +217,71 @@ export function SiteHeader({
                       link.children?.some((child) => isActive(child.href)),
                     )
                   : isActive(link.href);
+              const menuOpen = hasChildren && desktopMenu === link.label;
+              const panelState = menuOpen
+                ? "visible translate-y-0 opacity-100 duration-200"
+                : "pointer-events-none invisible -translate-y-1 opacity-0 duration-150";
 
               return (
-                <div key={link.label} className="group relative">
+                <div
+                  key={link.label}
+                  className="relative"
+                  onMouseEnter={hasChildren ? () => openMenu(link.label) : undefined}
+                  onMouseLeave={hasChildren ? scheduleClose : undefined}
+                  onBlur={
+                    hasChildren
+                      ? (event) => {
+                          if (!event.currentTarget.contains(event.relatedTarget as Node)) {
+                            closeMenu();
+                          }
+                        }
+                      : undefined
+                  }
+                >
                   <Link
                     href={link.href}
+                    data-menu-trigger={hasChildren ? link.label : undefined}
+                    aria-haspopup={hasChildren ? "true" : undefined}
+                    aria-expanded={hasChildren ? menuOpen : undefined}
+                    onClick={hasChildren ? closeMenu : undefined}
+                    onKeyDown={
+                      hasChildren
+                        ? (event) => {
+                            if (event.key !== "ArrowDown") return;
+                            event.preventDefault();
+                            openMenu(link.label);
+                            requestAnimationFrame(() => {
+                              event.currentTarget.parentElement
+                                ?.querySelector<HTMLElement>("[data-menu-panel] a")
+                                ?.focus();
+                            });
+                          }
+                        : undefined
+                    }
                     className={cn("nav-link", active && "nav-link-active")}
                   >
                     <span className="flex items-center gap-1.5 whitespace-nowrap">
                       {link.label}
                       {hasChildren ? (
-                        <ChevronDown className="h-3.5 w-3.5 text-navy-500 transition duration-300 group-hover:rotate-180" />
+                        <ChevronDown
+                          className={cn(
+                            "h-3.5 w-3.5 text-navy-500 transition-transform duration-200",
+                            menuOpen && "rotate-180",
+                          )}
+                        />
                       ) : null}
                     </span>
                   </Link>
 
                   {hasChildren && link.label !== "Destinations" ? (
-                    <div className="invisible absolute left-1/2 top-full w-[260px] -translate-x-1/2 pt-3 opacity-0 transition duration-200 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+                    <div
+                      data-menu-panel
+                      onClick={closeOnLinkClick}
+                      className={cn(
+                        "absolute left-1/2 top-full w-[260px] -translate-x-1/2 pt-3 transition-[opacity,translate,visibility] ease-[cubic-bezier(0.2,0,0,1)] motion-reduce:transition-none",
+                        panelState,
+                      )}
+                    >
                       <div className="rounded-[20px] border border-sand-300 bg-paper p-2 shadow-[0_24px_64px_-28px_rgba(11,39,53,0.3)]">
                         {link.children?.map((child) => (
                           <Link
@@ -176,8 +300,12 @@ export function SiteHeader({
                     // The nav bar's backdrop blur makes this fixed panel relative to the bar,
                     // so top-[50px] + pt-3 lines its panel up with the small nav dropdowns.
                     <div
-                      className="invisible fixed left-1/2 top-[50px] w-[min(1040px,calc(100vw-40px))] -translate-x-1/2 pt-3 opacity-0 transition duration-200 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100"
-                      onMouseLeave={() => setPreviewSlug(null)}
+                      data-menu-panel
+                      onClick={closeOnLinkClick}
+                      className={cn(
+                        "fixed left-1/2 top-[50px] w-[min(1040px,calc(100vw-40px))] -translate-x-1/2 pt-3 transition-[opacity,translate,visibility] ease-[cubic-bezier(0.2,0,0,1)] motion-reduce:transition-none",
+                        panelState,
+                      )}
                     >
                       <div className="flex gap-8 rounded-[24px] border border-sand-300 bg-paper p-6 shadow-[0_32px_64px_-24px_rgba(11,39,53,0.25)]">
                         {groups.map((group) => (
