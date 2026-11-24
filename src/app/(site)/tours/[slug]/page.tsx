@@ -1,3 +1,4 @@
+import { TourSectionTabs } from "@/components/site/tour-section-tabs";
 import { PageContentBlocks, RichFieldText } from "@/components/site/page-content-blocks";
 import type { Metadata } from "next";
 import Image from "next/image";
@@ -105,7 +106,6 @@ export default async function TourDetailPage({
     { label: "Overview", href: "#overview" },
     { label: "Itinerary", href: "#itinerary" },
     { label: "Inclusions", href: "#inclusions" },
-    { label: "Dates & prices", href: "#book" },
     { label: "Reviews", href: "#reviews" },
     { label: "FAQs", href: "#faqs" },
   ];
@@ -218,22 +218,7 @@ export default async function TourDetailPage({
       <div className="container-page mt-14 pb-20 md:pb-28">
         <div className="grid gap-12 lg:grid-cols-[1fr_392px] lg:items-start">
           <main className="min-w-0">
-            <nav className="-mx-5 flex overflow-x-auto whitespace-nowrap border-b border-sand-300 px-5 [mask-image:linear-gradient(to_right,black_80%,transparent)] [scrollbar-width:none] sm:mx-0 sm:px-0 sm:[mask-image:none]">
-              {tabs.map((tab, index) => (
-                <a
-                  key={tab.label}
-                  href={tab.href}
-                  className={`relative px-4 py-3 text-sm font-semibold transition ${
-                    index === 0 ? "text-ink" : "text-navy-500 hover:text-ink"
-                  }`}
-                >
-                  {tab.label}
-                  {index === 0 ? (
-                    <span className="absolute inset-x-4 -bottom-px h-[3px] rounded-full bg-gold-400" />
-                  ) : null}
-                </a>
-              ))}
-            </nav>
+            <TourSectionTabs tabs={tabs} />
 
             <div className="mt-8 grid grid-cols-2 gap-0 rounded-[20px] border border-sand-300 bg-paper py-6 md:grid-cols-4">
               {[
@@ -279,7 +264,7 @@ export default async function TourDetailPage({
               ))}
             </div>
 
-            <section id="overview" className="scroll-mt-32 pt-14">
+            <section id="overview" className="scroll-mt-40 pt-14">
               <h2 className="type-h3 text-ink">Why you&apos;ll love it</h2>
               <p className="type-body mt-3 text-navy-700"><RichFieldText editor={tour.richFields?.summary} fallback={tour.summary} /></p>
               <PageContentBlocks blocks={tour.contentBlocks} />
@@ -298,12 +283,12 @@ export default async function TourDetailPage({
               </div>
             </section>
 
-            <section id="itinerary" className="scroll-mt-32 pt-16">
+            <section id="itinerary" className="scroll-mt-40 pt-16">
               <h2 className="type-h3 text-ink">Day by day</h2>
               <ItineraryTimeline days={tour.itinerary} />
             </section>
 
-            <section id="inclusions" className="scroll-mt-32 pt-14">
+            <section id="inclusions" className="scroll-mt-40 pt-14">
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="rounded-[20px] border border-sand-300 bg-paper p-7">
                   <h2 className="type-title text-ink">What&apos;s included</h2>
@@ -339,7 +324,7 @@ export default async function TourDetailPage({
             </section>
 
             {quote ? (
-              <section id="reviews" className="scroll-mt-32 pt-14">
+              <section id="reviews" className="scroll-mt-40 pt-14">
                 <div className="on-ink relative overflow-hidden rounded-[24px] bg-ink p-8">
                   <div className="grid items-center gap-8 sm:grid-cols-[auto_1fr]">
                     <div>
@@ -364,7 +349,7 @@ export default async function TourDetailPage({
               </section>
             ) : null}
 
-            <section id="faqs" className="scroll-mt-32 pt-14">
+            <section id="faqs" className="scroll-mt-40 pt-14">
               <h2 className="type-h3 text-ink">Good to know</h2>
               <div className="mt-6 border-t border-sand-300">
                 {[
@@ -412,7 +397,7 @@ export default async function TourDetailPage({
             </section>
           </main>
 
-          <aside id="book" className="scroll-mt-32 lg:self-stretch">
+          <aside id="book" className="scroll-mt-40 lg:self-stretch">
             <BookingCardDock>
               <BookingCard
                 tourSlug={tour.slug}

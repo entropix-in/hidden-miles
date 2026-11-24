@@ -28,6 +28,7 @@
     "@lexical/rich-text": "^0.53.0",
     "@lexical/selection": "^0.53.0",
     "drizzle-orm": "^0.45.4",
+    "embla-carousel-react": "^8.6.0",
     "lexical": "^0.53.0",
     "lucide-react": "^1.70.0",
     "mysql2": "^3.24.6",

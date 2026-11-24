@@ -3,9 +3,21 @@ import { contentNodes } from "./lexical-content";
 import { mediaPathPattern } from "./media-path";
 
 export type GalleryPhoto = { url: string; alt: string };
+export type GalleryColumns = 1 | 2 | 3 | 4;
+export type GalleryDisplay = "grid" | "carousel";
+export type GalleryBlock = {
+  type: "gallery";
+  photos: GalleryPhoto[];
+  /** Photos per row (grid) or per view (carousel). 1 = full width. */
+  columns?: GalleryColumns;
+  display?: GalleryDisplay;
+};
 export type ContentBlock =
   | { type: "text"; editor: SerializedEditorState }
-  | { type: "gallery"; photos: GalleryPhoto[] };
+  | GalleryBlock;
+
+const galleryColumns: GalleryColumns[] = [1, 2, 3, 4];
+const galleryDisplays: GalleryDisplay[] = ["grid", "carousel"];
 
 export function parseContentBlocks(raw: string): ContentBlock[] {
   if (!raw) return [];
@@ -37,7 +49,18 @@ export function parseContentBlocks(raw: string): ContentBlock[] {
     if (block?.type === "gallery" && Array.isArray(block.photos) && block.photos.length <= 16
       && block.photos.every((photo) => typeof photo?.url === "string"
         && mediaPathPattern.test(photo.url) && typeof photo.alt === "string" && photo.alt.length <= 250)) {
-      return block.photos.length ? [block] : [];
+      if (block.columns !== undefined && !galleryColumns.includes(block.columns)) {
+        throw new Error("Page content includes an invalid block.");
+      }
+      if (block.display !== undefined && !galleryDisplays.includes(block.display)) {
+        throw new Error("Page content includes an invalid block.");
+      }
+      return block.photos.length ? [{
+        type: "gallery",
+        photos: block.photos.map(({ url, alt }: GalleryPhoto) => ({ url, alt })),
+        ...(block.columns ? { columns: block.columns } : {}),
+        ...(block.display ? { display: block.display } : {}),
+      }] : [];
     }
     throw new Error("Page content includes an invalid block.");
   });

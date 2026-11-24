@@ -348,14 +348,28 @@ export function SiteHeader({
 
                         {previewDestination ? (
                           <div className="relative hidden min-h-[360px] flex-1 overflow-hidden rounded-[20px] bg-ink xl:block">
-                            <Image
-                              key={previewDestination.slug}
-                              src={imageUrl(previewDestination.image, 1100)}
-                              alt={previewDestination.name}
-                              fill
-                              sizes="520px"
-                              className="object-cover"
-                            />
+                            {destinations.map((destination) => (
+                              <Image
+                                key={destination.slug}
+                                src={imageUrl(destination.image, 1100)}
+                                alt={
+                                  destination.slug === previewDestination.slug
+                                    ? destination.name
+                                    : ""
+                                }
+                                aria-hidden={
+                                  destination.slug !== previewDestination.slug
+                                }
+                                fill
+                                sizes="520px"
+                                className={cn(
+                                  "object-cover transition-opacity duration-500 ease-out",
+                                  destination.slug === previewDestination.slug
+                                    ? "opacity-100"
+                                    : "opacity-0",
+                                )}
+                              />
+                            ))}
                             <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-transparent" />
                             <div className="absolute inset-x-8 bottom-8">
                               <p className="type-h3 text-paper">

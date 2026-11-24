@@ -3,7 +3,15 @@
 import { useMemo, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { Dialog } from "@base-ui/react/dialog";
-import { Check, Minus, Phone, Plus, ShieldCheck, X } from "lucide-react";
+import {
+  CalendarDays,
+  ChevronDown,
+  Minus,
+  Phone,
+  Plus,
+  ShieldCheck,
+  X,
+} from "lucide-react";
 import type { TourDeparture } from "@/lib/types";
 import { fallbackDepartures } from "@/lib/tour-departures";
 import { site } from "@/data/site";
@@ -102,48 +110,36 @@ export function BookingCard({
         <span className="text-[32px] font-semibold leading-none tracking-[-0.03em] text-ink">
           {formatINR(adultPrice)}
         </span>
-        <span className="type-small text-navy-500">per adult</span>
       </p>
 
-      <div className="mt-6 flex items-baseline justify-between gap-3">
-        <p className="type-label text-navy-500">Departure date</p>
-        {allDates.length ? (
-          <button
-            type="button"
-            onClick={() => setPickerOpen(true)}
-            className="text-[12px] font-semibold text-navy-700 underline decoration-sand-300 decoration-1.5 underline-offset-4 transition hover:text-ink hover:decoration-ink"
-          >
-            Change
-          </button>
-        ) : null}
-      </div>
+      <p id="departure-date-label" className="type-label mt-6 text-navy-500">
+        Departure date
+      </p>
 
       {selected ? (
-        <div className="mt-3 flex items-center gap-3 rounded-[14px] border-[1.5px] border-ink bg-ink px-3.5 py-3 text-paper shadow-[0_12px_28px_-18px_rgba(11,39,53,0.7)]">
+        <button
+          type="button"
+          onClick={() => setPickerOpen(true)}
+          aria-labelledby="departure-date-label departure-date-value"
+          aria-haspopup="dialog"
+          className="field mt-3 flex cursor-pointer items-center gap-3 text-left hover:border-navy-300"
+        >
+          <CalendarDays aria-hidden="true" className="h-[18px] w-[18px] shrink-0 text-navy-500" />
+          <span id="departure-date-value" className="min-w-0 flex-1 truncate font-medium">
+            {dateFormatter.format(new Date(`${selected.startDate}T00:00:00Z`))}
+          </span>
           <span
-            aria-hidden="true"
-            className="grid h-[18px] w-[18px] shrink-0 place-items-center rounded-full border-[1.5px] border-gold-400 bg-gold-400 text-ink"
+            className={cn(
+              "shrink-0 text-[13px] font-medium tabular-nums",
+              selected.seatsLeft > 0 && selected.seatsLeft <= 5
+                ? "text-gold-700"
+                : "text-navy-500",
+            )}
           >
-            <Check className="h-3 w-3" strokeWidth={3} />
+            {seatLabel(selected.seatsLeft)}
           </span>
-          <span className="min-w-0 flex-1">
-            <span className="block truncate text-[13.5px] font-semibold">
-              {dateFormatter.format(
-                new Date(`${selected.startDate}T00:00:00Z`),
-              )}
-            </span>
-            <span
-              className={cn(
-                "mt-1 inline-flex rounded-full px-2 py-0.5 text-[11px] font-semibold",
-                selected.seatsLeft <= 0
-                  ? "bg-sand-200 text-navy-500"
-                  : "bg-gold-400 text-ink",
-              )}
-            >
-              {seatLabel(selected.seatsLeft)}
-            </span>
-          </span>
-        </div>
+          <ChevronDown aria-hidden="true" className="h-4 w-4 shrink-0 text-navy-500" />
+        </button>
       ) : (
         <p className="mt-3 rounded-[16px] border border-dashed border-sand-300 bg-sand-100 px-4 py-3 text-[13px] font-medium text-navy-700">
           New dates are being finalised. Ask us for the next departure.

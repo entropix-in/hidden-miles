@@ -4,10 +4,10 @@ import { useId, useRef, useState } from "react";
 import { plainTextEditorState } from "@/lib/rich-fields";
 import { ChevronDown, Images, Plus, Trash2 } from "lucide-react";
 import type { ItineraryDay } from "@/data/tours";
-import type { ContentBlock, GalleryPhoto } from "@/lib/content-blocks";
+import type { ContentBlock, GalleryBlock, GalleryPhoto } from "@/lib/content-blocks";
 import { getItineraryBadges } from "@/lib/itinerary";
 import { RichTextBlock } from "./admin-content-editor";
-import { AdminGalleryEditor } from "./admin-gallery-editor";
+import { AdminGalleryEditor, type GalleryLayout } from "./admin-gallery-editor";
 import { AdminItineraryBadges } from "./admin-itinerary-badges";
 
 type DayDraft = ItineraryDay & { key: string };
@@ -21,26 +21,33 @@ function ItineraryDayCard({ day, open, onToggle, onUpdate, onRemove }: {
 }) {
   const id = useId();
   const text = day.contentBlocks?.find((block) => block.type === "text");
-  const photos = day.contentBlocks?.find((block) => block.type === "gallery")?.photos ?? [];
+  const gallery = day.contentBlocks?.find((block): block is GalleryBlock => block.type === "gallery");
+  const photos = gallery?.photos ?? [];
+  const layout: GalleryLayout = { columns: gallery?.columns ?? 3, display: gallery?.display ?? "grid" };
   const [galleryOpen, setGalleryOpen] = useState(photos.length > 0);
   const [initialText] = useState(() => text?.editor ?? plainTextEditorState(day.description));
   const editor = text?.editor ?? initialText;
   const blocks: ContentBlock[] = [
     ...(editor ? [{ type: "text" as const, editor }] : []),
-    ...(photos.length ? [{ type: "gallery" as const, photos }] : []),
+    ...(photos.length ? [{ type: "gallery" as const, photos, ...layout }] : []),
   ];
   const automatic = !day.manualBadges && !day.badges?.length;
   const badges = getItineraryBadges(day);
 
-  function updatePhotos(change: (photos: GalleryPhoto[]) => GalleryPhoto[]) {
+  function updateGallery(change: (gallery: GalleryBlock) => GalleryBlock) {
     onUpdate((current) => {
       const contentBlocks = current.contentBlocks ?? [];
-      const previous = contentBlocks.find((block) => block.type === "gallery")?.photos ?? [];
+      const previous = contentBlocks.find((block): block is GalleryBlock => block.type === "gallery")
+        ?? { type: "gallery", photos: [] };
       return { ...current, contentBlocks: [
         ...contentBlocks.filter((block) => block.type !== "gallery"),
-        { type: "gallery", photos: change(previous) },
+        change(previous),
       ] };
     });
+  }
+
+  function updatePhotos(change: (photos: GalleryPhoto[]) => GalleryPhoto[]) {
+    updateGallery((previous) => ({ ...previous, photos: change(previous.photos) }));
   }
 
   return (
@@ -80,7 +87,8 @@ function ItineraryDayCard({ day, open, onToggle, onUpdate, onRemove }: {
           <AdminItineraryBadges badges={day.title || day.description || !automatic ? badges : []} automatic={automatic}
             onChange={(next) => onUpdate((current) => ({ ...current, badges: next, manualBadges: Boolean(next) }))} />
           {galleryOpen ? (
-            <AdminGalleryEditor photos={photos} onChange={updatePhotos} label={`Day ${day.day} photos`} />
+            <AdminGalleryEditor photos={photos} onChange={updatePhotos} label={`Day ${day.day} photos`}
+              layout={layout} onLayoutChange={(next) => updateGallery((previous) => ({ ...previous, ...next }))} />
           ) : (
             <div><button type="button" className="btn-outline" onClick={() => setGalleryOpen(true)}>
               <Images size={16} aria-hidden /> Add photo gallery
