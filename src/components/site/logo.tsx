@@ -14,7 +14,7 @@ export function Logo({
   className?: string;
 }) {
   const scale = compact ? 0.82 : size;
-  const dimension = Math.round(56 * scale);
+  const dimension = Math.round(48 * scale);
 
   return (
     <Link
@@ -33,10 +33,10 @@ export function Logo({
       />
       <span
         className={cn(
-          "whitespace-nowrap font-display font-semibold leading-none tracking-[-0.02em]",
+          "whitespace-nowrap font-semibold leading-none tracking-[-0.02em]",
           light ? "text-paper" : "text-ink",
         )}
-        style={{ fontSize: Math.round(22 * scale) }}
+        style={{ fontSize: Math.round(18 * scale) }}
       >
         Hidden Miles
       </span>

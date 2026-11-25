@@ -36,21 +36,21 @@ export function TestimonialCarousel({
 
   return (
     <figure
-      className="flex flex-col gap-6 self-center rounded-[28px] bg-paper p-8 text-ink lg:p-10"
+      className="flex flex-col gap-5 self-center rounded-[20px] bg-paper p-6 text-ink lg:p-8"
       aria-roledescription="carousel"
       aria-label="Guest reviews"
     >
       <span className="type-display h-10 leading-none text-gold-400">“</span>
 
       <div aria-live="polite" aria-atomic="true">
-        <blockquote className="font-display text-[20px] leading-[1.5] text-ink">
+        <blockquote className="text-[17px] leading-[1.5] font-medium text-ink">
           <RichFieldText editor={active.richFields?.quote} fallback={active.quote} />
         </blockquote>
 
-        <div className="mt-6 flex items-center gap-3.5">
+        <div className="mt-5 flex items-center gap-3">
           <span
             className={cn(
-              "grid h-[52px] w-[52px] place-items-center rounded-full text-sm font-semibold text-white",
+              "grid h-11 w-11 place-items-center rounded-full text-sm font-semibold text-white",
               avatarColours[index % avatarColours.length],
             )}
             aria-hidden="true"
@@ -83,7 +83,7 @@ export function TestimonialCarousel({
               type="button"
               onClick={() => goTo(index - 1)}
               aria-label="Previous review"
-              className="grid h-11 w-11 place-items-center rounded-full bg-sand-200 text-ink transition hover:bg-sand-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
+              className="grid h-10 w-10 place-items-center rounded-full bg-sand-200 text-ink transition hover:bg-sand-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
             >
               <ArrowLeft className="h-4 w-4" />
             </button>
@@ -91,7 +91,7 @@ export function TestimonialCarousel({
               type="button"
               onClick={() => goTo(index + 1)}
               aria-label="Next review"
-              className="grid h-11 w-11 place-items-center rounded-full bg-ink text-gold-400 transition hover:bg-navy-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
+              className="grid h-10 w-10 place-items-center rounded-full bg-ink text-gold-400 transition hover:bg-navy-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
             >
               <ArrowRight className="h-4 w-4" />
             </button>

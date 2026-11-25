@@ -52,7 +52,7 @@ export function SectionHeading({
   return (
     <div
       className={cn(
-        "flex flex-col gap-6 md:flex-row md:items-end md:justify-between",
+        "flex flex-col gap-5 md:flex-row md:items-end md:justify-between",
         align === "center" && "md:flex-col md:items-center",
         className,
       )}
@@ -80,7 +80,7 @@ export function SectionHeading({
         {description ? (
           <p
             className={cn(
-              "type-body mt-3 max-w-xl",
+              "type-body mt-2.5 max-w-xl",
               dark ? "text-navy-200" : "text-navy-700",
             )}
           >
@@ -94,7 +94,7 @@ export function SectionHeading({
           <Link
             href={href}
             className={cn(
-              "group inline-flex shrink-0 items-center gap-2 text-sm font-semibold transition",
+              "group inline-flex min-h-8 shrink-0 items-center gap-2 text-sm font-semibold transition",
               dark
                 ? "text-gold-400 hover:text-gold-300"
                 : "text-blue-700 hover:text-blue-800",

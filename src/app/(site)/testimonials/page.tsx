@@ -49,22 +49,22 @@ export default async function TestimonialsPage() {
 
   return (
     <>
-      <section className="container-page py-12 md:py-16">
-        <div className="flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between">
+      <section className="container-page py-10 md:py-12">
+        <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <Breadcrumbs
               items={[{ label: "Home", href: "/" }, { label: "Guest stories" }]}
             />
-            <h1 className="type-h1 mt-7 max-w-3xl text-ink">
+            <h1 className="type-h1 mt-6 max-w-3xl text-ink">
               12,400 travellers,
               <br />
               <span className="accent-line">in their own words.</span>
             </h1>
           </div>
 
-          <div className="on-ink flex w-full shrink-0 items-center gap-6 rounded-[24px] bg-ink p-6 sm:gap-8 sm:p-8 lg:w-auto">
+          <div className="on-ink flex w-full shrink-0 items-center gap-6 rounded-[20px] bg-ink p-6 sm:gap-8 sm:p-7 lg:w-auto">
             <div>
-              <p className="font-display text-[56px] leading-none text-paper">4.9</p>
+              <p className="font-semibold text-[40px] leading-none text-paper">4.9</p>
               <p className="mt-2 text-sm font-semibold tracking-[0.1em] text-gold-400">
                 ★★★★★
               </p>
@@ -93,7 +93,7 @@ export default async function TestimonialsPage() {
           </div>
         </div>
 
-        <div className="mt-10 flex flex-wrap gap-2">
+        <div className="mt-8 flex flex-wrap gap-2">
           {[
             "All stories",
             "Kashmir",
@@ -110,7 +110,7 @@ export default async function TestimonialsPage() {
         </div>
       </section>
 
-      <section className="container-page pb-16">
+      <section className="container-page pb-12">
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {columns.map((column, columnIndex) => (
             <div key={columnIndex} className="flex flex-col gap-6">
@@ -124,7 +124,7 @@ export default async function TestimonialsPage() {
                   <article
                     key={`${testimonial.name}-${index}`}
                     // Cards share any extra column height so all three columns end level.
-                    className="flex flex-col rounded-[24px] border border-sand-300 bg-paper p-7 lg:flex-1"
+                    className="flex flex-col rounded-[20px] border border-sand-300 bg-paper p-6 lg:flex-1"
                   >
                     {image ? (
                       <div className="relative mb-5 aspect-[320/200] overflow-hidden rounded-[20px] bg-ink">
@@ -144,7 +144,7 @@ export default async function TestimonialsPage() {
                       </span>
                     </div>
 
-                    <blockquote className="mt-3 font-display text-[18px] leading-[1.55] text-ink">
+                    <blockquote className="mt-3 text-[16px] leading-[1.55] text-ink">
                       “<RichFieldText editor={testimonial.richFields?.quote} fallback={testimonial.quote} />”
                     </blockquote>
 
@@ -170,7 +170,7 @@ export default async function TestimonialsPage() {
                         <span className="block text-[15px] font-semibold text-ink">
                           {testimonial.name}
                         </span>
-                        <span className="block text-[13px] font-medium leading-5 text-navy-500">
+                        <span className="mt-0.5 block text-[13px] font-medium leading-5 text-navy-500">
                           {testimonial.tour} · {testimonial.city}
                         </span>
                       </span>
@@ -182,7 +182,7 @@ export default async function TestimonialsPage() {
           ))}
         </div>
 
-        <div className="mt-10 flex justify-center">
+        <div className="mt-8 flex justify-center">
           <Link href="/testimonials" className="btn btn-outline">
             Load more stories
           </Link>

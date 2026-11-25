@@ -42,7 +42,7 @@ const faqs = [
 export default function ContactPage() {
   return (
     <>
-      <section className="container-page pt-8 pb-10 md:pt-12 md:pb-12">
+      <section className="container-page pt-8 pb-8 md:pt-12 md:pb-10">
         <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Contact" }]} />
         <h1 className="type-h1 mt-5 max-w-3xl text-ink">
           Let&apos;s plan something
@@ -54,7 +54,7 @@ export default function ContactPage() {
         </p>
       </section>
 
-      <section className="container-page pb-16">
+      <section className="container-page pb-12">
         <div className="grid gap-5 md:grid-cols-3">
           {[
             {
@@ -87,10 +87,10 @@ export default function ContactPage() {
               href={channel.href}
               target={channel.href.startsWith("http") ? "_blank" : undefined}
               rel={channel.href.startsWith("http") ? "noopener noreferrer" : undefined}
-              className="group rounded-[20px] border border-sand-300 bg-paper p-7 transition hover:border-navy-300"
+              className="group rounded-[20px] border border-sand-300 bg-paper p-6 transition hover:border-navy-300"
             >
               <span
-                className={`grid h-[52px] w-[52px] place-items-center rounded-[16px] text-paper ${channel.bg}`}
+                className={`grid h-[52px] w-[52px] place-items-center rounded-[14px] text-paper ${channel.bg}`}
               >
                 <channel.icon className="h-6 w-6" />
               </span>
@@ -104,12 +104,12 @@ export default function ContactPage() {
         </div>
       </section>
 
-      <section className="container-page pb-16 md:pb-24">
+      <section className="container-page pb-12 md:pb-16">
         <div className="grid gap-8 xl:grid-cols-[1fr_420px]">
           <ContactForm />
 
           <div className="flex flex-col gap-6">
-            <div className="relative aspect-[420/300] overflow-hidden rounded-[28px] bg-navy-100 xl:aspect-auto xl:min-h-[260px] xl:flex-1">
+            <div className="relative aspect-[420/300] overflow-hidden rounded-[20px] bg-navy-100 xl:aspect-auto xl:min-h-[260px] xl:flex-1">
               <Contours
                 color="rgba(25,103,133,0.28)"
                 count={8}
@@ -125,7 +125,7 @@ export default function ContactPage() {
               </span>
             </div>
 
-            <div className="rounded-[28px] bg-ink p-8 text-paper">
+            <div className="rounded-[20px] bg-ink p-7 text-paper">
               <p className="type-h4 text-paper">302, Meridian House</p>
               <p className="type-small mt-2 whitespace-pre-line text-navy-200">
                 Andheri East, Mumbai 400069{"\n"}
@@ -135,7 +135,7 @@ export default function ContactPage() {
                 href="https://maps.google.com/?q=Meridian+House+Andheri+East+Mumbai"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-5 inline-flex text-sm font-semibold text-gold-400 hover:text-gold-300"
+                className="mt-5 inline-flex min-h-8 items-center text-sm font-semibold text-gold-400 hover:text-gold-300"
               >
                 Get directions ↗
               </a>
@@ -161,7 +161,7 @@ export default function ContactPage() {
                 <details
                   key={faq.question}
                   open={index === 0}
-                  className="group border-t border-sand-300 py-7 last:border-b"
+                  className="group border-t border-sand-300 py-6 last:border-b"
                 >
                   <summary className="flex cursor-pointer list-none items-center justify-between gap-6 [&::-webkit-details-marker]:hidden">
                     <span className="type-title text-ink">{faq.question}</span>

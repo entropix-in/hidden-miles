@@ -12,7 +12,7 @@ export default function CheckoutLayout({
   return (
     <>
       <header className="border-b border-sand-300/80 bg-paper">
-        <div className="container-page flex h-16 items-center justify-between gap-4">
+        <div className="container-page flex h-14 items-center justify-between gap-4">
           <Logo compact />
           <div className="flex items-center gap-5 text-sm font-medium text-ink/70">
             <span className="hidden items-center gap-1.5 sm:flex">

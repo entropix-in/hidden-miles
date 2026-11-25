@@ -68,11 +68,11 @@ export default async function AccountPage() {
   return (
     <div className="bg-sand-100">
       <div className="on-ink bg-ink">
-        <div className="container-page py-10 md:py-14">
+        <div className="container-page py-8 md:py-12">
           <p className="type-label text-gold-400">My account</p>
           <div className="mt-2 flex flex-wrap items-end justify-between gap-5">
             <div>
-              <h1 className="type-h1 text-[clamp(1.75rem,3vw,2.5rem)] text-paper">Hello, {firstName}.</h1>
+              <h1 className="type-h1 text-paper">Hello, {firstName}.</h1>
               <p className="type-body mt-2 max-w-xl text-navy-200">
                 Your tours, traveller details and trip updates — all in one
                 place.
@@ -92,12 +92,12 @@ export default async function AccountPage() {
             ].map(([label, value]) => (
               <div
                 key={label}
-                className="rounded-[16px] border border-white/10 bg-white/5 px-5 py-4"
+                className="rounded-[14px] border border-white/10 bg-white/5 px-5 py-4"
               >
                 <p className="text-[12px] font-semibold text-navy-300">
                   {label}
                 </p>
-                <p className="mt-1 truncate text-xl font-semibold tracking-[-0.02em] text-paper">
+                <p className="mt-1 truncate text-lg font-semibold tracking-[-0.02em] text-paper">
                   {value}
                 </p>
               </div>
@@ -106,7 +106,7 @@ export default async function AccountPage() {
         </div>
       </div>
 
-      <div className="container-page py-10 md:py-14">
+      <div className="container-page py-8 md:py-12">
         {!user.emailVerified ? (
           <div className="mb-8">
             <VerifyEmailBanner email={user.email} />
@@ -124,7 +124,7 @@ export default async function AccountPage() {
           </div>
 
           {bookings.length === 0 ? (
-            <div className="mt-4 rounded-[24px] border border-dashed border-sand-300 bg-paper px-6 py-14 text-center">
+            <div className="mt-4 rounded-[20px] border border-dashed border-sand-300 bg-paper px-6 py-12 text-center">
               <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-sand-100 text-ink">
                 <Ticket className="h-6 w-6" />
               </span>
@@ -146,10 +146,10 @@ export default async function AccountPage() {
                 return (
                   <article
                     key={booking._id}
-                    className="overflow-hidden rounded-[24px] border border-sand-300 bg-paper"
+                    className="overflow-hidden rounded-[20px] border border-sand-300 bg-paper"
                   >
                     <div className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:p-6">
-                      <div className="relative h-[92px] w-full shrink-0 overflow-hidden rounded-[16px] bg-ink sm:h-[92px] sm:w-[132px]">
+                      <div className="relative h-[92px] w-full shrink-0 overflow-hidden rounded-[14px] bg-ink sm:h-[92px] sm:w-[132px]">
                         {image ? (
                           <Image
                             src={imageUrl(image, 500)}
@@ -207,7 +207,7 @@ export default async function AccountPage() {
         </section>
 
         <aside className="space-y-4">
-          <div className="rounded-[24px] border border-sand-300 bg-paper p-6">
+          <div className="rounded-[20px] border border-sand-300 bg-paper p-6">
             <div className="flex items-center gap-4">
               <span className="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-ink text-lg font-semibold uppercase text-gold-400">
                 {user.name.slice(0, 1) || "H"}
@@ -254,7 +254,7 @@ export default async function AccountPage() {
             </div>
           </div>
 
-          <div className="rounded-[24px] border border-sand-300 bg-paper p-6">
+          <div className="rounded-[20px] border border-sand-300 bg-paper p-6">
             <p className="type-label text-gold-600">Need a hand?</p>
             <p className="type-small mt-2 text-navy-700">
               Plans changed or have a question about a booking? Talk to a real

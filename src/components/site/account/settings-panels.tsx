@@ -30,7 +30,7 @@ export function Panel({
   tone?: "default" | "danger";
 }) {
   return (
-    <section className="grid gap-4 border-t border-sand-300 py-8 first:border-t-0 first:pt-0 last:pb-0 md:grid-cols-[280px_minmax(0,1fr)] md:gap-16">
+    <section className="grid gap-4 border-t border-sand-300 py-6 first:border-t-0 first:pt-0 last:pb-0 md:grid-cols-[240px_minmax(0,1fr)] md:gap-10">
       <div>
         <div className="flex items-baseline justify-between gap-4">
           <h2 className={cn("type-title", tone === "danger" ? "text-danger" : "text-ink")}>
@@ -356,7 +356,7 @@ function ChangePasswordPanel() {
       aside={
         <a
           href="/forgot-password"
-          className="shrink-0 pt-1 text-xs font-semibold text-blue-700 underline-offset-4 transition hover:text-blue-800 hover:underline"
+          className="inline-flex min-h-8 shrink-0 items-center text-xs font-semibold text-blue-700 underline-offset-4 transition hover:text-blue-800 hover:underline"
         >
           Forgot it?
         </a>

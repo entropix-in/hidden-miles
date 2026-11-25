@@ -52,9 +52,9 @@ export default async function ToursPage({
 
   return (
     <>
-      <section className="container-page pt-8 md:pt-12">
+      <section className="container-page pt-6 md:pt-8">
         <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Group Tours" }]} />
-        <h1 className="type-h1 mt-4 text-ink">Group Tours</h1>
+        <h1 className="type-h1 mt-3 text-ink">Group Tours</h1>
       </section>
 
       <ToursExplorer

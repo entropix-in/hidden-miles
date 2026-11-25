@@ -85,14 +85,14 @@ export function EnquiryForm({
     return (
       <div
         className={cn(
-          "rounded-3xl border border-navy-200 bg-navy-50 p-8 text-center",
+          "rounded-[20px] border border-navy-200 bg-navy-50 p-7 text-center",
           className,
         )}
       >
         <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-navy-600 text-white">
           <CheckCircle2 className="h-7 w-7" />
         </span>
-        <h3 className="mt-5 font-display text-2xl font-semibold text-navy-950">
+        <h3 className="type-h3 mt-5 text-navy-950">
           Your holiday is in good hands.
         </h3>
         <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-stone-600">
@@ -117,11 +117,11 @@ export function EnquiryForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className={cn("rounded-3xl bg-white p-6 sm:p-7", className)}
+      className={cn("rounded-[20px] bg-white p-6 sm:p-7", className)}
     >
       {!compact ? (
         <div className="mb-6">
-          <h3 className="font-display text-2xl font-semibold text-navy-950">
+          <h3 className="type-h3 text-navy-950">
             Tell us about your dream trip
           </h3>
           <p className="mt-2 text-sm leading-6 text-stone-500">

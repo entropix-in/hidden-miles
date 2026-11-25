@@ -102,7 +102,7 @@ export default async function CorporatePage() {
       >
         <Contours cx={0.2} cy={0.6} count={8} color="rgba(255,255,255,0.05)" />
         <div className="container-page relative section-major">
-          <div className="grid gap-12 xl:grid-cols-[1fr_520px] xl:items-start xl:gap-24">
+          <div className="grid gap-8 xl:grid-cols-[1fr_520px] xl:items-start xl:gap-16">
             <div>
               <SectionHeading
                 number="02"

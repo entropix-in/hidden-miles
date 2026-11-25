@@ -66,8 +66,8 @@ export default async function HomePage() {
   return (
     <>
       {/* ---------------------------------------------------------------- hero */}
-      <section className="container-page pt-10 md:pt-12">
-        <div className="grid items-center gap-12 xl:grid-cols-[1fr_600px] xl:gap-16">
+      <section className="container-page pt-8 md:pt-12">
+        <div className="grid items-center gap-8 xl:grid-cols-[1fr_600px] xl:gap-12">
           <div className="animate-rise">
             <h1 className="type-display text-ink">
               Journeys that
@@ -77,12 +77,12 @@ export default async function HomePage() {
               long after.
             </h1>
 
-            <p className="type-lead mt-6 max-w-[460px] text-navy-700">
+            <p className="type-lead mt-5 max-w-[460px] text-navy-700">
               Thoughtfully planned trips across India and the world, with a
               tour leader from day one.
             </p>
 
-            <div className="mt-8 grid gap-3 sm:flex sm:flex-wrap sm:items-center">
+            <div className="mt-6 grid gap-3 sm:flex sm:flex-wrap sm:items-center">
               <Link href="/tours" className="btn btn-ink btn-lg">
                 Explore tours
                 <span className="btn-dot">→</span>
@@ -92,7 +92,7 @@ export default async function HomePage() {
               </Link>
             </div>
 
-            <div className="mt-8 flex flex-wrap items-center gap-4">
+            <div className="mt-6 flex flex-wrap items-center gap-4">
               <div>
                 <Rating score="4.9" count="12,400+ reviews" />
                 <p className="mt-0.5 text-[13px] font-medium text-navy-500">
@@ -102,7 +102,7 @@ export default async function HomePage() {
             </div>
 
             {heroDestination ? (
-              <div className="relative mt-9 aspect-[350/300] overflow-hidden rounded-[28px] bg-ink md:aspect-[2/1] xl:hidden">
+              <div className="relative mt-7 aspect-[350/300] overflow-hidden rounded-[20px] bg-ink md:aspect-[2/1] xl:hidden">
                 <Image
                   src={imageUrl(heroDestination.image, 900)}
                   alt={heroDestination.name}
@@ -133,7 +133,7 @@ export default async function HomePage() {
             ) : null}
 
             {insetDestination ? (
-              <div className="absolute left-0 top-[260px] h-[300px] w-[240px] overflow-hidden rounded-[28px] border-8 border-paper bg-ink shadow-[0_18px_40px_-30px_rgba(11,39,53,0.5)]">
+              <div className="absolute left-0 top-[260px] h-[300px] w-[240px] overflow-hidden rounded-[20px] border-8 border-paper bg-ink shadow-[0_18px_40px_-30px_rgba(11,39,53,0.5)]">
                 <Image
                   src={imageUrl(insetDestination.image, 700)}
                   alt={insetDestination.name}
@@ -164,11 +164,11 @@ export default async function HomePage() {
           </div>
         </div>
 
-        <div className="mt-12">
+        <div className="mt-8">
           <SearchWidget destinations={destinations} experiences={experiences} />
         </div>
 
-        <div className="mt-6 flex flex-wrap items-center gap-2">
+        <div className="mt-5 flex flex-wrap items-center gap-2">
           <span className="w-full text-sm font-semibold text-navy-500 sm:w-auto">Popular:</span>
           {[
             { label: "Kashmir in spring", href: "/tours?destination=kashmir" },
@@ -190,7 +190,7 @@ export default async function HomePage() {
       </section>
 
       {/* --------------------------------------------------------------- stats */}
-      <section className="container-page pt-16 md:pt-20">
+      <section className="container-page pt-12 md:pt-14">
         <div className="grid grid-cols-2 gap-x-6 gap-y-8 md:grid-cols-4 md:gap-x-0">
           {stats.map((stat, index) => (
             <div
@@ -229,7 +229,7 @@ export default async function HomePage() {
           }
         />
 
-        <div className="mt-10 grid gap-6 lg:grid-cols-[588px_1fr]">
+        <div className="mt-8 grid gap-6 lg:grid-cols-[588px_1fr]">
           {bentoDestinations[0] ? (
             <DestinationCard
               destination={bentoDestinations[0]}
@@ -267,7 +267,7 @@ export default async function HomePage() {
             }
           />
 
-          <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {featuredSelection.map((tour, index) => (
               <TourCard key={tour.slug} tour={tour} priority={index === 0} />
             ))}
@@ -278,7 +278,7 @@ export default async function HomePage() {
       {/* -------------------------------------------------------------- why us */}
       <section className="on-ink relative isolate overflow-hidden bg-ink">
         <Contours cx={0.82} cy={0.3} count={9} color="rgba(255,255,255,0.055)" />
-        <div className="container-page relative grid gap-12 py-20 md:py-32 lg:grid-cols-[1fr_440px] lg:gap-20">
+        <div className="container-page relative grid gap-8 py-12 md:py-16 lg:grid-cols-[1fr_440px] lg:gap-14">
           <div>
             <SectionHeading
               number="03"
@@ -288,7 +288,7 @@ export default async function HomePage() {
               dark
             />
 
-            <div className="mt-10 grid gap-5 sm:grid-cols-2">
+            <div className="mt-8 grid gap-5 sm:grid-cols-2">
               <FeatureTile
                 dark
                 icon={<Wallet className="h-5 w-5" />}
@@ -341,7 +341,7 @@ export default async function HomePage() {
           }
         />
 
-        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {specialities.map((experience) => {
             const count = tours.filter((tour) =>
               tour.experiences.includes(experience.slug),
@@ -353,7 +353,7 @@ export default async function HomePage() {
                 href={`/speciality-tours/${experience.slug}`}
                 className="group"
               >
-                <div className="relative aspect-[4/3] overflow-hidden rounded-[24px] bg-ink sm:aspect-[282/360]">
+                <div className="relative aspect-[4/3] overflow-hidden rounded-[20px] bg-ink sm:aspect-[282/360]">
                   <Image
                     src={imageUrl(experience.image, 900)}
                     alt={experience.title}

@@ -112,7 +112,7 @@ export default async function TourDetailPage({
 
   return (
     <>
-      <section className="container-page pt-8 md:pt-10">
+      <section className="container-page pt-6 md:pt-8">
         <Breadcrumbs
           items={[
             { label: "Home", href: "/" },
@@ -134,7 +134,7 @@ export default async function TourDetailPage({
               <span className="badge badge-blue">{tour.region} group tour</span>
               <span className="badge badge-success">Family friendly</span>
             </div>
-            <h1 className="type-h1 mt-4 text-[clamp(1.875rem,3.4vw,2.75rem)] text-ink">{tour.title}</h1>
+            <h1 className="type-h1 mt-4 text-ink">{tour.title}</h1>
             <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-[13px] font-medium text-navy-700">
               <span className="inline-flex items-center gap-1.5">
                 <Star className="h-3.5 w-3.5 fill-gold-400 text-gold-400" />
@@ -173,15 +173,15 @@ export default async function TourDetailPage({
         </div>
       </section>
 
-      <section className="container-page mt-8">
+      <section className="container-page mt-6">
         <div
           className={showMosaic ? "grid gap-3 lg:grid-cols-[1.5fr_1fr]" : ""}
         >
           <div
             className={
               showMosaic
-                ? "relative aspect-[708/480] overflow-hidden rounded-[28px] bg-ink"
-                : "relative aspect-[16/9] overflow-hidden rounded-[28px] bg-ink lg:aspect-[21/8]"
+                ? "relative aspect-[708/480] overflow-hidden rounded-[20px] bg-ink"
+                : "relative aspect-[16/9] overflow-hidden rounded-[20px] bg-ink lg:aspect-[21/8]"
             }
           >
             <Image
@@ -215,12 +215,12 @@ export default async function TourDetailPage({
         </div>
       </section>
 
-      <div className="container-page mt-14 pb-20 md:pb-28">
-        <div className="grid gap-12 lg:grid-cols-[1fr_392px] lg:items-start">
+      <div className="container-page mt-12 pb-16 md:pb-20">
+        <div className="grid gap-8 lg:grid-cols-[1fr_392px] lg:items-start">
           <main className="min-w-0">
             <TourSectionTabs tabs={tabs} />
 
-            <div className="mt-8 grid grid-cols-2 gap-0 rounded-[20px] border border-sand-300 bg-paper py-6 md:grid-cols-4">
+            <div className="mt-6 grid grid-cols-2 gap-0 rounded-[20px] border border-sand-300 bg-paper py-5 md:grid-cols-4">
               {[
                 {
                   icon: Clock,
@@ -249,8 +249,8 @@ export default async function TourDetailPage({
                     index ? "md:border-l md:border-sand-300" : ""
                   } ${index < 2 ? "border-b border-sand-300 pb-5 md:border-b-0 md:pb-0" : "pt-5 md:pt-0"}`}
                 >
-                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-[14px] bg-sand-200 text-ink">
-                    <fact.icon className="h-5 w-5" />
+                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-[14px] bg-sand-200 text-ink">
+                    <fact.icon className="h-4.5 w-4.5" />
                   </span>
                   <span>
                     <span className="type-label block text-navy-500">
@@ -264,12 +264,12 @@ export default async function TourDetailPage({
               ))}
             </div>
 
-            <section id="overview" className="scroll-mt-40 pt-14">
+            <section id="overview" className="scroll-mt-40 pt-12">
               <h2 className="type-h3 text-ink">Why you&apos;ll love it</h2>
               <p className="type-body mt-3 text-navy-700"><RichFieldText editor={tour.richFields?.summary} fallback={tour.summary} /></p>
               <PageContentBlocks blocks={tour.contentBlocks} />
 
-              <div className="mt-7 grid gap-x-6 gap-y-4 sm:grid-cols-2">
+              <div className="mt-6 grid gap-x-6 gap-y-4 sm:grid-cols-2">
                 {tour.highlights.map((highlight, index) => (
                   <div key={index} className="flex items-center gap-3.5">
                     <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-gold-100 text-gold-600">
@@ -283,14 +283,14 @@ export default async function TourDetailPage({
               </div>
             </section>
 
-            <section id="itinerary" className="scroll-mt-40 pt-16">
+            <section id="itinerary" className="scroll-mt-40 pt-12">
               <h2 className="type-h3 text-ink">Day by day</h2>
               <ItineraryTimeline days={tour.itinerary} />
             </section>
 
-            <section id="inclusions" className="scroll-mt-40 pt-14">
+            <section id="inclusions" className="scroll-mt-40 pt-12">
               <div className="grid gap-6 md:grid-cols-2">
-                <div className="rounded-[20px] border border-sand-300 bg-paper p-7">
+                <div className="rounded-[20px] border border-sand-300 bg-paper p-6">
                   <h2 className="type-title text-ink">What&apos;s included</h2>
                   <ul className="mt-4 space-y-3">
                     {tour.inclusions.map((item, index) => (
@@ -305,7 +305,7 @@ export default async function TourDetailPage({
                     ))}
                   </ul>
                 </div>
-                <div className="rounded-[20px] border border-sand-300 bg-sand-100 p-7">
+                <div className="rounded-[20px] border border-sand-300 bg-sand-100 p-6">
                   <h2 className="type-title text-ink">Not included</h2>
                   <ul className="mt-4 space-y-3">
                     {tour.exclusions.map((item, index) => (
@@ -324,8 +324,8 @@ export default async function TourDetailPage({
             </section>
 
             {quote ? (
-              <section id="reviews" className="scroll-mt-40 pt-14">
-                <div className="on-ink relative overflow-hidden rounded-[24px] bg-ink p-8">
+              <section id="reviews" className="scroll-mt-40 pt-12">
+                <div className="on-ink relative overflow-hidden rounded-[20px] bg-ink p-6 sm:p-7">
                   <div className="grid items-center gap-8 sm:grid-cols-[auto_1fr]">
                     <div>
                       <p className="type-h1 text-paper">4.9</p>
@@ -337,7 +337,7 @@ export default async function TourDetailPage({
                       </p>
                     </div>
                     <div>
-                      <p className="font-display text-[19px] leading-[1.55] text-paper">
+                      <p className="text-[17px] leading-[1.6] text-paper">
                         “<RichFieldText editor={quote.richFields?.quote} fallback={quote.quote} />”
                       </p>
                       <p className="mt-3 text-sm font-semibold text-gold-400">
@@ -349,7 +349,7 @@ export default async function TourDetailPage({
               </section>
             ) : null}
 
-            <section id="faqs" className="scroll-mt-40 pt-14">
+            <section id="faqs" className="scroll-mt-40 pt-12">
               <h2 className="type-h3 text-ink">Good to know</h2>
               <div className="mt-6 border-t border-sand-300">
                 {[
@@ -423,7 +423,7 @@ export default async function TourDetailPage({
               href="/tours"
               linkLabel="View all tours"
             />
-            <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-8">
+            <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-7">
               {related.map((item) => (
                 <TourCard key={item.slug} tour={item} />
               ))}

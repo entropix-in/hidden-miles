@@ -69,7 +69,7 @@ export function SiteFooter() {
   return (
     <footer className="on-ink relative overflow-hidden border-t border-white/10 bg-ink text-paper">
       <div className="container-page">
-        <div className="flex flex-col gap-8 py-14 md:py-16 lg:flex-row lg:items-end lg:justify-between lg:gap-16">
+        <div className="flex flex-col gap-6 py-10 md:py-12 lg:flex-row lg:items-end lg:justify-between lg:gap-12">
           <div className="lg:min-w-0 lg:flex-1">
             <p className="type-h1 text-paper">
               Wander well,
@@ -87,13 +87,13 @@ export function SiteFooter() {
 
         <div className="route-line-ink" />
 
-        <div className="grid gap-10 py-12 md:grid-cols-2 lg:grid-cols-[320px_1fr] lg:gap-16">
+        <div className="grid gap-8 py-10 md:grid-cols-2 lg:grid-cols-[320px_1fr] lg:gap-12">
           <div>
             <Logo light />
-            <p className="type-small mt-5 max-w-[300px] text-navy-200">
+            <p className="type-small mt-4 max-w-[300px] text-navy-200">
               Offbeat journeys, thoughtfully planned.
             </p>
-            <div className="mt-6 flex gap-2.5">
+            <div className="mt-5 flex gap-2">
               {[
                 { label: "Instagram", short: "IG", href: site.socials[0]?.href ?? "#" },
                 { label: "Facebook", short: "FB", href: site.socials[1]?.href ?? "#" },
@@ -106,7 +106,7 @@ export function SiteFooter() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={social.label}
-                  className="grid h-10 w-10 place-items-center rounded-full bg-white/10 text-paper transition hover:bg-gold-400 hover:text-ink"
+                  className="grid h-9 w-9 place-items-center rounded-full bg-white/10 text-paper transition hover:bg-gold-400 hover:text-ink"
                 >
                   {socialIcons[social.label]}
                 </a>
@@ -114,11 +114,11 @@ export function SiteFooter() {
             </div>
           </div>
 
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-7 sm:grid-cols-2 lg:grid-cols-4">
             {columns.map((column) => (
               <div key={column.title}>
                 <h3 className="type-label text-gold-400">{column.title}</h3>
-                <ul className="mt-4 space-y-3">
+                <ul className="mt-3.5 space-y-2.5">
                   {column.items.map((item) => (
                     <li key={item.label}>
                       <Link
@@ -135,7 +135,7 @@ export function SiteFooter() {
 
             <div>
               <h3 className="type-label text-gold-400">Visit us</h3>
-              <ul className="type-small mt-4 space-y-3 text-navy-100">
+              <ul className="type-small mt-3.5 space-y-2.5 text-navy-100">
                 <li>302, Meridian House</li>
                 <li>Andheri East, Mumbai</li>
                 <li>Mon–Sat</li>
@@ -155,7 +155,7 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <div className="flex flex-col gap-3 border-t border-white/10 py-6 text-[13px] sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-3 border-t border-white/10 py-5 text-[13px] sm:flex-row sm:items-center sm:justify-between">
           {/* Separate items wrap cleanly, so no line ends on a dangling "·". */}
           <p className="flex flex-col gap-1 font-medium text-navy-300 sm:flex-row sm:flex-wrap sm:gap-x-3">
             <span>© {new Date().getFullYear()} {site.legalName}</span>

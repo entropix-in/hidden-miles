@@ -13,7 +13,7 @@ import { FieldError, PasswordStrength, SubmitButton } from "./form-parts";
 export function ExpiredResetLink({ next }: { next: string }) {
   return (
     <>
-      <div className="rounded-[18px] border border-sand-300 bg-sand-100 p-5">
+      <div className="rounded-[14px] border border-sand-300 bg-sand-100 p-5">
         <span className="grid h-11 w-11 place-items-center rounded-full bg-ink text-gold-400">
           <KeyRound className="h-5 w-5" aria-hidden />
         </span>
@@ -29,7 +29,7 @@ export function ExpiredResetLink({ next }: { next: string }) {
       </Link>
       <Link
         href={withNext("/login", next)}
-        className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-blue-700 transition hover:text-blue-800"
+        className="mt-4 inline-flex min-h-8 items-center gap-1.5 text-sm font-semibold text-blue-700 transition hover:text-blue-800"
       >
         Back to sign in
         <ArrowRight className="h-4 w-4" aria-hidden />
@@ -132,7 +132,7 @@ export function ResetPasswordForm({ token, next }: { token: string; next: string
 
       <Link
         href={withNext("/login", next)}
-        className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-blue-700 transition hover:text-blue-800"
+        className="mt-5 inline-flex min-h-8 items-center gap-1.5 text-sm font-semibold text-blue-700 transition hover:text-blue-800"
       >
         Back to sign in
         <ArrowRight className="h-4 w-4" aria-hidden />

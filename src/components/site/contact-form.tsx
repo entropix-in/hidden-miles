@@ -54,7 +54,7 @@ export function ContactForm() {
 
   if (status === "done") {
     return (
-      <div className="rounded-[28px] border border-sand-300 bg-paper p-10 text-center">
+      <div className="rounded-[20px] border border-sand-300 bg-paper p-8 text-center">
         <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-ink text-gold-400">
           <CheckCircle2 className="h-7 w-7" />
         </span>
@@ -80,7 +80,7 @@ export function ContactForm() {
   return (
     <form
       onSubmit={submit}
-      className="rounded-[24px] border border-sand-300 bg-paper p-6 md:p-8"
+      className="rounded-[20px] border border-sand-300 bg-paper p-6 md:p-8"
     >
       <h2 className="type-h3 text-ink">Send us a message</h2>
 

@@ -22,8 +22,8 @@ export const metadata: Metadata = {
 export default function PersonalisedPage() {
   return (
     <>
-      <section className="container-page pt-10 md:pt-14">
-        <div className="grid items-start gap-12 lg:grid-cols-[1fr_480px] lg:gap-16">
+      <section className="container-page pt-8 md:pt-12">
+        <div className="grid items-start gap-8 lg:grid-cols-[1fr_480px] lg:gap-12">
           <div>
             <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Personalised" }]} />
             <h1 className="type-h1 mt-5 text-ink">
@@ -52,8 +52,8 @@ export default function PersonalisedPage() {
             </div>
 
             {/* How it works sits beside the planner so the hero has no dead space. */}
-            <div className="mt-10 border-t border-sand-300 pt-8">
-              <h2 className="type-h4 text-ink">How it works</h2>
+            <div className="mt-8 border-t border-sand-300 pt-6">
+              <h2 className="type-h3 text-ink">How it works</h2>
               <ol className="mt-5 grid gap-5">
                 {[
                   {
@@ -79,7 +79,7 @@ export default function PersonalisedPage() {
                     </span>
                     <span>
                       <span className="type-title block text-ink">{step.title}</span>
-                      <span className="type-small mt-0.5 block text-navy-700">
+                      <span className="type-small mt-1 block text-navy-700">
                         {step.description}
                       </span>
                     </span>
@@ -89,7 +89,9 @@ export default function PersonalisedPage() {
             </div>
           </div>
 
-          <PersonalisedPlanner />
+          <div className="lg:sticky lg:top-24">
+            <PersonalisedPlanner />
+          </div>
         </div>
       </section>
 

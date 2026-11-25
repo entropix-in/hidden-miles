@@ -84,7 +84,7 @@ export function PersonalisedPlanner() {
   }
 
   return (
-    <div className="w-full max-w-[520px] rounded-[28px] border border-sand-300 bg-paper p-8 shadow-[0_24px_56px_-32px_rgba(11,39,53,0.25)] md:p-10">
+    <div className="w-full max-w-[520px] rounded-[20px] border border-sand-300 bg-paper p-7 shadow-[0_24px_56px_-32px_rgba(11,39,53,0.25)] md:p-8">
       <div className="flex items-center justify-between gap-3">
         <h2 className="type-h3 text-ink">Start planning</h2>
         {step < 3 ? (
@@ -136,7 +136,7 @@ export function PersonalisedPlanner() {
                 setTrip((current) => ({ ...current, destination: event.target.value }))
               }
               placeholder="Kerala, Bali, Japan…"
-              className="field h-[60px] py-4 leading-[27px]"
+              className="field h-10 py-2 leading-5"
             />
             <p className="field-hint">
               Not sure yet? Leave it blank.
@@ -157,7 +157,7 @@ export function PersonalisedPlanner() {
                     when: next,
                   }))
                 }
-                className="h-[60px] py-4 pr-12 leading-[27px]"
+                className="h-10 py-2 pr-12 leading-5"
               >
                 {monthOptions.map((month) => (
                   <option key={month} value={month}>
@@ -180,7 +180,7 @@ export function PersonalisedPlanner() {
                     duration: next,
                   }))
                 }
-                className="h-[60px] py-4 pr-12 leading-[27px]"
+                className="h-10 py-2 pr-12 leading-5"
               >
                 {durationOptions.map((duration) => (
                   <option key={duration} value={duration}>

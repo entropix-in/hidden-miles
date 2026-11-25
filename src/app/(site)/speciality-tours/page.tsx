@@ -49,7 +49,7 @@ export default async function SpecialityToursPage() {
         imageAlt="A honeymoon escape"
       />
 
-      <section className="container-page pb-16 md:pb-24">
+      <section className="container-page pb-12 md:pb-16">
         <div className="grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
           {experiences.map((experience) => {
             const count = tours.filter((tour) =>
@@ -62,7 +62,7 @@ export default async function SpecialityToursPage() {
                 href={`/speciality-tours/${experience.slug}`}
                 className="group flex flex-col"
               >
-                <div className="relative aspect-[4/3] overflow-hidden rounded-[24px] bg-ink">
+                <div className="relative aspect-[4/3] overflow-hidden rounded-[20px] bg-ink">
                   <Image
                     src={imageUrl(experience.image, 900)}
                     alt={experience.title}
@@ -98,7 +98,7 @@ export default async function SpecialityToursPage() {
             title="How it works"
             dark
           />
-          <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             <FeatureTile
               dark
               icon={<PhoneCall className="h-5 w-5" />}
@@ -131,7 +131,7 @@ export default async function SpecialityToursPage() {
         </div>
       </section>
 
-      <CtaBand className="pt-14 md:pt-20" />
+      <CtaBand className="pt-12 md:pt-14" />
     </>
   );
 }

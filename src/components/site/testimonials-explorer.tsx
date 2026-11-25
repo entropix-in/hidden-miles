@@ -56,7 +56,7 @@ export function TestimonialsExplorer({
   }
 
   return (
-    <section className="container-page py-12 sm:py-16">
+    <section className="container-page py-12 md:py-16">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div className="flex flex-wrap gap-2">
           <button
@@ -130,7 +130,7 @@ export function TestimonialsExplorer({
         {shown.map((testimonial) => (
           <article
             key={`${testimonial.name}-${testimonial.tour}-${testimonial.createdAt ?? 0}`}
-            className="flex h-full flex-col rounded-[28px] border border-stone-200 bg-white p-6 shadow-[0_14px_50px_-38px_rgba(11,39,53,0.45)]"
+            className="flex h-full flex-col rounded-[20px] border border-stone-200 bg-white p-6 shadow-[0_14px_50px_-38px_rgba(11,39,53,0.45)]"
           >
             <div className="flex items-center justify-between">
               <span className="flex items-center gap-0.5 text-gold-500">
@@ -154,7 +154,7 @@ export function TestimonialsExplorer({
             ) : null}
 
             <footer className="mt-5 flex items-center gap-3 border-t border-dashed border-stone-200 pt-5">
-              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-navy-950 font-display text-sm font-semibold text-blue-300">
+              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-navy-950 text-sm font-semibold text-blue-300">
                 {testimonial.name.charAt(0)}
               </span>
               <div className="min-w-0">
@@ -178,7 +178,7 @@ export function TestimonialsExplorer({
       </div>
 
       {visible < filtered.length ? (
-        <div className="mt-8 flex justify-center">
+        <div className="mt-6 flex justify-center">
           <button
             type="button"
             onClick={() => setVisible((current) => current + PAGE_SIZE)}

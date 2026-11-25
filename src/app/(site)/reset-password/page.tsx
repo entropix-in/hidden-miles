@@ -30,7 +30,7 @@ export default async function ResetPasswordPage({
     return (
       <AuthCard
         title="This link has expired"
-        subtitle="Reset links are valid for one hour and can only be used once."
+        subtitle="Your reset link is no longer active."
       >
         <ExpiredResetLink next={next} />
       </AuthCard>

@@ -101,14 +101,14 @@ export default async function SpecialityTourPage({
         </div>
       )}
 
-      <section className="container-page pb-16 md:pb-24">
+      <section className="container-page pb-12 md:pb-16">
         <SectionHeading
           label="Handpicked departures"
           title={`${experience.shortTitle} tours`}
         />
 
         {matchingTours.length ? (
-          <div className="mt-10 grid gap-6">
+          <div className="mt-8 grid gap-6">
             {extraTours.map((tour, index) => (
               <TourListCard key={tour.slug} tour={tour} priority={index === 0} />
             ))}
@@ -121,7 +121,7 @@ export default async function SpecialityTourPage({
             ) : null}
           </div>
         ) : (
-          <div className="mt-10 rounded-[28px] border border-dashed border-sand-300 px-6 py-16 text-center">
+          <div className="mt-8 rounded-[20px] border border-dashed border-sand-300 px-6 py-12 text-center">
             <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-sand-200 text-navy-500">
               <Compass className="h-6 w-6" />
             </span>
@@ -130,14 +130,14 @@ export default async function SpecialityTourPage({
               Share your dates and travel companions, and our team will design a{" "}
               {experience.shortTitle.toLowerCase()} journey around you.
             </p>
-            <Link href="/personalised" className="btn btn-ink mt-6">
+            <Link href="/personalised" className="btn btn-ink mt-5">
               Build my trip
               <span className="btn-dot">→</span>
             </Link>
           </div>
         )}
 
-        <div className="mt-12 rounded-[24px] border border-sand-300 bg-sand-100 p-6 md:p-8">
+        <div className="mt-8 rounded-[20px] border border-sand-300 bg-sand-100 p-6 md:p-7">
           <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
             <h2 className="type-h4 text-ink">Explore other styles</h2>
             <Link href="/speciality-tours" className="btn btn-outline shrink-0">
@@ -145,7 +145,7 @@ export default async function SpecialityTourPage({
               <span className="btn-dot">→</span>
             </Link>
           </div>
-          <div className="mt-6 flex flex-wrap gap-2">
+          <div className="mt-5 flex flex-wrap gap-2">
             {others.map((item) => (
               <Link
                 key={item.slug}

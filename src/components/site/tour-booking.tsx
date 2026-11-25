@@ -104,12 +104,12 @@ export function TourBooking({
     return (
       <div
         id="book"
-        className="scroll-mt-32 rounded-[28px] border border-sand-300 bg-paper p-8 text-center md:p-12"
+        className="scroll-mt-32 rounded-[20px] border border-sand-300 bg-paper p-6 text-center md:p-9"
       >
-        <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-ink text-gold-400">
-          <CheckCircle2 className="h-7 w-7" />
+        <span className="mx-auto grid h-12 w-12 place-items-center rounded-full bg-ink text-gold-400">
+          <CheckCircle2 className="h-6 w-6" />
         </span>
-        <h2 className="type-h3 mt-5 text-ink">Booking request received.</h2>
+        <h2 className="type-h3 mt-4 text-ink">Booking request received.</h2>
         <p className="type-body mx-auto mt-2 max-w-lg text-navy-700">
           Thank you, {form.name.split(" ")[0] || "traveller"}. We have reserved
           your seats on <strong>{tourTitle}</strong>
@@ -135,7 +135,7 @@ export function TourBooking({
   return (
     <div
       id="book"
-      className="scroll-mt-32 rounded-[28px] border border-sand-300 bg-paper p-7 md:p-9"
+      className="scroll-mt-32 rounded-[20px] border border-sand-300 bg-paper p-6 md:p-8"
     >
       <p className="type-label text-gold-600">Complete your booking</p>
       <h2 className="type-h3 mt-2 text-ink">Choose your departure</h2>
@@ -144,7 +144,7 @@ export function TourBooking({
         we confirm.
       </p>
 
-      <div className="mt-7 grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
+      <div className="mt-6 grid gap-7 lg:grid-cols-[1.1fr_0.9fr]">
         <div>
           {departures.length ? (
             <div className="grid gap-3">
@@ -156,7 +156,7 @@ export function TourBooking({
                   <label
                     key={departure._id}
                     className={cn(
-                      "flex cursor-pointer items-center gap-4 rounded-[16px] border-[1.5px] p-4 transition",
+                      "flex cursor-pointer items-center gap-4 rounded-[14px] border-[1.5px] p-4 transition",
                       soldOut
                         ? "cursor-not-allowed border-sand-300 bg-sand-100 opacity-70"
                         : "border-sand-300 bg-paper hover:border-navy-300",
@@ -210,7 +210,7 @@ export function TourBooking({
               })}
             </div>
           ) : (
-            <div className="rounded-[16px] border border-dashed border-sand-300 bg-sand-100 p-6">
+            <div className="rounded-[14px] border border-dashed border-sand-300 bg-sand-100 p-6">
               <p className="type-title text-ink">New dates are being finalised.</p>
               <p className="type-small mt-2 text-navy-700">
                 Send a booking request and our team will share the next available
@@ -267,7 +267,7 @@ export function TourBooking({
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="rounded-[20px] bg-sand-100 p-5">
+        <form onSubmit={handleSubmit} className="rounded-[20px] bg-sand-100 p-4">
           <p className="type-label text-navy-500">Lead traveller</p>
           <div className="mt-4 grid gap-3">
             <div>

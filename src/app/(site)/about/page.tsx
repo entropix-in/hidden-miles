@@ -30,7 +30,7 @@ export default async function AboutPage() {
 
   return (
     <>
-      <section className="container-page pt-8 pb-12 md:pt-12 md:pb-16">
+      <section className="container-page pt-6 pb-10 md:pt-8 md:pb-12">
         <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "About us" }]} />
         <h1 className="type-h1 mt-5 max-w-3xl text-ink">
           Since 1984, in the
@@ -44,7 +44,7 @@ export default async function AboutPage() {
       </section>
 
       <section className="container-page">
-        <div className="relative grid gap-4 pb-10 md:grid-cols-3 md:items-end">
+        <div className="relative grid gap-4 pb-8 md:grid-cols-3 md:items-end">
           {[
             { image: ladakh?.image, alt: "Ladakh", className: "" },
             { image: kashmir?.image, alt: "Kashmir", className: "" },
@@ -52,7 +52,7 @@ export default async function AboutPage() {
           ].map((photo) => (
             <div
               key={photo.alt}
-              className={`relative overflow-hidden rounded-[28px] bg-ink ${
+              className={`relative overflow-hidden rounded-[20px] bg-ink ${
                 "aspect-[420/440]"
               } ${photo.className}`}
             >
@@ -74,7 +74,7 @@ export default async function AboutPage() {
       </section>
 
       <section className="container-page section-major">
-        <div className="grid gap-12 lg:grid-cols-[460px_1fr] lg:items-center lg:gap-24">
+        <div className="grid gap-8 lg:grid-cols-[460px_1fr] lg:items-start lg:gap-16">
           <div>
             <h2 className="type-h2 text-ink">
               A family business,
@@ -88,7 +88,7 @@ export default async function AboutPage() {
               decades later we&apos;ve hosted 1.2 million guests — and we still
               answer the phone like it&apos;s our very first trip.
             </p>
-            <div className="mt-8 grid grid-cols-2 gap-6 border-t border-sand-300 pt-7 sm:grid-cols-4">
+            <div className="mt-6 grid grid-cols-2 gap-6 border-t border-sand-300 pt-6 sm:grid-cols-4">
               {[
                 { value: "1.2M+", label: "travellers" },
                 { value: "500+", label: "tour leaders" },
@@ -101,7 +101,7 @@ export default async function AboutPage() {
                 </div>
               ))}
             </div>
-            <Link href="/contact" className="btn btn-outline mt-8">
+            <Link href="/contact" className="btn btn-outline mt-6">
               Come say hello
               <span className="btn-dot">→</span>
             </Link>
@@ -117,7 +117,7 @@ export default async function AboutPage() {
             title="Four decades,"
             accent="a few milestones."
           />
-          <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-5 lg:gap-0">
+          <div className="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-5 lg:gap-0">
             {[
               ["1984", "First group tour to Kashmir — one bus, 32 travellers"],
               ["1996", "Our first international departure, to Europe"],
@@ -139,7 +139,7 @@ export default async function AboutPage() {
                   />
                 </div>
                 <p
-                  className={`mt-4 font-display text-[26px] leading-8 ${
+                  className={`mt-4 font-semibold text-[22px] leading-7 ${
                     index === 4 ? "text-gold-700" : "text-ink"
                   }`}
                 >
@@ -159,7 +159,7 @@ export default async function AboutPage() {
           title="Three promises"
           accent="we keep."
         />
-        <div className="mt-10 grid gap-5 md:grid-cols-3">
+        <div className="mt-8 grid gap-5 md:grid-cols-3">
           <FeatureTile
             icon={<PhoneCall className="h-5 w-5" />}
             title="Real humans, always"

@@ -46,7 +46,7 @@ export function CorporateProposalForm() {
 
   if (status === "done") {
     return (
-      <div className="rounded-[28px] border border-sand-300 bg-paper p-8 text-center">
+      <div className="rounded-[20px] border border-sand-300 bg-paper p-7 text-center">
         <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-ink text-gold-400">
           <CheckCircle2 className="h-7 w-7" />
         </span>
@@ -61,9 +61,9 @@ export function CorporateProposalForm() {
   return (
     <form
       onSubmit={submit}
-      className="w-full rounded-[28px] border border-sand-300 bg-sand-100 p-8 md:p-10"
+      className="w-full rounded-[20px] border border-sand-300 bg-sand-100 p-7 md:p-8"
     >
-      <h2 className="type-h3 text-ink">Request a proposal</h2>
+      <h3 className="type-h3 text-ink">Request a proposal</h3>
       <p className="type-small mt-2 text-navy-500">
         We reply within one working day.
       </p>

@@ -17,5 +17,5 @@ const icons = {
 
 export function AddonIconView({ icon, className }: { icon: AddonIcon; className?: string }) {
   const Icon = icons[icon] ?? Sparkles;
-  return <Icon className={cn("h-5 w-5", className)} aria-hidden />;
+  return <Icon className={cn("h-4.5 w-4.5", className)} aria-hidden />;
 }

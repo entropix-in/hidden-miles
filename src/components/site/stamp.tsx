@@ -54,7 +54,7 @@ export function Stamp({
         </text>
       </svg>
       <span
-        className="grid place-items-center rounded-full bg-ink font-display text-gold-400"
+        className="grid place-items-center rounded-full bg-ink font-semibold text-gold-400"
         style={{
           width: size * 0.42,
           height: size * 0.42,

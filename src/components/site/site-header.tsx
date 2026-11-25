@@ -177,7 +177,7 @@ export function SiteHeader({
     <header className="sticky top-0 z-50">
       {/* Utility bar */}
       <div className="hidden bg-ink text-paper lg:block">
-        <div className="container-page flex h-9 items-center justify-between text-[13px]">
+        <div className="container-page flex h-8 items-center justify-between text-[12px]">
           <span className="font-medium text-navy-200">Offbeat journeys, thoughtfully planned</span>
           <div className="flex items-center gap-6 font-medium text-navy-100">
             <a
@@ -201,7 +201,7 @@ export function SiteHeader({
 
       {/* Main nav */}
       <div className="relative border-b border-sand-300/80 bg-paper/90 backdrop-blur-xl">
-        <div className="container-page flex h-16 items-center justify-between gap-6">
+        <div className="container-page flex h-14 items-center justify-between gap-6">
           <Logo compact />
 
           <nav
@@ -282,12 +282,12 @@ export function SiteHeader({
                         panelState,
                       )}
                     >
-                      <div className="rounded-[20px] border border-sand-300 bg-paper p-2 shadow-[0_24px_64px_-28px_rgba(11,39,53,0.3)]">
+                      <div className="rounded-[14px] border border-sand-300 bg-paper p-2 shadow-[0_24px_64px_-28px_rgba(11,39,53,0.3)]">
                         {link.children?.map((child) => (
                           <Link
                             key={child.label}
                             href={child.href}
-                            className="block rounded-[12px] px-3.5 py-2.5 text-sm font-semibold text-ink transition hover:bg-sand-100"
+                            className="block rounded-[10px] px-3 py-2 text-sm font-semibold text-ink transition hover:bg-sand-100"
                           >
                             {child.label}
                           </Link>
@@ -307,14 +307,14 @@ export function SiteHeader({
                         panelState,
                       )}
                     >
-                      <div className="flex gap-8 rounded-[24px] border border-sand-300 bg-paper p-6 shadow-[0_32px_64px_-24px_rgba(11,39,53,0.25)]">
+                      <div className="flex gap-6 rounded-[20px] border border-sand-300 bg-paper p-5 shadow-[0_32px_64px_-24px_rgba(11,39,53,0.25)]">
                         {groups.map((group) => (
                           <div
                             key={group.label}
                             className="flex w-[220px] shrink-0 flex-col"
                           >
                             <p className="type-label text-gold-600">{group.label}</p>
-                            <div className="mt-3 grid gap-0.5">
+                            <div className="mt-2.5 grid gap-0.5">
                               {group.items.slice(0, 7).map((destination) => (
                                 <Link
                                   key={destination.slug}
@@ -322,7 +322,7 @@ export function SiteHeader({
                                   onMouseEnter={() => setPreviewSlug(destination.slug)}
                                   onFocus={() => setPreviewSlug(destination.slug)}
                                   className={cn(
-                                    "flex items-center justify-between rounded-[12px] px-3 py-2 text-[15px] font-semibold text-ink transition hover:bg-sand-100",
+                                    "flex items-center justify-between rounded-[10px] px-3 py-2 text-sm font-semibold text-ink transition hover:bg-sand-100",
                                     previewDestination?.slug === destination.slug &&
                                       "bg-sand-100",
                                   )}
@@ -347,7 +347,7 @@ export function SiteHeader({
                         ))}
 
                         {previewDestination ? (
-                          <div className="relative hidden min-h-[360px] flex-1 overflow-hidden rounded-[20px] bg-ink xl:block">
+                          <div className="relative hidden min-h-[300px] flex-1 overflow-hidden rounded-[14px] bg-ink xl:block">
                             {destinations.map((destination) => (
                               <Image
                                 key={destination.slug}
@@ -371,7 +371,7 @@ export function SiteHeader({
                               />
                             ))}
                             <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-transparent" />
-                            <div className="absolute inset-x-8 bottom-8">
+                            <div className="absolute inset-x-6 bottom-6">
                               <p className="type-h3 text-paper">
                                 {previewDestination.name}
                               </p>
@@ -402,7 +402,7 @@ export function SiteHeader({
                 setSearchOpen((open) => !open);
                 setMobileOpen(false);
               }}
-              className="grid h-10 w-10 place-items-center rounded-full text-ink transition hover:bg-sand-100"
+              className="grid h-9 w-9 place-items-center rounded-full text-ink transition hover:bg-sand-100"
               aria-label="Search tours and destinations"
               aria-expanded={searchOpen}
             >
@@ -436,7 +436,7 @@ export function SiteHeader({
             <button
               type="button"
               onClick={() => setMobileOpen((open) => !open)}
-              className="grid h-10 w-10 place-items-center rounded-full bg-ink text-gold-400 lg:hidden"
+              className="grid h-9 w-9 place-items-center rounded-full bg-ink text-gold-400 lg:hidden"
               aria-label={mobileOpen ? "Close menu" : "Open menu"}
               aria-expanded={mobileOpen}
             >
@@ -457,7 +457,7 @@ export function SiteHeader({
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder="Search tours, destinations or a feeling…"
-                className="min-w-0 flex-1 bg-transparent text-base font-medium text-ink outline-none placeholder:text-navy-500"
+                className="min-w-0 flex-1 bg-transparent text-[15px] font-medium text-ink outline-none placeholder:text-navy-500"
               />
               <button type="submit" className="btn btn-primary btn-sm">
                 Search
@@ -471,12 +471,12 @@ export function SiteHeader({
       {/* Mobile drawer */}
       {mobileOpen ? (
         <div className="fixed inset-x-0 bottom-0 top-0 z-50 overflow-y-auto bg-paper lg:hidden">
-          <div className="flex items-center justify-between border-b border-sand-300 px-5 py-3.5">
+          <div className="flex items-center justify-between border-b border-sand-300 px-5 py-3">
             <Logo compact />
             <button
               type="button"
               onClick={() => setMobileOpen(false)}
-              className="grid h-[42px] w-[42px] place-items-center rounded-full bg-ink text-gold-400"
+              className="grid h-9 w-9 place-items-center rounded-full bg-ink text-gold-400"
               aria-label="Close menu"
             >
               <X className="h-5 w-5" />
@@ -486,7 +486,7 @@ export function SiteHeader({
           <div className="px-5 pt-4">
             <form
               onSubmit={submitSearch}
-              className="flex items-center gap-3 rounded-full border border-sand-300 bg-paper px-5 py-3.5"
+              className="flex items-center gap-3 rounded-full border border-sand-300 bg-paper px-4 py-3"
             >
               <Search className="h-4 w-4 text-ink" />
               <input
@@ -498,7 +498,7 @@ export function SiteHeader({
             </form>
           </div>
 
-          <nav className="px-5 py-5" aria-label="Mobile">
+          <nav className="px-5 py-4" aria-label="Mobile">
             {[
               { label: "Home", href: "/" },
               { label: "Group Tours", href: "/tours" },
@@ -523,7 +523,7 @@ export function SiteHeader({
                       onClick={() => setMobileOpen(false)}
                       aria-current={active ? "page" : undefined}
                       className={cn(
-                        "flex-1 py-3.5 text-[16px] font-semibold transition",
+                        "flex-1 py-3 text-[15px] font-semibold transition",
                         active ? "text-gold-600" : "text-ink hover:text-gold-600",
                       )}
                     >
@@ -535,7 +535,7 @@ export function SiteHeader({
                         onClick={() => setOpenGroup(isOpen ? null : item.label)}
                         aria-label={isOpen ? "Collapse destinations" : "Expand destinations"}
                         aria-expanded={isOpen}
-                        className="grid h-10 w-10 place-items-center rounded-full text-navy-500 transition hover:bg-sand-100 hover:text-ink"
+                        className="grid h-9 w-9 place-items-center rounded-full text-navy-500 transition hover:bg-sand-100 hover:text-ink"
                       >
                         <ChevronDown
                           className={cn("h-4 w-4 transition duration-200", isOpen && "rotate-180")}
@@ -546,8 +546,8 @@ export function SiteHeader({
                   </div>
 
                   {expandable && isOpen ? (
-                    <div className="pb-5">
-                      <div className="grid gap-4">
+                    <div className="pb-4">
+                      <div className="grid gap-3">
                         {groups.map((group) => (
                           <div key={group.label}>
                             <p className="type-label text-gold-600">{group.label}</p>
@@ -580,7 +580,7 @@ export function SiteHeader({
             })}
           </nav>
 
-          <div className="border-t border-sand-300 px-5 py-5">
+          <div className="border-t border-sand-300 px-5 py-4">
             {user ? (
               <Link
                 href="/account"
