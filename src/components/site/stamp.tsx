@@ -1,3 +1,4 @@
+import { MountainSnow } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 function pathId(text: string, size: number) {
@@ -11,18 +12,23 @@ function pathId(text: string, size: number) {
 export function Stamp({
   size = 140,
   text = "HIDDEN MILES · WANDER WELL · OFFBEAT JOURNEYS · ",
+  tone = "gold",
   className,
 }: {
   size?: number;
   text?: string;
+  /** gold: the brand seal. paper: an ink passport stamp for light, busy compositions. */
+  tone?: "gold" | "paper";
   className?: string;
 }) {
-  const id = pathId(text, size);
+  const id = pathId(text + tone, size);
+  const paper = tone === "paper";
 
   return (
     <span
       className={cn(
-        "relative inline-grid shrink-0 place-items-center rounded-full bg-gold-400 shadow-[0_12px_32px_-14px_rgba(11,39,53,0.5)]",
+        "relative inline-grid shrink-0 place-items-center rounded-full shadow-[0_12px_32px_-14px_rgba(11,39,53,0.5)]",
+        paper ? "bg-paper" : "bg-gold-400",
         className,
       )}
       style={{ width: size, height: size }}
@@ -41,6 +47,12 @@ export function Stamp({
             fill="none"
           />
         </defs>
+        {paper ? (
+          <g fill="none" stroke="var(--color-ink)" strokeWidth="1.25">
+            <circle cx="70" cy="70" r="63" />
+            <circle cx="70" cy="70" r="38" />
+          </g>
+        ) : null}
         <text
           fill="var(--color-ink)"
           fontSize="10"
@@ -58,16 +70,24 @@ export function Stamp({
           </textPath>
         </text>
       </svg>
-      <span
-        className="grid place-items-center rounded-full bg-ink font-semibold text-gold-400"
-        style={{
-          width: size * 0.42,
-          height: size * 0.42,
-          fontSize: size * 0.2,
-        }}
-      >
-        H
-      </span>
+      {paper ? (
+        <MountainSnow
+          className="relative text-ink"
+          style={{ width: size * 0.26, height: size * 0.26 }}
+          strokeWidth={1.5}
+        />
+      ) : (
+        <span
+          className="grid place-items-center rounded-full bg-ink font-semibold text-gold-400"
+          style={{
+            width: size * 0.42,
+            height: size * 0.42,
+            fontSize: size * 0.2,
+          }}
+        >
+          H
+        </span>
+      )}
     </span>
   );
 }

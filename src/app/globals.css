@@ -875,10 +875,14 @@
 .hero-collage > * {
   animation: fade-pop 900ms var(--ease-out-soft) both;
 }
-.hero-collage > :nth-child(1) { animation-delay: 150ms; }
-.hero-collage > :nth-child(2) { animation-delay: 320ms; }
-.hero-collage > :nth-child(3) { animation-delay: 520ms; }
-.hero-collage > :nth-child(4) { animation-delay: 640ms; }
+/* Sun first, then the three cards, then the flight path and stamp on top. */
+.hero-collage > :nth-child(1) { animation-delay: 100ms; }
+.hero-collage > :nth-child(2) { animation-delay: 620ms; }
+.hero-collage > :nth-child(3) { animation-delay: 700ms; }
+.hero-collage > :nth-child(4) { animation-delay: 220ms; }
+.hero-collage > :nth-child(5) { animation-delay: 320ms; }
+.hero-collage > :nth-child(6) { animation-delay: 420ms; }
+.hero-collage > :nth-child(7) { animation-delay: 780ms; }
 
 /* Scroll reveals: blocks inside each section fade up as they enter the
    viewport. Pure CSS (scroll-driven); browsers without support show content

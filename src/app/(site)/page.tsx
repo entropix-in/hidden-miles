@@ -3,7 +3,7 @@ import Link from "next/link";
 import {
   BadgeCheck,
   Headset,
-  MapPin,
+  Plane,
   ShieldCheck,
   Wallet,
 } from "lucide-react";
@@ -11,6 +11,7 @@ import { CtaBand } from "@/components/site/cta-band";
 import { Contours } from "@/components/site/contours";
 import { DestinationCard } from "@/components/site/destination-card";
 import { FeatureTile } from "@/components/site/feature-tile";
+import { Skyline } from "@/components/site/skyline";
 import { SectionHeading } from "@/components/site/section-heading";
 import { SearchWidget } from "@/components/site/search-widget";
 import { Stamp } from "@/components/site/stamp";
@@ -28,8 +29,6 @@ import { imageUrl } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
-const heroCoordinates = "34.30° N · 75.29° E";
-
 export default async function HomePage() {
   const [tours, destinations, experiences, testimonials] = await Promise.all([
     loadTours(),
@@ -42,7 +41,12 @@ export default async function HomePage() {
   const featuredSelection = (featuredTours.length ? featuredTours : tours).slice(0, 3);
   const bySlug = (slug: string) => destinations.find((item) => item.slug === slug);
   const heroDestination = bySlug("kashmir") ?? destinations[0];
-  const insetDestination = bySlug("kerala") ?? destinations[1];
+  // Fanned hero cards, left to right: backwaters, mountains, desert forts.
+  const fanDestinations = {
+    left: bySlug("kerala") ?? destinations[1],
+    centre: heroDestination,
+    right: bySlug("rajasthan") ?? destinations[2],
+  };
   const bentoDestinations = [
     bySlug("kashmir"),
     bySlug("kerala"),
@@ -65,119 +69,160 @@ export default async function HomePage() {
   return (
     <>
       {/* ---------------------------------------------------------------- hero */}
-      <section className="container-page pt-8 md:pt-12">
-        <div className="grid items-center gap-8 xl:grid-cols-[1fr_600px] xl:gap-12">
-          <div className="hero-stagger">
-            <h1 className="type-hero text-ink">
-              Offbeat India
-              <br />
-              and the world,
-              <br />
-              <span className="accent-line">led from day one</span>
-            </h1>
+      <div className="relative isolate overflow-hidden bg-[linear-gradient(to_bottom,var(--color-paper),var(--color-sand-100)_20%,var(--color-sand-100)_75%,var(--color-paper))]">
+        <Skyline className="absolute bottom-[132px] left-[-3%] -z-10 hidden w-[48%] max-w-[720px] md:block" />
+        <Contours
+          className="-z-10 hidden md:block"
+          color="rgba(11,39,53,0.07)"
+          count={7}
+          cx={1.02}
+          cy={1.08}
+          seed={2}
+        />
 
-            <p className="type-lead mt-6 max-w-[440px] text-navy-700">
-              Thoughtfully planned group tours and personalised trips, from
-              Kashmir and Kerala to Japan and Europe.
-            </p>
+        <section className="container-page pt-8 md:pt-12">
+          <div className="grid items-center gap-8 xl:grid-cols-[1fr_640px] xl:gap-8">
+            <div className="hero-stagger">
+              <h1 className="type-hero text-ink">
+                Offbeat India
+                <br />
+                and the world,
+                <br />
+                <span className="accent-line">led from day one</span>
+              </h1>
 
-            <div className="mt-8 grid gap-3 sm:flex sm:flex-wrap sm:items-center">
-              <Link href="/tours" className="btn btn-ink btn-lg">
-                Explore tours
-                <span className="btn-dot">→</span>
-              </Link>
-              <Link href="/contact" className="btn btn-outline btn-lg">
-                Talk to an expert
-              </Link>
+              <p className="type-lead mt-6 max-w-[440px] text-navy-700">
+                Thoughtfully planned group tours and personalised trips, from
+                Kashmir and Kerala to Japan and Europe.
+              </p>
+
+              <div className="mt-8 grid gap-3 sm:flex sm:flex-wrap sm:items-center">
+                <Link href="/tours" className="btn btn-ink btn-lg">
+                  Explore tours
+                  <span className="btn-dot">→</span>
+                </Link>
+                <Link href="/contact" className="btn btn-outline btn-lg">
+                  Talk to an expert
+                </Link>
+              </div>
+
+              {heroDestination ? (
+                <div className="relative mt-7 aspect-[350/300] overflow-hidden rounded-[20px] bg-ink md:aspect-[2/1] xl:hidden">
+                  <Image
+                    src={imageUrl(heroDestination.image, 900)}
+                    alt={heroDestination.name}
+                    fill
+                    sizes="100vw"
+                    className="object-cover"
+                  />
+                  <span className="absolute bottom-4 right-4">
+                    <Stamp size={96} tone="paper" />
+                  </span>
+                </div>
+              ) : null}
             </div>
 
-            {heroDestination ? (
-              <div className="relative mt-7 aspect-[350/300] overflow-hidden rounded-[20px] bg-ink md:aspect-[2/1] xl:hidden">
-                <Image
-                  src={imageUrl(heroDestination.image, 900)}
-                  alt={heroDestination.name}
-                  fill
-                  sizes="100vw"
-                  className="object-cover"
+            {/* Fanned postcards under a gold sun, with the flight path that links them. */}
+            <div className="hero-collage relative mx-auto hidden h-[560px] w-full max-w-[640px] xl:block">
+              <span className="absolute left-[232px] top-[-4px] h-[360px] w-[360px] rounded-full bg-gold-300" />
+
+              <svg
+                viewBox="0 0 320 200"
+                aria-hidden="true"
+                className="absolute left-[-8px] top-[8px] h-[200px] w-[320px] text-ink"
+              >
+                <path
+                  d="M14 196 C-6 120 40 44 128 26 C190 14 250 20 312 46"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeOpacity="0.45"
+                  strokeWidth="1.25"
+                  strokeDasharray="4 6"
+                  strokeLinecap="round"
                 />
-                <span className="absolute bottom-4 right-4">
-                  <Stamp size={96} />
-                </span>
-              </div>
-            ) : null}
+              </svg>
+              <Plane
+                aria-hidden="true"
+                className="absolute left-[136px] top-[14px] h-8 w-8 rotate-[12deg] fill-ink text-ink"
+                strokeWidth={1.25}
+              />
+
+              {fanDestinations.right ? (
+                <figure className="absolute left-[420px] top-[132px] h-[300px] w-[200px] rotate-[9deg] overflow-hidden rounded-[28px] border-[6px] border-paper bg-ink shadow-[0_28px_48px_-28px_rgba(11,39,53,0.55)]">
+                  <Image
+                    src={imageUrl(fanDestinations.right.image, 600)}
+                    alt={fanDestinations.right.name}
+                    fill
+                    sizes="200px"
+                    className="object-cover"
+                  />
+                </figure>
+              ) : null}
+
+              {fanDestinations.left ? (
+                <figure className="absolute left-[16px] top-[168px] h-[320px] w-[220px] -rotate-[7deg] overflow-hidden rounded-[28px] border-[6px] border-paper bg-ink shadow-[0_28px_48px_-28px_rgba(11,39,53,0.55)]">
+                  <Image
+                    src={imageUrl(fanDestinations.left.image, 600)}
+                    alt={fanDestinations.left.name}
+                    fill
+                    sizes="220px"
+                    className="object-cover"
+                  />
+                </figure>
+              ) : null}
+
+              {fanDestinations.centre ? (
+                <figure className="absolute left-[188px] top-[64px] h-[420px] w-[264px] -rotate-[9deg] overflow-hidden rounded-[32px] border-[6px] border-paper bg-ink shadow-[0_32px_56px_-28px_rgba(11,39,53,0.6)]">
+                  <Image
+                    src={imageUrl(fanDestinations.centre.image, 900)}
+                    alt={fanDestinations.centre.name}
+                    fill
+                    priority
+                    sizes="264px"
+                    className="object-cover"
+                  />
+                </figure>
+              ) : null}
+
+              <span className="absolute left-[496px] top-[400px]">
+                <Stamp size={136} tone="paper" />
+              </span>
+            </div>
           </div>
 
-          {/* Collage */}
-          <div className="hero-collage relative mx-auto hidden aspect-square w-full max-w-[600px] xl:block">
-            {heroDestination ? (
-              <div className="absolute left-[160px] top-0 h-[560px] w-[440px] overflow-hidden rounded-t-[220px] rounded-b-[28px] bg-ink">
-                <Image
-                  src={imageUrl(heroDestination.image, 1200)}
-                  alt={heroDestination.name}
-                  fill
-                  priority
-                  sizes="440px"
-                  className="object-cover"
-                />
-              </div>
-            ) : null}
+          <div className="mt-8">
+            <SearchWidget
+              destinations={destinations}
+              experiences={experiences}
+            />
+          </div>
 
-            {insetDestination ? (
-              <div className="absolute left-0 top-[260px] h-[300px] w-[240px] overflow-hidden rounded-[20px] border-8 border-paper bg-ink shadow-[0_18px_40px_-30px_rgba(11,39,53,0.5)]">
-                <Image
-                  src={imageUrl(insetDestination.image, 700)}
-                  alt={insetDestination.name}
-                  fill
-                  sizes="240px"
-                  className="object-cover"
-                />
-              </div>
-            ) : null}
-
-            <div className="absolute left-[200px] top-[40px] flex items-center gap-2.5 rounded-full bg-paper py-2.5 pl-2.5 pr-4 shadow-[0_12px_32px_-16px_rgba(11,39,53,0.45)]">
-              <span className="grid h-8 w-8 place-items-center rounded-full bg-gold-400 text-ink">
-                <MapPin className="h-4 w-4" strokeWidth={1.75} />
-              </span>
-              <span>
-                <span className="block text-[13px] font-semibold text-ink">
-                  Sonamarg, Kashmir
-                </span>
-                <span className="block text-xs font-medium tabular-nums text-navy-500">
-                  {heroCoordinates}
-                </span>
-              </span>
-            </div>
-
-            <span className="absolute left-[452px] top-[470px]">
-              <Stamp size={140} />
+          <div className="mt-5 flex flex-wrap items-center gap-2">
+            <span className="w-full text-sm font-semibold text-navy-500 sm:w-auto">
+              Popular:
             </span>
+            {[
+              {
+                label: "Kashmir in spring",
+                href: "/tours?destination=kashmir",
+              },
+              { label: "Women's Special", href: "/tours?experience=women" },
+              { label: "Honeymoons", href: "/tours?experience=honeymoon" },
+              { label: "Europe 2027", href: "/destinations/europe" },
+              { label: "Under ₹50k", href: "/tours?price=under50" },
+            ].map((link, index) => (
+              // Four chips fit two even rows on phones; the fifth shows from tablet up.
+              <Link
+                key={link.label}
+                href={link.href}
+                className={`chip ${index === 4 ? "hidden sm:inline-flex" : ""}`}
+              >
+                {link.label}
+              </Link>
+            ))}
           </div>
-        </div>
-
-        <div className="mt-8">
-          <SearchWidget destinations={destinations} experiences={experiences} />
-        </div>
-
-        <div className="mt-5 flex flex-wrap items-center gap-2">
-          <span className="w-full text-sm font-semibold text-navy-500 sm:w-auto">Popular:</span>
-          {[
-            { label: "Kashmir in spring", href: "/tours?destination=kashmir" },
-            { label: "Women's Special", href: "/tours?experience=women" },
-            { label: "Honeymoons", href: "/tours?experience=honeymoon" },
-            { label: "Europe 2027", href: "/destinations/europe" },
-            { label: "Under ₹50k", href: "/tours?price=under50" },
-          ].map((link, index) => (
-            // Four chips fit two even rows on phones; the fifth shows from tablet up.
-            <Link
-              key={link.label}
-              href={link.href}
-              className={`chip ${index === 4 ? "hidden sm:inline-flex" : ""}`}
-            >
-              {link.label}
-            </Link>
-          ))}
-        </div>
-      </section>
+        </section>
+      </div>
 
       {/* --------------------------------------------------------------- stats */}
       <section className="container-page pt-12 md:pt-14">
