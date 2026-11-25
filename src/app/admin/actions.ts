@@ -255,6 +255,7 @@ export async function saveTourAction(formData: FormData) {
   await requireAdmin();
 
   const id = getString(formData, "id");
+  let savedId = id;
 
   try {
     const db = requireDb();
@@ -364,14 +365,15 @@ export async function saveTourAction(formData: FormData) {
         }
       });
     } else {
-      await db.insert(toursTable).values(tourValues(data));
+      const [created] = await db.insert(toursTable).values(tourValues(data)).$returningId();
+      savedId = String(created.id);
     }
   } catch (error) {
     return { error: messageFor(error), field: errorField(error) };
   }
 
   revalidateContent();
-  succeed("/admin/tours", id ? "Package updated." : "Package added.");
+  succeed(savedId ? `/admin/tours/${savedId}` : "/admin/tours", id ? "Package updated." : "Package added.");
 }
 
 export async function deleteTourAction(formData: FormData) {

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { CalendarDays, ExternalLink, Pencil, Search } from "lucide-react";
+import { ExternalLink, Eye, Pencil, Search } from "lucide-react";
 import {
   AdminEmptyState,
   AdminNotice,
@@ -146,8 +146,9 @@ export default async function AdminToursPage({ searchParams }: {
               </div>
 
               <div className="flex flex-wrap items-center gap-2 sm:justify-end">
-                <Link href={`/admin/departures?tour=${encodeURIComponent(tour.slug)}`} className="btn-outline">
-                  <CalendarDays size={16} aria-hidden /> Departure dates
+                <Link href={`/admin/tours/${tour._id}`} className="btn-outline">
+                  <Eye className="h-3.5 w-3.5" aria-hidden />
+                  Details
                 </Link>
                 <Link
                   href={`/tours/${tour.slug}`}
