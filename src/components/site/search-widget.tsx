@@ -25,7 +25,7 @@ const months = [
 ];
 
 const inlineTriggerClassName =
-  "flex w-full cursor-pointer items-center justify-between gap-2 bg-transparent text-left text-[15px] font-semibold text-ink outline-none";
+  "flex min-h-8 w-full cursor-pointer items-center justify-between gap-2 bg-transparent text-left text-sm font-semibold text-ink outline-none";
 
 export function SearchWidget({
   destinations,
@@ -56,14 +56,14 @@ export function SearchWidget({
     <form
       onSubmit={handleSubmit}
       className={cn(
-        "flex flex-col gap-1 rounded-[24px] border border-sand-300 bg-paper p-2.5 shadow-[0_24px_56px_-36px_rgba(11,39,53,0.35)] lg:flex-row lg:items-center lg:gap-0",
+        "flex flex-col gap-1 rounded-[20px] border border-sand-300 bg-paper p-2.5 shadow-[0_24px_56px_-36px_rgba(11,39,53,0.35)] lg:flex-row lg:items-center lg:gap-0",
         className,
       )}
     >
       <div className="grid flex-1 gap-1 md:grid-cols-2 lg:flex lg:items-center">
-        <label className="group flex flex-1 items-center gap-3 rounded-[16px] px-4 py-3 transition hover:bg-sand-100">
-          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-sand-200 text-ink">
-            <MapPin className="h-[18px] w-[18px]" />
+        <label className="group flex flex-1 items-center gap-3 rounded-[14px] px-4 py-2.5 transition hover:bg-sand-100">
+          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-sand-200 text-ink">
+            <MapPin className="h-4 w-4" />
           </span>
           <span className="min-w-0 flex-1">
             <span className="type-label block text-navy-500">
@@ -87,11 +87,11 @@ export function SearchWidget({
           </span>
         </label>
 
-        <span className="route-line my-1 hidden lg:block lg:h-11 lg:w-0 lg:border-l lg:border-t-0" />
+        <span className="route-line my-1 hidden lg:block lg:h-9 lg:w-0 lg:border-l lg:border-t-0" />
 
-        <label className="group flex flex-1 items-center gap-3 rounded-[16px] px-4 py-3 transition hover:bg-sand-100">
-          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-sand-200 text-ink">
-            <CalendarDays className="h-[18px] w-[18px]" />
+        <label className="group flex flex-1 items-center gap-3 rounded-[14px] px-4 py-2.5 transition hover:bg-sand-100">
+          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-sand-200 text-ink">
+            <CalendarDays className="h-4 w-4" />
           </span>
           <span className="min-w-0 flex-1">
             <span className="type-label block text-navy-500">When</span>
@@ -112,11 +112,11 @@ export function SearchWidget({
           </span>
         </label>
 
-        <span className="route-line my-1 hidden lg:block lg:h-11 lg:w-0 lg:border-l lg:border-t-0" />
+        <span className="route-line my-1 hidden lg:block lg:h-9 lg:w-0 lg:border-l lg:border-t-0" />
 
-        <label className="group flex flex-1 items-center gap-3 rounded-[16px] px-4 py-3 transition hover:bg-sand-100">
-          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-sand-200 text-ink">
-            <Compass className="h-[18px] w-[18px]" />
+        <label className="group flex flex-1 items-center gap-3 rounded-[14px] px-4 py-2.5 transition hover:bg-sand-100">
+          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-sand-200 text-ink">
+            <Compass className="h-4 w-4" />
           </span>
           <span className="min-w-0 flex-1">
             <span className="type-label block text-navy-500">
@@ -140,11 +140,11 @@ export function SearchWidget({
           </span>
         </label>
 
-        <span className="route-line my-1 hidden lg:block lg:h-11 lg:w-0 lg:border-l lg:border-t-0" />
+        <span className="route-line my-1 hidden lg:block lg:h-9 lg:w-0 lg:border-l lg:border-t-0" />
 
-        <label className="group flex flex-1 items-center gap-3 rounded-[16px] px-4 py-3 transition hover:bg-sand-100">
-          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-sand-200 text-ink">
-            <Users className="h-[18px] w-[18px]" />
+        <label className="group flex flex-1 items-center gap-3 rounded-[14px] px-4 py-2.5 transition hover:bg-sand-100">
+          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-sand-200 text-ink">
+            <Users className="h-4 w-4" />
           </span>
           <span className="min-w-0 flex-1">
             <span className="type-label block text-navy-500">

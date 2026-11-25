@@ -157,8 +157,8 @@ export default async function AdminDeparturesPage({ searchParams }: {
                           const tour = packageBySlug.get(departure.tourSlug);
                           const date = dateLabel(departure.startDate);
                           return (
-                            <tr role="row" key={departure._id}>
-                              <td role="cell" className="admin-departure-date"><Link className="admin-data-link admin-departure-date-link" aria-label={`Details for ${date}, ${titleFor(departure.tourSlug)}`} href={`/admin/departures/${departure._id}`}>{date} <ArrowRight size={13} aria-hidden /></Link>{departure.note && <p>{departure.note}</p>}</td>
+                            <tr role="row" key={departure._id} className="admin-clickable-row">
+                              <td role="cell" className="admin-departure-date"><Link className="admin-data-link admin-departure-date-link admin-row-link" aria-label={`Details for ${date}, ${titleFor(departure.tourSlug)}`} href={`/admin/departures/${departure._id}`}>{date} <ArrowRight size={13} aria-hidden /></Link>{departure.note && <p>{departure.note}</p>}</td>
                               <td role="cell" className="admin-departure-package">{tour ? <AdminDeparturePackage tour={tour} /> : departure.tourSlug}</td>
                               <td role="cell" data-mobile-label="Price per person" className="whitespace-nowrap">{formatINR(departure.price)}</td>
                               <td role="cell" data-mobile-label="Seats booked" className="whitespace-nowrap"><strong>{departure.booked} / {departure.capacity}</strong>

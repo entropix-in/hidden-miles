@@ -2,7 +2,6 @@
 
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { useScrollingSticky } from "@/lib/use-scrolling-sticky";
 import {
   ArrowLeft,
   ArrowRight,
@@ -73,16 +72,21 @@ function DualRange({
   minLabel: string;
   maxLabel: string;
 }) {
-  const percent = (value: number) => ((value - min) / (max - min)) * 100;
+  // Thumb is 28px wide, so its centre travels between 14px and (width - 14px).
+  // Position the track/fill on that same span so they line up with the thumbs.
+  const THUMB_HALF = 14;
+  const fraction = (value: number) => (value - min) / (max - min);
+  const thumbOffset = (value: number) =>
+    `calc(${THUMB_HALF}px + (100% - ${THUMB_HALF * 2}px) * ${fraction(value)})`;
 
   return (
-    <div className="relative mt-4 h-[22px]">
-      <span className="absolute inset-x-0 top-1/2 h-1 -translate-y-1/2 rounded-full bg-sand-200" />
+    <div className="relative mt-2 h-7">
+      <span className="absolute inset-x-3.5 top-1/2 h-1 -translate-y-1/2 rounded-full bg-sand-200" />
       <span
         className="absolute top-1/2 h-1 -translate-y-1/2 rounded-full bg-ink"
         style={{
-          left: `${percent(valueMin)}%`,
-          right: `${100 - percent(valueMax)}%`,
+          left: thumbOffset(valueMin),
+          right: `calc(${THUMB_HALF}px + (100% - ${THUMB_HALF * 2}px) * ${1 - fraction(valueMax)})`,
         }}
       />
       <input
@@ -117,6 +121,55 @@ function DualRange({
   );
 }
 
+/**
+ * Sticky that also works when the element is taller than the viewport:
+ * it scrolls with the page, pins once its bottom (scrolling down) or its
+ * top (scrolling up) comes into view, and behaves like plain sticky when
+ * it fits on screen.
+ */
+function useScrollSticky<T extends HTMLElement>(topGap: number, bottomGap: number) {
+  const ref = useRef<T>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    let top = topGap;
+    let lastY = window.scrollY;
+    let frame = 0;
+
+    const apply = () => {
+      frame = 0;
+      const y = window.scrollY;
+      const minTop = Math.min(
+        topGap,
+        window.innerHeight - el.offsetHeight - bottomGap,
+      );
+      top = Math.max(minTop, Math.min(topGap, top - (y - lastY)));
+      lastY = y;
+      el.style.top = `${top}px`;
+    };
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(apply);
+    };
+
+    const resize = new ResizeObserver(schedule);
+    resize.observe(el);
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    apply();
+
+    return () => {
+      cancelAnimationFrame(frame);
+      resize.disconnect();
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+    };
+  }, [topGap, bottomGap]);
+
+  return ref;
+}
+
 export function ToursExplorer({
   tours,
   destinations,
@@ -138,7 +191,8 @@ export function ToursExplorer({
   initialQuery?: string;
   initialPriceMax?: number;
 }) {
-  const filterAsideRef = useScrollingSticky<HTMLElement>();
+  // 96px matches lg:top-24 (clears the fixed header); 24px breathing room below.
+  const sidebarRef = useScrollSticky<HTMLElement>(96, 24);
   const [destination, setDestination] = useState(initialDestination);
   const [experience, setExperience] = useState(initialExperience);
   const [region, setRegion] = useState<Region>(initialRegion);
@@ -348,29 +402,33 @@ export function ToursExplorer({
   }
 
   function renderFilterPanel(idPrefix: string) {
+    const isDesktop = idPrefix === "desktop";
     return (
-      <div className="rounded-[24px] border border-sand-300 bg-paper p-6">
+      <div className="rounded-[20px] border border-sand-300 bg-paper p-5">
         <div className="flex items-center justify-between gap-3">
           <p className="type-title text-ink">Filters</p>
           <button
             type="button"
             onClick={resetFilters}
-            className="text-sm font-semibold text-blue-700 transition hover:text-blue-800"
+            className="inline-flex min-h-8 items-center text-sm font-semibold text-blue-700 transition hover:text-blue-800"
           >
             Reset
           </button>
         </div>
 
-        <div className="mt-6 space-y-6">
+        <div className="mt-4 space-y-4">
           <section>
-            <p className="type-label mb-3 text-navy-500">Region</p>
-            <div className="flex flex-wrap gap-2">
+            <p className="type-label mb-2 text-navy-500">Region</p>
+            <div className="flex flex-wrap gap-1.5">
               {regions.map((item) => (
                 <button
                   key={item}
                   type="button"
                   onClick={() => setRegion(item)}
-                  className={cn("chip", region === item && "chip-active")}
+                  className={cn(
+                    "chip min-h-7 px-2.5 py-1 text-[13px]",
+                    region === item && "chip-active",
+                  )}
                 >
                   {item}
                 </button>
@@ -381,8 +439,8 @@ export function ToursExplorer({
           <div className="hr-dashed" />
 
           <section>
-            <p className="type-label mb-3 text-navy-500">Travel style</p>
-            <div className="grid gap-3">
+            <p className="type-label mb-2 text-navy-500">Travel style</p>
+            <div className="grid">
               {experiences.map((item) => {
                 const count = tours.filter((tour) =>
                   tour.experiences.includes(item.slug),
@@ -396,7 +454,7 @@ export function ToursExplorer({
                     onClick={() =>
                       setExperience(checked ? "" : item.slug)
                     }
-                    className="flex items-center gap-3 text-left"
+                    className="flex min-h-8 items-center gap-2.5 text-left"
                   >
                     <span
                       className={cn(
@@ -423,14 +481,14 @@ export function ToursExplorer({
           <div className="hr-dashed" />
 
           <section>
-            <label htmlFor={`${idPrefix}-destination`} className="type-label mb-3 block text-navy-500">
+            <label htmlFor={`${idPrefix}-destination`} className="type-label mb-2 block text-navy-500">
               Destination
             </label>
             <Select
               id={`${idPrefix}-destination`}
               value={destination}
               onValueChange={setDestination}
-              className="border-transparent bg-sand-100 py-3 pr-10"
+              className="border-transparent bg-sand-100 h-10 py-0 pr-10"
             >
               <option value="">All destinations</option>
               {destinations.map((item) => (
@@ -444,14 +502,14 @@ export function ToursExplorer({
           <div className="hr-dashed" />
 
           <section>
-            <label htmlFor={`${idPrefix}-month`} className="type-label mb-3 block text-navy-500">
+            <label htmlFor={`${idPrefix}-month`} className="type-label mb-2 block text-navy-500">
               Departure month
             </label>
             <Select
               id={`${idPrefix}-month`}
               value={month}
               onValueChange={setMonth}
-              className="border-transparent bg-sand-100 py-3 pr-10"
+              className="border-transparent bg-sand-100 h-10 py-0 pr-10"
             >
               {months.map((item) => (
                 <option key={item} value={item}>
@@ -505,7 +563,7 @@ export function ToursExplorer({
           <button
             type="button"
             onClick={() => setFiltersOpen(false)}
-            className="btn btn-ink w-full"
+            className={cn("btn btn-ink w-full", isDesktop && "lg:hidden")}
           >
             Show {filtered.length} tours
             <span className="btn-dot">→</span>
@@ -516,9 +574,9 @@ export function ToursExplorer({
   }
 
   return (
-    <section className="container-page pt-8 pb-16 md:pt-10 md:pb-24">
-      <div className="grid gap-8 lg:grid-cols-[280px_1fr] lg:items-start lg:gap-10">
-        <aside ref={filterAsideRef} className="hidden lg:sticky lg:top-32 lg:block">
+    <section className="container-page pt-8 pb-12 md:pt-12 md:pb-16">
+      <div className="grid gap-7 lg:grid-cols-[280px_1fr] lg:items-start lg:gap-8">
+        <aside ref={sidebarRef} className="hidden lg:sticky lg:top-24 lg:block">
           {renderFilterPanel("desktop")}
         </aside>
 
@@ -544,7 +602,7 @@ export function ToursExplorer({
                 ) : null}
               </button>
 
-              <div className="relative flex items-center gap-1.5 rounded-full border border-sand-300 bg-paper py-2.5 pl-4 pr-3">
+              <div className="relative flex h-9 items-center gap-1.5 rounded-full border border-sand-300 bg-paper pl-4 pr-3">
                 <label
                   htmlFor="tour-sort"
                   className="text-[13px] font-medium text-navy-500"
@@ -555,7 +613,7 @@ export function ToursExplorer({
                   id="tour-sort"
                   value={sort}
                   onValueChange={setSort}
-                  triggerClassName="flex cursor-pointer items-center gap-1.5 bg-transparent text-sm font-semibold text-ink outline-none"
+                  triggerClassName="flex min-h-9 cursor-pointer items-center gap-1.5 bg-transparent px-1 text-sm font-semibold text-ink outline-none"
                   menuMinWidth={190}
                 >
                   {sortOptions.map((option) => (
@@ -612,7 +670,7 @@ export function ToursExplorer({
                   key={filter.key}
                   type="button"
                   onClick={filter.clear}
-                  className="chip chip-soft"
+                  className="chip chip-soft min-h-8 px-3 text-[13px]"
                 >
                   {filter.label}
                   <X className="h-3 w-3" />
@@ -621,7 +679,7 @@ export function ToursExplorer({
               <button
                 type="button"
                 onClick={resetFilters}
-                className="text-[13px] font-semibold text-navy-500 transition hover:text-ink"
+                className="inline-flex min-h-8 items-center text-[13px] font-semibold text-navy-500 transition hover:text-ink"
               >
                 Clear all
               </button>
@@ -633,7 +691,7 @@ export function ToursExplorer({
               <div
                 ref={gridRef}
                 className={cn(
-                  "mt-7 gap-7 content-start",
+                  "mt-6 gap-6 content-start",
                   view === "grid" ? "grid sm:grid-cols-2" : "grid grid-cols-1",
                 )}
               >
@@ -655,7 +713,7 @@ export function ToursExplorer({
               </div>
             </>
           ) : (
-            <div className="mt-7 rounded-[28px] border border-dashed border-sand-300 bg-paper px-6 py-16 text-center">
+            <div className="mt-6 rounded-[20px] border border-dashed border-sand-300 bg-paper px-6 py-12 text-center">
               <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-sand-200 text-navy-500">
                 <SearchX className="h-6 w-6" />
               </span>
@@ -680,8 +738,8 @@ export function ToursExplorer({
 
           {filtered.length ? (
             <>
-              <div className="mt-10 flex flex-col items-start gap-5 rounded-[20px] bg-gold-100 px-7 py-6 sm:flex-row sm:items-center">
-                <span className="grid h-[52px] w-[52px] shrink-0 place-items-center rounded-[16px] bg-gold-400 text-ink">
+              <div className="mt-8 flex flex-col items-start gap-5 rounded-[20px] bg-gold-100 px-6 py-5 sm:flex-row sm:items-center">
+                <span className="grid h-[52px] w-[52px] shrink-0 place-items-center rounded-[14px] bg-gold-400 text-ink">
                   <Headset className="h-6 w-6" />
                 </span>
                 <div className="flex-1">
@@ -699,7 +757,7 @@ export function ToursExplorer({
 
               <nav
                 aria-label="Tours pagination"
-                className="mt-8 flex flex-wrap items-center justify-center gap-2"
+                className="mt-6 flex flex-wrap items-center justify-center gap-2"
               >
                 {totalPages > 1 ? (
                   <>

@@ -1,20 +1,15 @@
 "use client";
 
-import { useEffect, useId, useRef, useState, type ReactNode } from "react";
-import { ArrowDown, ArrowUp, Bold, Copy, GripVertical, Heading, Images, Italic, Layers, List, ListChecks, ListOrdered, Pilcrow, Quote, Redo2, Trash2, Underline, Undo2 } from "lucide-react";
-import { DndContext, KeyboardSensor, PointerSensor, closestCenter, useSensor, useSensors } from "@dnd-kit/core";
-import { SortableContext, arrayMove, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
+import { useEffect, useId, useRef, useState } from "react";
+import { DraggableBlockPlugin_EXPERIMENTAL } from "@lexical/react/LexicalDraggableBlockPlugin";
+import { Bold, GripVertical, Heading, Images, Italic, List, ListChecks, ListOrdered, Pilcrow, Quote, Redo2, Underline, Undo2 } from "lucide-react";
 import {
-  $createParagraphNode, $getRoot, $getSelection, createEditor, $isRangeSelection, FORMAT_TEXT_COMMAND,
+  $createParagraphNode, $getRoot, $getSelection, $isRangeSelection, FORMAT_TEXT_COMMAND,
   REDO_COMMAND, UNDO_COMMAND, type SerializedEditorState,
 } from "lexical";
 import { $setBlocksType } from "@lexical/selection";
 import { $createHeadingNode, $createQuoteNode } from "@lexical/rich-text";
-import {
-  $createListItemNode, $createListNode, INSERT_CHECK_LIST_COMMAND, INSERT_ORDERED_LIST_COMMAND,
-  INSERT_UNORDERED_LIST_COMMAND, type ListType,
-} from "@lexical/list";
+import { INSERT_CHECK_LIST_COMMAND, INSERT_ORDERED_LIST_COMMAND, INSERT_UNORDERED_LIST_COMMAND } from "@lexical/list";
 import { contentNodes } from "@/lib/lexical-content";
 import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
@@ -28,40 +23,9 @@ import { LinkPlugin } from "@lexical/react/LexicalLinkPlugin";
 import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
 import { isContentLink, type ContentBlock } from "@/lib/content-blocks";
 import { AdminEditorLink } from "./admin-editor-link";
-import { AdminGalleryEditor } from "./admin-gallery-editor";
+import { $insertGallery, GalleryNode, type SerializedGalleryNode } from "./admin-gallery-node";
 
-type DraftBlock = (ContentBlock | { type: "text"; editor: null }) & { id: string };
-
-const presets = {
-  heading: "Heading",
-  quote: "Quote",
-  bullet: "Bulleted list",
-  number: "Numbered list",
-  check: "Checklist",
-} as const;
-
-type Preset = keyof typeof presets;
-
-function presetState(preset: Preset): SerializedEditorState {
-  const editor = createEditor({ nodes: contentNodes });
-  editor.update(() => {
-    if (preset === "heading" || preset === "quote") {
-      $getRoot().append(preset === "heading" ? $createHeadingNode("h3") : $createQuoteNode());
-    } else {
-      $getRoot().append($createListNode(preset).append($createListItemNode(preset === "check" ? false : undefined)));
-    }
-  }, { discrete: true });
-  return editor.getEditorState().toJSON();
-}
-
-function textBlockLabel(value: SerializedEditorState | null) {
-  const first = value?.root.children[0] as { type: string; listType?: ListType } | undefined;
-  if (first?.type === "list" && first.listType) return presets[first.listType];
-  if (first?.type === "heading" || first?.type === "quote") return presets[first.type];
-  return "Rich text";
-}
-
-function EditorToolbar({ compact }: { compact: boolean }) {
+function EditorToolbar({ compact, gallery }: { compact: boolean; gallery: boolean }) {
   const [editor] = useLexicalComposerContext();
   const [active, setActive] = useState<string[]>([]);
   useEffect(() => editor.registerUpdateListener(({ editorState }) => {
@@ -112,6 +76,12 @@ function EditorToolbar({ compact }: { compact: boolean }) {
           <Icon size={17} aria-hidden />
         </button>
       ))}
+      {gallery && (
+        <button type="button" title="Insert photo gallery" aria-label="Insert photo gallery"
+          onMouseDown={(event) => event.preventDefault()} onClick={() => editor.update($insertGallery)}>
+          <Images size={17} aria-hidden />
+        </button>
+      )}
       {history.map(([label, Icon, action]) => (
         <button key={label} type="button" title={label} aria-label={label}
           onMouseDown={(event) => event.preventDefault()} onClick={action}>
@@ -126,28 +96,48 @@ function hasText(node: { text?: string; children?: readonly object[] }) {
   return Boolean(node.text) || Boolean(node.children?.some(hasText));
 }
 
-export function RichTextBlock({ value, onChange, label, compact = false }: {
+/** Drag handle beside each top-level block (paragraphs, lists, galleries) for reordering. */
+function BlockDragPlugin({ anchor }: { anchor: HTMLElement }) {
+  const menuRef = useRef<HTMLButtonElement>(null);
+  const lineRef = useRef<HTMLDivElement>(null);
+  return (
+    <DraggableBlockPlugin_EXPERIMENTAL anchorElem={anchor} menuRef={menuRef} targetLineRef={lineRef}
+      isOnMenu={(element) => Boolean(element.closest(".admin-drag-menu"))}
+      menuComponent={
+        <button ref={menuRef} type="button" className="admin-drag-menu" aria-label="Drag to reorder" title="Drag to reorder">
+          <GripVertical size={16} aria-hidden />
+        </button>
+      }
+      targetLineComponent={<div ref={lineRef} className="admin-drag-line" />} />
+  );
+}
+
+export function RichTextBlock({ value, onChange, label, compact = false, gallery = false }: {
   value: SerializedEditorState | null;
   onChange: (value: SerializedEditorState, text: string) => void;
   label: string;
   compact?: boolean;
+  /** Allow embedding photo galleries in the document. */
+  gallery?: boolean;
 }) {
+  const [anchor, setAnchor] = useState<HTMLDivElement | null>(null);
   return (
     <LexicalComposer initialConfig={{
       namespace: "HiddenMilesContent",
-      nodes: contentNodes,
+      nodes: gallery ? [...contentNodes, GalleryNode] : contentNodes,
       theme: { text: { bold: "font-medium", italic: "italic", underline: "underline" }, list: { listitemChecked: "admin-check-checked", listitemUnchecked: "admin-check-unchecked" } },
       onError: (error) => { throw error; },
       editorState: value ? JSON.stringify(value) : undefined,
     }}>
-      <EditorToolbar compact={compact} />
-      <div className="admin-editor-area">
+      <EditorToolbar compact={compact} gallery={gallery} />
+      <div className="admin-editor-area" ref={setAnchor} data-draggable={gallery || undefined}>
         <RichTextPlugin contentEditable={<ContentEditable aria-label={label} className="admin-editor-input" />}
           ErrorBoundary={LexicalErrorBoundary} />
-        {(!value || !hasText(value.root)) && (
+        {(!value || !(hasText(value.root) || value.root.children.some((node) => node.type === "gallery"))) && (
           <span className="admin-editor-placeholder" aria-hidden>Start writing…</span>
         )}
       </div>
+      {gallery && anchor && <BlockDragPlugin anchor={anchor} />}
       <HistoryPlugin />
       <ListPlugin />
       <CheckListPlugin />
@@ -158,137 +148,50 @@ export function RichTextBlock({ value, onChange, label, compact = false }: {
   );
 }
 
-const blockOptions = [
-  { label: "Rich text", icon: Pilcrow, type: "text" },
-  { label: "Heading", icon: Heading, type: "text", template: "heading" },
-  { label: "Quote", icon: Quote, type: "text", template: "quote" },
-  { label: "Bulleted list", icon: List, type: "text", template: "bullet" },
-  { label: "Numbered list", icon: ListOrdered, type: "text", template: "number" },
-  { label: "Checklist", icon: ListChecks, type: "text", template: "check" },
-  { label: "Gallery", icon: Images, type: "gallery" },
-] as const;
+type SerializedNode = SerializedEditorState["root"]["children"][number];
 
-function SortableBlock({ id, label, actions, children }: {
-  id: string;
-  label: string;
-  actions: ReactNode;
-  children: ReactNode;
-}) {
-  const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition, isDragging } = useSortable({ id });
-  return (
-    <li ref={setNodeRef} className="admin-block" data-dragging={isDragging || undefined}
-      style={{ transform: CSS.Translate.toString(transform), transition }}>
-      <div className="admin-block-header">
-        <div className="admin-block-title">
-          <button type="button" ref={setActivatorNodeRef} className="admin-icon-button admin-drag-handle"
-            {...attributes} {...listeners} aria-label={`Reorder ${label} block`} title="Drag to reorder">
-            <GripVertical size={17} aria-hidden />
-          </button>
-          <span>{label}</span>
-        </div>
-        <div className="admin-block-actions">{actions}</div>
-      </div>
-      {children}
-    </li>
-  );
+/** Merges stored blocks into one editor document; galleries become embedded gallery nodes. */
+export function blocksToState(blocks: ContentBlock[]): SerializedEditorState | null {
+  if (!blocks.length) return null;
+  const textRoot = blocks.find((block) => block.type === "text")?.editor.root;
+  const children = blocks.flatMap((block): SerializedNode[] => block.type === "text"
+    ? block.editor.root.children
+    : [{ type: "gallery", version: 1, photos: block.photos, columns: block.columns ?? 3, display: block.display ?? "grid" } as SerializedNode]);
+  return { root: { ...(textRoot ?? { type: "root", version: 1, direction: null, format: "", indent: 0 }), children } } as SerializedEditorState;
+}
+
+/** Splits the editor document back into text and gallery blocks for storage. */
+export function stateToBlocks(state: SerializedEditorState): ContentBlock[] {
+  const blocks: ContentBlock[] = [];
+  let run: SerializedNode[] = [];
+  const flush = () => {
+    if (run.length) blocks.push({ type: "text", editor: { root: { ...state.root, children: run } } });
+    run = [];
+  };
+  for (const node of state.root.children) {
+    if (node.type === "gallery") {
+      flush();
+      const gallery = node as unknown as SerializedGalleryNode;
+      if (gallery.photos.length) blocks.push({ type: "gallery", photos: gallery.photos, columns: gallery.columns, display: gallery.display });
+    } else run.push(node);
+  }
+  flush();
+  return blocks;
 }
 
 export function AdminContentEditor({ initialBlocks = [] }: { initialBlocks?: ContentBlock[] }) {
   const id = useId();
-  const [blocks, setBlocks] = useState<DraftBlock[]>(() =>
-    initialBlocks.map((block, index) => ({ ...block, id: `${id}-${index}` })));
-  const nextId = useRef(initialBlocks.length);
-  const [announcement, setAnnouncement] = useState("");
-  const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
-  );
-
-  function update(block: DraftBlock) {
-    setBlocks((current) => current.map((item) => item.id === block.id ? block : item));
-  }
-
-  function move(index: number, target: number) {
-    if (index === target || index < 0 || target < 0 || target >= blocks.length) return;
-    setBlocks((current) => arrayMove(current, index, target));
-    setAnnouncement(`Block moved to position ${target + 1}.`);
-  }
-
-  function addBlock(type: "text" | "gallery", template?: Preset) {
-    const blockId = `${id}-${nextId.current++}`;
-    const block: DraftBlock = type === "text"
-      ? { type, id: blockId, editor: template ? presetState(template) : null }
-      : { type, id: blockId, photos: [], columns: 3, display: "grid" };
-    setBlocks((current) => [...current, block]);
-    setAnnouncement(`${template ? presets[template] : type === "text" ? "Rich text" : "Photo gallery"} block added.`);
-  }
+  const [initialState] = useState(() => blocksToState(initialBlocks));
+  const [state, setState] = useState(initialState);
+  const [blocks, setBlocks] = useState(initialBlocks);
 
   return (
     <section className="admin-content-editor" aria-labelledby={`${id}-title`}>
       <h2 id={`${id}-title`} className="font-medium text-(--studio-text)">Page content</h2>
-      <input type="hidden" name="contentBlocks" value={JSON.stringify(blocks.flatMap(({ id: blockId, ...block }) => {
-        void blockId;
-        return block.type === "text" && !block.editor ? [] : [block];
-      }))} />
-      <div className="sr-only" role="status">{announcement}</div>
-      {!blocks.length && (
-        <div className="admin-content-empty">
-          <Layers size={21} aria-hidden />
-          <div><strong>No content blocks yet</strong><p>Choose a block below to start building this page.</p></div>
-        </div>
-      )}
-      <DndContext id={id} sensors={sensors} collisionDetection={closestCenter}
-        onDragEnd={({ active, over }) => {
-          if (!over) return;
-          move(blocks.findIndex((block) => block.id === active.id), blocks.findIndex((block) => block.id === over.id));
-        }}>
-      <SortableContext items={blocks.map((block) => block.id)} strategy={verticalListSortingStrategy}>
-      <ol className="admin-blocks">
-        {blocks.map((block, index) => {
-          const label = block.type === "text" ? textBlockLabel(block.editor) : "Photo gallery";
-          return (
-            <SortableBlock key={block.id} id={block.id} label={label} actions={<>
-                  <button type="button" title="Move up" aria-label={`Move ${label} block ${index + 1} up`}
-                    disabled={index === 0} onClick={() => move(index, index - 1)}><ArrowUp size={16} /></button>
-                  <button type="button" title="Move down" aria-label={`Move ${label} block ${index + 1} down`}
-                    disabled={index === blocks.length - 1} onClick={() => move(index, index + 1)}><ArrowDown size={16} /></button>
-                  <button type="button" title="Duplicate block" aria-label={`Duplicate ${label} block ${index + 1}`}
-                    disabled={blocks.length >= 40} onClick={() => {
-                      const copy = { ...block, id: `${id}-${nextId.current++}` };
-                      setBlocks((current) => [...current.slice(0, index + 1), copy, ...current.slice(index + 1)]);
-                      setAnnouncement(`${label} block duplicated.`);
-                    }}><Copy size={16} /></button>
-                  <button type="button" title="Remove block" aria-label={`Remove ${label} block ${index + 1}`}
-                    onClick={() => {
-                      setBlocks((current) => current.filter((item) => item.id !== block.id));
-                      setAnnouncement(`${label} block removed.`);
-                    }}><Trash2 size={16} /></button>
-              </>}>
-              {block.type === "text" ? (
-                <RichTextBlock value={block.editor} label={`Rich text block ${index + 1}`}
-                  onChange={(editor) => update({ ...block, editor })} />
-              ) : (
-                <AdminGalleryEditor photos={block.photos} onChange={(change) =>
-                  setBlocks((current) => current.map((item) =>
-                    item.id === block.id && item.type === "gallery"
-                      ? { ...item, photos: change(item.photos) } : item))}
-                  layout={{ columns: block.columns ?? 3, display: block.display ?? "grid" }}
-                  onLayoutChange={(layout) => setBlocks((current) => current.map((item) =>
-                    item.id === block.id && item.type === "gallery" ? { ...item, ...layout } : item))} />
-              )}
-            </SortableBlock>
-          );
-        })}
-      </ol>
-      </SortableContext>
-      </DndContext>
-      <div className="admin-editor-add" role="group" aria-label="Add content block">
-        {blockOptions.map((option) => (
-          <button key={option.label} type="button" className="btn-outline" disabled={blocks.length >= 40}
-            onClick={() => addBlock(option.type, "template" in option ? option.template : undefined)}>
-            <option.icon size={16} aria-hidden /> {option.label}
-          </button>
-        ))}
+      <input type="hidden" name="contentBlocks" value={JSON.stringify(blocks)} />
+      <div className="admin-block">
+        <RichTextBlock value={state} label="Page content" gallery
+          onChange={(next) => { setState(next); setBlocks(stateToBlocks(next)); }} />
       </div>
     </section>
   );

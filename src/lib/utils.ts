@@ -21,7 +21,16 @@ export function slugify(value: string) {
 const fallbackImage =
   "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee";
 
-export function imageUrl(src?: string | null, width = 1200) {
+/**
+ * Sized Unsplash URL. Pass `height` (and a higher `quality`) when the slot's
+ * shape differs from the photo's, so the crop arrives at full resolution
+ * instead of being stretched by `object-cover`.
+ */
+export function imageUrl(
+  src?: string | null,
+  width = 1200,
+  { height, quality = 78 }: { height?: number; quality?: number } = {},
+) {
   const source = src?.trim() || fallbackImage;
 
   try {
@@ -29,7 +38,8 @@ export function imageUrl(src?: string | null, width = 1200) {
     url.searchParams.set("auto", "format");
     url.searchParams.set("fit", "crop");
     url.searchParams.set("w", String(width));
-    url.searchParams.set("q", "78");
+    if (height) url.searchParams.set("h", String(height));
+    url.searchParams.set("q", String(quality));
     return url.toString();
   } catch {
     return source;

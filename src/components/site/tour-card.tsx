@@ -42,7 +42,7 @@ function TourCardContent({
   return (
     <article
       className={cn(
-        "card-lift group flex h-full flex-col rounded-[28px] border border-sand-300 bg-paper p-2 shadow-[0_12px_32px_-24px_rgba(11,39,53,0.4)]",
+        "card-lift group flex h-full flex-col rounded-[20px] border border-sand-300 bg-paper p-2 shadow-[0_12px_32px_-24px_rgba(11,39,53,0.4)]",
         className,
       )}
     >
@@ -122,7 +122,7 @@ function TourCardContent({
             </p>
           </div>
           <Link
-            href={`/tours/${tour.slug}#book`}
+            href={`/tours/${tour.slug}`}
             className="btn btn-ink btn-sm"
             aria-label={`Book ${tour.title}`}
           >
@@ -146,7 +146,7 @@ export function TourListCard({
   const seatsLow = !tour.departure || /left|filling|sold/i.test(tour.departure);
 
   return (
-    <article className="card-lift group @container overflow-hidden rounded-[28px] border border-sand-300 bg-paper">
+    <article className="card-lift group @container overflow-hidden rounded-[20px] border border-sand-300 bg-paper">
       <div className="flex flex-col p-2 sm:flex-row">
       <Link
         href={`/tours/${tour.slug}`}
@@ -212,7 +212,7 @@ export function TourListCard({
             </p>
           </div>
           <Link
-            href={`/tours/${tour.slug}#book`}
+            href={`/tours/${tour.slug}`}
             className="btn btn-ink btn-sm"
             aria-label={`Book ${tour.title}`}
           >

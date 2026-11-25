@@ -280,7 +280,7 @@ export function BookingFlow({
     return (
       <>
         <div className="on-ink relative overflow-hidden bg-ink">
-          <div className="container-page flex flex-col items-center gap-6 py-20 text-center md:py-24">
+          <div className="container-page flex flex-col items-center gap-6 py-12 text-center md:py-16">
             <Stamp size={140} text="BOOKED · SEE YOU THERE · WANDER WELL · " />
             <h1 className="type-h1 text-paper">
               You&apos;re going to {tour.destinationName}
@@ -302,11 +302,11 @@ export function BookingFlow({
           </div>
         </div>
 
-        <div className="container-page grid gap-10 py-16 lg:grid-cols-[1fr_440px]">
+        <div className="container-page grid gap-8 py-12 lg:grid-cols-[1fr_440px]">
           <div>
             <p className="type-label text-gold-600">What happens next</p>
             <h2 className="type-h3 mt-2 text-ink">Your countdown to departure</h2>
-            <div className="mt-8 space-y-0">
+            <div className="mt-6 space-y-0">
               {[
                 ["Today", "Payment received", "Confirmation and invoice sent to your email.", true],
                 ["Within 48 hours", "Meet your tour leader", "They will add you to the group's WhatsApp and say hello.", false],
@@ -340,7 +340,7 @@ export function BookingFlow({
             </div>
           </div>
 
-          <div className="rounded-[28px] border border-sand-300 bg-paper p-7">
+          <div className="rounded-[20px] border border-sand-300 bg-paper p-6">
             <div className="relative aspect-[376/180] overflow-hidden rounded-[20px] bg-ink">
               <Image
                 src={imageUrl(tour.image, 800)}
@@ -379,9 +379,9 @@ export function BookingFlow({
     <div className="bg-sand-100">
       <CheckoutHeader step={step} email={account.email} />
 
-      <div className="container-page grid gap-10 py-8 md:py-12 xl:grid-cols-[1fr_400px] xl:items-start">
+      <div className="container-page grid gap-8 py-6 md:py-10 xl:grid-cols-[1fr_400px] xl:items-start">
         <div>
-          <h1 className="type-h2 text-ink">
+          <h1 className="type-h1 text-ink">
             {step === 0
               ? "Plan your group departure."
               : step === 1
@@ -412,7 +412,7 @@ export function BookingFlow({
             </div>
           ) : null}
 
-          <div className="mt-7 space-y-6">
+          <div className="mt-6 space-y-5">
             {step === 0 ? (
               <>
                 <SectionCard
@@ -476,7 +476,7 @@ export function BookingFlow({
                         type="button"
                         onClick={() => setCity(option.name)}
                         className={cn(
-                          "flex items-center gap-4 rounded-[16px] border-[1.5px] px-5 py-4 text-left transition",
+                          "flex items-center gap-4 rounded-[14px] border-[1.5px] px-4 py-3 text-left transition",
                           city === option.name
                             ? "border-blue-500 bg-blue-50"
                             : "border-sand-300 bg-paper hover:border-navy-300",
@@ -737,7 +737,7 @@ export function BookingFlow({
                         >
                           <span
                             className={cn(
-                              "grid h-[52px] w-[52px] shrink-0 place-items-center rounded-[16px]",
+                              "grid h-11 w-11 shrink-0 place-items-center rounded-[14px]",
                               active
                                 ? "bg-gold-100 text-gold-600"
                                 : "bg-sand-200 text-ink",
@@ -888,7 +888,7 @@ export function BookingFlow({
                         type="button"
                         onClick={() => setPlan(option.id)}
                         className={cn(
-                          "flex items-center gap-4 rounded-[16px] border-[1.5px] p-5 text-left transition",
+                          "flex items-center gap-4 rounded-[14px] border-[1.5px] p-4 text-left transition",
                           plan === option.id
                             ? "border-blue-500 bg-blue-50"
                             : "border-sand-300 bg-paper hover:border-navy-300",
@@ -939,8 +939,8 @@ export function BookingFlow({
                     ))}
                   </div>
 
-                  <div className="mt-5 flex flex-col items-center gap-6 rounded-[20px] bg-sand-100 p-6 sm:flex-row">
-                    <div className="grid h-[148px] w-[148px] shrink-0 grid-cols-7 gap-0.5 rounded-[16px] border border-sand-300 bg-paper p-4">
+                  <div className="mt-4 flex flex-col items-center gap-5 rounded-[20px] bg-sand-100 p-5 sm:flex-row">
+                    <div className="grid h-[148px] w-[148px] shrink-0 grid-cols-7 gap-0.5 rounded-[14px] border border-sand-300 bg-paper p-4">
                       {Array.from({ length: 49 }).map((_, index) => (
                         <span
                           key={index}
@@ -1044,9 +1044,9 @@ export function BookingFlow({
         </div>
 
         <aside className="lg:sticky lg:top-24">
-          <div className="rounded-[28px] border border-sand-300 bg-paper p-7 shadow-[0_16px_40px_-32px_rgba(11,39,53,0.3)]">
+          <div className="rounded-[20px] border border-sand-300 bg-paper p-6 shadow-[0_16px_40px_-32px_rgba(11,39,53,0.3)]">
             <div className="flex items-center gap-4">
-              <div className="relative h-[88px] w-[88px] shrink-0 overflow-hidden rounded-[16px] bg-ink">
+              <div className="relative h-[88px] w-[88px] shrink-0 overflow-hidden rounded-[14px] bg-ink">
                 <Image
                   src={imageUrl(tour.image, 300)}
                   alt={tour.title}
@@ -1137,7 +1137,7 @@ export function BookingFlow({
                   {travellers} travellers · incl. taxes
                 </p>
               </div>
-              <p className="text-2xl font-semibold tracking-[-0.02em] text-ink">
+              <p className="text-xl font-semibold tracking-[-0.02em] text-ink">
                 {formatINR(total)}
               </p>
             </div>
@@ -1171,7 +1171,7 @@ export function BookingFlow({
 function CheckoutHeader({ step, email }: { step: number; email: string }) {
   return (
     <div className="sticky top-0 z-40 border-b border-sand-300 bg-paper/90 backdrop-blur-xl">
-      <div className="container-page flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="container-page flex flex-col gap-3 py-3.5 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-wrap items-center gap-2.5">
           {STEPS.map((label, index) => {
             const done = index < step;
@@ -1238,12 +1238,12 @@ function SectionCard({
   children: React.ReactNode;
 }) {
   return (
-    <section className="rounded-[28px] border border-sand-300 bg-paper p-7 md:p-9">
+    <section className="rounded-[20px] border border-sand-300 bg-paper p-6 md:p-8">
       <h2 className="type-h4 text-ink">{title}</h2>
       {subtitle ? (
         <p className="type-small mt-1.5 text-navy-500">{subtitle}</p>
       ) : null}
-      <div className="mt-5">{children}</div>
+      <div className="mt-4">{children}</div>
     </section>
   );
 }
@@ -1262,7 +1262,7 @@ function Counter({
   onChange: (value: number) => void;
 }) {
   return (
-    <div className="flex items-center justify-between gap-3 rounded-[16px] border border-sand-300 bg-paper px-4 py-3.5 sm:px-5 sm:py-4">
+    <div className="flex items-center justify-between gap-3 rounded-[14px] border border-sand-300 bg-paper px-4 py-3 sm:px-4 sm:py-3">
       <div>
         <p className="text-sm font-semibold text-ink">{label}</p>
         <p className="mt-0.5 text-[13px] font-medium leading-5 text-navy-500">{sub}</p>
@@ -1306,7 +1306,7 @@ function StepActions({
   return (
     <div className="flex flex-wrap items-center justify-between gap-4">
       {backHref ? (
-        <Link href={backHref} className="inline-flex items-center gap-2 text-sm font-semibold text-navy-700">
+        <Link href={backHref} className="inline-flex min-h-8 items-center gap-2 text-sm font-semibold text-navy-700">
           <ArrowLeft className="h-4 w-4" />
           {backLabel}
         </Link>
@@ -1314,7 +1314,7 @@ function StepActions({
         <button
           type="button"
           onClick={back}
-          className="inline-flex items-center gap-2 text-sm font-semibold text-navy-700"
+          className="inline-flex min-h-8 items-center gap-2 text-sm font-semibold text-navy-700"
         >
           <ArrowLeft className="h-4 w-4" />
           {backLabel}

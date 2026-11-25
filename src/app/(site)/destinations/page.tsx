@@ -114,7 +114,7 @@ export default async function DestinationsPage({
       >
         <form
           action="/destinations"
-          className="flex w-full max-w-[460px] items-center gap-3 rounded-full border-[1.5px] border-sand-300 bg-paper px-5 py-3.5"
+          className="flex w-full max-w-[460px] items-center gap-3 rounded-full border-[1.5px] border-sand-300 bg-paper py-1 pl-5 pr-1.5"
         >
           <Search className="h-5 w-5 text-navy-500" />
           <input
@@ -122,21 +122,21 @@ export default async function DestinationsPage({
             defaultValue={query}
             placeholder="Search a destination…"
             aria-label="Search a destination"
-            className="min-w-0 flex-1 bg-transparent text-[15px] font-medium text-ink outline-none placeholder:text-navy-500"
+            className="h-10 min-w-0 flex-1 bg-transparent text-sm font-medium text-ink outline-none placeholder:text-navy-500"
           />
-          <button type="submit" className="text-sm font-semibold text-blue-700">
+          <button type="submit" className="inline-flex h-9 items-center px-3 text-sm font-semibold text-blue-700">
             Search
           </button>
         </form>
       </PageHero>
 
-      <section className="container-page pb-16 md:pb-24">
+      <section className="container-page pb-12 md:pb-16">
         <SectionHeading
           number="01"
           label="India"
           title="India"
         />
-        <div className={`mt-10 grid gap-6 sm:grid-cols-2 ${indiaGrid.grid}`}>
+        <div className={`mt-8 grid gap-6 sm:grid-cols-2 ${indiaGrid.grid}`}>
           {india.map((destination, index) => (
             <DestinationCard
               key={destination.slug}
@@ -147,7 +147,7 @@ export default async function DestinationsPage({
           ))}
         </div>
         {!india.length ? (
-          <p className="type-body mt-8 rounded-[20px] border border-dashed border-sand-300 p-8 text-center text-navy-500">
+          <p className="type-body mt-6 rounded-[20px] border border-dashed border-sand-300 p-7 text-center text-navy-500">
             No Indian destinations match “{query}”. Try another name.
           </p>
         ) : null}
@@ -160,7 +160,7 @@ export default async function DestinationsPage({
             label="International"
             title="International"
           />
-          <div className={`mt-10 grid gap-6 sm:grid-cols-2 ${internationalGrid.grid}`}>
+          <div className={`mt-8 grid gap-6 sm:grid-cols-2 ${internationalGrid.grid}`}>
             {international.map((destination, index) => (
               <DestinationCard
                 key={destination.slug}
@@ -171,11 +171,11 @@ export default async function DestinationsPage({
             ))}
           </div>
           {!international.length ? (
-            <p className="type-body mt-8 rounded-[20px] border border-dashed border-sand-300 p-8 text-center text-navy-500">
+            <p className="type-body mt-6 rounded-[20px] border border-dashed border-sand-300 p-7 text-center text-navy-500">
               No international destinations match “{query}”. Try another name.
             </p>
           ) : null}
-          <div className="mt-10 flex justify-center">
+          <div className="mt-8 flex justify-center">
             <Link href="/tours" className="btn btn-outline">
               Browse all tours
               <span className="btn-dot">→</span>
@@ -185,7 +185,7 @@ export default async function DestinationsPage({
       </section>
 
       <CtaBand
-        className="pt-14 md:pt-20"
+        className="pt-12 md:pt-14"
         title="Two places,"
         accent="one connected trip"
         description="Combine destinations into one itinerary."

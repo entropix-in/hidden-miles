@@ -198,7 +198,7 @@ export function SignupForm({
           <FieldError id="confirmPassword-error" message={show("confirmPassword")} />
         </div>
 
-        <SubmitButton pending={pending} pendingLabel="Creating your account…" className={disabled ? "pointer-events-none opacity-55" : undefined}>
+        <SubmitButton pending={pending} pendingLabel="Creating your account…" className={disabled ? "mt-2 pointer-events-none opacity-55" : "mt-2"}>
           <UserPlus className="h-4 w-4" aria-hidden />
           Create my account
         </SubmitButton>
@@ -211,7 +211,7 @@ export function SignupForm({
 
       <Divider label="Already with us?" />
 
-      <Link href={withNext("/login", next)} className="btn btn-outline w-full">
+      <Link href={withNext("/login", next)} className="btn btn-outline btn-lg w-full">
         Sign in instead
         <span className="btn-dot">→</span>
       </Link>

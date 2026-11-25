@@ -88,7 +88,7 @@ export function TourSectionTabs({ tabs }: { tabs: Tab[] }) {
       aria-label="Tour sections"
       style={{ top: headerHeight }}
       data-stuck={stuck || undefined}
-      className="tour-section-tabs sticky z-30 -mx-5 flex overflow-x-auto whitespace-nowrap border-b border-sand-300 bg-paper px-5 [mask-image:linear-gradient(to_right,black_80%,transparent)] [scrollbar-width:none] sm:mx-0 sm:px-0 sm:[mask-image:none]"
+      className="tour-section-tabs sticky z-30 -mx-5 flex overflow-x-auto whitespace-nowrap border-b border-sand-300 bg-paper px-5 scroll-px-4 [mask-image:linear-gradient(to_right,black_85%,transparent)] [scrollbar-width:none] sm:mx-0 sm:px-0 md:[mask-image:none]"
     >
       {tabs.map((tab, index) => (
         <a

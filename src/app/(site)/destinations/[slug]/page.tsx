@@ -84,7 +84,7 @@ export default async function DestinationDetailPage({
   return (
     <>
       <section className="container-page py-6">
-        <div className="relative isolate flex min-h-[420px] flex-col justify-end overflow-hidden rounded-[28px] bg-ink p-7 pb-9 sm:p-10 lg:min-h-[480px]">
+        <div className="relative isolate flex min-h-[420px] flex-col justify-end overflow-hidden rounded-[20px] bg-ink p-6 pb-8 sm:p-8 lg:min-h-[480px]">
           <Image
             src={imageUrl(destination.image, 2000)}
             alt={destination.name}
@@ -106,8 +106,8 @@ export default async function DestinationDetailPage({
             />
           </div>
 
-          <div className="relative mt-auto max-w-[900px] pt-16">
-            <h1 className="font-display text-[clamp(3rem,7vw,5.5rem)] leading-[0.96] tracking-[-0.045em] text-paper">
+          <div className="relative mt-auto max-w-[900px] pt-12">
+            <h1 className="font-semibold text-[clamp(2.25rem,4.5vw,3.5rem)] leading-[1.05] tracking-[-0.03em] text-paper">
               {destination.name}
             </h1>
             <p className="type-lead mt-3 max-w-[620px] text-navy-200">
@@ -119,7 +119,7 @@ export default async function DestinationDetailPage({
       </section>
 
       <section className="container-page">
-        <div className="grid grid-cols-2 gap-x-4 gap-y-5 rounded-[20px] border border-sand-300 bg-paper p-5 lg:grid-cols-4 lg:gap-0 lg:px-4 lg:py-6">
+        <div className="grid grid-cols-2 gap-x-4 gap-y-5 rounded-[20px] border border-sand-300 bg-paper p-5 lg:grid-cols-4 lg:gap-0 lg:px-4 lg:py-5">
           {facts.map((fact, index) => (
             <div
               key={fact.label}
@@ -144,12 +144,12 @@ export default async function DestinationDetailPage({
       </section>
 
       <section className="container-page section-minor">
-        <div className="grid gap-12 lg:grid-cols-[1fr_440px] lg:gap-20">
+        <div className="grid gap-8 lg:grid-cols-[1fr_440px] lg:gap-14">
           <div>
             <h2 className="type-h2 text-ink">About {destination.name}</h2>
             <p className="type-lead mt-4 text-navy-700"><RichFieldText editor={destination.richFields?.description} fallback={destination.description} /></p>
             <PageContentBlocks blocks={destination.contentBlocks} />
-            <Link href="/contact" className="btn btn-outline mt-7">
+            <Link href="/contact" className="btn btn-outline mt-6">
               Plan a private {destination.name} trip
               <span className="btn-dot">→</span>
             </Link>
@@ -183,20 +183,20 @@ export default async function DestinationDetailPage({
             />
             {destinationTours.length < 3 ? (
               // One or two tours read better as wide cards than a half-empty grid.
-              <div className="mt-10 grid gap-6">
+              <div className="mt-8 grid gap-6">
                 {destinationTours.map((tour, index) => (
                   <TourListCard key={tour.slug} tour={tour} priority={index === 0} />
                 ))}
               </div>
             ) : (
-              <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {destinationTours.slice(0, 3).map((tour, index) => (
                   <TourCard key={tour.slug} tour={tour} priority={index === 0} />
                 ))}
               </div>
             )}
             {destinationTours.length > 3 ? (
-            <div className="mt-10 flex justify-center">
+            <div className="mt-8 flex justify-center">
               <Link
                 href={`/tours?destination=${destination.slug}`}
                 className="btn btn-outline"
@@ -219,7 +219,7 @@ export default async function DestinationDetailPage({
             href="/destinations"
             linkLabel="All destinations"
           />
-          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {related.map((item) => (
               <DestinationCard
                 key={item.slug}

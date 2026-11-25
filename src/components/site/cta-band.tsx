@@ -21,8 +21,8 @@ export function CtaBand({
   className?: string;
 }) {
   return (
-    <section className={cn("container-page pb-14 md:pb-20", className)}>
-      <div className="on-ink relative isolate overflow-hidden rounded-[28px] bg-ink">
+    <section className={cn("container-page pb-10 md:pb-14", className)}>
+      <div className="on-ink relative isolate overflow-hidden rounded-[20px] bg-ink">
         <Contours
           className="opacity-70"
           color="rgba(255,255,255,0.05)"
@@ -31,7 +31,7 @@ export function CtaBand({
           count={7}
         />
         <div className={cn("grid", image && "xl:grid-cols-[1fr_520px]")}>
-          <div className="relative flex flex-col justify-center gap-6 px-6 py-12 sm:px-12 md:px-16 md:py-16">
+          <div className="relative flex flex-col justify-center gap-5 px-6 py-10 sm:px-10 md:px-12 md:py-12">
             <h2 className="type-h2 max-w-xl text-paper">
               {title}
               <br />
@@ -64,8 +64,8 @@ export function CtaBand({
               className="object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/20 to-transparent" />
-            <span className="absolute bottom-10 right-10">
-              <Stamp size={112} />
+            <span className="absolute bottom-8 right-8">
+              <Stamp size={96} />
             </span>
           </div>
           ) : null}

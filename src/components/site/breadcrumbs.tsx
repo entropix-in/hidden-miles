@@ -48,7 +48,7 @@ export function Breadcrumbs({
               <Link
                 href={item.href}
                 className={cn(
-                  "text-[13px] font-medium transition",
+                  "inline-flex items-center min-h-8 text-[13px] font-medium transition",
                   dark
                     ? "text-white/90 [text-shadow:0_1px_2px_rgb(0_0_0_/0.5)] hover:text-paper"
                     : "text-navy-500 hover:text-ink",

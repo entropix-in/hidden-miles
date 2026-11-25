@@ -255,6 +255,7 @@ export async function saveTourAction(formData: FormData) {
   await requireAdmin();
 
   const id = getString(formData, "id");
+  let savedId = id;
 
   try {
     const db = requireDb();
@@ -364,14 +365,15 @@ export async function saveTourAction(formData: FormData) {
         }
       });
     } else {
-      await db.insert(toursTable).values(tourValues(data));
+      const [created] = await db.insert(toursTable).values(tourValues(data)).$returningId();
+      savedId = String(created.id);
     }
   } catch (error) {
     return { error: messageFor(error), field: errorField(error) };
   }
 
   revalidateContent();
-  succeed("/admin/tours", id ? "Package updated." : "Package added.");
+  succeed(savedId ? `/admin/tours/${savedId}` : "/admin/tours", id ? "Package updated." : "Package added.");
 }
 
 export async function deleteTourAction(formData: FormData) {
@@ -668,6 +670,27 @@ export async function updateEnquiryStatusAction(formData: FormData) {
   revalidatePath("/admin/enquiries");
   revalidatePath("/admin");
   succeed(back, "Enquiry status updated.");
+}
+
+export async function deleteEnquiryAction(formData: FormData) {
+  await requireAdmin();
+  const requested = getString(formData, "returnTo");
+  const back = /^\/admin\/enquiries(?:\?|$)/.test(requested) ? requested : "/admin/enquiries";
+
+  try {
+    const db = requireDb();
+    const numericId = parseId(getString(formData, "id"));
+    const [existing] = await db.select({ id: enquiriesTable.id }).from(enquiriesTable)
+      .where(eq(enquiriesTable.id, numericId)).limit(1);
+    if (!existing) throw new Error("Enquiry not found.");
+    await db.delete(enquiriesTable).where(eq(enquiriesTable.id, numericId));
+  } catch (error) {
+    fail(back, error);
+  }
+
+  revalidatePath("/admin/enquiries");
+  revalidatePath("/admin");
+  succeed(back, "Enquiry deleted.");
 }
 
 export async function seedContentAction() {

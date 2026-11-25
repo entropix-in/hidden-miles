@@ -1,3 +1,5 @@
+import { ViewTransition } from "react";
+import { ScrollToTop } from "@/components/site/scroll-to-top";
 import { Lock, Phone } from "lucide-react";
 import { Logo } from "@/components/site/logo";
 import { site } from "@/data/site";
@@ -12,7 +14,7 @@ export default function CheckoutLayout({
   return (
     <>
       <header className="border-b border-sand-300/80 bg-paper">
-        <div className="container-page flex h-16 items-center justify-between gap-4">
+        <div className="container-page flex h-14 items-center justify-between gap-4">
           <Logo compact />
           <div className="flex items-center gap-5 text-sm font-medium text-ink/70">
             <span className="hidden items-center gap-1.5 sm:flex">
@@ -30,7 +32,10 @@ export default function CheckoutLayout({
           </div>
         </div>
       </header>
-      <main>{children}</main>
+      <ScrollToTop />
+      <ViewTransition default="page">
+        <main>{children}</main>
+      </ViewTransition>
     </>
   );
 }

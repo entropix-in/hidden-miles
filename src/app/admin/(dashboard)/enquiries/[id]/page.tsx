@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { updateEnquiryStatusAction } from "@/app/admin/actions";
+import { deleteEnquiryAction, updateEnquiryStatusAction } from "@/app/admin/actions";
+import { AdminDeleteButton } from "@/components/admin/admin-delete-button";
 import { AdminRequestStatus } from "@/components/admin/admin-request-status";
 import { AdminNotice, DatabaseSetupNotice } from "@/components/admin/admin-ui";
 import { splitEnquiryMessage } from "@/lib/enquiry-message";
@@ -69,6 +70,10 @@ export default async function AdminEnquiryDetailPage({ params, searchParams }: {
               </dl>
             </section>
           )}
+          <footer className="flex justify-end">
+            <AdminDeleteButton action={deleteEnquiryAction} id={enquiry._id} fields={{ returnTo: back }}
+              label="Delete enquiry" confirmText={`Delete the enquiry from ${name}? This cannot be undone.`} />
+          </footer>
         </>
       ) : <h1 className="admin-page-title">Enquiry not found</h1>}
     </div>

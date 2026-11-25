@@ -52,7 +52,7 @@ export default async function VerifyEmailPage({
       title={`You're all set, ${firstName}`}
       subtitle="Your email is confirmed and you're signed in."
     >
-      <div className="rounded-[18px] border border-sand-300 bg-sand-100 p-5" role="status">
+      <div className="rounded-[14px] border border-sand-300 bg-sand-100 p-5" role="status">
         <span className="grid h-11 w-11 place-items-center rounded-full bg-ink text-gold-400">
           <BadgeCheck className="h-5 w-5" aria-hidden />
         </span>

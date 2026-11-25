@@ -36,7 +36,7 @@ export default async function ExperiencesPage() {
         imageAlt="A travel destination"
       />
 
-      <section className="container-page pb-16 md:pb-24">
+      <section className="container-page pb-12 md:pb-16">
         <div>
           <div className="grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
             {experiences.map((experience) => (
@@ -45,7 +45,7 @@ export default async function ExperiencesPage() {
                 href={`/speciality-tours/${experience.slug}`}
                 className="group"
               >
-                <div className="relative aspect-[4/3] overflow-hidden rounded-[24px] bg-ink">
+                <div className="relative aspect-[4/3] overflow-hidden rounded-[20px] bg-ink">
                   <Image
                     src={imageUrl(experience.image, 900)}
                     alt={experience.title}

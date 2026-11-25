@@ -12,9 +12,9 @@ export function AuthCard({
 }) {
   return (
     <div className="bg-sand-100">
-      <div className="container-page py-10 md:py-16">
-        <div className="mx-auto grid max-w-[980px] overflow-hidden rounded-[28px] border border-sand-300 bg-paper shadow-[0_32px_80px_-52px_rgba(11,39,53,0.45)] lg:grid-cols-[0.85fr_1fr]">
-          <aside className="on-ink relative hidden flex-col justify-between overflow-hidden bg-ink p-9 text-paper lg:flex">
+      <div className="container-page py-8 md:py-12">
+        <div className="mx-auto grid max-w-[980px] overflow-hidden rounded-[20px] border border-sand-300 bg-paper shadow-[0_32px_80px_-52px_rgba(11,39,53,0.45)] lg:grid-cols-[0.85fr_1fr]">
+          <aside className="on-ink relative hidden flex-col justify-between overflow-hidden bg-ink p-7 text-paper lg:flex">
             <div
               aria-hidden="true"
               className="absolute -right-20 -top-24 h-64 w-64 rounded-full border border-white/10"
@@ -34,7 +34,7 @@ export function AuthCard({
                 departure in a couple of taps.
               </p>
 
-              <ul className="mt-8 space-y-4">
+              <ul className="mt-6 space-y-3.5">
                 {[
                   ["Book faster", "Your name, email and phone are filled in for you."],
                   ["All trips in one place", "See upcoming departures, payments and status."],
@@ -57,14 +57,14 @@ export function AuthCard({
               </ul>
             </div>
 
-            <div className="relative mt-10 space-y-3 border-t border-white/10 pt-6">
+            <div className="relative mt-8 space-y-3 border-t border-white/10 pt-5">
               <p className="flex items-center gap-2 text-[13px] font-medium text-navy-200">
                 <ShieldCheck className="h-4 w-4 text-gold-400" />
                 Your details stay private. Never sold, never shared.
               </p>
               <a
                 href={site.phoneHref}
-                className="flex items-center gap-2 text-[13px] font-semibold text-gold-400 transition hover:text-gold-300"
+                className="flex min-h-8 items-center gap-2 text-[13px] font-semibold text-gold-400 transition hover:text-gold-300"
               >
                 <Phone className="h-4 w-4" />
                 Need help? {site.phone}
@@ -72,10 +72,10 @@ export function AuthCard({
             </div>
           </aside>
 
-          <div className="p-6 sm:p-9 md:p-10">
+          <div className="flex flex-col justify-center p-6 sm:p-8 md:p-9">
             <h1 className="type-h2 text-ink">{title}</h1>
             <p className="type-small mt-2 max-w-md text-navy-600">{subtitle}</p>
-            <div className="mt-7">{children}</div>
+            <div className="mt-6">{children}</div>
           </div>
         </div>
       </div>

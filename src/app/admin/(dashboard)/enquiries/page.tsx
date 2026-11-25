@@ -4,7 +4,8 @@ import { AdminNotice, DatabaseSetupNotice } from "@/components/admin/admin-ui";
 import { AdminListPagination, adminPageNumber } from "@/components/admin/admin-list-pagination";
 import { AdminBookingSortButton as AdminSortButton } from "@/components/admin/admin-booking-sort-button";
 import { AdminRequestStatus } from "@/components/admin/admin-request-status";
-import { updateEnquiryStatusAction } from "@/app/admin/actions";
+import { deleteEnquiryAction, updateEnquiryStatusAction } from "@/app/admin/actions";
+import { AdminDeleteButton } from "@/components/admin/admin-delete-button";
 import { splitEnquiryMessage } from "@/lib/enquiry-message";
 import { loadAdminEnquiries } from "@/lib/content";
 import { enquiryStatusLabels as statusLabels } from "@/lib/enquiry-status";
@@ -126,7 +127,7 @@ export default async function AdminEnquiriesPage({ searchParams }: {
                           href={href(active, 1, `${name}-${sortColumn === name && order === "asc" ? "desc" : "asc"}`)} />
                       </th>
                     ))}
-                    <th scope="col" role="columnheader" className="admin-request-details-cell"><span className="sr-only">Details</span></th>
+                    <th scope="col" role="columnheader" className="admin-request-details-cell"><span className="sr-only">Actions</span></th>
                   </tr></thead>
                   <tbody role="rowgroup">
                     {visible.slice((page - 1) * pageSize, page * pageSize).map((item) => {
@@ -137,10 +138,10 @@ export default async function AdminEnquiriesPage({ searchParams }: {
                       const detailHref = `/admin/enquiries/${item._id}?from=${encodeURIComponent(returnTo)}`;
                       const { interest } = splitEnquiryMessage(item.message);
                       return (
-                        <tr key={item._id} role="row">
+                        <tr key={item._id} role="row" className="admin-clickable-row">
                           <th scope="row" role="rowheader" className="admin-enquiry-traveller">
                             <div className="admin-request-lines">
-                              <Link className="admin-booking-detail-link" href={detailHref}>{item.name || item.email}</Link>
+                              <Link className="admin-booking-detail-link admin-row-link" href={detailHref}>{item.name || item.email}</Link>
                               {item.email && <a href={`mailto:${item.email}`} className="admin-enquiry-contact">{item.email}</a>}
                               {item.phone && <a href={`tel:${item.phone.replace(/\s/g, "")}`} className="admin-enquiry-contact">{item.phone}</a>}
                             </div>
@@ -161,7 +162,11 @@ export default async function AdminEnquiriesPage({ searchParams }: {
                               action={updateEnquiryStatusAction} labels={statusLabels} fieldLabel="Enquiry status" returnTo={returnTo} />
                           </td>
                           <td role="cell" className="admin-request-details-cell">
-                            <Link className="btn-outline" href={detailHref} aria-label={`Details for ${item.name || item.email}`}>Details</Link>
+                            <div className="admin-request-row-actions">
+                              <AdminDeleteButton action={deleteEnquiryAction} id={item._id} fields={{ returnTo }} compact
+                                label={`Delete enquiry from ${item.name || item.email}`}
+                                confirmText={`Delete the enquiry from ${item.name || item.email}? This cannot be undone.`} />
+                            </div>
                           </td>
                         </tr>
                       );

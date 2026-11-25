@@ -20,8 +20,8 @@ export function DestinationCard({
     <Link
       href={`/destinations/${destination.slug}`}
       className={cn(
-        "group relative isolate flex min-h-[308px] flex-col justify-end overflow-hidden rounded-[28px] bg-ink p-7 text-paper",
-        big && "min-h-[420px] lg:min-h-[640px]",
+        "card-lift group relative isolate flex min-h-[280px] flex-col justify-end overflow-hidden rounded-[20px] bg-ink p-6 text-paper",
+        big && "min-h-[360px] lg:min-h-[520px]",
         className,
       )}
     >
@@ -35,7 +35,7 @@ export function DestinationCard({
       />
       <div className="absolute inset-0 bg-gradient-to-t from-ink/95 via-ink/30 to-ink/20" />
 
-      <div className="absolute inset-x-6 top-6 flex items-center justify-between gap-3">
+      <div className="absolute inset-x-5 top-5 flex items-center justify-between gap-3">
         <span className="badge badge-glass">
           {tourCount} {tourCount === 1 ? "tour" : "tours"}
         </span>
@@ -48,7 +48,7 @@ export function DestinationCard({
         <p className="type-small mt-2 text-navy-200">{destination.tagline}</p>
       </div>
 
-      <span className="absolute bottom-6 right-6 grid h-10 w-10 place-items-center rounded-full bg-gold-400 text-ink transition duration-300 group-hover:scale-105 group-hover:bg-gold-300">
+      <span className="absolute bottom-5 right-5 grid h-10 w-10 place-items-center rounded-full bg-gold-400 text-ink transition duration-300 group-hover:scale-105 group-hover:bg-gold-300">
         <span className="text-base leading-none">↗</span>
       </span>
     </Link>

@@ -3,7 +3,7 @@ import Link from "next/link";
 import {
   BadgeCheck,
   Headset,
-  MapPin,
+  Plane,
   ShieldCheck,
   Wallet,
 } from "lucide-react";
@@ -11,8 +11,8 @@ import { CtaBand } from "@/components/site/cta-band";
 import { Contours } from "@/components/site/contours";
 import { DestinationCard } from "@/components/site/destination-card";
 import { FeatureTile } from "@/components/site/feature-tile";
+import { Skyline } from "@/components/site/skyline";
 import { SectionHeading } from "@/components/site/section-heading";
-import { Rating } from "@/components/site/rating";
 import { SearchWidget } from "@/components/site/search-widget";
 import { Stamp } from "@/components/site/stamp";
 import { TestimonialCarousel } from "@/components/site/testimonial-carousel";
@@ -29,7 +29,27 @@ import { imageUrl } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
-const heroCoordinates = "34.30° N · 75.29° E";
+/**
+ * Arch outline for a w×h box: a semicircle on top, straight sides, and a
+ * bottom edge that climbs `drop` px from left to right, with 16px corners.
+ */
+function archPath(w: number, h: number, drop: number) {
+  const r = w / 2;
+  const c = 16;
+  const length = Math.hypot(w, drop);
+  const ux = (w / length) * c;
+  const uy = (drop / length) * c;
+  const n = (value: number) => Math.round(value * 10) / 10;
+  return [
+    `M0 ${r}`,
+    `A${r} ${r} 0 0 1 ${w} ${r}`,
+    `L${w} ${n(h - drop - c)}`,
+    `Q${w} ${h - drop} ${n(w - ux)} ${n(h - drop + uy)}`,
+    `L${n(ux)} ${n(h - uy)}`,
+    `Q0 ${h} 0 ${h - c}`,
+    "Z",
+  ].join(" ");
+}
 
 export default async function HomePage() {
   const [tours, destinations, experiences, testimonials] = await Promise.all([
@@ -43,7 +63,34 @@ export default async function HomePage() {
   const featuredSelection = (featuredTours.length ? featuredTours : tours).slice(0, 3);
   const bySlug = (slug: string) => destinations.find((item) => item.slug === slug);
   const heroDestination = bySlug("kashmir") ?? destinations[0];
-  const insetDestination = bySlug("kerala") ?? destinations[1];
+  // Hero arches, left to right: backwaters, mountains, desert forts. The centre
+  // one rises highest; each bottom edge climbs `drop` px from left to right.
+  const heroArches = [
+    {
+      key: "left",
+      destination: bySlug("kerala") ?? destinations[1],
+      box: "left-0 top-[168px] h-[384px] w-[172px]",
+      width: 172,
+      height: 384,
+      drop: 8,
+    },
+    {
+      key: "centre",
+      destination: heroDestination,
+      box: "left-[182px] top-[36px] h-[544px] w-[268px]",
+      width: 268,
+      height: 544,
+      drop: 40,
+    },
+    {
+      key: "right",
+      destination: bySlug("rajasthan") ?? destinations[2],
+      box: "left-[458px] top-[156px] h-[404px] w-[182px]",
+      width: 182,
+      height: 404,
+      drop: 24,
+    },
+  ];
   const bentoDestinations = [
     bySlug("kashmir"),
     bySlug("kerala"),
@@ -66,131 +113,156 @@ export default async function HomePage() {
   return (
     <>
       {/* ---------------------------------------------------------------- hero */}
-      <section className="container-page pt-10 md:pt-12">
-        <div className="grid items-center gap-12 xl:grid-cols-[1fr_600px] xl:gap-16">
-          <div className="animate-rise">
-            <h1 className="type-display text-ink">
-              Journeys that
-              <br />
-              <span className="accent-line">stay with you</span>
-              <br />
-              long after.
-            </h1>
+      <div className="relative isolate overflow-hidden bg-[linear-gradient(to_bottom,var(--color-paper),var(--color-sand-100)_20%,var(--color-sand-100)_75%,var(--color-paper))]">
+        <Skyline className="absolute bottom-[132px] left-[-3%] -z-10 hidden w-[48%] max-w-[720px] md:block" />
+        <Contours
+          className="-z-10 hidden md:block"
+          color="rgba(11,39,53,0.07)"
+          count={7}
+          cx={1.02}
+          cy={1.08}
+          seed={2}
+        />
 
-            <p className="type-lead mt-6 max-w-[460px] text-navy-700">
-              Thoughtfully planned trips across India and the world, with a
-              tour leader from day one.
-            </p>
+        <section className="container-page pt-8 md:pt-12">
+          <div className="grid items-center gap-8 xl:grid-cols-[1fr_640px] xl:gap-8">
+            <div className="hero-stagger">
+              <h1 className="type-hero text-ink">
+                Offbeat India
+                <br />
+                and the world,
+                <br />
+                <span className="accent-line">led from day one</span>
+              </h1>
 
-            <div className="mt-8 grid gap-3 sm:flex sm:flex-wrap sm:items-center">
-              <Link href="/tours" className="btn btn-ink btn-lg">
-                Explore tours
-                <span className="btn-dot">→</span>
-              </Link>
-              <Link href="/contact" className="btn btn-outline btn-lg">
-                Talk to an expert
-              </Link>
-            </div>
+              <p className="type-lead mt-6 max-w-[440px] text-navy-700">
+                Thoughtfully planned group tours and personalised trips, from
+                Kashmir and Kerala to Japan and Europe.
+              </p>
 
-            <div className="mt-8 flex flex-wrap items-center gap-4">
-              <div>
-                <Rating score="4.9" count="12,400+ reviews" />
-                <p className="mt-0.5 text-[13px] font-medium text-navy-500">
-                  1.2 million travellers hosted
-                </p>
+              <div className="mt-8 grid gap-3 sm:flex sm:flex-wrap sm:items-center">
+                <Link href="/tours" className="btn btn-ink btn-lg">
+                  Explore tours
+                  <span className="btn-dot">→</span>
+                </Link>
+                <Link href="/contact" className="btn btn-outline btn-lg">
+                  Talk to an expert
+                </Link>
               </div>
+
+              {heroDestination ? (
+                <div className="relative mt-7 aspect-[350/300] overflow-hidden rounded-[20px] bg-ink md:aspect-[2/1] xl:hidden">
+                  <Image
+                    src={imageUrl(heroDestination.image, 900)}
+                    alt={heroDestination.name}
+                    fill
+                    sizes="100vw"
+                    className="object-cover"
+                  />
+                  <span className="absolute bottom-4 right-4">
+                    <Stamp size={96} tone="paper" />
+                  </span>
+                </div>
+              ) : null}
             </div>
 
-            {heroDestination ? (
-              <div className="relative mt-9 aspect-[350/300] overflow-hidden rounded-[28px] bg-ink md:aspect-[2/1] xl:hidden">
-                <Image
-                  src={imageUrl(heroDestination.image, 900)}
-                  alt={heroDestination.name}
-                  fill
-                  sizes="100vw"
-                  className="object-cover"
+            {/* Three arched windows onto India under a pale sun, with paper arches
+                peeking out behind them and one flight path over the top. */}
+            <div className="hero-collage relative mx-auto hidden h-[588px] w-full max-w-[640px] xl:block">
+              <span className="absolute left-[408px] top-[44px] h-[144px] w-[144px] rounded-full bg-gold-200/70" />
+              <span className="absolute left-[92px] top-[108px] h-[320px] w-[148px] rounded-t-full bg-sand-200/70" />
+              <span className="absolute left-[516px] top-[100px] h-[320px] w-[132px] rounded-t-full bg-sand-200/70" />
+
+              {heroArches.map((arch) =>
+                arch.destination ? (
+                  <figure
+                    key={arch.key}
+                    // Shadow on the wrapper so the clip below doesn't cut it off.
+                    className={`absolute drop-shadow-[0_16px_20px_rgba(11,39,53,0.16)] ${arch.box}`}
+                  >
+                    <div
+                      className="absolute inset-0 bg-sand-200"
+                      style={{ clipPath: `path("${archPath(arch.width, arch.height, arch.drop)}")` }}
+                    >
+                      {/* Oversized by 16% so the photo can drift on scroll without
+                          showing an edge; the centre arch drifts most. */}
+                      <Image
+                        src={imageUrl(
+                          arch.destination.image,
+                          Math.round(arch.width * 2.32),
+                          { height: Math.round(arch.height * 2.32), quality: 88 },
+                        )}
+                        alt={arch.destination.name}
+                        fill
+                        priority={arch.key === "centre"}
+                        sizes={`${Math.round(arch.width * 1.16)}px`}
+                        className="hero-parallax object-cover"
+                        style={{ "--drift": arch.key === "centre" ? "6%" : "4%" } as React.CSSProperties}
+                      />
+                    </div>
+                  </figure>
+                ) : null,
+              )}
+
+              <svg
+                viewBox="0 0 400 220"
+                aria-hidden="true"
+                className="absolute left-0 top-0 h-[220px] w-[400px] text-ink"
+              >
+                <path
+                  d="M16 208 C4 124 112 32 248 14 C290 9 322 9 346 11"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeOpacity="0.5"
+                  strokeWidth="1.25"
+                  strokeDasharray="4 5"
+                  strokeLinecap="round"
                 />
-                <span className="absolute bottom-4 right-4">
-                  <Stamp size={96} />
-                </span>
-              </div>
-            ) : null}
+              </svg>
+              <Plane
+                aria-hidden="true"
+                className="absolute left-[348px] top-0 h-8 w-8 rotate-45 fill-ink text-ink"
+                strokeWidth={1.25}
+              />
+            </div>
           </div>
 
-          {/* Collage */}
-          <div className="relative mx-auto hidden aspect-square w-full max-w-[600px] xl:block">
-            {heroDestination ? (
-              <div className="absolute left-[160px] top-0 h-[560px] w-[440px] overflow-hidden rounded-t-[220px] rounded-b-[28px] bg-ink">
-                <Image
-                  src={imageUrl(heroDestination.image, 1200)}
-                  alt={heroDestination.name}
-                  fill
-                  priority
-                  sizes="440px"
-                  className="object-cover"
-                />
-              </div>
-            ) : null}
+          <div className="mt-8">
+            <SearchWidget
+              destinations={destinations}
+              experiences={experiences}
+            />
+          </div>
 
-            {insetDestination ? (
-              <div className="absolute left-0 top-[260px] h-[300px] w-[240px] overflow-hidden rounded-[28px] border-8 border-paper bg-ink shadow-[0_18px_40px_-30px_rgba(11,39,53,0.5)]">
-                <Image
-                  src={imageUrl(insetDestination.image, 700)}
-                  alt={insetDestination.name}
-                  fill
-                  sizes="240px"
-                  className="object-cover"
-                />
-              </div>
-            ) : null}
-
-            <div className="absolute left-[200px] top-[40px] flex items-center gap-2.5 rounded-full bg-paper py-2.5 pl-2.5 pr-4 shadow-[0_12px_32px_-16px_rgba(11,39,53,0.45)]">
-              <span className="grid h-8 w-8 place-items-center rounded-full bg-gold-400 text-ink">
-                <MapPin className="h-4 w-4" />
-              </span>
-              <span>
-                <span className="block text-[13px] font-semibold text-ink">
-                  Sonamarg, Kashmir
-                </span>
-                <span className="block text-xs font-medium text-navy-500">
-                  {heroCoordinates}
-                </span>
-              </span>
-            </div>
-
-            <span className="absolute left-[452px] top-[470px]">
-              <Stamp size={140} />
+          <div className="mt-5 flex flex-wrap items-center gap-2">
+            <span className="w-full text-sm font-semibold text-navy-500 sm:w-auto">
+              Popular:
             </span>
+            {[
+              {
+                label: "Kashmir in spring",
+                href: "/tours?destination=kashmir",
+              },
+              { label: "Women's Special", href: "/tours?experience=women" },
+              { label: "Honeymoons", href: "/tours?experience=honeymoon" },
+              { label: "Europe 2027", href: "/destinations/europe" },
+              { label: "Under ₹50k", href: "/tours?price=under50" },
+            ].map((link, index) => (
+              // Four chips fit two even rows on phones; the fifth shows from tablet up.
+              <Link
+                key={link.label}
+                href={link.href}
+                className={`chip ${index === 4 ? "hidden sm:inline-flex" : ""}`}
+              >
+                {link.label}
+              </Link>
+            ))}
           </div>
-        </div>
-
-        <div className="mt-12">
-          <SearchWidget destinations={destinations} experiences={experiences} />
-        </div>
-
-        <div className="mt-6 flex flex-wrap items-center gap-2">
-          <span className="w-full text-sm font-semibold text-navy-500 sm:w-auto">Popular:</span>
-          {[
-            { label: "Kashmir in spring", href: "/tours?destination=kashmir" },
-            { label: "Women's Special", href: "/tours?experience=women" },
-            { label: "Honeymoons", href: "/tours?experience=honeymoon" },
-            { label: "Europe 2027", href: "/destinations/europe" },
-            { label: "Under ₹50k", href: "/tours?price=under50" },
-          ].map((link, index) => (
-            // Four chips fit two even rows on phones; the fifth shows from tablet up.
-            <Link
-              key={link.label}
-              href={link.href}
-              className={`chip ${index === 4 ? "hidden sm:inline-flex" : ""}`}
-            >
-              {link.label}
-            </Link>
-          ))}
-        </div>
-      </section>
+        </section>
+      </div>
 
       {/* --------------------------------------------------------------- stats */}
-      <section className="container-page pt-16 md:pt-20">
+      <section className="container-page pt-12 md:pt-14">
         <div className="grid grid-cols-2 gap-x-6 gap-y-8 md:grid-cols-4 md:gap-x-0">
           {stats.map((stat, index) => (
             <div
@@ -229,7 +301,7 @@ export default async function HomePage() {
           }
         />
 
-        <div className="mt-10 grid gap-6 lg:grid-cols-[588px_1fr]">
+        <div className="mt-8 grid gap-6 lg:grid-cols-[588px_1fr]">
           {bentoDestinations[0] ? (
             <DestinationCard
               destination={bentoDestinations[0]}
@@ -267,7 +339,7 @@ export default async function HomePage() {
             }
           />
 
-          <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {featuredSelection.map((tour, index) => (
               <TourCard key={tour.slug} tour={tour} priority={index === 0} />
             ))}
@@ -278,7 +350,7 @@ export default async function HomePage() {
       {/* -------------------------------------------------------------- why us */}
       <section className="on-ink relative isolate overflow-hidden bg-ink">
         <Contours cx={0.82} cy={0.3} count={9} color="rgba(255,255,255,0.055)" />
-        <div className="container-page relative grid gap-12 py-20 md:py-32 lg:grid-cols-[1fr_440px] lg:gap-20">
+        <div className="container-page relative grid gap-8 py-12 md:py-16 lg:grid-cols-[1fr_440px] lg:gap-14">
           <div>
             <SectionHeading
               number="03"
@@ -288,7 +360,7 @@ export default async function HomePage() {
               dark
             />
 
-            <div className="mt-10 grid gap-5 sm:grid-cols-2">
+            <div className="mt-8 grid gap-5 sm:grid-cols-2">
               <FeatureTile
                 dark
                 icon={<Wallet className="h-5 w-5" />}
@@ -341,7 +413,7 @@ export default async function HomePage() {
           }
         />
 
-        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {specialities.map((experience) => {
             const count = tours.filter((tour) =>
               tour.experiences.includes(experience.slug),
@@ -353,7 +425,7 @@ export default async function HomePage() {
                 href={`/speciality-tours/${experience.slug}`}
                 className="group"
               >
-                <div className="relative aspect-[4/3] overflow-hidden rounded-[24px] bg-ink sm:aspect-[282/360]">
+                <div className="relative aspect-[4/3] overflow-hidden rounded-[20px] bg-ink sm:aspect-[282/360]">
                   <Image
                     src={imageUrl(experience.image, 900)}
                     alt={experience.title}

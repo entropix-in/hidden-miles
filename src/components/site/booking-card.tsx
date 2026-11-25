@@ -93,7 +93,7 @@ export function BookingCard({
   const bookingHref = `/tours/${tourSlug}/book?${bookingParams.toString()}`;
 
   return (
-    <div className="rounded-[28px] border border-sand-300 bg-paper p-7 shadow-[0_24px_56px_-36px_rgba(11,39,53,0.28)] sm:p-8">
+    <div className="rounded-[20px] border border-sand-300 bg-paper p-6 shadow-[0_24px_56px_-36px_rgba(11,39,53,0.28)] sm:p-6">
       <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
         {oldPrice ? (
           <span className="text-sm font-medium text-navy-500 line-through">
@@ -107,12 +107,12 @@ export function BookingCard({
         ) : null}
       </div>
       <p className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-1">
-        <span className="text-[32px] font-semibold leading-none tracking-[-0.03em] text-ink">
+        <span className="text-[24px] font-semibold leading-none tracking-[-0.03em] text-ink">
           {formatINR(adultPrice)}
         </span>
       </p>
 
-      <p id="departure-date-label" className="type-label mt-6 text-navy-500">
+      <p id="departure-date-label" className="type-label mt-5 text-navy-500">
         Departure date
       </p>
 
@@ -141,7 +141,7 @@ export function BookingCard({
           <ChevronDown aria-hidden="true" className="h-4 w-4 shrink-0 text-navy-500" />
         </button>
       ) : (
-        <p className="mt-3 rounded-[16px] border border-dashed border-sand-300 bg-sand-100 px-4 py-3 text-[13px] font-medium text-navy-700">
+        <p className="mt-3 rounded-[14px] border border-dashed border-sand-300 bg-sand-100 px-4 py-3 text-[13px] font-medium text-navy-700">
           New dates are being finalised. Ask us for the next departure.
         </p>
       )}
@@ -149,7 +149,7 @@ export function BookingCard({
       <Dialog.Root open={pickerOpen} onOpenChange={setPickerOpen}>
         <Dialog.Portal>
           <Dialog.Backdrop className="fixed inset-0 z-[80] bg-ink/45 backdrop-blur-[2px]" />
-          <Dialog.Popup className="fixed left-1/2 top-1/2 z-[81] max-h-[85dvh] w-[min(94vw,560px)] -translate-x-1/2 -translate-y-1/2 overflow-y-auto overscroll-contain rounded-[24px] border border-sand-300 bg-paper p-5 shadow-[0_40px_80px_-40px_rgba(11,39,53,0.55)] sm:p-6">
+          <Dialog.Popup className="fixed left-1/2 top-1/2 z-[81] max-h-[85dvh] w-[min(94vw,560px)] -translate-x-1/2 -translate-y-1/2 overflow-y-auto overscroll-contain rounded-[20px] border border-sand-300 bg-paper p-5 shadow-[0_40px_80px_-40px_rgba(11,39,53,0.55)] sm:p-6">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <Dialog.Title className="type-title text-ink">
@@ -249,7 +249,7 @@ export function BookingCard({
           id="departure-city"
           value={city}
           onValueChange={setCity}
-          className="mt-2 py-3 font-semibold"
+          className="mt-3 h-10 py-0 text-sm font-semibold"
         >
           {cities.map((item) => (
             <option key={item.name} value={item.name}>
@@ -311,7 +311,7 @@ export function BookingCard({
         </div>
       </div>
 
-      <div className="mt-6 rounded-[16px] border border-sand-300 bg-sand-50 p-4">
+      <div className="mt-6 rounded-[14px] border border-sand-300 bg-sand-50 p-4">
         <div className="space-y-2.5 text-sm">
           <div className="flex items-center justify-between gap-3">
             <span className="text-navy-700">
@@ -369,7 +369,7 @@ export function BookingCard({
         Ask a question
       </Link>
 
-      <div className="mt-5 space-y-2">
+      <div className="mt-4 space-y-2">
         {[
           "Free date change up to 30 days before",
           "Balance due 30 days before travel",
@@ -389,7 +389,7 @@ export function BookingCard({
         href={site.phoneHref}
         className="mt-5 flex items-center gap-3 rounded-[14px] border border-sand-300 bg-sand-50 p-3.5 transition hover:border-navy-300 hover:bg-sand-100"
       >
-        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-navy-500 text-xs font-semibold text-white">
+        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-navy-500 text-xs font-semibold text-white">
           NK
         </span>
         <span className="min-w-0 flex-1">

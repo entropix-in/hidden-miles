@@ -26,16 +26,16 @@ export function PageHero({
   className?: string;
 }) {
   return (
-    <section className={cn("container-page pt-8 pb-14 md:pt-12 md:pb-20", className)}>
+    <section className={cn("container-page pt-8 pb-10 md:pt-12 md:pb-14", className)}>
       <div
         className={cn(
-          "grid gap-10 xl:grid-cols-[1fr_500px] xl:gap-16",
+          "grid gap-8 xl:grid-cols-[1fr_500px] xl:gap-12",
           description ? "items-start" : "items-center",
         )}
       >
         <div className="max-w-[600px]">
           <Breadcrumbs items={items} />
-          <h1 className="type-h1 mt-5 text-ink">
+          <h1 className="type-h1 mt-4 text-ink">
             {title}
             {accent ? (
               <>
@@ -49,12 +49,12 @@ export function PageHero({
               {description}
             </p>
           ) : null}
-          {children ? <div className="mt-7">{children}</div> : null}
+          {children ? <div className="mt-6">{children}</div> : null}
         </div>
 
         <div
           className={cn(
-            "relative aspect-[16/10] w-full overflow-hidden rounded-[24px] bg-ink sm:block",
+            "relative aspect-[16/10] w-full overflow-hidden rounded-[20px] bg-ink sm:block",
             // A heading-only hero gets a shorter photo so the text column isn't left with dead space.
             description ? "xl:aspect-[16/11]" : children ? "xl:aspect-[2/1]" : "xl:aspect-[21/9]",
             !showImageOnMobile && "hidden",

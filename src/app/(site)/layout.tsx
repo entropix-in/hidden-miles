@@ -1,3 +1,5 @@
+import { ViewTransition } from "react";
+import { ScrollToTop } from "@/components/site/scroll-to-top";
 import { SiteHeader } from "@/components/site/site-header";
 import { SiteFooter } from "@/components/site/site-footer";
 import { loadDestinations, loadTours } from "@/lib/content";
@@ -27,7 +29,11 @@ export default async function SiteLayout({
         tourCounts={tourCounts}
         user={user}
       />
-      <main>{children}</main>
+      {/* Route changes crossfade + rise the page body; header/footer stay put. */}
+      <ScrollToTop />
+      <ViewTransition default="page">
+        <main>{children}</main>
+      </ViewTransition>
       <SiteFooter />
     </>
   );

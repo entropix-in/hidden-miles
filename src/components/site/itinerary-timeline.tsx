@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 
 export function ItineraryTimeline({ days }: { days: ItineraryDay[] }) {
   return (
-    <ol className="mt-8">
+    <ol className="mt-6">
       {days.map((day, index) => {
         const badges = getItineraryBadges(day);
         const last = index === days.length - 1;
@@ -14,12 +14,12 @@ export function ItineraryTimeline({ days }: { days: ItineraryDay[] }) {
         return (
           <li
             key={day.day}
-            className="grid grid-cols-[48px_1fr] gap-5 sm:gap-6"
+            className="grid grid-cols-[40px_1fr] gap-4 sm:gap-5"
           >
             <div className="flex flex-col items-center">
               <span
                 className={cn(
-                  "grid h-12 w-12 shrink-0 place-items-center rounded-full text-sm font-semibold",
+                  "grid h-10 w-10 shrink-0 place-items-center rounded-full text-sm font-semibold",
                   index === 0
                     ? "bg-ink text-gold-400"
                     : "border-[1.5px] border-sand-300 bg-paper text-navy-700",
@@ -34,7 +34,7 @@ export function ItineraryTimeline({ days }: { days: ItineraryDay[] }) {
 
             <details
               open={index === 0}
-              className="group min-w-0 pb-7 [&::-webkit-details-marker]:hidden"
+              className="group min-w-0 pb-6 [&::-webkit-details-marker]:hidden"
             >
               <summary className="flex cursor-pointer list-none items-start justify-between gap-4">
                 <span className="type-title mt-1 block text-ink">

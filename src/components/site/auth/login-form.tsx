@@ -106,7 +106,7 @@ export function LoginForm({
             </label>
             <Link
               href={withNext("/forgot-password", next)}
-              className="text-xs font-semibold text-blue-700 underline-offset-4 transition hover:text-blue-800 hover:underline"
+              className="inline-flex min-h-8 items-center text-xs font-semibold text-blue-700 underline-offset-4 transition hover:text-blue-800 hover:underline"
             >
               Forgot password?
             </Link>
@@ -132,7 +132,7 @@ export function LoginForm({
           Keep me signed in on this device
         </label>
 
-        <SubmitButton pending={pending} pendingLabel="Signing in…" className={disabled ? "pointer-events-none opacity-55" : undefined}>
+        <SubmitButton pending={pending} pendingLabel="Signing in…" className={disabled ? "mt-2 pointer-events-none opacity-55" : "mt-2"}>
           <LockKeyhole className="h-4 w-4" aria-hidden />
           Sign in
         </SubmitButton>
@@ -140,7 +140,7 @@ export function LoginForm({
 
       <Divider label="New here?" />
 
-      <Link href={withNext("/signup", next)} className="btn btn-outline w-full">
+      <Link href={withNext("/signup", next)} className="btn btn-outline btn-lg w-full">
         Create an account
         <span className="btn-dot">→</span>
       </Link>

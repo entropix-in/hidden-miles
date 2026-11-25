@@ -116,7 +116,7 @@ export default async function AccountSettingsPage({
 
   return (
     <div className="bg-sand-100">
-      <div className="container-page pt-8 md:pt-12">
+      <div className="container-page pt-6 md:pt-8">
         <Breadcrumbs
           items={[
             { label: "My account", href: "/account" },
@@ -125,8 +125,8 @@ export default async function AccountSettingsPage({
         />
       </div>
 
-      <div className="container-page py-8 md:py-12">
-        <h1 className="type-h1 text-[clamp(1.5rem,2.6vw,2.1rem)] text-ink">
+      <div className="container-page py-8 md:py-10">
+        <h1 className="type-h1 text-ink">
           Account settings
         </h1>
 
@@ -135,7 +135,7 @@ export default async function AccountSettingsPage({
           {!user.emailVerified ? <VerifyEmailBanner email={user.email} /> : null}
         </div>
 
-        <div className="mt-8 rounded-[24px] border border-sand-300 bg-paper p-6 md:p-10">
+        <div className="mt-6 rounded-[20px] border border-sand-300 bg-paper p-6 md:p-8">
           <ProfilePanel name={user.name} phone={user.phone} />
           <EmailPanel
             email={user.email}

@@ -4,7 +4,7 @@ import { Contours } from "@/components/site/contours";
 
 export default function SiteNotFound() {
   return (
-    <section className="relative isolate overflow-hidden pt-8 pb-20 md:pt-12 md:pb-28">
+    <section className="relative isolate overflow-hidden pt-8 pb-16 md:pt-10 md:pb-20">
       <Contours
         color="rgba(11,39,53,0.12)"
         count={10}

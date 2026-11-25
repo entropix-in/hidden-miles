@@ -80,7 +80,11 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en" className={`${manrope.variable} ${fraunces.variable}`}>
+    <html
+      lang="en"
+      data-scroll-behavior="smooth"
+      className={`${manrope.variable} ${fraunces.variable}`}
+    >
       <body>
         {children}
         <script
