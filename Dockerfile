@@ -24,6 +24,9 @@ COPY --from=build --chown=node:node /app/public ./www/public
 COPY --from=build /app/node_modules ./node_modules
 COPY drizzle.config.ts ./
 COPY drizzle ./drizzle
+COPY tsconfig.json ./
+COPY scripts/seed.ts ./scripts/seed.ts
+COPY src ./src
 RUN mkdir -p /app/storage/media && chown -R node:node /app/storage
 
 USER node
