@@ -824,6 +824,142 @@
   animation: float-slow 7s ease-in-out infinite;
 }
 
+/* ------------------------------------------------------------------
+   Motion — subtle, public site only. Reveals use the individual
+   `translate`/`scale` properties so they never fight hover `transform`s.
+   ------------------------------------------------------------------ */
+:root {
+  --ease-out-soft: cubic-bezier(0.22, 0.68, 0.28, 1);
+}
+
+@keyframes fade-rise {
+  from {
+    opacity: 0;
+    translate: 0 18px;
+  }
+  to {
+    opacity: 1;
+    translate: none;
+  }
+}
+
+@keyframes fade-pop {
+  from {
+    opacity: 0;
+    scale: 0.96;
+  }
+  to {
+    opacity: 1;
+    scale: none;
+  }
+}
+
+/* Home hero: copy lines arrive in sequence, collage pieces settle in after. */
+.hero-stagger > * {
+  animation: fade-rise 700ms var(--ease-out-soft) both;
+}
+.hero-stagger > :nth-child(2) { animation-delay: 90ms; }
+.hero-stagger > :nth-child(3) { animation-delay: 180ms; }
+.hero-stagger > :nth-child(4) { animation-delay: 270ms; }
+.hero-stagger > :nth-child(5) { animation-delay: 360ms; }
+
+.hero-collage > * {
+  animation: fade-pop 900ms var(--ease-out-soft) both;
+}
+.hero-collage > :nth-child(1) { animation-delay: 150ms; }
+.hero-collage > :nth-child(2) { animation-delay: 320ms; }
+.hero-collage > :nth-child(3) { animation-delay: 520ms; }
+.hero-collage > :nth-child(4) { animation-delay: 640ms; }
+
+/* Scroll reveals: blocks inside each section fade up as they enter the
+   viewport. Pure CSS (scroll-driven); browsers without support show content
+   immediately. Content already on screen at load renders fully revealed. */
+@supports (animation-timeline: view()) {
+  body:not(:has(.admin-studio)) main section.container-page > *,
+  body:not(:has(.admin-studio)) main section > .container-page > *,
+  body:not(:has(.admin-studio)) main .reveal {
+    animation: fade-rise linear both;
+    animation-timeline: view();
+    animation-range: entry 0 entry 180px;
+  }
+
+  /* Cards within a grid reveal one by one as each enters. */
+  body:not(:has(.admin-studio)) main section .grid > :is(article, a, li, .card, .card-lift) {
+    animation: fade-rise linear both;
+    animation-timeline: view();
+    animation-range: entry 0 entry 140px;
+  }
+
+  /* Never animate the hero copy twice, sticky asides, or anything inside
+     the header/dialogs. */
+  body:not(:has(.admin-studio)) main .hero-stagger,
+  body:not(:has(.admin-studio)) main .hero-stagger *,
+  body:not(:has(.admin-studio)) main .hero-collage,
+  body:not(:has(.admin-studio)) main :is(.sticky, [class*="lg:sticky"]) {
+    animation-timeline: auto;
+  }
+  body:not(:has(.admin-studio)) main .hero-stagger,
+  body:not(:has(.admin-studio)) main :is(.sticky, [class*="lg:sticky"]),
+  /* The opening section of every page is above the fold: show it at once so
+     nothing near the fold loads half-faded. */
+  body:not(:has(.admin-studio)) main > :is(section, div):first-child > *,
+  body:not(:has(.admin-studio)) main > :is(section, div):first-child > .container-page > *,
+  body:not(:has(.admin-studio)) main > :is(section, div):first-child .grid > * {
+    animation: none;
+  }
+
+  /* …but keep the home hero's own entrance sequence. */
+  body:not(:has(.admin-studio)) main > :is(section, div):first-child .hero-stagger > *,
+  body:not(:has(.admin-studio)) main > :is(section, div):first-child .hero-collage > * {
+    animation-timeline: auto;
+  }
+}
+
+/* Page transitions (React <ViewTransition default="page">). The header and
+   footer live outside the named group, so only the page body moves. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+}
+
+::view-transition-group(.page) {
+  animation-duration: 0s;
+}
+
+::view-transition-old(.page),
+::view-transition-new(.page) {
+  height: 100%;
+  object-fit: none;
+  object-position: top;
+}
+
+::view-transition-old(.page) {
+  animation: 160ms ease-out both page-out;
+}
+
+::view-transition-new(.page) {
+  animation: 340ms var(--ease-out-soft) 80ms both page-in;
+}
+
+@keyframes page-out {
+  to {
+    opacity: 0;
+    translate: 0 -6px;
+  }
+}
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+    translate: 0 12px;
+  }
+}
+
+/* Gentle press feedback on buttons. */
+:is(.btn, .btn-primary, .btn-ink, .btn-outline, .btn-light):not(.admin-studio *):active {
+  transform: translateY(0) scale(0.98);
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -831,7 +967,19 @@
 
   .animate-rise,
   .animate-float-slow,
-  .animate-spin-slow {
+  .animate-spin-slow,
+  .hero-stagger > *,
+  .hero-collage > *,
+  main section.container-page > *,
+  main section > .container-page > *,
+  main .reveal,
+  main section .grid > * {
+    animation: none !important;
+  }
+
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
     animation: none !important;
   }
 }

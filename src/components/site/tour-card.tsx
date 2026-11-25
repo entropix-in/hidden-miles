@@ -122,7 +122,7 @@ function TourCardContent({
             </p>
           </div>
           <Link
-            href={`/tours/${tour.slug}#book`}
+            href={`/tours/${tour.slug}`}
             className="btn btn-ink btn-sm"
             aria-label={`Book ${tour.title}`}
           >
@@ -212,7 +212,7 @@ export function TourListCard({
             </p>
           </div>
           <Link
-            href={`/tours/${tour.slug}#book`}
+            href={`/tours/${tour.slug}`}
             className="btn btn-ink btn-sm"
             aria-label={`Book ${tour.title}`}
           >

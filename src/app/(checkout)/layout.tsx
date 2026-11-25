@@ -1,3 +1,5 @@
+import { ViewTransition } from "react";
+import { ScrollToTop } from "@/components/site/scroll-to-top";
 import { Lock, Phone } from "lucide-react";
 import { Logo } from "@/components/site/logo";
 import { site } from "@/data/site";
@@ -30,7 +32,10 @@ export default function CheckoutLayout({
           </div>
         </div>
       </header>
-      <main>{children}</main>
+      <ScrollToTop />
+      <ViewTransition default="page">
+        <main>{children}</main>
+      </ViewTransition>
     </>
   );
 }

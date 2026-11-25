@@ -68,7 +68,7 @@ export default async function HomePage() {
       {/* ---------------------------------------------------------------- hero */}
       <section className="container-page pt-8 md:pt-12">
         <div className="grid items-center gap-8 xl:grid-cols-[1fr_600px] xl:gap-12">
-          <div className="animate-rise">
+          <div className="hero-stagger">
             <h1 className="type-display text-ink">
               Journeys that
               <br />
@@ -118,7 +118,7 @@ export default async function HomePage() {
           </div>
 
           {/* Collage */}
-          <div className="relative mx-auto hidden aspect-square w-full max-w-[600px] xl:block">
+          <div className="hero-collage relative mx-auto hidden aspect-square w-full max-w-[600px] xl:block">
             {heroDestination ? (
               <div className="absolute left-[160px] top-0 h-[560px] w-[440px] overflow-hidden rounded-t-[220px] rounded-b-[28px] bg-ink">
                 <Image
@@ -144,7 +144,7 @@ export default async function HomePage() {
               </div>
             ) : null}
 
-            <div className="absolute left-[200px] top-[40px] flex items-center gap-2.5 rounded-full bg-paper py-2.5 pl-2.5 pr-4 shadow-[0_12px_32px_-16px_rgba(11,39,53,0.45)]">
+            <div className="animate-float-slow absolute left-[200px] top-[40px] flex items-center gap-2.5 rounded-full bg-paper py-2.5 pl-2.5 pr-4 shadow-[0_12px_32px_-16px_rgba(11,39,53,0.45)]">
               <span className="grid h-8 w-8 place-items-center rounded-full bg-gold-400 text-ink">
                 <MapPin className="h-4 w-4" />
               </span>

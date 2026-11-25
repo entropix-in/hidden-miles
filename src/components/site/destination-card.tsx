@@ -20,7 +20,7 @@ export function DestinationCard({
     <Link
       href={`/destinations/${destination.slug}`}
       className={cn(
-        "group relative isolate flex min-h-[280px] flex-col justify-end overflow-hidden rounded-[20px] bg-ink p-6 text-paper",
+        "card-lift group relative isolate flex min-h-[280px] flex-col justify-end overflow-hidden rounded-[20px] bg-ink p-6 text-paper",
         big && "min-h-[360px] lg:min-h-[520px]",
         className,
       )}
