@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { ArrowUpRight, Inbox, Search } from "lucide-react";
+import { deleteBookingAction } from "@/app/admin/actions";
+import { AdminDeleteButton } from "@/components/admin/admin-delete-button";
 import { AdminBookingSortButton } from "@/components/admin/admin-booking-sort-button";
 import { AdminDeparturePackage, departurePackage } from "@/components/admin/admin-departure-package";
 import { AdminBookingStatus } from "@/components/admin/admin-booking-status";
@@ -146,7 +148,7 @@ export default async function AdminBookingRequestsPage({ searchParams }: {
                           href={filterHref({ sort: `${key}-${sortColumn === key && order === "asc" ? "desc" : "asc"}` })} />
                       </th>
                     ))}
-                  <th scope="col" role="columnheader" className="admin-request-details-cell"><span className="sr-only">Details</span></th>
+                  <th scope="col" role="columnheader" className="admin-request-details-cell"><span className="sr-only">Actions</span></th>
                   </tr></thead>
                   <tbody role="rowgroup">
                     {filtered.slice((page - 1) * pageSize, page * pageSize).map((booking) => {
@@ -155,10 +157,10 @@ export default async function AdminBookingRequestsPage({ searchParams }: {
                       const detailHref = `/admin/bookings/${booking._id}?from=${encodeURIComponent(returnTo)}`;
                       const tour = toursBySlug.get(booking.tourSlug);
                       return (
-                        <tr role="row" key={booking._id}>
+                        <tr role="row" key={booking._id} className="admin-clickable-row">
                           <td role="cell" className="admin-booking-traveller">
                             <div className="admin-request-lines">
-                              <Link className="admin-booking-detail-link" href={detailHref}>{booking.name}</Link>
+                              <Link className="admin-booking-detail-link admin-row-link" href={detailHref}>{booking.name}</Link>
                               <p title={booking.email}>{booking.email}</p>
                             </div>
                           </td>
@@ -178,7 +180,11 @@ export default async function AdminBookingRequestsPage({ searchParams }: {
                             <AdminBookingStatus key={booking.status} id={booking._id} name={booking.name} status={booking.status} returnTo={returnTo} />
                           </td>
                           <td role="cell" className="admin-request-details-cell">
-                            <Link className="btn-outline" href={detailHref} aria-label={`Details for ${booking.name}`}>Details</Link>
+                            <div className="admin-request-row-actions">
+                              <AdminDeleteButton action={deleteBookingAction} id={booking._id} fields={{ returnTo }} compact
+                                label={`Delete booking request from ${booking.name}`}
+                                confirmText={`Delete the booking request from ${booking.name}? This cannot be undone.`} />
+                            </div>
                           </td>
                         </tr>
                       );

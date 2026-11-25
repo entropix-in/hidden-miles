@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ExternalLink, Eye, Pencil, Search } from "lucide-react";
+import { ExternalLink, Pencil, Search } from "lucide-react";
 import {
   AdminEmptyState,
   AdminNotice,
@@ -105,7 +105,7 @@ export default async function AdminToursPage({ searchParams }: {
           {matched.slice((page - 1) * pageSize, page * pageSize).map((tour) => (
             <article
               key={tour._id}
-              className="flex flex-col gap-3 rounded-xl border border-stone-200 bg-white p-3 sm:flex-row sm:items-center"
+              className="admin-clickable-row flex flex-col gap-3 rounded-xl border border-stone-200 bg-white p-3 sm:flex-row sm:items-center"
             >
               <div className="relative aspect-[16/9] w-full shrink-0 overflow-hidden rounded-[8px] sm:aspect-[4/3] sm:h-[72px] sm:w-24">
                 {tour.image ? (
@@ -138,7 +138,7 @@ export default async function AdminToursPage({ searchParams }: {
                   </span>
                 </div>
                 <h2 className="mt-1 text-base font-medium text-(--studio-text)">
-                  <Link href={`/admin/tours/${tour._id}`} className="hover:underline">{tour.title}</Link>
+                  <Link href={`/admin/tours/${tour._id}`} className="admin-row-link hover:underline">{tour.title}</Link>
                 </h2>
                 <p className="mt-1 text-sm font-medium text-stone-500">
                   {tour.destinationName} · {formatINR(tour.price)} per person
@@ -146,10 +146,6 @@ export default async function AdminToursPage({ searchParams }: {
               </div>
 
               <div className="flex flex-wrap items-center gap-2 sm:justify-end">
-                <Link href={`/admin/tours/${tour._id}`} className="btn-outline">
-                  <Eye className="h-3.5 w-3.5" aria-hidden />
-                  Details
-                </Link>
                 <Link
                   href={`/tours/${tour.slug}`}
                   target="_blank"

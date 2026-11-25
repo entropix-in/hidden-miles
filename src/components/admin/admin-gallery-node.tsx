@@ -109,7 +109,7 @@ function GalleryComponent({ nodeKey, photos, columns, display }: {
       <div className="admin-block-header">
         <span className="admin-block-title">Photo gallery</span>
         <div className="admin-block-actions">
-          <button type="button" title="Remove gallery" aria-label="Remove photo gallery"
+          <button type="button" className="admin-button-danger" title="Remove gallery" aria-label="Remove photo gallery"
             onClick={() => change((node) => node.remove())}><Trash2 size={16} /></button>
         </div>
       </div>

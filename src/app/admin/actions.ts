@@ -672,6 +672,27 @@ export async function updateEnquiryStatusAction(formData: FormData) {
   succeed(back, "Enquiry status updated.");
 }
 
+export async function deleteEnquiryAction(formData: FormData) {
+  await requireAdmin();
+  const requested = getString(formData, "returnTo");
+  const back = /^\/admin\/enquiries(?:\?|$)/.test(requested) ? requested : "/admin/enquiries";
+
+  try {
+    const db = requireDb();
+    const numericId = parseId(getString(formData, "id"));
+    const [existing] = await db.select({ id: enquiriesTable.id }).from(enquiriesTable)
+      .where(eq(enquiriesTable.id, numericId)).limit(1);
+    if (!existing) throw new Error("Enquiry not found.");
+    await db.delete(enquiriesTable).where(eq(enquiriesTable.id, numericId));
+  } catch (error) {
+    fail(back, error);
+  }
+
+  revalidatePath("/admin/enquiries");
+  revalidatePath("/admin");
+  succeed(back, "Enquiry deleted.");
+}
+
 export async function seedContentAction() {
   await requireAdmin();
 
