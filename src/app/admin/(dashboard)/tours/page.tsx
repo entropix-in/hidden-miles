@@ -138,7 +138,7 @@ export default async function AdminToursPage({ searchParams }: {
                   </span>
                 </div>
                 <h2 className="mt-1 text-base font-medium text-(--studio-text)">
-                  {tour.title}
+                  <Link href={`/admin/tours/${tour._id}`} className="hover:underline">{tour.title}</Link>
                 </h2>
                 <p className="mt-1 text-sm font-medium text-stone-500">
                   {tour.destinationName} · {formatINR(tour.price)} per person
@@ -158,7 +158,7 @@ export default async function AdminToursPage({ searchParams }: {
                   <ExternalLink className="h-3.5 w-3.5" />
                 </Link>
                 <Link
-                  href={`/admin/tours/${tour._id}`}
+                  href={`/admin/tours/${tour._id}/edit`}
                   className="btn-outline"
                 >
                   <Pencil className="h-3.5 w-3.5" />

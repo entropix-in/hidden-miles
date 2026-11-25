@@ -875,14 +875,38 @@
 .hero-collage > * {
   animation: fade-pop 900ms var(--ease-out-soft) both;
 }
-/* Sun first, then the three cards, then the flight path and stamp on top. */
+/* Hero arches: each photo sits oversized in its cutout and drifts down a few
+   percent over the first screen of scrolling, so it reads as a window with
+   depth behind it. Scroll-driven, no JS; static where unsupported or when
+   reduced motion is requested. */
+.hero-parallax {
+  scale: 1.16;
+}
+
+@keyframes hero-drift {
+  from { translate: 0 calc(var(--drift, 4%) * -1); }
+  to { translate: 0 var(--drift, 4%); }
+}
+
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-parallax {
+      animation: hero-drift linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 100vh;
+    }
+  }
+}
+
+/* Sun and paper arches, then the photos, and the flight path last. */
 .hero-collage > :nth-child(1) { animation-delay: 100ms; }
-.hero-collage > :nth-child(2) { animation-delay: 620ms; }
-.hero-collage > :nth-child(3) { animation-delay: 700ms; }
-.hero-collage > :nth-child(4) { animation-delay: 220ms; }
+.hero-collage > :nth-child(2) { animation-delay: 140ms; }
+.hero-collage > :nth-child(3) { animation-delay: 180ms; }
+.hero-collage > :nth-child(4) { animation-delay: 240ms; }
 .hero-collage > :nth-child(5) { animation-delay: 320ms; }
-.hero-collage > :nth-child(6) { animation-delay: 420ms; }
-.hero-collage > :nth-child(7) { animation-delay: 780ms; }
+.hero-collage > :nth-child(6) { animation-delay: 400ms; }
+.hero-collage > :nth-child(7) { animation-delay: 620ms; }
+.hero-collage > :nth-child(8) { animation-delay: 700ms; }
 
 /* Scroll reveals: blocks inside each section fade up as they enter the
    viewport. Pure CSS (scroll-driven); browsers without support show content

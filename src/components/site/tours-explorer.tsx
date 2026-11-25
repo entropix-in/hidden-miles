@@ -80,7 +80,7 @@ function DualRange({
     `calc(${THUMB_HALF}px + (100% - ${THUMB_HALF * 2}px) * ${fraction(value)})`;
 
   return (
-    <div className="relative mt-4 h-7">
+    <div className="relative mt-2 h-7">
       <span className="absolute inset-x-3.5 top-1/2 h-1 -translate-y-1/2 rounded-full bg-sand-200" />
       <span
         className="absolute top-1/2 h-1 -translate-y-1/2 rounded-full bg-ink"
@@ -121,6 +121,55 @@ function DualRange({
   );
 }
 
+/**
+ * Sticky that also works when the element is taller than the viewport:
+ * it scrolls with the page, pins once its bottom (scrolling down) or its
+ * top (scrolling up) comes into view, and behaves like plain sticky when
+ * it fits on screen.
+ */
+function useScrollSticky<T extends HTMLElement>(topGap: number, bottomGap: number) {
+  const ref = useRef<T>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    let top = topGap;
+    let lastY = window.scrollY;
+    let frame = 0;
+
+    const apply = () => {
+      frame = 0;
+      const y = window.scrollY;
+      const minTop = Math.min(
+        topGap,
+        window.innerHeight - el.offsetHeight - bottomGap,
+      );
+      top = Math.max(minTop, Math.min(topGap, top - (y - lastY)));
+      lastY = y;
+      el.style.top = `${top}px`;
+    };
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(apply);
+    };
+
+    const resize = new ResizeObserver(schedule);
+    resize.observe(el);
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    apply();
+
+    return () => {
+      cancelAnimationFrame(frame);
+      resize.disconnect();
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+    };
+  }, [topGap, bottomGap]);
+
+  return ref;
+}
+
 export function ToursExplorer({
   tours,
   destinations,
@@ -142,6 +191,8 @@ export function ToursExplorer({
   initialQuery?: string;
   initialPriceMax?: number;
 }) {
+  // 96px matches lg:top-24 (clears the fixed header); 24px breathing room below.
+  const sidebarRef = useScrollSticky<HTMLElement>(96, 24);
   const [destination, setDestination] = useState(initialDestination);
   const [experience, setExperience] = useState(initialExperience);
   const [region, setRegion] = useState<Region>(initialRegion);
@@ -351,16 +402,10 @@ export function ToursExplorer({
   }
 
   function renderFilterPanel(idPrefix: string) {
-    // Desktop: header stays pinned while the filter list scrolls inside the panel.
     const isDesktop = idPrefix === "desktop";
     return (
-      <div
-        className={cn(
-          "rounded-[20px] border border-sand-300 bg-paper p-6",
-          isDesktop && "lg:flex lg:max-h-[calc(100vh-112px)] lg:flex-col",
-        )}
-      >
-        <div className="flex shrink-0 items-center justify-between gap-3">
+      <div className="rounded-[20px] border border-sand-300 bg-paper p-5">
+        <div className="flex items-center justify-between gap-3">
           <p className="type-title text-ink">Filters</p>
           <button
             type="button"
@@ -371,23 +416,17 @@ export function ToursExplorer({
           </button>
         </div>
 
-        <div
-          className={cn(
-            "mt-6 space-y-6",
-            isDesktop &&
-              "lg:min-h-0 lg:flex-1 lg:overflow-y-auto lg:overscroll-contain lg:pr-2 lg:pb-10 lg:[scrollbar-width:thin] lg:[mask-image:linear-gradient(to_bottom,black_calc(100%-40px),transparent)]",
-          )}
-        >
+        <div className="mt-4 space-y-4">
           <section>
-            <p className="type-label mb-3 text-navy-500">Region</p>
-            <div className="flex flex-wrap gap-2">
+            <p className="type-label mb-2 text-navy-500">Region</p>
+            <div className="flex flex-wrap gap-1.5">
               {regions.map((item) => (
                 <button
                   key={item}
                   type="button"
                   onClick={() => setRegion(item)}
                   className={cn(
-                    "chip min-h-8 px-3 text-[13px]",
+                    "chip min-h-7 px-2.5 py-1 text-[13px]",
                     region === item && "chip-active",
                   )}
                 >
@@ -400,8 +439,8 @@ export function ToursExplorer({
           <div className="hr-dashed" />
 
           <section>
-            <p className="type-label mb-3 text-navy-500">Travel style</p>
-            <div className="grid gap-3">
+            <p className="type-label mb-2 text-navy-500">Travel style</p>
+            <div className="grid">
               {experiences.map((item) => {
                 const count = tours.filter((tour) =>
                   tour.experiences.includes(item.slug),
@@ -415,7 +454,7 @@ export function ToursExplorer({
                     onClick={() =>
                       setExperience(checked ? "" : item.slug)
                     }
-                    className="flex min-h-8 items-center gap-3 text-left"
+                    className="flex min-h-8 items-center gap-2.5 text-left"
                   >
                     <span
                       className={cn(
@@ -442,7 +481,7 @@ export function ToursExplorer({
           <div className="hr-dashed" />
 
           <section>
-            <label htmlFor={`${idPrefix}-destination`} className="type-label mb-3 block text-navy-500">
+            <label htmlFor={`${idPrefix}-destination`} className="type-label mb-2 block text-navy-500">
               Destination
             </label>
             <Select
@@ -463,7 +502,7 @@ export function ToursExplorer({
           <div className="hr-dashed" />
 
           <section>
-            <label htmlFor={`${idPrefix}-month`} className="type-label mb-3 block text-navy-500">
+            <label htmlFor={`${idPrefix}-month`} className="type-label mb-2 block text-navy-500">
               Departure month
             </label>
             <Select
@@ -524,7 +563,7 @@ export function ToursExplorer({
           <button
             type="button"
             onClick={() => setFiltersOpen(false)}
-            className="btn btn-ink w-full"
+            className={cn("btn btn-ink w-full", isDesktop && "lg:hidden")}
           >
             Show {filtered.length} tours
             <span className="btn-dot">→</span>
@@ -537,7 +576,7 @@ export function ToursExplorer({
   return (
     <section className="container-page pt-8 pb-12 md:pt-12 md:pb-16">
       <div className="grid gap-7 lg:grid-cols-[280px_1fr] lg:items-start lg:gap-8">
-        <aside className="hidden lg:sticky lg:top-24 lg:block">
+        <aside ref={sidebarRef} className="hidden lg:sticky lg:top-24 lg:block">
           {renderFilterPanel("desktop")}
         </aside>
 

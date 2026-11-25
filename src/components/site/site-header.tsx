@@ -46,6 +46,7 @@ export function SiteHeader({
   const [desktopMenu, setDesktopMenu] = useState<string | null>(null);
   const closeTimer = useRef<number | null>(null);
   const navRef = useRef<HTMLElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const firstName = user?.name.split(" ")[0] || "Account";
 
   const cancelClose = useCallback(() => {
@@ -90,6 +91,16 @@ export function SiteHeader({
   }
 
   useEffect(() => cancelClose, [cancelClose]);
+
+  useEffect(() => {
+    if (!searchOpen) return;
+    searchInputRef.current?.focus({ preventScroll: true });
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setSearchOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [searchOpen]);
 
   useEffect(() => {
     if (!desktopMenu) return;
@@ -408,13 +419,14 @@ export function SiteHeader({
             >
               <Search className="h-[18px] w-[18px]" />
             </button>
-            <Link href="/contact" className="btn btn-ink btn-sm hidden sm:inline-flex">
+            <Link href="/contact" className="btn btn-ink btn-sm hidden h-9 sm:inline-flex">
+              <Phone className="h-4 w-4" aria-hidden="true" />
               Plan my trip
             </Link>
             {user ? (
               <Link
                 href="/account"
-                className="hidden items-center gap-2 rounded-full border border-sand-300 bg-paper py-1 pl-1 pr-3 transition hover:border-navy-300 hover:bg-sand-100 sm:flex"
+                className="hidden h-9 items-center gap-2 rounded-full border border-sand-300 bg-paper pl-1 pr-3 transition hover:border-navy-300 hover:bg-sand-100 sm:flex"
                 aria-label="My account"
               >
                 <span className="grid h-7 w-7 place-items-center rounded-full bg-ink text-[12px] font-semibold uppercase text-gold-400">
@@ -427,7 +439,7 @@ export function SiteHeader({
             ) : (
               <Link
                 href="/login"
-                className="hidden items-center gap-1.5 rounded-full px-3 py-2 text-[13px] font-semibold text-ink transition hover:bg-sand-100 sm:inline-flex"
+                className="hidden h-9 items-center gap-1.5 rounded-full px-3 text-[13px] font-semibold text-ink transition hover:bg-sand-100 sm:inline-flex"
               >
                 <UserRound className="h-4 w-4" />
                 Sign in
@@ -445,27 +457,40 @@ export function SiteHeader({
           </div>
         </div>
 
-        {searchOpen ? (
-          <div className="border-t border-sand-300 bg-paper">
-            <form
-              onSubmit={submitSearch}
-              className="container-page flex items-center gap-3 py-4"
+        <div
+          inert={!searchOpen}
+          className={cn(
+            "grid transition-[grid-template-rows] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
+            searchOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
+          )}
+        >
+          <div className="overflow-hidden">
+            <div
+              className={cn(
+                "border-t border-sand-300 bg-paper transition duration-300 ease-out motion-reduce:transition-none",
+                searchOpen ? "translate-y-0 opacity-100" : "-translate-y-2 opacity-0",
+              )}
             >
-              <Search className="h-5 w-5 text-navy-500" />
-              <input
-                autoFocus
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
-                placeholder="Search tours, destinations or a feeling…"
-                className="min-w-0 flex-1 bg-transparent text-[15px] font-medium text-ink outline-none placeholder:text-navy-500"
-              />
-              <button type="submit" className="btn btn-primary btn-sm">
-                Search
-                <span className="btn-dot">→</span>
-              </button>
-            </form>
+              <form
+                onSubmit={submitSearch}
+                className="container-page flex items-center gap-3 py-4"
+              >
+                <Search className="h-5 w-5 text-navy-500" />
+                <input
+                  ref={searchInputRef}
+                  value={query}
+                  onChange={(event) => setQuery(event.target.value)}
+                  placeholder="Search tours, destinations or a feeling…"
+                  className="min-w-0 flex-1 bg-transparent text-[15px] font-medium text-ink outline-none placeholder:text-navy-500"
+                />
+                <button type="submit" className="btn btn-primary btn-sm">
+                  Search
+                  <span className="btn-dot">→</span>
+                </button>
+              </form>
+            </div>
           </div>
-        ) : null}
+        </div>
       </div>
 
       {/* Mobile drawer */}

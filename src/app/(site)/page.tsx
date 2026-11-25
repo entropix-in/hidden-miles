@@ -29,6 +29,28 @@ import { imageUrl } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
+/**
+ * Arch outline for a w×h box: a semicircle on top, straight sides, and a
+ * bottom edge that climbs `drop` px from left to right, with 16px corners.
+ */
+function archPath(w: number, h: number, drop: number) {
+  const r = w / 2;
+  const c = 16;
+  const length = Math.hypot(w, drop);
+  const ux = (w / length) * c;
+  const uy = (drop / length) * c;
+  const n = (value: number) => Math.round(value * 10) / 10;
+  return [
+    `M0 ${r}`,
+    `A${r} ${r} 0 0 1 ${w} ${r}`,
+    `L${w} ${n(h - drop - c)}`,
+    `Q${w} ${h - drop} ${n(w - ux)} ${n(h - drop + uy)}`,
+    `L${n(ux)} ${n(h - uy)}`,
+    `Q0 ${h} 0 ${h - c}`,
+    "Z",
+  ].join(" ");
+}
+
 export default async function HomePage() {
   const [tours, destinations, experiences, testimonials] = await Promise.all([
     loadTours(),
@@ -41,12 +63,34 @@ export default async function HomePage() {
   const featuredSelection = (featuredTours.length ? featuredTours : tours).slice(0, 3);
   const bySlug = (slug: string) => destinations.find((item) => item.slug === slug);
   const heroDestination = bySlug("kashmir") ?? destinations[0];
-  // Fanned hero cards, left to right: backwaters, mountains, desert forts.
-  const fanDestinations = {
-    left: bySlug("kerala") ?? destinations[1],
-    centre: heroDestination,
-    right: bySlug("rajasthan") ?? destinations[2],
-  };
+  // Hero arches, left to right: backwaters, mountains, desert forts. The centre
+  // one rises highest; each bottom edge climbs `drop` px from left to right.
+  const heroArches = [
+    {
+      key: "left",
+      destination: bySlug("kerala") ?? destinations[1],
+      box: "left-0 top-[168px] h-[384px] w-[172px]",
+      width: 172,
+      height: 384,
+      drop: 8,
+    },
+    {
+      key: "centre",
+      destination: heroDestination,
+      box: "left-[182px] top-[36px] h-[544px] w-[268px]",
+      width: 268,
+      height: 544,
+      drop: 40,
+    },
+    {
+      key: "right",
+      destination: bySlug("rajasthan") ?? destinations[2],
+      box: "left-[458px] top-[156px] h-[404px] w-[182px]",
+      width: 182,
+      height: 404,
+      drop: 24,
+    },
+  ];
   const bentoDestinations = [
     bySlug("kashmir"),
     bySlug("kerala"),
@@ -122,71 +166,64 @@ export default async function HomePage() {
               ) : null}
             </div>
 
-            {/* Fanned postcards under a gold sun, with the flight path that links them. */}
-            <div className="hero-collage relative mx-auto hidden h-[560px] w-full max-w-[640px] xl:block">
-              <span className="absolute left-[232px] top-[-4px] h-[360px] w-[360px] rounded-full bg-gold-300" />
+            {/* Three arched windows onto India under a pale sun, with paper arches
+                peeking out behind them and one flight path over the top. */}
+            <div className="hero-collage relative mx-auto hidden h-[588px] w-full max-w-[640px] xl:block">
+              <span className="absolute left-[408px] top-[44px] h-[144px] w-[144px] rounded-full bg-gold-200/70" />
+              <span className="absolute left-[92px] top-[108px] h-[320px] w-[148px] rounded-t-full bg-sand-200/70" />
+              <span className="absolute left-[516px] top-[100px] h-[320px] w-[132px] rounded-t-full bg-sand-200/70" />
+
+              {heroArches.map((arch) =>
+                arch.destination ? (
+                  <figure
+                    key={arch.key}
+                    // Shadow on the wrapper so the clip below doesn't cut it off.
+                    className={`absolute drop-shadow-[0_16px_20px_rgba(11,39,53,0.16)] ${arch.box}`}
+                  >
+                    <div
+                      className="absolute inset-0 bg-sand-200"
+                      style={{ clipPath: `path("${archPath(arch.width, arch.height, arch.drop)}")` }}
+                    >
+                      {/* Oversized by 16% so the photo can drift on scroll without
+                          showing an edge; the centre arch drifts most. */}
+                      <Image
+                        src={imageUrl(
+                          arch.destination.image,
+                          Math.round(arch.width * 2.32),
+                          { height: Math.round(arch.height * 2.32), quality: 88 },
+                        )}
+                        alt={arch.destination.name}
+                        fill
+                        priority={arch.key === "centre"}
+                        sizes={`${Math.round(arch.width * 1.16)}px`}
+                        className="hero-parallax object-cover"
+                        style={{ "--drift": arch.key === "centre" ? "6%" : "4%" } as React.CSSProperties}
+                      />
+                    </div>
+                  </figure>
+                ) : null,
+              )}
 
               <svg
-                viewBox="0 0 320 200"
+                viewBox="0 0 400 220"
                 aria-hidden="true"
-                className="absolute left-[-8px] top-[8px] h-[200px] w-[320px] text-ink"
+                className="absolute left-0 top-0 h-[220px] w-[400px] text-ink"
               >
                 <path
-                  d="M14 196 C-6 120 40 44 128 26 C190 14 250 20 312 46"
+                  d="M16 208 C4 124 112 32 248 14 C290 9 322 9 346 11"
                   fill="none"
                   stroke="currentColor"
-                  strokeOpacity="0.45"
+                  strokeOpacity="0.5"
                   strokeWidth="1.25"
-                  strokeDasharray="4 6"
+                  strokeDasharray="4 5"
                   strokeLinecap="round"
                 />
               </svg>
               <Plane
                 aria-hidden="true"
-                className="absolute left-[136px] top-[14px] h-8 w-8 rotate-[12deg] fill-ink text-ink"
+                className="absolute left-[348px] top-0 h-8 w-8 rotate-45 fill-ink text-ink"
                 strokeWidth={1.25}
               />
-
-              {fanDestinations.right ? (
-                <figure className="absolute left-[420px] top-[132px] h-[300px] w-[200px] rotate-[9deg] overflow-hidden rounded-[28px] border-[6px] border-paper bg-ink shadow-[0_28px_48px_-28px_rgba(11,39,53,0.55)]">
-                  <Image
-                    src={imageUrl(fanDestinations.right.image, 600)}
-                    alt={fanDestinations.right.name}
-                    fill
-                    sizes="200px"
-                    className="object-cover"
-                  />
-                </figure>
-              ) : null}
-
-              {fanDestinations.left ? (
-                <figure className="absolute left-[16px] top-[168px] h-[320px] w-[220px] -rotate-[7deg] overflow-hidden rounded-[28px] border-[6px] border-paper bg-ink shadow-[0_28px_48px_-28px_rgba(11,39,53,0.55)]">
-                  <Image
-                    src={imageUrl(fanDestinations.left.image, 600)}
-                    alt={fanDestinations.left.name}
-                    fill
-                    sizes="220px"
-                    className="object-cover"
-                  />
-                </figure>
-              ) : null}
-
-              {fanDestinations.centre ? (
-                <figure className="absolute left-[188px] top-[64px] h-[420px] w-[264px] -rotate-[9deg] overflow-hidden rounded-[32px] border-[6px] border-paper bg-ink shadow-[0_32px_56px_-28px_rgba(11,39,53,0.6)]">
-                  <Image
-                    src={imageUrl(fanDestinations.centre.image, 900)}
-                    alt={fanDestinations.centre.name}
-                    fill
-                    priority
-                    sizes="264px"
-                    className="object-cover"
-                  />
-                </figure>
-              ) : null}
-
-              <span className="absolute left-[496px] top-[400px]">
-                <Stamp size={136} tone="paper" />
-              </span>
             </div>
           </div>
 
