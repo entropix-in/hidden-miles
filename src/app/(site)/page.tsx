@@ -12,7 +12,6 @@ import { Contours } from "@/components/site/contours";
 import { DestinationCard } from "@/components/site/destination-card";
 import { FeatureTile } from "@/components/site/feature-tile";
 import { SectionHeading } from "@/components/site/section-heading";
-import { Rating } from "@/components/site/rating";
 import { SearchWidget } from "@/components/site/search-widget";
 import { Stamp } from "@/components/site/stamp";
 import { TestimonialCarousel } from "@/components/site/testimonial-carousel";
@@ -69,20 +68,20 @@ export default async function HomePage() {
       <section className="container-page pt-8 md:pt-12">
         <div className="grid items-center gap-8 xl:grid-cols-[1fr_600px] xl:gap-12">
           <div className="hero-stagger">
-            <h1 className="type-display text-ink">
-              Journeys that
+            <h1 className="type-hero text-ink">
+              Offbeat India
               <br />
-              <span className="accent-line">stay with you</span>
+              and the world,
               <br />
-              long after.
+              <span className="accent-line">led from day one</span>
             </h1>
 
-            <p className="type-lead mt-5 max-w-[460px] text-navy-700">
-              Thoughtfully planned trips across India and the world, with a
-              tour leader from day one.
+            <p className="type-lead mt-6 max-w-[440px] text-navy-700">
+              Thoughtfully planned group tours and personalised trips, from
+              Kashmir and Kerala to Japan and Europe.
             </p>
 
-            <div className="mt-6 grid gap-3 sm:flex sm:flex-wrap sm:items-center">
+            <div className="mt-8 grid gap-3 sm:flex sm:flex-wrap sm:items-center">
               <Link href="/tours" className="btn btn-ink btn-lg">
                 Explore tours
                 <span className="btn-dot">→</span>
@@ -90,15 +89,6 @@ export default async function HomePage() {
               <Link href="/contact" className="btn btn-outline btn-lg">
                 Talk to an expert
               </Link>
-            </div>
-
-            <div className="mt-6 flex flex-wrap items-center gap-4">
-              <div>
-                <Rating score="4.9" count="12,400+ reviews" />
-                <p className="mt-0.5 text-[13px] font-medium text-navy-500">
-                  1.2 million travellers hosted
-                </p>
-              </div>
             </div>
 
             {heroDestination ? (
@@ -144,15 +134,15 @@ export default async function HomePage() {
               </div>
             ) : null}
 
-            <div className="animate-float-slow absolute left-[200px] top-[40px] flex items-center gap-2.5 rounded-full bg-paper py-2.5 pl-2.5 pr-4 shadow-[0_12px_32px_-16px_rgba(11,39,53,0.45)]">
+            <div className="absolute left-[200px] top-[40px] flex items-center gap-2.5 rounded-full bg-paper py-2.5 pl-2.5 pr-4 shadow-[0_12px_32px_-16px_rgba(11,39,53,0.45)]">
               <span className="grid h-8 w-8 place-items-center rounded-full bg-gold-400 text-ink">
-                <MapPin className="h-4 w-4" />
+                <MapPin className="h-4 w-4" strokeWidth={1.75} />
               </span>
               <span>
                 <span className="block text-[13px] font-semibold text-ink">
                   Sonamarg, Kashmir
                 </span>
-                <span className="block text-xs font-medium text-navy-500">
+                <span className="block text-xs font-medium tabular-nums text-navy-500">
                   {heroCoordinates}
                 </span>
               </span>

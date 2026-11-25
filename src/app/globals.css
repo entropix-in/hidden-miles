@@ -205,6 +205,15 @@
     font-weight: 600;
   }
 
+  /* Home hero only: one size up from display so the copy holds its half. */
+  .type-hero {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: clamp(2.5rem, 4.4vw, 4rem);
+    line-height: 1.04;
+    letter-spacing: -0.035em;
+  }
+
   .type-lead {
     font-size: 16px;
     line-height: 26px;

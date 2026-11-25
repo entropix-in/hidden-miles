@@ -43,12 +43,17 @@ export function Stamp({
         </defs>
         <text
           fill="var(--color-ink)"
-          fontSize="10.2"
-          fontWeight="800"
-          letterSpacing="2.1"
+          fontSize="10"
+          fontWeight="600"
           fontFamily="var(--font-sans)"
         >
-          <textPath href={`#${id}`} startOffset="0">
+          {/* Fit the ring exactly (2π·50) so the phrase never overruns its own start. */}
+          <textPath
+            href={`#${id}`}
+            startOffset="0"
+            textLength="314"
+            lengthAdjust="spacing"
+          >
             {text}
           </textPath>
         </text>
